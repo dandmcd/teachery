@@ -74,6 +74,13 @@ export default {
           userId: user.id
         }
       });
+    },
+    allCards: async (user, args, { models }) => {
+      return await models.Card.findAll({
+        where: {
+          userId: user.id
+        }
+      });
     }
   }
 };

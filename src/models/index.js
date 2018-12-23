@@ -7,7 +7,7 @@ if (process.env.DATABASE_URL) {
   });
 } else {
   sequelize = new Sequelize(
-    process.env.TEST_DATABASE || process.env.DATABASE,
+    process.env.DATABASE,
     process.env.DATABASE_USER,
     process.env.DATABASE_PASSWORD,
     {
@@ -18,7 +18,8 @@ if (process.env.DATABASE_URL) {
 
 const models = {
   User: sequelize.import("./user"),
-  Message: sequelize.import("./message")
+  Message: sequelize.import("./message"),
+  Card: sequelize.import("./card")
 };
 
 Object.keys(models).forEach(key => {

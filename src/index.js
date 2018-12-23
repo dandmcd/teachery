@@ -77,13 +77,15 @@ server.applyMiddleware({ app, path: "/graphql" });
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
-const isTest = !!process.env.TEST_DATABASE;
+const isTest = !!process.env.DATABASE;
 const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 8000;
+//For production, change sync force: isTest || isProduction
+// const eraseDatabaseOnSync = true;
 
 sequelize.sync({ force: isTest || isProduction }).then(async () => {
   if (isTest || isProduction) {
-    createUsersWithMessages(new Date());
+    createUsersWithMessagesAndCards(new Date());
   }
 
   httpServer.listen({ port }, () => {
@@ -91,7 +93,7 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
   });
 });
 
-const createUsersWithMessages = async date => {
+const createUsersWithMessagesAndCards = async date => {
   await models.User.create(
     {
       username: "dandmcd",
@@ -100,7 +102,7 @@ const createUsersWithMessages = async date => {
       role: "ADMIN",
       messages: [
         {
-          text: "I am the greatest!",
+          text: "I am super!",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
@@ -108,7 +110,22 @@ const createUsersWithMessages = async date => {
     {
       include: [models.Message]
     }
-  );
+  ).then(user => {
+    models.Card.create(
+      {
+        front: "Hello",
+        back: "Nihao",
+        createdAt: date.setSeconds(date.getSeconds() + 1),
+        userId: 1
+      },
+      {
+        front: "Let's go",
+        back: "Bears",
+        createdAt: date.setSeconds(date.getSeconds() + 1),
+        userId: 1
+      }
+    );
+  });
 
   await models.User.create(
     {
@@ -122,6 +139,13 @@ const createUsersWithMessages = async date => {
         },
         {
           text: "The cutest cat",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        }
+      ],
+      allCards: [
+        {
+          front: "Bingo!",
+          back: "Was his nameo",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
