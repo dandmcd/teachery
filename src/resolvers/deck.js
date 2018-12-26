@@ -8,7 +8,7 @@ const fromCursorHash = string =>
 
 export default {
   Query: {
-    cards: async (parent, { cursor, limit = 100 }, { models }) => {
+    decks: async (parent, { cursor, limit = 100 }, { models }) => {
       const cursorOptions = cursor
         ? {
             where: {
@@ -19,31 +19,31 @@ export default {
           }
         : {};
 
-      const cards = await models.Card.findAll({
+      const decks = await models.Deck.findAll({
         order: [["createdAt", "DESC"]],
         limit: limit + 1,
         ...cursorOptions
       });
 
-      const hasNextPage = allCards.length > limit;
-      const edges = hasNextPage ? allCards.slice(0, -1) : allCards;
+      const hasNextPage = decks.length > limit;
+      const edges = hasNextPage ? decks.slice(0, -1) : decks;
 
       return {
         edges,
-        CardPageInfo: {
+        pageInfo: {
           hasNextPage,
           endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
         }
       };
     },
-    card: async (parent, { id }, { models }) => {
-      return await models.Card.findById(id);
+    deck: async (parent, { id }, { models }) => {
+      return await models.Deck.findById(id);
     }
   },
 
-  Card: {
-    deck: async (card, args, { models }) => {
-      return await models.user.findById(card.cardId);
+  Deck: {
+    user: async (deck, args, { models }) => {
+      return await models.User.findById(deck.userId);
     }
   }
 };

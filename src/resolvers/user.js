@@ -75,8 +75,8 @@ export default {
         }
       });
     },
-    allCards: async (user, args, { models }) => {
-      return await models.Card.findAll({
+    decks: async (user, args, { models }) => {
+      return await models.Deck.findAll({
         where: {
           userId: user.id
         }

@@ -85,7 +85,7 @@ const port = process.env.PORT || 8000;
 
 sequelize.sync({ force: isTest || isProduction }).then(async () => {
   if (isTest || isProduction) {
-    createUsersWithMessagesAndCards(new Date());
+    createUsersWithMessagesAndDecks(new Date());
   }
 
   httpServer.listen({ port }, () => {
@@ -93,7 +93,7 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
   });
 });
 
-const createUsersWithMessagesAndCards = async date => {
+const createUsersWithMessagesAndDecks = async date => {
   await models.User.create(
     {
       username: "dandmcd",
@@ -105,13 +105,32 @@ const createUsersWithMessagesAndCards = async date => {
           text: "I am super!",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
+      ],
+      decks: [
+        {
+          name: "Immigration Interview",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        }
       ]
     },
     {
       include: [models.Message]
     }
+  );
+  await models.Deck.create(
+    {
+      name: "Immigration Interview",
+      createdAt: date.setSeconds(date.getSeconds() + 1),
+      userId: "1"
+    },
+    {
+      inclue: [models.Deck]
+    }
+  );
+};
+/*   }
   ).then(user => {
-    models.Card.create(
+    models.Deck.create(
       {
         front: "Hello",
         back: "Nihao",
@@ -125,33 +144,4 @@ const createUsersWithMessagesAndCards = async date => {
         userId: 1
       }
     );
-  });
-
-  await models.User.create(
-    {
-      username: "hotpot",
-      email: "cat@dog.com",
-      password: "katkat111",
-      messages: [
-        {
-          text: "I am a cat...",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
-        },
-        {
-          text: "The cutest cat",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
-        }
-      ],
-      allCards: [
-        {
-          front: "Bingo!",
-          back: "Was his nameo",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
-        }
-      ]
-    },
-    {
-      include: [models.Message]
-    }
-  );
-};
+  }); */

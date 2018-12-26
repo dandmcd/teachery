@@ -20,7 +20,7 @@ const card = (sequelize, DataTypes) => {
     }
   });
   Card.associate = models => {
-    Card.belongsTo(models.User);
+    Card.belongsTo(models.Deck);
   };
   return Card;
 };

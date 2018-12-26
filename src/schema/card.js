@@ -2,7 +2,7 @@ import { gql } from "apollo-server-express";
 
 export default gql`
   extend type Query {
-    allCards(cursor: String, limit: Int): CardConnection!
+    cards(cursor: String, limit: Int): CardConnection!
     card(id: ID!): Card!
   }
 
@@ -21,6 +21,6 @@ export default gql`
     front: String!
     back: String
     createdAt: Date!
-    user: User!
+    deck: Deck!
   }
 `;

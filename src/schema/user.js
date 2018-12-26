@@ -24,6 +24,7 @@ export default gql`
     email: String!
     role: String
     messages: [Message!]
-    allCards: [Card!]
+    decks: [Deck!]
+    cards: [Card!]
   }
 `;
