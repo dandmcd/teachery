@@ -42,6 +42,14 @@ export default {
   },
 
   Deck: {
+    cards: async (deck, args, { models }) => {
+      return await models.Card.findAll({
+        where: {
+          deckId: deck.id
+        }
+      });
+    },
+
     user: async (deck, args, { models }) => {
       return await models.User.findById(deck.userId);
     }

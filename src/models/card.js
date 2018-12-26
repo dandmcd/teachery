@@ -11,12 +11,7 @@ const card = (sequelize, DataTypes) => {
     },
     back: {
       type: DataTypes.STRING,
-      validate: {
-        notEmpty: {
-          args: true,
-          msg: "Back of the card must have text."
-        }
-      }
+      allowNull: true
     }
   });
   Card.associate = models => {

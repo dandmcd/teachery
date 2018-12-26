@@ -25,12 +25,12 @@ export default {
         ...cursorOptions
       });
 
-      const hasNextPage = allCards.length > limit;
-      const edges = hasNextPage ? allCards.slice(0, -1) : allCards;
+      const hasNextPage = cards.length > limit;
+      const edges = hasNextPage ? cards.slice(0, -1) : cards;
 
       return {
         edges,
-        CardPageInfo: {
+        pageInfo: {
           hasNextPage,
           endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
         }
@@ -43,7 +43,7 @@ export default {
 
   Card: {
     deck: async (card, args, { models }) => {
-      return await models.user.findById(card.cardId);
+      return await models.Deck.findById(card.deckId);
     }
   }
 };

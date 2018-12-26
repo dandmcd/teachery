@@ -1,5 +1,6 @@
 logfile
 node_modules/
+seed.js
 
 # dependencies
 /node_modules

@@ -11,6 +11,7 @@ import schema from "./schema";
 import resolvers from "./resolvers";
 import models, { sequelize } from "./models";
 import loaders from "./loaders";
+import createUsersWithMessagesAndDecks from "./seed";
 
 const app = express();
 
@@ -93,42 +94,15 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
   });
 });
 
-const createUsersWithMessagesAndDecks = async date => {
-  await models.User.create(
-    {
-      username: "dandmcd",
-      email: "dandmcd@gmail.com",
-      password: "hotpot123",
-      role: "ADMIN",
-      messages: [
-        {
-          text: "I am super!",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
-        }
-      ],
-      decks: [
-        {
-          name: "Immigration Interview",
-          createdAt: date.setSeconds(date.getSeconds() + 1)
-        }
-      ]
-    },
-    {
-      include: [models.Message]
-    }
-  );
-  await models.Deck.create(
-    {
-      name: "Immigration Interview",
-      createdAt: date.setSeconds(date.getSeconds() + 1),
-      userId: "1"
-    },
-    {
-      inclue: [models.Deck]
-    }
-  );
+/*
+  await models.Card.create({
+    front: "Hello",
+    back: "Nihao",
+    createdAt: date.setSeconds(date.getSeconds() + 1),
+    deckId: "1"
+  });
 };
-/*   }
+   }
   ).then(user => {
     models.Deck.create(
       {
