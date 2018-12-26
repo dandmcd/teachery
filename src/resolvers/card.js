@@ -42,8 +42,8 @@ export default {
   },
 
   Card: {
-    deck: async (card, args, { models }) => {
-      return await models.Deck.findById(card.deckId);
+    deck: async (card, args, { loaders }) => {
+      return await loaders.deck.load(card.deckId);
     }
   }
 };

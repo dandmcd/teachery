@@ -53,7 +53,8 @@ const server = new ApolloServer({
       return {
         models,
         loaders: {
-          user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
+          user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
+          deck: new DataLoader(keys => loaders.deck.batchUsers(keys, models))
         }
       };
     }
@@ -93,29 +94,3 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
 });
-
-/*
-  await models.Card.create({
-    front: "Hello",
-    back: "Nihao",
-    createdAt: date.setSeconds(date.getSeconds() + 1),
-    deckId: "1"
-  });
-};
-   }
-  ).then(user => {
-    models.Deck.create(
-      {
-        front: "Hello",
-        back: "Nihao",
-        createdAt: date.setSeconds(date.getSeconds() + 1),
-        userId: 1
-      },
-      {
-        front: "Let's go",
-        back: "Bears",
-        createdAt: date.setSeconds(date.getSeconds() + 1),
-        userId: 1
-      }
-    );
-  }); */

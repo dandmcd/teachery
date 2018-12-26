@@ -7,8 +7,9 @@ import Flashcards from "../Flashcards";
 
 const Landing = ({ session }) => (
   <div>
-    <h2>This is the landing page yep</h2>
     <p>
+      <h2>This is the landing page yep</h2>
+
       <Flashcards />
     </p>
     <hr />

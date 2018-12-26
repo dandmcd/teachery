@@ -1,3 +1,4 @@
 import * as user from "./user";
+import * as deck from "./deck";
 
-export default { user };
+export default { user, deck };
