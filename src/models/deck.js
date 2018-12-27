@@ -13,7 +13,7 @@ const deck = (sequelize, DataTypes) => {
 
   Deck.associate = models => {
     Deck.belongsTo(models.User);
-    Deck.hasMany(models.Card);
+    Deck.hasMany(models.Card, { onDelete: "CASCADE" });
   };
   return Deck;
 };

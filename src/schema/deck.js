@@ -6,6 +6,11 @@ export default gql`
     deck(id: ID): Deck!
   }
 
+  extend type Mutation {
+    createDeck(name: String!): Deck!
+    deleteDeck(id: ID!): Boolean!
+  }
+
   type DeckConnection {
     edges: [Deck!]!
     pageInfo: DeckPageInfo!

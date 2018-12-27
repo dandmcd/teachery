@@ -54,7 +54,7 @@ const server = new ApolloServer({
         models,
         loaders: {
           user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
-          deck: new DataLoader(keys => loaders.deck.batchUsers(keys, models))
+          deck: new DataLoader(keys => loaders.deck.Decks(keys, models))
         }
       };
     }
@@ -67,7 +67,8 @@ const server = new ApolloServer({
         me,
         secret: process.env.SECRET,
         loaders: {
-          user: new DataLoader(keys => loaders.user.batchUsers(keys, models))
+          user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
+          deck: new DataLoader(keys => loaders.deck.batchDecks(keys, models))
         }
       };
     }

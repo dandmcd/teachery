@@ -25,6 +25,5 @@ export default gql`
     role: String
     messages: [Message!]
     decks: [Deck!]
-    cards: [Card!]
   }
 `;

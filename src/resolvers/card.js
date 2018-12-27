@@ -1,6 +1,8 @@
 import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 
+import { isAdmin, isAuthenticated } from "./authorization";
+
 const toCursorHash = string => Buffer.from(string).toString("base64");
 
 const fromCursorHash = string =>
@@ -39,6 +41,29 @@ export default {
     card: async (parent, { id }, { models }) => {
       return await models.Card.findById(id);
     }
+  },
+
+  Mutation: {
+    createCard: combineResolvers(
+      isAdmin,
+      async (parent, { deckId, front, back }, { models }) => {
+        const card = await models.Card.create({
+          deckId,
+          front,
+          back
+        });
+        return card;
+      }
+    ),
+
+    deleteCard: combineResolvers(
+      isAdmin,
+      async (parent, { id }, { models }) => {
+        return await models.Card.destroy({
+          where: { id }
+        });
+      }
+    )
   },
 
   Card: {
