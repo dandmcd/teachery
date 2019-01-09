@@ -12,6 +12,7 @@ import resolvers from "./resolvers";
 import models, { sequelize } from "./models";
 import loaders from "./loaders";
 import createUsersWithMessagesAndDecks from "./seed";
+import path from "path";
 
 const app = express();
 

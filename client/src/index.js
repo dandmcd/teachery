@@ -13,7 +13,7 @@ import App from "./components/App";
 import { signOut } from "./components/SignOut";
 
 const httpLink = new HttpLink({
-  uri: "http://localhost:8000/graphql"
+  uri: "/graphql"
 });
 
 const wsLink = new WebSocketLink({
