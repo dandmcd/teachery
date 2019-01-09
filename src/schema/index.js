@@ -4,6 +4,7 @@ import userSchema from "./user";
 import messageSchema from "./message";
 import cardSchema from "./card";
 import deckSchema from "./deck";
+import assignmentSchema from "./assignment";
 
 const linkSchema = gql`
   scalar Date
@@ -21,4 +22,11 @@ const linkSchema = gql`
   }
 `;
 
-export default [linkSchema, userSchema, messageSchema, cardSchema, deckSchema];
+export default [
+  linkSchema,
+  userSchema,
+  messageSchema,
+  cardSchema,
+  deckSchema,
+  assignmentSchema
+];

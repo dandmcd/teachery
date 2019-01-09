@@ -3,19 +3,16 @@ import React from "react";
 import withSession from "../Session/withSession";
 
 import { MessageCreate, Messages } from "../Message";
-import Flashcards from "../Flashcards";
+import { Assignments } from "../Assignment";
 
 const Landing = ({ session }) => (
   <div>
-    <p>
-      <h2>This is the landing page yep</h2>
-
-      <Flashcards />
-    </p>
+    <h2>Landing page</h2>
     <hr />
-
+    {session && session.me && <Assignments me={session.me} limit={2} />}
+    <hr />
     {session && session.me && <MessageCreate />}
-    {session && session.me && <Messages me={session.me} limit={2} />}
+    {session && session.me && <Messages me={session.me} limit={3} />}
   </div>
 );
 

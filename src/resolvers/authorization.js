@@ -19,3 +19,13 @@ export const isMessageOwner = async (parent, { id }, { models, me }) => {
 
   return skip;
 };
+
+export const isAssignmentOwner = async (parent, { id }, { models, me }) => {
+  const assignment = await models.Assignment.findById(id, { raw: true });
+
+  if (assignment.userId !== me.id) {
+    throw new ForbiddenError("Not authenticated as owner.");
+  }
+
+  return skip;
+};

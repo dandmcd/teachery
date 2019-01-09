@@ -8,6 +8,8 @@ import SignInPage from "../SignIn";
 import AccountPage from "../Account";
 import AdminPage from "../Admin";
 import withSession from "../Session/withSession";
+import FlashCardPage from "../FlashCards";
+import Cards from "../FlashCards/Cards";
 
 import * as routes from "../../constants/routes";
 import history from "../../constants/history";
@@ -32,6 +34,16 @@ const App = ({ session, refetch }) => (
       />
       <Route exact path={routes.ACCOUNT} component={() => <AccountPage />} />
       <Route exact path={routes.ADMIN} component={() => <AdminPage />} />
+      <Route
+        exact
+        path={routes.FLASHCARDS}
+        component={() => <FlashCardPage />}
+      />
+      <Route
+        exact
+        path={routes.CARDS}
+        component={props => <Cards {...props} />}
+      />
     </div>
   </Router>
 );

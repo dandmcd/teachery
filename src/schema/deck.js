@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 export default gql`
   extend type Query {
     decks(cursor: String, limit: Int): DeckConnection!
-    deck(id: ID): Deck!
+    deck(id: ID, deckName: String): Deck!
   }
 
   extend type Mutation {
@@ -23,7 +23,7 @@ export default gql`
 
   type Deck {
     id: ID!
-    name: String!
+    deckName: String!
     createdAt: Date!
     user: User!
     cards: [Card!]

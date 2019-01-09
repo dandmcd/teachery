@@ -81,6 +81,13 @@ export default {
           userId: user.id
         }
       });
+    },
+    assignments: async (user, args, { models }) => {
+      return await models.Assignment.findAll({
+        where: {
+          userId: user.id
+        }
+      });
     }
   }
 };

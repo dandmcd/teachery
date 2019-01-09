@@ -1,6 +1,6 @@
 const deck = (sequelize, DataTypes) => {
   const Deck = sequelize.define("deck", {
-    name: {
+    deckName: {
       type: DataTypes.STRING,
       validate: {
         notEmpty: {
