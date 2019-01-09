@@ -11,7 +11,7 @@
     "build": "babel src —-out-dir dist",
     "test-server": "TEST_DATABASE=testfuwu npm start",
     "test": "mocha --require @babel/register 'src/**/*.spec.js'",
-    "client": "cd client && npm start",
+    "client": "npm start --prefix client",
     "start": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "",
