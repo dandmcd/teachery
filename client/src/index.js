@@ -17,7 +17,7 @@ const httpLink = new HttpLink({
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://localhost:8000/graphql`,
+  uri: `ws://fuwuyuan.herokuapp.com/graphql`,
   options: {
     reconnect: true
   }
