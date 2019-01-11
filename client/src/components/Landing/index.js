@@ -7,7 +7,7 @@ import { Assignments } from "../Assignment";
 
 const Landing = ({ session }) => (
   <div>
-    <h2>Landing page</h2>
+    <h2>Landing page ^^^</h2>
     <hr />
     {session && session.me && <Assignments me={session.me} limit={2} />}
     <hr />
