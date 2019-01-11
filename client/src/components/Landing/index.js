@@ -12,7 +12,7 @@ const Landing = ({ session }) => (
     {session && session.me && <Assignments me={session.me} limit={2} />}
     <hr />
     {session && session.me && <MessageCreate />}
-    {session && session.me && <Messages me={session.me} limit={3} />}
+    <Messages limit={3} />
   </div>
 );
 
