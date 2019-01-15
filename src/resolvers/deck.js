@@ -47,9 +47,10 @@ export default {
     createDeck: combineResolvers(
       isAdmin,
       isAuthenticated,
-      async (parent, { deckName }, { models, me }) => {
+      async (parent, { deckname, description }, { models, me }) => {
         const deck = await models.Deck.create({
-          deckName,
+          deckname,
+          description,
           userId: me.id
         });
         return deck;

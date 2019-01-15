@@ -81,7 +81,7 @@ server.applyMiddleware({ app, path: "/graphql" });
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
-const isTest = !!process.env.TEST_DATABASE;
+const isTest = !!process.env.DATABASE;
 const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 8000;
 //For production, change sync force: isTest || isProduction

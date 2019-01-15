@@ -1,16 +1,18 @@
 import React from "react";
 
-import withSession from "../Session/withSession";
+import withAuthorization from "../Session/withAuthorization";
 
 import Decks from "./Decks";
 
-const FlashCardPage = ({ session }) => (
+const FlashCardPage = () => (
   <div>
     <h2>Flashcards</h2>
     <hr />
 
-    {session && session.me && <Decks />}
+    <Decks />
   </div>
 );
 
-export default withSession(FlashCardPage);
+export default withAuthorization(session => session && session.me)(
+  FlashCardPage
+);

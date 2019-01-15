@@ -1,11 +1,20 @@
 const deck = (sequelize, DataTypes) => {
   const Deck = sequelize.define("deck", {
-    deckName: {
+    deckname: {
       type: DataTypes.STRING,
       validate: {
         notEmpty: {
           args: true,
           msg: "A deck must have a name."
+        }
+      }
+    },
+    description: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "A deck must have a description."
         }
       }
     }

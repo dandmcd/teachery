@@ -51,7 +51,8 @@ const createUsersWithMessagesAndDecks = async date => {
 
   await models.Deck.create(
     {
-      deckName: "Immigration Interview",
+      deckname: "Immigration Interview",
+      description: "Prepare for your immigration interview",
       createdAt: date.setSeconds(date.getSeconds() + 1),
       userId: "1",
       cards: [
@@ -73,7 +74,8 @@ const createUsersWithMessagesAndDecks = async date => {
 
   await models.Deck.create(
     {
-      deckName: "English",
+      deckname: "English",
+      description: "Learn A to Z English",
       createdAt: date.setSeconds(date.getSeconds() + 1),
       userId: "2",
       cards: [

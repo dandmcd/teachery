@@ -3,7 +3,7 @@ import { gql } from "apollo-server-express";
 export default gql`
   extend type Query {
     decks(cursor: String, limit: Int): DeckConnection!
-    deck(id: ID, deckName: String): Deck!
+    deck(id: ID, deckname: String, tag: String): Deck!
   }
 
   extend type Mutation {
@@ -11,7 +11,7 @@ export default gql`
     Creates a deck -
     Deck name is required is required!
     """
-    createDeck(deckName: String!): Deck!
+    createDeck(deckname: String!, description: String!): Deck!
 
     """
     Deletes a deck
@@ -35,7 +35,12 @@ export default gql`
     """
     Name of the deck
     """
-    deckName: String!
+    deckname: String!
+
+    """
+    Description of the deck
+    """
+    description: String!
     createdAt: Date!
     user: User!
     cards: [Card!]
