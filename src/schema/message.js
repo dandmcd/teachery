@@ -23,7 +23,12 @@ export default gql`
 
   type Message {
     id: ID!
+
+    """
+    Message text
+    """
     text: String!
+
     createdAt: Date!
     user: User!
   }

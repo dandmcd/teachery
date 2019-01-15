@@ -7,7 +7,15 @@ export default gql`
   }
 
   extend type Mutation {
-    createDeck(name: String!): Deck!
+    """
+    Creates a deck -
+    Deck name is required is required!
+    """
+    createDeck(deckName: String!): Deck!
+
+    """
+    Deletes a deck
+    """
     deleteDeck(id: ID!): Boolean!
   }
 
@@ -23,6 +31,10 @@ export default gql`
 
   type Deck {
     id: ID!
+
+    """
+    Name of the deck
+    """
     deckName: String!
     createdAt: Date!
     user: User!

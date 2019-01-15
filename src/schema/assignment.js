@@ -7,11 +7,19 @@ export default gql`
   }
 
   extend type Mutation {
+    """
+    Creates an assignment -
+    Assignment name is required!
+    """
     createAssignment(
       assignment_name: String!
       description: String
       url: String
     ): Assignment!
+
+    """
+    Delete an assignment
+    """
     deleteAssignment(id: ID!): Boolean!
   }
 
@@ -27,9 +35,22 @@ export default gql`
 
   type Assignment {
     id: ID!
+
+    """
+    Name of assignment
+    """
     assignment_name: String!
+
+    """
+    Notes and/or instructions for assignment
+    """
     description: String
+
+    """
+    URL link
+    """
     url: String
+
     createdAt: Date!
     user: User!
   }

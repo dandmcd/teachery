@@ -8,9 +8,22 @@ export default gql`
   }
 
   extend type Mutation {
+    """
+    Sign up a new account
+    Username, email and password are required!
+    """
     signUp(username: String!, email: String!, password: String!): Token!
 
+    """
+    Sign in to account
+    Token and password are required!
+    """
     signIn(login: String!, password: String!): Token!
+
+    """
+    Delete user
+    Requires ADMIN role
+    """
     deleteUser(id: ID!): Boolean!
   }
 
@@ -22,6 +35,11 @@ export default gql`
     id: ID!
     username: String!
     email: String!
+
+    """
+    User level -
+    Currently only 1 role used, ADMIN
+    """
     role: String
     messages: [Message!]
     assignments: [Assignment!]
