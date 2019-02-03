@@ -53,11 +53,6 @@ export default {
           url,
           userId: me.id
         });
-
-        pubsub.publish(EVENTS.ASSIGNMENT.CREATED, {
-          assignmentCreated: { assignment }
-        });
-
         return assignment;
       }
     ),
@@ -74,12 +69,6 @@ export default {
   Assignment: {
     user: async (assignment, args, { loaders }) => {
       return await loaders.user.load(assignment.userId);
-    }
-  },
-
-  Subscription: {
-    assignmentCreated: {
-      subscribe: () => pubsub.asyncIterator(EVENTS.ASSIGNMENT.CREATED)
     }
   }
 };

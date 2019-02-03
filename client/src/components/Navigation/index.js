@@ -23,6 +23,9 @@ const NavigationAuth = ({ session }) => (
       <Link to={routes.FLASHCARDS}>Flashcards</Link>
     </li>
     <li>
+      <Link to={routes.ASSIGNMENTS}>Assignments</Link>
+    </li>
+    <li>
       <Link to={routes.ACCOUNT}>Account ({session.me.username})</Link>
     </li>
     {session && session.me && session.me.role === "ADMIN" && (

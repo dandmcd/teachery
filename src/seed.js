@@ -106,7 +106,7 @@ const createUsersWithMessagesAndDecks = async date => {
     description: "Studying English exam 1",
     url: "http://www.google.com",
     createdAt: date.setSeconds(date.getSeconds() + 1),
-    userId: "2"
+    userId: "1"
   });
 
   await models.Assignment.create({

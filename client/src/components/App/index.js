@@ -5,6 +5,7 @@ import Navigation from "../Navigation";
 import LandingPage from "../Landing";
 import SignUpPage from "../SignUp";
 import SignInPage from "../SignIn";
+import AssignmentPage from "../Assignment";
 import AccountPage from "../Account";
 import AdminPage from "../Admin";
 import withSession from "../Session/withSession";
@@ -33,6 +34,11 @@ const App = ({ session, refetch }) => (
         component={() => <SignInPage refetch={refetch} />}
       />
       <Route exact path={routes.ACCOUNT} component={() => <AccountPage />} />
+      <Route
+        exact
+        path={routes.ASSIGNMENTS}
+        component={() => <AssignmentPage />}
+      />
       <Route exact path={routes.ADMIN} component={() => <AdminPage />} />
       <Route
         exact

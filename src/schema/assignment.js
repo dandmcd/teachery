@@ -54,12 +54,4 @@ export default gql`
     createdAt: Date!
     user: User!
   }
-
-  extend type Subscription {
-    assignmentCreated: AssignmentCreated!
-  }
-
-  type AssignmentCreated {
-    assignment: Assignment!
-  }
 `;

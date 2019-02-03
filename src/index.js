@@ -84,8 +84,6 @@ server.installSubscriptionHandlers(httpServer);
 const isTest = !!process.env.DATABASE;
 const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 8000;
-//For production, change sync force: isTest || isProduction
-// const eraseDatabaseOnSync = true;
 
 sequelize.sync({ force: isTest || isProduction }).then(async () => {
   if (isTest || isProduction) {
