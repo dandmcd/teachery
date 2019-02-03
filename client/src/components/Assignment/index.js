@@ -1,7 +1,6 @@
 import React from "react";
 
 import withAuthorization from "../Session/withAuthorization";
-
 import Assignments from "./Assignments";
 import AssignmentCreate from "./AssignmentCreate";
 

@@ -6,16 +6,16 @@ import ErrorMessage from "../../Error";
 import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
 
 const CREATE_ASSIGNMENT = gql`
-  mutation($assignment_name: String!, $description: String, $url: String) {
+  mutation($assignmentname: String!, $note: String, $link: String) {
     createAssignment(
-      assignment_name: $assignment_name
-      description: $description
-      url: $url
+      assignmentname: $assignmentname
+      note: $note
+      link: $link
     ) {
       id
-      assignment_name
-      description
-      url
+      assignmentname
+      note
+      link
       createdAt
       user {
         id
@@ -27,9 +27,9 @@ const CREATE_ASSIGNMENT = gql`
 
 class AssignmentCreate extends Component {
   state = {
-    assignment_name: "",
-    description: "",
-    url: ""
+    assignmentname: "",
+    note: "",
+    link: ""
   };
 
   onChange = event => {
@@ -42,17 +42,17 @@ class AssignmentCreate extends Component {
 
     try {
       await createAssignment();
-      this.setState({ assignment_name: "", description: "", url: "" });
+      this.setState({ assignmentname: "", note: "", link: "" });
     } catch (error) {}
   };
 
   render() {
-    const { assignment_name, description, url } = this.state;
+    const { assignmentname, note, link } = this.state;
 
     return (
       <Mutation
         mutation={CREATE_ASSIGNMENT}
-        variables={{ assignment_name, description, url }}
+        variables={{ assignmentname, note, link }}
         update={(cache, { data: { createAssignment } }) => {
           const data = cache.readQuery({
             query: GET_PAGINATED_ASSIGNMENTS_WITH_USERS
@@ -74,25 +74,25 @@ class AssignmentCreate extends Component {
         {(createAssignment, { data, loading, error }) => (
           <form onSubmit={event => this.onSubmit(event, createAssignment)}>
             <textarea
-              name="assignment_name"
-              value={assignment_name}
+              name="assignmentname"
+              value={assignmentname}
               onChange={this.onChange}
               type="text"
               placeholder="Your assignment name ... (REQUIRED)"
             />
             <textarea
-              name="description"
-              value={description}
+              name="note"
+              value={note}
               onChange={this.onChange}
               type="text"
               placeholder="Add details and notes ..."
             />
             <textarea
-              name="url"
-              value={url}
+              name="link"
+              value={link}
               onChange={this.onChange}
               type="text"
-              placeholder="Add a link"
+              placeholder="Add a URL link"
             />
             <button type="submit">Submit</button>
 

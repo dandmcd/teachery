@@ -1,10 +1,10 @@
 import React, { Component, Fragment } from "react";
 import { Query } from "react-apollo";
 
-import AssignmentDelete from "../AssignmentDelete";
-import Loading from "../../Loading";
 import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
+import AssignmentDelete from "../AssignmentDelete";
+import Loading from "../../Loading";
 
 const Assignments = ({ limit, me }) => (
   <Query query={GET_PAGINATED_ASSIGNMENTS_WITH_USERS} variables={{ limit }}>
@@ -85,8 +85,9 @@ const AssignmentItemBase = ({ assignment, session }) => (
   <div>
     <h3>{assignment.user.username}</h3>
     <small>{assignment.createdAt}</small>
-    <p>{assignment.assignment_name}</p>
-    <p>{assignment.description}</p>
+    <p>{assignment.assignmentname}</p>
+    <p>{assignment.note}</p>
+    <p>{assignment.link}</p>
 
     {session && session.me && assignment.user.id === session.me.id && (
       <AssignmentDelete assignment={assignment} />

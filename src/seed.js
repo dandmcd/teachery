@@ -52,7 +52,7 @@ const createUsersWithMessagesAndDecks = async date => {
   await models.Deck.create(
     {
       deckname: "Immigration Interview",
-      description: "Prepare for your immigration interview",
+      note: "Prepare for your immigration interview",
       createdAt: date.setSeconds(date.getSeconds() + 1),
       userId: "1",
       cards: [
@@ -75,7 +75,7 @@ const createUsersWithMessagesAndDecks = async date => {
   await models.Deck.create(
     {
       deckname: "English",
-      description: "Learn A to Z English",
+      note: "Learn A to Z English",
       createdAt: date.setSeconds(date.getSeconds() + 1),
       userId: "2",
       cards: [
@@ -102,17 +102,17 @@ const createUsersWithMessagesAndDecks = async date => {
   );
 
   await models.Assignment.create({
-    assignment_name: "Do 50 words",
-    description: "Studying English exam 1",
-    url: "http://www.google.com",
+    assignmentname: "Do 50 words",
+    note: "Studying English exam 1",
+    link: "http://www.google.com",
     createdAt: date.setSeconds(date.getSeconds() + 1),
     userId: "1"
   });
 
   await models.Assignment.create({
-    assignment_name: "Read article",
-    description: "Read article and prepare to discuss",
-    url:
+    assignmentname: "Read article",
+    note: "Read article and prepare to discuss",
+    link:
       "https://www.nbcnews.com/news/us-news/brother-american-arrested-russia-spying-charges-says-he-was-there-n953526",
     createdAt: date.setSeconds(date.getSeconds() + 1),
     userId: "2"

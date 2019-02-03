@@ -46,11 +46,11 @@ export default {
   Mutation: {
     createAssignment: combineResolvers(
       isAuthenticated,
-      async (parent, { assignment_name, description, url }, { models, me }) => {
+      async (parent, { assignmentname, note, link }, { models, me }) => {
         const assignment = await models.Assignment.create({
-          assignment_name,
-          description,
-          url,
+          assignmentname,
+          note,
+          link,
           userId: me.id
         });
         return assignment;

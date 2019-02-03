@@ -2,26 +2,7 @@ import React from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
-const GET_ALL_ASSIGNMENTS_WITH_USERS = gql`
-  query {
-    assignments(order: "DESC") @connection(key: "AssignmentsConnection") {
-      edges {
-        id
-        assignment_name
-        description
-        url
-        createdAt
-        user {
-          id
-          username
-        }
-      }
-      pageInfo {
-        hasNextPage
-      }
-    }
-  }
-`;
+import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
 
 const DELETE_ASSIGNMENT = gql`
   mutation($id: ID!) {
@@ -35,11 +16,11 @@ const AssignmentDelete = ({ assignment }) => (
     variables={{ id: assignment.id }}
     update={cache => {
       const data = cache.readQuery({
-        query: GET_ALL_ASSIGNMENTS_WITH_USERS
+        query: GET_PAGINATED_ASSIGNMENTS_WITH_USERS
       });
 
       cache.writeQuery({
-        query: GET_ALL_ASSIGNMENTS_WITH_USERS,
+        query: GET_PAGINATED_ASSIGNMENTS_WITH_USERS,
         data: {
           ...data,
           assignments: {

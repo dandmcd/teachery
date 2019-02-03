@@ -12,9 +12,9 @@ export default gql`
     Assignment name is required!
     """
     createAssignment(
-      assignment_name: String!
-      description: String
-      url: String
+      assignmentname: String!
+      note: String
+      link: String
     ): Assignment!
 
     """
@@ -39,17 +39,17 @@ export default gql`
     """
     Name of assignment
     """
-    assignment_name: String!
+    assignmentname: String!
 
     """
     Notes and/or instructions for assignment
     """
-    description: String
+    note: String
 
     """
-    URL link
+    A URL link related to the assignment
     """
-    url: String
+    link: String
 
     createdAt: Date!
     user: User!

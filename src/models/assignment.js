@@ -1,6 +1,6 @@
 const assignment = (sequelize, DataTypes) => {
   const Assignment = sequelize.define("assignment", {
-    assignment_name: {
+    assignmentname: {
       type: DataTypes.STRING,
       validate: {
         notEmpty: {
@@ -9,11 +9,11 @@ const assignment = (sequelize, DataTypes) => {
         }
       }
     },
-    description: {
+    note: {
       type: DataTypes.STRING,
       allowNull: true
     },
-    url: {
+    link: {
       type: DataTypes.STRING,
       allowNull: true
     }

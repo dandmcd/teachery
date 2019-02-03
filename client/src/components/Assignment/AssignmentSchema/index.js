@@ -6,9 +6,9 @@ const GET_PAGINATED_ASSIGNMENTS_WITH_USERS = gql`
       @connection(key: "AssignmentsConnection") {
       edges {
         id
-        assignment_name
-        description
-        url
+        assignmentname
+        note
+        link
         createdAt
         user {
           id
