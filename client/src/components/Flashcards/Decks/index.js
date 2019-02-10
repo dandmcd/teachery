@@ -40,7 +40,7 @@ class Decks extends Component {
 
             return (
               <Fragment>
-                {console.log(data)}
+                {console.log(decksToRender)}
                 {decksToRender.map(deck => (
                   <DeckItem key={deck.id} deck={deck} />
                 ))}

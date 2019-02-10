@@ -23,7 +23,7 @@ export class Cards extends Component {
   render() {
     let { id } = this.props.match.params;
     id = parseInt(id);
-
+    console.log(id);
     return (
       <Query query={CARDS_QUERY} variables={{ id }}>
         {({ data, error, loading }) => {
