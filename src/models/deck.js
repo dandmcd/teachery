@@ -23,6 +23,10 @@ const deck = (sequelize, DataTypes) => {
   Deck.associate = models => {
     Deck.belongsTo(models.User);
     Deck.hasMany(models.Card, { onDelete: "CASCADE" });
+    Deck.belongsToMany(models.Tag, {
+      through: models.DeckTag,
+      onDelete: "CASCADE"
+    });
   };
   return Deck;
 };

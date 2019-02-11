@@ -17,6 +17,10 @@ const GET_DECKS = gql`
           id
           front
         }
+        tags {
+          id
+          tagname
+        }
       }
     }
   }

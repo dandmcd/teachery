@@ -21,7 +21,9 @@ const models = {
   Message: sequelize.import("./message"),
   Card: sequelize.import("./card"),
   Deck: sequelize.import("./deck"),
-  Assignment: sequelize.import("./assignment")
+  Assignment: sequelize.import("./assignment"),
+  Tag: sequelize.import("./tag"),
+  DeckTag: sequelize.import("./decktag")
 };
 
 Object.keys(models).forEach(key => {

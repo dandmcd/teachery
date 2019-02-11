@@ -11,7 +11,7 @@ export default gql`
     Creates a card to insert in a deck -
     Deck id and front-facing card text are required!
     """
-    createCard(deckId: Int!, front: String!, back: String): Message!
+    createCard(deckId: Int!, front: String!, back: String): Card!
 
     """
     Deletes a card
@@ -41,7 +41,6 @@ export default gql`
     Back-facing card text
     """
     back: String
-
     createdAt: Date!
     deck: Deck!
   }

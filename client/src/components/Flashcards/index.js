@@ -7,6 +7,7 @@ import Decks from "./Decks";
 const FlashCardPage = () => (
   <div>
     <h2>Flashcards</h2>
+    <h3>Search: </h3>
     <hr />
 
     <Decks />

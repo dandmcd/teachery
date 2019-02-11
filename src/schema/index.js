@@ -5,6 +5,7 @@ import messageSchema from "./message";
 import cardSchema from "./card";
 import deckSchema from "./deck";
 import assignmentSchema from "./assignment";
+import tagSchema from "./tag";
 
 const linkSchema = gql`
   scalar Date
@@ -28,5 +29,6 @@ export default [
   messageSchema,
   cardSchema,
   deckSchema,
-  assignmentSchema
+  assignmentSchema,
+  tagSchema
 ];

@@ -52,7 +52,7 @@ const createUsersWithMessagesAndDecks = async date => {
   await models.Deck.create(
     {
       deckname: "Immigration Interview",
-      note: "Prepare for your immigration interview",
+      description: "Prepare for your immigration interview",
       createdAt: date.setSeconds(date.getSeconds() + 1),
       userId: "1",
       cards: [
@@ -62,20 +62,31 @@ const createUsersWithMessagesAndDecks = async date => {
           createdAt: date.setSeconds(date.getSeconds() + 1)
         },
         {
-          front: "What you doing?",
+          front: "Ni hao ma",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        }
+      ],
+      tags: [
+        {
+          tagname: "Chinese",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        },
+        {
+          tagname: "Mandarin",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
     },
     {
-      include: [models.Card]
+      include: [models.Card, models.Tag]
     }
   );
 
   await models.Deck.create(
     {
       deckname: "English",
-      note: "Learn A to Z English",
+
+      description: "Learn A to Z English",
       createdAt: date.setSeconds(date.getSeconds() + 1),
       userId: "2",
       cards: [
@@ -94,10 +105,52 @@ const createUsersWithMessagesAndDecks = async date => {
           back: "for good measure",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
+      ],
+      tags: [
+        {
+          tagname: "English",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        }
       ]
     },
     {
-      include: [models.Card]
+      include: [models.Card, models.Tag]
+    }
+  );
+
+  await models.Deck.create(
+    {
+      deckname: "Food",
+
+      description: "Learn all the foodz",
+      createdAt: date.setSeconds(date.getSeconds() + 1),
+      userId: "1",
+      cards: [
+        {
+          front: "Pork or other meat wrapped in noodles",
+          back: "Dumplings",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        },
+        {
+          front: "They swim, and are healthy to eat",
+          back: "Fish",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        },
+        {
+          front: "Soooo delicious",
+          back: "Cheese",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        }
+      ],
+      tags: [
+        {
+          tagname: "Food",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        }
+      ]
+    },
+    {
+      include: [models.Card, models.Tag]
     }
   );
 

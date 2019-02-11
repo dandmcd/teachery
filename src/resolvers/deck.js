@@ -2,6 +2,7 @@ import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 
 import { isAdmin, isAuthenticated } from "./authorization";
+import tag from "./tag";
 
 const toCursorHash = string => Buffer.from(string).toString("base64");
 
@@ -38,6 +39,13 @@ export default {
         }
       };
     },
+
+    decksWithTags: async (parent, args, { models }) => {
+      return await models.Deck.findAll({
+        include: [models.Tag]
+      });
+    },
+
     deck: async (parent, { id }, { models }) => {
       return await models.Deck.findById(id);
     }
@@ -73,6 +81,19 @@ export default {
         where: {
           deckId: deck.id
         }
+      });
+    },
+
+    tags: async (deck, args, { models }) => {
+      return await models.Tag.findAll({
+        include: [
+          {
+            model: models.Deck,
+            where: {
+              id: deck.id
+            }
+          }
+        ]
       });
     },
 
