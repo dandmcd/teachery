@@ -14,13 +14,14 @@ const Assignments = ({ limit, me }) => (
       }
 
       const { assignments } = data;
+      console.log(assignments);
 
       if (loading || !assignments) {
         return <Loading />;
       }
 
       const { edges, pageInfo } = assignments;
-
+      console.log(edges);
       return (
         <Fragment>
           <AssignmentList assignments={edges} me={me} />

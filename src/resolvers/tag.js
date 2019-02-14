@@ -44,6 +44,7 @@ export default {
     },
     getTagsByName: async (parent, { tagname }, { models }) => {
       return await models.Tag.findAll({
+        include: [models.Deck],
         where: {
           tagname: {
             [Sequelize.Op.iLike]: "%" + tagname + "%"

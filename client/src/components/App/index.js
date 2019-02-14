@@ -11,6 +11,8 @@ import AdminPage from "../Admin";
 import withSession from "../Session/withSession";
 import FlashCardPage from "../FlashCards";
 import Cards from "../FlashCards/Cards";
+import Search from "../FlashCards/Decks/DeckSearch";
+import Tags from "../FlashCards/Decks/DeckItem/TagItem";
 
 import * as routes from "../../constants/routes";
 import history from "../../constants/history";
@@ -50,6 +52,12 @@ const App = ({ session, refetch }) => (
         path={routes.CARDS}
         component={props => <Cards {...props} />}
       />
+      <Route
+        exact
+        path={routes.SEARCH}
+        component={props => <Search {...props} />}
+      />
+      <Route exact path={routes.TAGS} component={Tags} />
     </div>
   </Router>
 );

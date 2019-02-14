@@ -13,10 +13,6 @@ const GET_DECKS = gql`
         deckname
         description
         createdAt
-        cards {
-          id
-          front
-        }
         tags {
           id
           tagname

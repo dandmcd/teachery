@@ -1,13 +1,15 @@
 import React from "react";
-
 import withAuthorization from "../Session/withAuthorization";
 
 import Decks from "./Decks";
+import Search from "./Decks/DeckSearch";
 
 const FlashCardPage = () => (
   <div>
     <h2>Flashcards</h2>
-    <h3>Search: </h3>
+    <div>
+      <Search />
+    </div>
     <hr />
 
     <Decks />

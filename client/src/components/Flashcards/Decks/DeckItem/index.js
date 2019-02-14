@@ -1,13 +1,13 @@
-import React, { Fragment } from "react";
+import React from "react";
 import Moment from "react-moment";
 import { Link } from "react-router-dom";
 
-import TagItem from "./TagItem";
+import TagLink from "../DeckItem/TagLink";
 
 export default function DeckItem({
   deck: { id, deckname, description, createdAt, tags }
 }) {
-  console.log(deckname);
+  console.log(tags);
   return (
     <div>
       <div>
@@ -17,11 +17,11 @@ export default function DeckItem({
         <p>{description}</p>
         <h5>
           Created on <Moment format="YYYY-MM-DD HH:mm">{createdAt}</Moment>
-          <p>
-            {tags.map(tag => (
-              <TagItem key={tags.id} tag={tag} />
-            ))}
-          </p>
+        </h5>
+        <h5>
+          {tags.map(tag => (
+            <TagLink key={tag.id} tag={tag} />
+          ))}
         </h5>
       </div>
     </div>
