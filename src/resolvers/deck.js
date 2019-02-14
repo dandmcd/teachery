@@ -65,6 +65,28 @@ export default {
       }
     ),
 
+    addTagToDeck: combineResolvers(
+      isAdmin,
+      async (parent, { id, tagname }, { models }) => {
+        const deck = await models.Deck.findOne({
+          where: { id }
+        });
+        const tag = await models.Tag.findOne({
+          where: {
+            tagname: {
+              [Sequelize.Op.iLike]: "%" + tagname + "%"
+            }
+          }
+        });
+        const decktag = await models.DeckTag.create({
+          tagId: tag.id,
+          deckId: deck.id
+        });
+        console.log(deck);
+        return deck;
+      }
+    ),
+
     deleteDeck: combineResolvers(
       isAdmin,
       async (parent, { id }, { models }) => {

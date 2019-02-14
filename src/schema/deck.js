@@ -17,6 +17,7 @@ export default gql`
     Deletes a deck
     """
     deleteDeck(id: ID!): Boolean!
+    addTagToDeck(id: ID!, tagname: String!): Deck!
   }
 
   type DeckConnection {

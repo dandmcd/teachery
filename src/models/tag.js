@@ -2,6 +2,7 @@ const tag = (sequelize, DataTypes) => {
   const Tag = sequelize.define("tag", {
     tagname: {
       type: DataTypes.STRING,
+      unique: true,
       validate: {
         notEmpty: {
           args: true,
