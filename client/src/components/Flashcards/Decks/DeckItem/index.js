@@ -5,14 +5,14 @@ import { Link } from "react-router-dom";
 import TagLink from "../DeckItem/TagLink";
 
 export default function DeckItem({
-  deck: { id, deckname, description, createdAt, tags }
+  deck: { id, deckName, description, createdAt, tags }
 }) {
   console.log(tags);
   return (
     <div>
       <div>
         <h2>
-          <Link to={`/deck/${id}`}>{deckname}</Link>
+          <Link to={`/deck/${id}`}>{deckName}</Link>
         </h2>
         <p>{description}</p>
         <h5>

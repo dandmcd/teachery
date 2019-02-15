@@ -2,13 +2,22 @@ import { gql } from "apollo-server-express";
 
 export default gql`
   extend type Query {
+    """
+    Get all tags
+    """
     tags(cursor: String, limit: Int): TagConnection!
+    """
+    Get tag by id
+    """
     tag(id: ID!): Tag!
-    getTagsByName(tagname: String!): [Tag]
+    """
+    Get tag by name
+    """
+    getTagsByName(tagName: String!): [Tag]
   }
 
   extend type Mutation {
-    createTag(tagname: String!): Tag!
+    createTag(tagName: String!): Tag!
     deleteTag(id: ID!): Boolean!
   }
 
@@ -24,7 +33,10 @@ export default gql`
 
   type Tag {
     id: ID!
-    tagname: String!
+    """
+    Tag Label
+    """
+    tagName: String!
     createdAt: Date!
     decks: [Deck!]!
   }

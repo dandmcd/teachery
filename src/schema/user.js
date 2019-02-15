@@ -2,7 +2,13 @@ import { gql } from "apollo-server-express";
 
 export default gql`
   extend type Query {
+    """
+    Get all users
+    """
     users: [User!]
+    """
+    Get user by id
+    """
     user(id: ID!): User
     me: User
   }

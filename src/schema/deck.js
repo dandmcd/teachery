@@ -2,8 +2,17 @@ import { gql } from "apollo-server-express";
 
 export default gql`
   extend type Query {
+    """
+    Get all decks
+    """
     decks(cursor: String, limit: Int): DeckConnection!
-    deck(id: ID, deckname: String): Deck!
+    """
+    Get deck by ID (deckName not yet enabled)
+    """
+    deck(id: ID, deckName: String): Deck!
+    """
+    Get all decks with tags (Depreciated)
+    """
     decksWithTags: [Deck!]!
   }
 
@@ -12,12 +21,15 @@ export default gql`
     Creates a deck -
     Deck name is required!
     """
-    createDeck(deckname: String!, description: String!): Deck!
+    createDeck(deckName: String!, description: String!): Deck!
     """
     Deletes a deck
     """
     deleteDeck(id: ID!): Boolean!
-    addTagToDeck(id: ID!, tagname: String!): Deck!
+    """
+    Add tag to deck
+    """
+    addTagToDeck(id: ID!, tagName: String!): Deck!
   }
 
   type DeckConnection {
@@ -36,7 +48,7 @@ export default gql`
     """
     Name of the deck
     """
-    deckname: String!
+    deckName: String!
 
     """
     Description of the deck

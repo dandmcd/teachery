@@ -5,14 +5,10 @@ import gql from "graphql-tag";
 import TagLink from "../DeckItem/TagLink";
 
 const TAG_SEARCH_QUERY = gql`
-  query TagSearchQuery($tagname: String!) {
-    getTagsByName(tagname: $tagname) {
-      tagname
+  query TagSearchQuery($tagName: String!) {
+    getTagsByName(tagName: $tagName) {
+      tagName
       id
-      decks {
-        id
-        deckname
-      }
     }
   }
 `;
@@ -20,7 +16,7 @@ const TAG_SEARCH_QUERY = gql`
 class Search extends Component {
   state = {
     tags: [],
-    tagname: ""
+    tagName: ""
   };
 
   render() {
@@ -31,7 +27,7 @@ class Search extends Component {
           Search (Tags Only):
           <input
             type="text"
-            onChange={e => this.setState({ tagname: e.target.value })}
+            onChange={e => this.setState({ tagName: e.target.value })}
           />
           <button onClick={() => this._executeSearch()}>OK</button>
         </div>
@@ -43,10 +39,10 @@ class Search extends Component {
   }
 
   _executeSearch = async () => {
-    const { tagname } = this.state;
+    const { tagName } = this.state;
     const result = await this.props.client.query({
       query: TAG_SEARCH_QUERY,
-      variables: { tagname }
+      variables: { tagName }
     });
     console.log(result);
     const tags = result.data.getTagsByName;

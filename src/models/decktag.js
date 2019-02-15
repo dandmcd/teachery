@@ -1,5 +1,5 @@
-const decktag = (sequelize, DataTypes) => {
-  const DeckTag = sequelize.define("decktag", {});
+const deckTag = (sequelize, DataTypes) => {
+  const DeckTag = sequelize.define("deckTag", {});
   return DeckTag;
 };
-export default decktag;
+export default deckTag;

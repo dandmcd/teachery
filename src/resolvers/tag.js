@@ -42,12 +42,12 @@ export default {
     tag: async (parent, { id }, { models }) => {
       return await models.Tag.findById(id);
     },
-    getTagsByName: async (parent, { tagname }, { models }) => {
+    getTagsByName: async (parent, { tagName }, { models }) => {
       return await models.Tag.findAll({
         include: [models.Deck],
         where: {
-          tagname: {
-            [Sequelize.Op.iLike]: "%" + tagname + "%"
+          tagName: {
+            [Sequelize.Op.iLike]: "%" + tagName + "%"
           }
         }
       });
@@ -57,9 +57,9 @@ export default {
   Mutation: {
     createTag: combineResolvers(
       isAdmin,
-      async (parent, { tagname }, { models }) => {
+      async (parent, { tagName }, { models }) => {
         const tag = await models.Tag.create({
-          tagname
+          tagName
         });
         return tag;
       }

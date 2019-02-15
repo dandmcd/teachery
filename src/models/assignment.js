@@ -1,6 +1,6 @@
 const assignment = (sequelize, DataTypes) => {
   const Assignment = sequelize.define("assignment", {
-    assignmentname: {
+    assignmentName: {
       type: DataTypes.STRING,
       validate: {
         notEmpty: {

@@ -86,7 +86,7 @@ const AssignmentItemBase = ({ assignment, session }) => (
   <div>
     <h3>{assignment.user.username}</h3>
     <small>{assignment.createdAt}</small>
-    <p>{assignment.assignmentname}</p>
+    <p>{assignment.assignmentName}</p>
     <p>{assignment.note}</p>
     <p>{assignment.link}</p>
 

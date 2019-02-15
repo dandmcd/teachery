@@ -55,9 +55,9 @@ export default {
     createDeck: combineResolvers(
       isAdmin,
       isAuthenticated,
-      async (parent, { deckname, description }, { models, me }) => {
+      async (parent, { deckName, description }, { models, me }) => {
         const deck = await models.Deck.create({
-          deckname,
+          deckName,
           description,
           userId: me.id
         });
@@ -67,18 +67,18 @@ export default {
 
     addTagToDeck: combineResolvers(
       isAdmin,
-      async (parent, { id, tagname }, { models }) => {
+      async (parent, { id, tagName }, { models }) => {
         const deck = await models.Deck.findOne({
           where: { id }
         });
         const tag = await models.Tag.findOne({
           where: {
-            tagname: {
-              [Sequelize.Op.iLike]: "%" + tagname + "%"
+            tagName: {
+              [Sequelize.Op.iLike]: "%" + tagName + "%"
             }
           }
         });
-        const decktag = await models.DeckTag.create({
+        const deckTag = await models.DeckTag.create({
           tagId: tag.id,
           deckId: deck.id
         });

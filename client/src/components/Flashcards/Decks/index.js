@@ -10,12 +10,12 @@ const GET_DECKS = gql`
     decks @connection(key: "DeckConnection") {
       edges {
         id
-        deckname
+        deckName
         description
         createdAt
         tags {
           id
-          tagname
+          tagName
         }
       }
     }

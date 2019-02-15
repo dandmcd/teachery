@@ -12,7 +12,7 @@ const TAGS_QUERY = gql`
       id
       decks {
         id
-        deckname
+        deckName
       }
     }
   }
@@ -41,7 +41,7 @@ export class Tags extends Component {
                 {console.log(taggedDecksToRender)}
                 {taggedDecksToRender.map(deck => (
                   <li key={deck.id}>
-                    <Link to={`/deck/${deck.id}`}>{deck.deckname}</Link>
+                    <Link to={`/deck/${deck.id}`}>{deck.deckName}</Link>
                   </li>
                 ))}
               </Fragment>

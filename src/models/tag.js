@@ -1,6 +1,6 @@
 const tag = (sequelize, DataTypes) => {
   const Tag = sequelize.define("tag", {
-    tagname: {
+    tagName: {
       type: DataTypes.STRING,
       unique: true,
       validate: {

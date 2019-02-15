@@ -2,7 +2,13 @@ import { gql } from "apollo-server-express";
 
 export default gql`
   extend type Query {
+    """
+    Get all cards
+    """
     cards(cursor: String, limit: Int): CardConnection!
+    """
+    Get card by id
+    """
     card(id: ID!): Card!
   }
 

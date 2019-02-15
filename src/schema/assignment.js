@@ -2,7 +2,13 @@ import { gql } from "apollo-server-express";
 
 export default gql`
   extend type Query {
+    """
+    Get all assignments
+    """
     assignments(cursor: String, limit: Int): AssignmentConnection!
+    """
+    Get assignment by id
+    """
     assignment(id: ID!): Assignment!
   }
 
@@ -12,7 +18,7 @@ export default gql`
     Assignment name is required!
     """
     createAssignment(
-      assignmentname: String!
+      assignmentName: String!
       note: String
       link: String
     ): Assignment!
@@ -39,7 +45,7 @@ export default gql`
     """
     Name of assignment
     """
-    assignmentname: String!
+    assignmentName: String!
 
     """
     Notes and/or instructions for assignment

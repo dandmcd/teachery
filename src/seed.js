@@ -51,7 +51,7 @@ const createUsersWithMessagesAndDecks = async date => {
 
   await models.Deck.create(
     {
-      deckname: "Immigration Interview",
+      deckName: "Immigration Interview",
       description: "Prepare for your immigration interview",
       createdAt: date.setSeconds(date.getSeconds() + 1),
       userId: "1",
@@ -68,11 +68,11 @@ const createUsersWithMessagesAndDecks = async date => {
       ],
       tags: [
         {
-          tagname: "Chinese",
+          tagName: "Chinese",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         },
         {
-          tagname: "Mandarin",
+          tagName: "Mandarin",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
@@ -84,7 +84,7 @@ const createUsersWithMessagesAndDecks = async date => {
 
   await models.Deck.create(
     {
-      deckname: "English",
+      deckName: "English",
 
       description: "Learn A to Z English",
       createdAt: date.setSeconds(date.getSeconds() + 1),
@@ -108,7 +108,7 @@ const createUsersWithMessagesAndDecks = async date => {
       ],
       tags: [
         {
-          tagname: "English",
+          tagName: "English",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
@@ -120,7 +120,7 @@ const createUsersWithMessagesAndDecks = async date => {
 
   await models.Deck.create(
     {
-      deckname: "Food",
+      deckName: "Food",
 
       description: "Learn all the foodz",
       createdAt: date.setSeconds(date.getSeconds() + 1),
@@ -144,7 +144,7 @@ const createUsersWithMessagesAndDecks = async date => {
       ],
       tags: [
         {
-          tagname: "Food",
+          tagName: "Food",
           createdAt: date.setSeconds(date.getSeconds() + 1)
         }
       ]
@@ -155,7 +155,7 @@ const createUsersWithMessagesAndDecks = async date => {
   );
 
   await models.Assignment.create({
-    assignmentname: "Do 50 words",
+    assignmentName: "Do 50 words",
     note: "Studying English exam 1",
     link: "http://www.google.com",
     createdAt: date.setSeconds(date.getSeconds() + 1),
@@ -163,7 +163,7 @@ const createUsersWithMessagesAndDecks = async date => {
   });
 
   await models.Assignment.create({
-    assignmentname: "Read article",
+    assignmentName: "Read article",
     note: "Read article and prepare to discuss",
     link:
       "https://www.nbcnews.com/news/us-news/brother-american-arrested-russia-spying-charges-says-he-was-there-n953526",

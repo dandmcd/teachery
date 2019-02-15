@@ -2,7 +2,13 @@ import { gql } from "apollo-server-express";
 
 export default gql`
   extend type Query {
+    """
+    Get all messages
+    """
     messages(cursor: String, limit: Int): MessageConnection!
+    """
+    Get message by id
+    """
     message(id: ID!): Message!
   }
 

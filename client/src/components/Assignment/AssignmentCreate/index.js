@@ -6,14 +6,14 @@ import ErrorMessage from "../../Error";
 import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
 
 const CREATE_ASSIGNMENT = gql`
-  mutation($assignmentname: String!, $note: String, $link: String) {
+  mutation($assignmentName: String!, $note: String, $link: String) {
     createAssignment(
-      assignmentname: $assignmentname
+      assignmentName: $assignmentName
       note: $note
       link: $link
     ) {
       id
-      assignmentname
+      assignmentName
       note
       link
       createdAt
@@ -27,7 +27,7 @@ const CREATE_ASSIGNMENT = gql`
 
 class AssignmentCreate extends Component {
   state = {
-    assignmentname: "",
+    assignmentName: "",
     note: "",
     link: ""
   };
@@ -42,17 +42,17 @@ class AssignmentCreate extends Component {
 
     try {
       await createAssignment();
-      this.setState({ assignmentname: "", note: "", link: "" });
+      this.setState({ assignmentName: "", note: "", link: "" });
     } catch (error) {}
   };
 
   render() {
-    const { assignmentname, note, link } = this.state;
+    const { assignmentName, note, link } = this.state;
 
     return (
       <Mutation
         mutation={CREATE_ASSIGNMENT}
-        variables={{ assignmentname, note, link }}
+        variables={{ assignmentName, note, link }}
         update={(cache, { data: { createAssignment } }) => {
           const data = cache.readQuery({
             query: GET_PAGINATED_ASSIGNMENTS_WITH_USERS
@@ -74,8 +74,8 @@ class AssignmentCreate extends Component {
         {(createAssignment, { data, loading, error }) => (
           <form onSubmit={event => this.onSubmit(event, createAssignment)}>
             <textarea
-              name="assignmentname"
-              value={assignmentname}
+              name="assignmentName"
+              value={assignmentName}
               onChange={this.onChange}
               type="text"
               placeholder="Your assignment name ... (REQUIRED)"
