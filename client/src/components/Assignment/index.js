@@ -6,7 +6,7 @@ import AssignmentCreate from "./AssignmentCreate";
 
 const AssignmentPage = () => (
   <div>
-    <h1>Account Page</h1>
+    <h1>Assignments</h1>
     <AssignmentCreate />
     <hr />
     <Assignments limit={3} />

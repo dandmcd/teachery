@@ -24,10 +24,11 @@ class Search extends Component {
     return (
       <div>
         <div>
-          Search (Tags Only):
+          Search:
           <input
             type="text"
             onChange={e => this.setState({ tagName: e.target.value })}
+            placeholder="Search by language"
           />
           <button onClick={() => this._executeSearch()}>OK</button>
         </div>

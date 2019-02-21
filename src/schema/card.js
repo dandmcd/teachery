@@ -49,5 +49,6 @@ export default gql`
     back: String
     createdAt: Date!
     deck: Deck!
+    user: User!
   }
 `;

@@ -2,10 +2,23 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
+import styled from "styled-components";
 
 import { SignUpLink } from "../SignUp";
 import * as routes from "../../constants/routes";
 import ErrorMessage from "../Error";
+
+const Button = styled.button`
+  background: transparent;
+  border-radius: 2px;
+  border: 2px solid papayawhip;
+  color: slategray;
+  margin: 0.1em;
+  padding: 0.25em 1em;
+  ${Button} :disabled & {
+    background: black;
+  }
+`;
 
 const SIGN_IN = gql`
   mutation($login: String!, $password: String!) {
@@ -75,9 +88,9 @@ class SignInForm extends Component {
               placeholder="Password"
               autoComplete="password"
             />
-            <button disabled={isInvalid || loading} type="submit">
+            <Button disabled={isInvalid || loading} type="submit">
               Sign In
-            </button>
+            </Button>
 
             {error && <ErrorMessage error={error} />}
           </form>

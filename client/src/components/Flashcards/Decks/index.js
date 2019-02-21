@@ -1,56 +1,115 @@
 import React, { Component, Fragment } from "react";
-import gql from "graphql-tag";
 import { Query } from "react-apollo";
+import Moment from "react-moment";
 
+import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
 import Loading from "../../Loading";
-import DeckItem from "./DeckItem";
+import TagLink from "../Decks/DeckItem/TagLink";
+import withSession from "../../Session/withSession";
+import { Link } from "react-router-dom";
+import DeckDelete from "./DeckDelete";
+import AddDeckTag from "./DeckItem/AddDeckTag";
+import Toggle from "../../Toggle";
 
-const GET_DECKS = gql`
-  query DeckQuery {
-    decks @connection(key: "DeckConnection") {
-      edges {
-        id
-        deckName
-        description
-        createdAt
-        tags {
-          id
-          tagName
-        }
+const Decks = ({ limit, me }) => (
+  <Query query={GET_PAGINATED_DECKS_WITH_USERS} variables={{ limit }}>
+    {({ data, loading, error, fetchMore }) => {
+      if (!data) {
+        return <div>There are no decks yet ...</div>;
       }
+
+      const { decks } = data;
+      console.log(decks);
+
+      if (loading || !decks) {
+        return <Loading />;
+      }
+
+      const { edges, pageInfo } = decks;
+      console.log(edges);
+
+      return (
+        <Fragment>
+          <DeckList decks={edges} me={me} />
+
+          {pageInfo.hasNextPage && (
+            <MoreDecksButton
+              limit={limit}
+              pageInfo={pageInfo}
+              fetchMore={fetchMore}
+            >
+              More
+            </MoreDecksButton>
+          )}
+        </Fragment>
+      );
+    }}
+  </Query>
+);
+
+const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (
+  <button
+    type="button"
+    onClick={() =>
+      fetchMore({
+        variables: {
+          cursor: pageInfo.endCursor,
+          limit
+        },
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          if (!fetchMoreResult) {
+            return previousResult;
+          }
+
+          return {
+            decks: {
+              ...fetchMoreResult.decks,
+              edges: [
+                ...previousResult.decks.edges,
+                ...fetchMoreResult.decks.edges
+              ]
+            }
+          };
+        }
+      })
     }
-  }
-`;
+  >
+    {children}
+  </button>
+);
 
-class Decks extends Component {
+class DeckList extends Component {
   render() {
-    return (
-      <Fragment>
-        <h1>Deck</h1>
-        <Query query={GET_DECKS}>
-          {({ data, error, loading }) => {
-            if (loading) {
-              return <Loading />;
-            }
-            if (error) {
-              return <p>Error</p>;
-            }
-
-            const decksToRender = data.decks.edges;
-
-            return (
-              <Fragment>
-                {console.log(decksToRender)}
-                {decksToRender.map(deck => (
-                  <DeckItem key={deck.id} deck={deck} />
-                ))}
-              </Fragment>
-            );
-          }}
-        </Query>
-      </Fragment>
-    );
+    const { decks, me } = this.props;
+    console.log(decks);
+    return decks.map(deck => <DeckItem key={deck.id} deck={deck} me={me} />);
   }
 }
+
+const DeckItemBase = ({ deck, session }) => (
+  <div>
+    <div>
+      <h2>
+        <Link to={`/deck/${deck.id}`}>{deck.deckName}</Link>
+      </h2>
+      <p>{deck.description}</p>
+      <small>
+        Created on <Moment format="YYYY-MM-DD HH:mm">{deck.createdAt}</Moment>
+      </small>
+      <h5>created by: {deck.user.username}</h5>
+      {session && session.me && deck.user.id === session.me.id && (
+        <DeckDelete deck={deck} />
+      )}
+      <Toggle />
+      <h5>
+        {deck.tags.map(tag => (
+          <TagLink key={tag.id} tag={tag} />
+        ))}
+      </h5>
+    </div>
+  </div>
+);
+
+const DeckItem = withSession(DeckItemBase);
 
 export default Decks;

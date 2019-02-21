@@ -53,7 +53,6 @@ export default {
 
   Mutation: {
     createDeck: combineResolvers(
-      isAdmin,
       isAuthenticated,
       async (parent, { deckName, description }, { models, me }) => {
         const deck = await models.Deck.create({
