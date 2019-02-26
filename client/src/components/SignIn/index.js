@@ -10,13 +10,14 @@ import ErrorMessage from "../Error";
 
 const Button = styled.button`
   background: transparent;
-  border-radius: 2px;
-  border: 2px solid papayawhip;
-  color: slategray;
-  margin: 0.1em;
+  border-radius: 3px;
+  border: 2px solid #233841;
+  color: #233841;
+  margin: 0.2em;
   padding: 0.25em 1em;
-  ${Button} :disabled & {
-    background: black;
+  &:disabled {
+    color: rgba(35, 56, 65, 0.5);
+    border: 2px solid rgba(35, 56, 65, 0.3);
   }
 `;
 
@@ -30,7 +31,7 @@ const SIGN_IN = gql`
 
 const SignInPage = ({ history, refetch }) => (
   <div>
-    <h1>SignIn</h1>
+    <h1>Sign In</h1>
     <SignInForm history={history} refetch={refetch} />
     <SignUpLink />
   </div>
@@ -79,6 +80,7 @@ class SignInForm extends Component {
               type="text"
               placeholder="Email or Username"
               autoComplete="username"
+              autoFocus
             />
             <input
               name="password"
@@ -86,7 +88,7 @@ class SignInForm extends Component {
               onChange={this.onChange}
               type="password"
               placeholder="Password"
-              autoComplete="password"
+              autoComplete="current-password"
             />
             <Button disabled={isInvalid || loading} type="submit">
               Sign In
