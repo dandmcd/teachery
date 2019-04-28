@@ -12,6 +12,8 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import App from "./components/App";
 import { signOut } from "./components/SignOut";
 
+import "./style.css";
+
 const httpLink = new HttpLink({
   uri: "/graphql"
 });

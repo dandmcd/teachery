@@ -2,24 +2,11 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
-import styled from "styled-components";
 
 import { SignUpLink } from "../SignUp";
 import * as routes from "../../constants/routes";
 import ErrorMessage from "../Error";
-
-const Button = styled.button`
-  background: transparent;
-  border-radius: 3px;
-  border: 2px solid #233841;
-  color: #233841;
-  margin: 0.2em;
-  padding: 0.25em 1em;
-  &:disabled {
-    color: rgba(35, 56, 65, 0.5);
-    border: 2px solid rgba(35, 56, 65, 0.3);
-  }
-`;
+import "./style.css";
 
 const SIGN_IN = gql`
   mutation($login: String!, $password: String!) {
@@ -72,7 +59,11 @@ class SignInForm extends Component {
     return (
       <Mutation mutation={SIGN_IN} variables={{ login, password }}>
         {(signIn, { data, loading, error }) => (
-          <form onSubmit={event => this.onSubmit(event, signIn)}>
+          <form
+            className="box"
+            onSubmit={event => this.onSubmit(event, signIn)}
+          >
+            <h1>Login</h1>
             <input
               name="login"
               value={login}
@@ -80,7 +71,6 @@ class SignInForm extends Component {
               type="text"
               placeholder="Email or Username"
               autoComplete="username"
-              autoFocus
             />
             <input
               name="password"
@@ -90,9 +80,13 @@ class SignInForm extends Component {
               placeholder="Password"
               autoComplete="current-password"
             />
-            <Button disabled={isInvalid || loading} type="submit">
+            <button
+              className="button"
+              disabled={isInvalid || loading}
+              type="submit"
+            >
               Sign In
-            </Button>
+            </button>
 
             {error && <ErrorMessage error={error} />}
           </form>

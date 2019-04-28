@@ -12,7 +12,8 @@
     "test-server": "TEST_DATABASE=testfuwu npm start",
     "test": "mocha --require @babel/register 'src/**/*.spec.js'",
     "client": "npm start --prefix client",
-    "start": "concurrently \"npm run server\" \"npm run client\""
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "echo Skip build on Heroku"
   },
   "author": "",
   "license": "MIT",
@@ -46,5 +47,6 @@
     "sequelize": "^4.41.2",
     "subscriptions-transport-ws": "^0.9.15",
     "uuid": "^3.3.2"
-  }
+  },
+  "heroku-run-build-script": true
 }

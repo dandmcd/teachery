@@ -1,0 +1,21 @@
+#root html,
+body {
+  margin: 0;
+}
+a {
+  color: #95092f;
+  text-decoration: none;
+}
+a:visited {
+  color: #5b061d;
+}
+a:hover {
+  color: #ce0d41;
+}
+
+html {
+  background-color: #fff;
+  @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i" rel="stylesheet');
+  font-family: "Open Sans", sans-serif;
+  color: #22020b;
+}
