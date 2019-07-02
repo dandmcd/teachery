@@ -11,7 +11,7 @@ export const isAdmin = combineResolvers(
 );
 
 export const isMessageOwner = async (parent, { id }, { models, me }) => {
-  const message = await models.Message.findById(id, { raw: true });
+  const message = await models.Message.findByPk(id, { raw: true });
 
   if (message.userId !== me.id) {
     throw new ForbiddenError("Not authenticated as owner.");
@@ -21,7 +21,7 @@ export const isMessageOwner = async (parent, { id }, { models, me }) => {
 };
 
 export const isAssignmentOwner = async (parent, { id }, { models, me }) => {
-  const assignment = await models.Assignment.findById(id, { raw: true });
+  const assignment = await models.Assignment.findByPk(id, { raw: true });
 
   if (assignment.userId !== me.id) {
     throw new ForbiddenError("Not authenticated as owner.");

@@ -40,7 +40,7 @@ export default {
       };
     },
     tag: async (parent, { id }, { models }) => {
-      return await models.Tag.findById(id);
+      return await models.Tag.findByPk(id);
     },
     getTagsByName: async (parent, { tagName }, { models }) => {
       return await models.Tag.findAll({

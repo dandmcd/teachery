@@ -8,7 +8,6 @@ import TagLink from "../Decks/DeckItem/TagLink";
 import withSession from "../../Session/withSession";
 import { Link } from "react-router-dom";
 import DeckDelete from "./DeckDelete";
-import AddDeckTag from "./DeckItem/AddDeckTag";
 import Toggle from "../../Toggle";
 
 const Decks = ({ limit, me }) => (
@@ -96,6 +95,7 @@ const DeckItemBase = ({ deck, session }) => (
       <small>
         Created on <Moment format="YYYY-MM-DD HH:mm">{deck.createdAt}</Moment>
       </small>
+      <h5>{deck.cards.length} Cards</h5>
       <h5>created by: {deck.user.username}</h5>
       {session && session.me && deck.user.id === session.me.id && (
         <DeckDelete deck={deck} />

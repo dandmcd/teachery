@@ -39,7 +39,7 @@ export default {
       };
     },
     card: async (parent, { id }, { models }) => {
-      return await models.Card.findById(id);
+      return await models.Card.findByPk(id);
     }
   },
 

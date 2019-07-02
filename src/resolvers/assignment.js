@@ -38,7 +38,7 @@ export default {
       };
     },
     assignment: async (parent, { id }, { models }) => {
-      return await models.Assignment.findById(id);
+      return await models.Assignment.findByPk(id);
     }
   },
 

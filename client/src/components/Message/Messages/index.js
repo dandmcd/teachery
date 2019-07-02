@@ -53,7 +53,7 @@ const Messages = ({ limit }) => (
           </div>
         );
       }
-
+      console.log(data);
       const { messages } = data;
 
       if (loading || !messages) {

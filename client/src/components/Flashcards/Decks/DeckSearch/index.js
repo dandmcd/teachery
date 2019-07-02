@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { withApollo } from "react-apollo";
 import gql from "graphql-tag";
 
@@ -12,6 +12,12 @@ const TAG_SEARCH_QUERY = gql`
     }
   }
 `;
+
+const Toggle = () => {
+  const [isToggledOn, setToggle] = useState(false);
+  const toggle = () => setToggle(!isToggledOn);
+  return <button onClick={toggle}>{isToggledOn ? "ON" : "OFF"}</button>;
+};
 
 class Search extends Component {
   state = {
@@ -35,6 +41,7 @@ class Search extends Component {
         {this.state.tags.map(tag => (
           <TagLink key={tag.id} tag={tag} />
         ))}
+        <Toggle />
       </div>
     );
   }
@@ -46,9 +53,13 @@ class Search extends Component {
       variables: { tagName }
     });
     console.log(result);
-    const tags = result.data.getTagsByName;
-    this.setState({ tags });
-    console.log(tags);
+    if (result.data.getTagsByName.length === 0) {
+      console.log("Ooopsie");
+    } else {
+      const tags = result.data.getTagsByName;
+      this.setState({ tags });
+      console.log(tags);
+    }
   };
 }
 

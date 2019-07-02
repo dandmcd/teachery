@@ -47,7 +47,7 @@ export default {
     },
 
     deck: async (parent, { id }, { models }) => {
-      return await models.Deck.findById(id);
+      return await models.Deck.findByPk(id);
     }
   },
 
@@ -119,7 +119,7 @@ export default {
     },
 
     user: async (deck, args, { models }) => {
-      return await models.User.findById(deck.userId);
+      return await models.User.findByPk(deck.userId);
     }
   }
 };
