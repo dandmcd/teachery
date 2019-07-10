@@ -10,10 +10,6 @@ export default gql`
     Get deck by ID (deckName not yet enabled)
     """
     deck(id: ID, deckName: String): Deck!
-    """
-    Get all decks with tags (Depreciated)
-    """
-    decksWithTags: [Deck!]!
   }
 
   extend type Mutation {

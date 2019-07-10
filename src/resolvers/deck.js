@@ -40,12 +40,6 @@ export default {
       };
     },
 
-    decksWithTags: async (parent, args, { models }) => {
-      return await models.Deck.findAll({
-        include: [models.Tag]
-      });
-    },
-
     deck: async (parent, { id }, { models }) => {
       return await models.Deck.findByPk(id);
     }

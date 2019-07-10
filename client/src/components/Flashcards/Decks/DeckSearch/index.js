@@ -16,7 +16,8 @@ const TAG_SEARCH_QUERY = gql`
 class Search extends Component {
   state = {
     tags: [],
-    tagName: ""
+    tagName: "",
+    noResult: false
   };
 
   render() {
@@ -27,10 +28,15 @@ class Search extends Component {
           Search:
           <input
             type="text"
-            onChange={e => this.setState({ tagName: e.target.value })}
+            onChange={e =>
+              this.setState({ tagName: e.target.value, noResult: false })
+            }
             placeholder="Search by language"
           />
           <button onClick={() => this._executeSearch()}>OK</button>
+          {this.state.noResult && (
+            <h5>Sorry, your search did not find any results...</h5>
+          )}
         </div>
         {this.state.tags.map(tag => (
           <TagLink key={tag.id} tag={tag} />
@@ -47,7 +53,7 @@ class Search extends Component {
     });
     console.log(result);
     if (result.data.getTagsByName.length === 0) {
-      console.log("Ooopsie");
+      this.setState({ noResult: true });
     } else {
       const tags = result.data.getTagsByName;
       this.setState({ tags });
