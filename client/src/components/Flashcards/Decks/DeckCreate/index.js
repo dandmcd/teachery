@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
@@ -29,75 +29,82 @@ const CREATE_DECK = gql`
   }
 `;
 
-class DeckCreate extends Component {
-  state = {
+const DeckCreate = () => {
+  const [toggleMutate, setToggleMutate] = useState(false);
+  const [deckState, setDeckState] = useState({
     deckName: "",
     description: ""
-  };
+  });
 
-  onChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
-  };
+  const { deckName, description } = deckState;
 
-  onSubmit = async (event, createDeck) => {
-    event.preventDefault();
+  const onSubmit = async (e, createDeck) => {
+    e.preventDefault();
 
     try {
+      setDeckState({ deckName: "", description: "" });
       await createDeck();
-      this.setState({ deckName: "", description: "" });
     } catch (error) {}
   };
 
-  render() {
-    const { deckName, description } = this.state;
+  const onChange = e =>
+    setDeckState({ ...deckState, [e.target.name]: e.target.value });
 
-    return (
-      <Mutation
-        mutation={CREATE_DECK}
-        variables={{ deckName, description }}
-        update={(cache, { data: { createDeck } }) => {
-          const data = cache.readQuery({
-            query: GET_PAGINATED_DECKS_WITH_USERS
-          });
+  return (
+    <h4>
+      {!toggleMutate && (
+        <button type="button" onClick={() => setToggleMutate(true)}>
+          Create a new Deck
+        </button>
+      )}
 
-          cache.writeQuery({
-            query: GET_PAGINATED_DECKS_WITH_USERS,
-            data: {
-              ...data,
-              decks: {
-                ...data.decks,
-                edges: [createDeck, ...data.decks.edges],
-                pageInfo: data.decks.pageInfo
+      {toggleMutate && (
+        <Mutation
+          mutation={CREATE_DECK}
+          variables={{ deckName, description }}
+          update={(cache, { data: { createDeck } }) => {
+            const data = cache.readQuery({
+              query: GET_PAGINATED_DECKS_WITH_USERS
+            });
+
+            cache.writeQuery({
+              query: GET_PAGINATED_DECKS_WITH_USERS,
+              data: {
+                ...data,
+                decks: {
+                  ...data.decks,
+                  edges: [createDeck, ...data.decks.edges],
+                  pageInfo: data.decks.pageInfo
+                }
               }
-            }
-          });
-        }}
-      >
-        {(createDeck, { data, loading, error }) => (
-          <form onSubmit={event => this.onSubmit(event, createDeck)}>
-            <textarea
-              name="deckName"
-              value={deckName}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Your deck name ... (REQUIRED)"
-            />
-            <textarea
-              name="description"
-              value={description}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Add details and descriptions ..."
-            />
-            <button type="submit">Submit</button>
+            });
+          }}
+        >
+          {(createDeck, { data, loading, error }) => (
+            <form onSubmit={e => onSubmit(e, createDeck)}>
+              <textarea
+                name="deckName"
+                value={deckName}
+                onChange={onChange}
+                type="text"
+                placeholder="Your deck name ... (REQUIRED)"
+              />
+              <textarea
+                name="description"
+                value={description}
+                onChange={onChange}
+                type="text"
+                placeholder="Add details and descriptions ..."
+              />
+              <button type="submit">Submit</button>
 
-            {error && <ErrorMessage error={error} />}
-          </form>
-        )}
-      </Mutation>
-    );
-  }
-}
+              {error && <ErrorMessage error={error} />}
+            </form>
+          )}
+        </Mutation>
+      )}
+    </h4>
+  );
+};
 
 export default DeckCreate;

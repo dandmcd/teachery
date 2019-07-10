@@ -70,18 +70,23 @@ export default {
         const deck = await models.Deck.findOne({
           where: { id }
         });
-        const tag = await models.Tag.findOne({
+        const tag = await models.Tag.findOrCreate({
           where: {
-            tagName: {
-              [Sequelize.Op.iLike]: "%" + tagName + "%"
-            }
+            tagName: tagName
           }
+        }).then(([tag, created]) => {
+          console.log(
+            tag.get({
+              plain: true
+            })
+          );
+          console.log(created);
+          return tag;
         });
         const deckTag = await models.DeckTag.create({
           tagId: tag.id,
           deckId: deck.id
         });
-        console.log(deck);
         return deck;
       }
     ),

@@ -1,14 +1,10 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment } from "react";
 import { Query } from "react-apollo";
-import Moment from "react-moment";
 
 import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
 import Loading from "../../Loading";
-import TagLink from "../Decks/DeckItem/TagLink";
 import withSession from "../../Session/withSession";
-import { Link } from "react-router-dom";
-import DeckDelete from "./DeckDelete";
-import Toggle from "../../Toggle";
+import DeckItemBase from "./DeckItem";
 
 const Decks = ({ limit, me }) => (
   <Query query={GET_PAGINATED_DECKS_WITH_USERS} variables={{ limit }}>
@@ -77,38 +73,10 @@ const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (
   </button>
 );
 
-class DeckList extends Component {
-  render() {
-    const { decks, me } = this.props;
-    console.log(decks);
-    return decks.map(deck => <DeckItem key={deck.id} deck={deck} me={me} />);
-  }
-}
-
-const DeckItemBase = ({ deck, session }) => (
-  <div>
-    <div>
-      <h2>
-        <Link to={`/deck/${deck.id}`}>{deck.deckName}</Link>
-      </h2>
-      <p>{deck.description}</p>
-      <small>
-        Created on <Moment format="YYYY-MM-DD HH:mm">{deck.createdAt}</Moment>
-      </small>
-      <h5>{deck.cards.length} Cards</h5>
-      <h5>created by: {deck.user.username}</h5>
-      {session && session.me && deck.user.id === session.me.id && (
-        <DeckDelete deck={deck} />
-      )}
-      <Toggle />
-      <h5>
-        {deck.tags.map(tag => (
-          <TagLink key={tag.id} tag={tag} />
-        ))}
-      </h5>
-    </div>
-  </div>
-);
+const DeckList = ({ decks, me }) => {
+  console.log(decks);
+  return decks.map(deck => <DeckItem key={deck.id} deck={deck} me={me} />);
+};
 
 const DeckItem = withSession(DeckItemBase);
 

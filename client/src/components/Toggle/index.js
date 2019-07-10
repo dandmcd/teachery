@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AddDeckTag from "../FlashCards/Decks/DeckItem/AddDeckTag";
 
-export default function Toggle() {
+const Toggle = ({ deck }) => {
   const [isOn, setIsOn] = useState(false);
 
   return (
@@ -12,7 +12,9 @@ export default function Toggle() {
         </button>
       )}
 
-      {isOn && <AddDeckTag />}
+      {isOn && <AddDeckTag deck={deck} />}
     </div>
   );
-}
+};
+
+export default Toggle;

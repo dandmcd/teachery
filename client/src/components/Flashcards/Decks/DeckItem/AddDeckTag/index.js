@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
@@ -16,62 +16,52 @@ const ADD_TAG_TO_DECK = gql`
   }
 `;
 
-class AddDeckTag extends Component {
-  state = {
-    id: 0,
+const AddDeckTag = ({ deck }) => {
+  const [state, setState] = useState({
+    id: null,
     tagName: ""
-  };
+  });
 
-  onChange = event => {
-    const { name, value, type } = event.target;
+  const { id, tagName } = state;
 
-    this.setState({
-      [name]: type === "number" ? parseInt(value, 10) : value
-    });
-  };
-
-  onSubmit = async (event, addTagToDeck) => {
-    event.preventDefault();
+  const onSubmit = async (e, addTagToDeck) => {
+    e.preventDefault();
 
     try {
-      await addTagToDeck();
-      this.setState({
-        id: 0,
+      setState({
+        id: deck.id,
         tagName: ""
       });
+      await addTagToDeck();
     } catch (error) {}
-    console.log(this.state);
   };
 
-  render() {
-    const { id, tagName } = this.state;
-    console.log(this.state);
-    return (
-      <Mutation mutation={ADD_TAG_TO_DECK} variables={{ id, tagName }}>
-        {(addTagToDeck, { data, loading, error }) => (
-          <form onSubmit={event => this.onSubmit(event, addTagToDeck)}>
-            <input
-              name="id"
-              value={id}
-              onChange={this.onChange}
-              type="number"
-              placeholder="Deck id to add tag ... (REQUIRED)"
-            />
-            <textarea
-              name="tagName"
-              value={tagName}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Tag Name (REQUIRED)"
-            />
-            <button type="submit">Submit</button>
+  const onChange = e => setState({ ...state, [e.target.name]: e.target.value });
 
-            {error && <ErrorMessage error={error} />}
-          </form>
-        )}
-      </Mutation>
-    );
-  }
-}
+  useEffect(() => {
+    if (deck && deck.id) {
+      setState({ id: deck.id });
+    }
+  }, [deck]);
+
+  return (
+    <Mutation mutation={ADD_TAG_TO_DECK} variables={{ id, tagName }}>
+      {(addTagToDeck, { data, loading, error }) => (
+        <form onSubmit={e => onSubmit(e, addTagToDeck)}>
+          <textarea
+            name="tagName"
+            value={tagName}
+            onChange={onChange}
+            type="text"
+            placeholder="Tag Nameeee (REQUIRED)"
+          />
+          <button type="submit">Submit</button>
+
+          {error && <ErrorMessage error={error} />}
+        </form>
+      )}
+    </Mutation>
+  );
+};
 
 export default AddDeckTag;

@@ -34,7 +34,7 @@ const DeckDelete = ({ deck }) => (
   >
     {(deleteDeck, { data, loading, error }) => (
       <button type="button" onClick={deleteDeck}>
-        Delete
+        Delete Deck
       </button>
     )}
   </Mutation>

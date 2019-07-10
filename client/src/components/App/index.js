@@ -17,6 +17,7 @@ import Tags from "../FlashCards/Decks/DeckItem/TagItem";
 import * as routes from "../../constants/routes";
 import history from "../../constants/history";
 import "./style.css";
+import Profile from "../Profile";
 
 const App = ({ session, refetch }) => (
   <Router history={history}>
@@ -34,6 +35,7 @@ const App = ({ session, refetch }) => (
           path={routes.SIGN_IN}
           component={() => <SignInPage refetch={refetch} />}
         />
+        <Route exact path={routes.PROFILE} component={() => <Profile />} />
         <Route exact path={routes.ACCOUNT} component={() => <AccountPage />} />
         <Route
           exact

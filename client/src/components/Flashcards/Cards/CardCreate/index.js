@@ -1,8 +1,9 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
 import ErrorMessage from "../../../Error";
+import GET_PAGINATED_DECKS_WITH_USERS from "../../Decks/DeckSchema/index";
 
 const CREATE_CARD = gql`
   mutation($deckId: Int!, $front: String!, $back: String!) {
@@ -15,71 +16,66 @@ const CREATE_CARD = gql`
   }
 `;
 
-class CardCreate extends Component {
-  state = {
-    deckId: 0,
+const CardCreate = ({ deck }) => {
+  const [state, setState] = useState({
+    deckId: null,
     front: "",
     back: ""
-  };
+  });
 
-  onChange = event => {
-    const { name, value, type } = event.target;
-
-    this.setState({
-      [name]: type === "number" ? parseInt(value, 10) : value
-    });
-  };
-
-  onSubmit = async (event, createCard) => {
-    event.preventDefault();
+  const { deckId, front, back } = state;
+  const onSubmit = async (e, createCard) => {
+    e.preventDefault();
 
     try {
-      await createCard();
-      this.setState({
-        deckId: 0,
+      setState({
+        deckId: parseInt(deck.id, 10),
         front: "",
         back: ""
       });
+      await createCard();
     } catch (error) {}
-    console.log(this.state);
   };
 
-  render() {
-    const { deckId, front, back } = this.state;
-    console.log(this.state);
-    return (
-      <Mutation mutation={CREATE_CARD} variables={{ deckId, front, back }}>
-        {(createCard, { data, loading, error }) => (
-          <form onSubmit={event => this.onSubmit(event, createCard)}>
-            <input
-              name="deckId"
-              value={deckId}
-              onChange={this.onChange}
-              type="number"
-              placeholder="Deck id ... (REQUIRED)"
-            />
-            <textarea
-              name="front"
-              value={front}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Face of the flashcard ... (REQUIRED)"
-            />
-            <textarea
-              name="back"
-              value={back}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Back of the card ..."
-            />
-            <button type="submit">Submit</button>
+  const onChange = e => setState({ ...state, [e.target.name]: e.target.value });
 
-            {error && <ErrorMessage error={error} />}
-          </form>
-        )}
-      </Mutation>
-    );
-  }
-}
+  useEffect(() => {
+    if (deck && deck.id) {
+      setState({ deckId: parseInt(deck.id, 10) });
+    }
+  }, [deck]);
+
+  return (
+    <Mutation
+      mutation={CREATE_CARD}
+      variables={{ deckId, front, back }}
+      refetchQueries={[
+        { query: GET_PAGINATED_DECKS_WITH_USERS, variables: { limit: 3 } }
+      ]}
+    >
+      {(createCard, { data, loading, error }) => (
+        <form onSubmit={e => onSubmit(e, createCard)}>
+          <textarea
+            name="front"
+            value={front}
+            onChange={onChange}
+            type="text"
+            placeholder="Face of the flashcard ... (REQUIRED)"
+          />
+          <textarea
+            name="back"
+            value={back}
+            onChange={onChange}
+            type="text"
+            placeholder="Back of the card ..."
+          />
+          <button type="submit">Submit</button>
+
+          {error && <ErrorMessage error={error} />}
+        </form>
+      )}
+    </Mutation>
+  );
+};
 
 export default CardCreate;

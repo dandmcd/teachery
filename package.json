@@ -31,6 +31,7 @@
     "nodemon": "^1.19.1"
   },
   "dependencies": {
+    "@playlyfe/gql": "^2.6.1",
     "apollo-server": "^2.2.6",
     "apollo-server-express": "^2.2.6",
     "bcrypt": "^3.0.6",
