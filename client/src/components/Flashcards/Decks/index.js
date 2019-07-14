@@ -14,14 +14,12 @@ const Decks = ({ limit, me }) => (
       }
 
       const { decks } = data;
-      console.log(decks);
 
       if (loading || !decks) {
         return <Loading />;
       }
 
       const { edges, pageInfo } = decks;
-      console.log(edges);
 
       return (
         <Fragment>

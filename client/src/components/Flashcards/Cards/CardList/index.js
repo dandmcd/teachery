@@ -1,13 +1,12 @@
 import React from "react";
 //Do we need withRouter here?
 import { withRouter } from "react-router-dom";
-import { shuffle } from "lodash";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
-import withAuthorization from "../../Session/withAuthorization";
 
-import Loading from "../../Loading";
-import CardDeck from "./CardDeck";
+import withAuthorization from "../../../Session/withAuthorization";
+import Loading from "../../../Loading";
+import CardItem from "../CardItem";
 
 const CARDS_QUERY = gql`
   query CardsQuery($id: ID!) {
@@ -17,16 +16,18 @@ const CARDS_QUERY = gql`
         id
         front
         back
+        createdAt
       }
     }
   }
 `;
 
-export const Cards = (props, { deck }) => {
+export const CardList = (props, { deck }) => {
   console.log(props);
   let { id } = props.match.params;
   id = parseInt(id);
-  console.log(deck);
+  console.log(id);
+
   return (
     <Query query={CARDS_QUERY} variables={{ id }}>
       {({ data, error, loading }) => {
@@ -36,22 +37,15 @@ export const Cards = (props, { deck }) => {
         if (error) {
           return <p>Error</p>;
         }
-        console.log(data.deck.cards);
-
-        const shuffledCards = shuffle(data.deck.cards);
-        const withCount = shuffledCards.slice(
-          0,
-          parseInt(props.location.state.count)
-        );
-        console.log(props.location.state.count);
-        console.log(withCount);
-
-        return <CardDeck cards={withCount} />;
+        console.log(data.deck);
+        const { cards } = data.deck;
+        console.log(cards);
+        return cards.map(card => <CardItem key={card.id} card={card} />);
       }}
     </Query>
   );
 };
 
 export default withAuthorization(session => session && session.me)(
-  withRouter(Cards)
+  withRouter(CardList)
 );

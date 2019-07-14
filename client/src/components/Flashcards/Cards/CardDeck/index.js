@@ -1,57 +1,52 @@
 import React, { Component, Fragment } from "react";
-import { shuffle } from "lodash";
-import memoize from "memoize-one";
+import { Link } from "react-router-dom";
 
 export default class CardDeck extends Component {
   constructor(props) {
     super(props);
 
-    this.handleMouseHover = this.handleMouseHover.bind(this);
+    this.handleCardFlip = this.handleCardFlip.bind(this);
 
     this.state = {
       index: 0,
-      isHovering: false
+      isFlipped: false
     };
   }
 
-  shuffle = memoize(array => shuffle(array));
+  onGoToNext = () =>
+    this.setState({ index: this.state.index + 1, isFlipped: false });
 
-  onGoToNext = () => this.setState({ index: this.state.index + 1 });
-
-  handleMouseHover() {
-    this.setState(this.toggleHoverState);
+  handleCardFlip() {
+    this.setState(this.toggleCardSide);
   }
 
-  toggleHoverState(state) {
+  toggleCardSide(state) {
     return {
-      isHovering: !state.isHovering
+      isFlipped: !state.isFlipped
     };
   }
 
   render() {
-    const shuffledCards = this.shuffle(this.props.cards);
-    const item = shuffledCards[this.state.index];
+    const item = this.props.cards[this.state.index];
 
-    if (this.state.index >= shuffledCards.length) {
+    if (this.state.index >= this.props.cards.length) {
       return (
         <div>
           <h1>Finished</h1>
+          <Link to="/deck">Go back to Flashcards page</Link>
         </div>
       );
     } else {
       return (
         <Fragment>
-          <div
-            onMouseEnter={this.handleMouseHover}
-            onMouseLeave={this.handleMouseHover}
-          >
+          <div>
             <h1>{item.front}</h1>
+            {this.state.isFlipped && <h1>{item.back}</h1>}
+            <hr />
+            <button onClick={this.handleCardFlip}>
+              {this.state.isFlipped ? "Hide Answer" : "Show Answer"}
+            </button>
           </div>
-          {this.state.isHovering && (
-            <div>
-              <h1>{item.back}</h1>
-            </div>
-          )}
           <p>
             <button onClick={this.onGoToNext}>Next</button>
           </p>

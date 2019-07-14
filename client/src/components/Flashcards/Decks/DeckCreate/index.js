@@ -51,7 +51,7 @@ const DeckCreate = () => {
     setDeckState({ ...deckState, [e.target.name]: e.target.value });
 
   return (
-    <h4>
+    <div>
       {!toggleMutate && (
         <button type="button" onClick={() => setToggleMutate(true)}>
           Create a new Deck
@@ -103,7 +103,7 @@ const DeckCreate = () => {
           )}
         </Mutation>
       )}
-    </h4>
+    </div>
   );
 };
 

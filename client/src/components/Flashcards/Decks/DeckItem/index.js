@@ -3,6 +3,7 @@ import Moment from "react-moment";
 
 import TagLink from "../DeckItem/TagLink";
 import { Link } from "react-router-dom";
+import history from "../../../../constants/history";
 import DeckDelete from "./../DeckDelete";
 import AddDeckTag from "./AddDeckTag";
 import CardCreate from "../../Cards/CardCreate/";
@@ -10,18 +11,72 @@ import CardCreate from "../../Cards/CardCreate/";
 const DeckItemBase = ({ deck, session }) => {
   const [cardMutate, setCardMutate] = useState(false);
   const [isOn, setIsOn] = useState(false);
+  const [sessionCount, setSessionCount] = useState({
+    count: ""
+  });
+  const { count } = sessionCount;
+
+  const onSubmit = e => {
+    e.preventDefault();
+    if (!count) {
+      return;
+    }
+    history.push(`/deck/${deck.id}`, { count: count });
+  };
+
+  const deckLink = {
+    pathname: `/deck/${deck.id}`,
+    count: count
+  };
+
+  const cardListLink = {
+    pathname: `/deck/${deck.id}/list`
+  };
+
+  const onChange = e => {
+    setSessionCount({ ...sessionCount, [e.target.name]: e.target.value });
+  };
+  console.log(sessionCount);
+
+  const handleClick = () => {
+    setSessionCount({ count: deck.cards.length });
+    console.log(count);
+  };
 
   return (
     <div>
       <h2>
-        <Link to={`/deck/${deck.id}`}>{deck.deckName}</Link>
+        <Link to={cardListLink}>{deck.deckName}</Link>
       </h2>
+      <h5>
+        <Link to={cardListLink}>{deck.cards.length} Cards</Link>
+      </h5>
+      <h4>
+        How many cards to study (Chosen at random)
+        <form onSubmit={e => onSubmit(e)}>
+          <input
+            name="count"
+            value={count}
+            onChange={onChange}
+            type="number"
+            min="0"
+            max={deck.cards.length}
+            step="1"
+            placeholder="How many cards to study?"
+          />
+          <button type="button" onClick={handleClick}>
+            All
+          </button>
+          <button type="submit">Start</button>
+        </form>
+      </h4>
+
       <p>{deck.description}</p>
       <small>
         Created on <Moment format="YYYY-MM-DD HH:mm">{deck.createdAt}</Moment>
         <h5>created by: {deck.user.username}</h5>
       </small>
-      <h5>{deck.cards.length} Cards</h5>
+
       <h5>
         {deck.tags.map(tag => (
           <TagLink key={tag.id} tag={tag} />

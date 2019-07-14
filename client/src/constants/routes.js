@@ -6,6 +6,7 @@ export const ACCOUNT = "/account";
 export const ADMIN = "/admin";
 export const FLASHCARDS = "/deck";
 export const CARDS = "/deck/:id";
+export const CARDLIST = "/deck/:id/list";
 export const SEARCH = "/search";
 export const TAGS = "/tag/:id";
 export const PROFILE = "/profile";
