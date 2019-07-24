@@ -6,6 +6,7 @@ import cardSchema from "./card";
 import deckSchema from "./deck";
 import assignmentSchema from "./assignment";
 import tagSchema from "./tag";
+import assignedTaskSchema from "./assigned";
 
 const linkSchema = gql`
   scalar Date
@@ -30,5 +31,6 @@ export default [
   cardSchema,
   deckSchema,
   assignmentSchema,
-  tagSchema
+  tagSchema,
+  assignedTaskSchema
 ];

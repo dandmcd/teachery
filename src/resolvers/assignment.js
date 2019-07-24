@@ -25,7 +25,6 @@ export default {
         limit: limit + 1,
         ...cursorOptions
       });
-
       const hasNextPage = assignments.length > limit;
       const edges = hasNextPage ? assignments.slice(0, -1) : assignments;
 
@@ -45,11 +44,17 @@ export default {
   Mutation: {
     createAssignment: combineResolvers(
       isAuthenticated,
-      async (parent, { assignmentName, note, link }, { models, me }) => {
+      async (
+        parent,
+        { assignmentName, note, link, status, dueDate },
+        { models, me }
+      ) => {
         const assignment = await models.Assignment.create({
           assignmentName,
           note,
           link,
+          status,
+          dueDate,
           userId: me.id
         });
         return assignment;
@@ -66,6 +71,19 @@ export default {
   },
 
   Assignment: {
+    assignedTasks: async (assignment, args, { models }) => {
+      return await models.AssignedTask.findAll({
+        include: [
+          {
+            model: models.Assignment,
+            where: {
+              id: assignment.id
+            }
+          }
+        ]
+      });
+    },
+
     user: async (assignment, args, { loaders }) => {
       return await loaders.user.load(assignment.userId);
     }

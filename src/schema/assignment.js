@@ -56,8 +56,8 @@ export default gql`
     A URL link related to the assignment
     """
     link: String
-
     createdAt: Date!
     user: User!
+    assignedTasks: [AssignedTask!]!
   }
 `;

@@ -154,22 +154,48 @@ const createUsersWithMessagesAndDecks = async date => {
     }
   );
 
-  await models.Assignment.create({
-    assignmentName: "Do 50 words",
-    note: "Studying English exam 1",
-    link: "http://www.google.com",
-    createdAt: date.setSeconds(date.getSeconds() + 1),
-    userId: "1"
-  });
+  await models.Assignment.create(
+    {
+      assignmentName: "Do 50 words",
+      note: "Studying English exam 1",
+      link: "https://www.google.com",
+      createdAt: date.setSeconds(date.getSeconds() + 1),
+      userId: "1",
+      assignedTasks: [
+        {
+          assignedTo: 1,
+          dueDate: "2020-1-2",
+          status: "INCOMPLETE",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        }
+      ]
+    },
+    {
+      include: [models.AssignedTask]
+    }
+  );
 
-  await models.Assignment.create({
-    assignmentName: "Read article",
-    note: "Read article and prepare to discuss",
-    link:
-      "https://www.nbcnews.com/news/us-news/brother-american-arrested-russia-spying-charges-says-he-was-there-n953526",
-    createdAt: date.setSeconds(date.getSeconds() + 1),
-    userId: "2"
-  });
+  await models.Assignment.create(
+    {
+      assignmentName: "Read article",
+      note: "Read article and prepare to discuss",
+      link:
+        "https://www.nbcnews.com/news/us-news/brother-american-arrested-russia-spying-charges-says-he-was-there-n953526",
+      createdAt: date.setSeconds(date.getSeconds() + 1),
+      userId: "2",
+      assignedTasks: [
+        {
+          assignedTo: 2,
+          dueDate: "2019-5-20",
+          status: "COMPLETE",
+          createdAt: date.setSeconds(date.getSeconds() + 1)
+        }
+      ]
+    },
+    {
+      include: [models.AssignedTask]
+    }
+  );
 };
 
 export default createUsersWithMessagesAndDecks;

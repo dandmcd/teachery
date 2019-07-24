@@ -2,7 +2,6 @@ import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 
 import { isAdmin, isAuthenticated } from "./authorization";
-import tag from "./tag";
 
 const toCursorHash = string => Buffer.from(string).toString("base64");
 

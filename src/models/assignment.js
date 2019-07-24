@@ -15,11 +15,21 @@ const assignment = (sequelize, DataTypes) => {
     },
     link: {
       type: DataTypes.STRING,
+      validate: {
+        isUrl: {
+          args: true,
+          msg: "The URL is not valid."
+        }
+      },
       allowNull: true
     }
   });
   Assignment.associate = models => {
     Assignment.belongsTo(models.User);
+    Assignment.belongsToMany(models.AssignedTask, {
+      through: models.UserAssignment,
+      onDelete: "CASCADE"
+    });
   };
   return Assignment;
 };

@@ -22,8 +22,10 @@ const models = {
   Card: sequelize.import("./card"),
   Deck: sequelize.import("./deck"),
   Assignment: sequelize.import("./assignment"),
+  AssignedTask: sequelize.import("./assigned.js"),
   Tag: sequelize.import("./tag"),
-  DeckTag: sequelize.import("./decktag")
+  DeckTag: sequelize.import("./decktag"),
+  UserAssignment: sequelize.import("./userassignment.js")
 };
 
 Object.keys(models).forEach(key => {
