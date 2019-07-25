@@ -88,6 +88,13 @@ export default {
           userId: user.id
         }
       });
+    },
+    assignedTasks: async (user, args, { models }) => {
+      return await models.AssignedTask.findAll({
+        where: {
+          assignedTo: user.id
+        }
+      });
     }
   }
 };

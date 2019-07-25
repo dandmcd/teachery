@@ -49,6 +49,7 @@ export default gql`
     role: String
     messages: [Message!]
     assignments: [Assignment!]
+    assignedTasks: [AssignedTask!]
     decks: [Deck!]
   }
 `;

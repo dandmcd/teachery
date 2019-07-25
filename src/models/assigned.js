@@ -5,6 +5,12 @@ const assignedTask = (sequelize, DataTypes) => {
     {
       assignmentId: {
         type: DataTypes.INTEGER,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "A deck must have a name."
+          }
+        },
         unique: {
           args: "noDuplicate",
           msg: "User was already assigned this task."
@@ -13,11 +19,21 @@ const assignedTask = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.ENUM,
         values: ["INCOMPLETE", "COMPLETE", "REVIEWING", "GRADED"],
-        allowNull: true
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "A deck must have a name."
+          }
+        }
       },
       assignedTo: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "A deck must have a name."
+          }
+        },
         unique: {
           args: "noDuplicate",
           msg: "User was already assigned this task."
@@ -25,6 +41,12 @@ const assignedTask = (sequelize, DataTypes) => {
       },
       dueDate: {
         type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "A deck must have a name."
+          }
+        },
         validate: {
           isDate: {
             args: true,

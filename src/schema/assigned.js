@@ -4,15 +4,15 @@ export default gql`
   extend type Query {
     assignedTasks(cursor: String, limit: Int): AssignedTaskConnection!
 
-    assignedTask(id: ID): AssignedTask!
+    assignedTask(id: ID!): AssignedTask!
   }
 
   extend type Mutation {
     assignTask(
-      assignmentId: Int
+      assignmentId: Int!
       assignedTo: Int!
-      dueDate: String
-      status: Status
+      dueDate: String!
+      status: Status!
     ): AssignedTask!
   }
 
@@ -35,18 +35,21 @@ export default gql`
 
   type AssignedTask {
     id: ID!
+    """
+    User the task is assigned to
+    """
     assignedTo: Int!
 
     """
     Date when the assignment is due
     Use the format YEAR-MONTH-DAY - 2020-04-20
     """
-    dueDate: String
+    dueDate: String!
     """
     Status of the assignment
     Can only use values INCOMPLETE, COMPLETE, REVIEWING, GRADED
     """
-    status: Status
+    status: Status!
     createdAt: Date!
     assignments: [Assignment!]!
   }

@@ -163,6 +163,7 @@ const createUsersWithMessagesAndDecks = async date => {
       userId: "1",
       assignedTasks: [
         {
+          assignmentId: 1,
           assignedTo: 1,
           dueDate: "2020-1-2",
           status: "INCOMPLETE",
@@ -185,6 +186,7 @@ const createUsersWithMessagesAndDecks = async date => {
       userId: "2",
       assignedTasks: [
         {
+          assignmentId: 2,
           assignedTo: 2,
           dueDate: "2019-5-20",
           status: "COMPLETE",
