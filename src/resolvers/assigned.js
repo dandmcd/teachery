@@ -77,7 +77,6 @@ export default {
           assignedTaskId: assignedTask.id,
           assignedTo
         });
-        console.log(assignedTask);
         return assignedTask;
       }
     )

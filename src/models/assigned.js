@@ -1,4 +1,3 @@
-import { validate } from "graphql";
 const assignedTask = (sequelize, DataTypes) => {
   const AssignedTask = sequelize.define(
     "assignedTask",
