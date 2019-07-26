@@ -51,6 +51,6 @@ export default gql`
     """
     status: Status!
     createdAt: Date!
-    assignments: [Assignment!]!
+    assignment: Assignment!
   }
 `;

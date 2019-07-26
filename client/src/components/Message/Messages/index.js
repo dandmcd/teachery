@@ -47,13 +47,9 @@ const Messages = ({ limit }) => (
   <Query query={GET_PAGINATED_MESSAGES_WITH_USERS} variables={{ limit }}>
     {({ data, loading, error, fetchMore, subscribeToMore }) => {
       if (!data) {
-        return (
-          <div>
-            There are no messages yet ... Try to create one by yourself.
-          </div>
-        );
+        return <div>There are no messages yet ...</div>;
       }
-      console.log(data);
+
       const { messages } = data;
 
       if (loading || !messages) {

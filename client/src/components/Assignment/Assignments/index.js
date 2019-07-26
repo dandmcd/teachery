@@ -13,18 +13,18 @@ const Assignments = ({ limit, me }) => (
         return <div>There are no assignments yet ...</div>;
       }
 
-      const { assignments } = data;
-      console.log(assignments);
+      const { assignedTasks } = data;
+      console.log(assignedTasks);
 
-      if (loading || !assignments) {
+      if (loading || !assignedTasks) {
         return <Loading />;
       }
 
-      const { edges, pageInfo } = assignments;
+      const { edges, pageInfo } = assignedTasks;
       console.log(edges);
       return (
         <Fragment>
-          <AssignmentList assignments={edges} me={me} />
+          <AssignmentList assignedTasks={edges} me={me} />
 
           {pageInfo.hasNextPage && (
             <MoreAssignmentsButton
@@ -56,11 +56,11 @@ const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
           }
 
           return {
-            assignments: {
-              ...fetchMoreResult.assignments,
+            assignedTasks: {
+              ...fetchMoreResult.assignedTasks,
               edges: [
-                ...previousResult.assignments.edges,
-                ...fetchMoreResult.assignments.edges
+                ...previousResult.assignedTasks.edges,
+                ...fetchMoreResult.assignedTasks.edges
               ]
             }
           };
@@ -74,25 +74,36 @@ const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
 
 class AssignmentList extends Component {
   render() {
-    const { assignments, me } = this.props;
-
-    return assignments.map(assignment => (
-      <AssignmentItem key={assignment.id} assignment={assignment} me={me} />
+    const { assignedTasks, me } = this.props;
+    console.log(assignedTasks);
+    return assignedTasks.map(assignedTask => (
+      <AssignmentItem
+        key={assignedTask.id}
+        assignedTask={assignedTask}
+        me={me}
+      />
     ));
   }
 }
 
-const AssignmentItemBase = ({ assignment, session }) => (
+const AssignmentItemBase = ({
+  assignedTask: {
+    dueDate,
+    id,
+    status,
+    createdAt,
+    assignment: { assignmentName, link, note }
+  },
+  session
+}) => (
   <div>
-    <h3>{assignment.user.username}</h3>
-    <small>{assignment.createdAt}</small>
-    <p>{assignment.assignmentName}</p>
-    <p>{assignment.note}</p>
-    <p>{assignment.link}</p>
-
-    {session && session.me && assignment.user.id === session.me.id && (
-      <AssignmentDelete assignment={assignment} />
-    )}
+    <h3>{assignmentName}</h3>
+    <strong>{dueDate}</strong>
+    <p>
+      <a href="{link}">{link}</a>
+    </p>
+    <p>{note}</p>
+    <p>{status}</p>
   </div>
 );
 

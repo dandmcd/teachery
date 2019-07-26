@@ -1,7 +1,7 @@
 import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
-import { isAdmin } from "./authorization";
-import { isError } from "util";
+
+import { isAdmin, isAuthenticated, isAssignedTaskOwner } from "./authorization";
 import { UserInputError } from "apollo-server";
 
 const toCursorHash = string => Buffer.from(string).toString("base64");
@@ -11,34 +11,42 @@ const fromCursorHash = string =>
 
 export default {
   Query: {
-    assignedTasks: async (parent, { cursor, limit = 100 }, { models }) => {
-      const cursorOptions = cursor
-        ? {
-            where: {
-              createdAt: {
-                [Sequelize.Op.lt]: fromCursorHash(cursor)
+    assignedTasks: combineResolvers(
+      isAuthenticated,
+      async (parent, { cursor, limit = 100 }, { models, me }) => {
+        const cursorOptions = cursor
+          ? {
+              where: {
+                createdAt: {
+                  [Sequelize.Op.lt]: fromCursorHash(cursor)
+                }
               }
             }
+          : {};
+
+        const assignedTasks = await models.AssignedTask.findAll({
+          where: {
+            assignedTo: me.id
+          },
+          order: [["createdAt", "DESC"]],
+          limit: limit + 1,
+          ...cursorOptions
+        });
+
+        const hasNextPage = assignedTasks.length > limit;
+        const edges = hasNextPage ? assignedTasks.slice(0, -1) : assignedTasks;
+
+        return {
+          edges,
+          pageInfo: {
+            hasNextPage,
+            endCursor: toCursorHash(
+              edges[edges.length - 1].createdAt.toString()
+            )
           }
-        : {};
-
-      const assignedTasks = await models.AssignedTask.findAll({
-        order: [["createdAt", "DESC"]],
-        limit: limit + 1,
-        ...cursorOptions
-      });
-
-      const hasNextPage = assignedTasks.length > limit;
-      const edges = hasNextPage ? assignedTasks.slice(0, -1) : assignedTasks;
-
-      return {
-        edges,
-        pageInfo: {
-          hasNextPage,
-          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
-        }
-      };
-    },
+        };
+      }
+    ),
 
     assignedTask: async (parent, { id }, { models }) => {
       return await models.AssignedTask.findByPk(id);
@@ -83,17 +91,9 @@ export default {
   },
 
   AssignedTask: {
-    assignments: async (assignedTask, args, { models }) => {
-      return await models.Assignment.findAll({
-        include: [
-          {
-            model: models.AssignedTask,
-            where: {
-              id: assignedTask.id
-            }
-          }
-        ]
-      });
+    assignment: async (assignedTask, args, { loaders }) => {
+      console.log(assignedTask.assignmentId);
+      return await loaders.assignment.load(assignedTask.assignmentId);
     }
   }
 };

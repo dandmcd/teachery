@@ -1,18 +1,16 @@
 import React from "react";
 
-import withAuthorization from "../Session/withAuthorization";
+import withSession from "../Session/withSession";
 import Assignments from "./Assignments";
 import AssignmentCreate from "./AssignmentCreate";
 
-const AssignmentPage = () => (
+const AssignmentPage = session => (
   <div>
     <h1>Assignments</h1>
-    <AssignmentCreate />
+    {session && session.me && session.me.role && <AssignmentCreate />}
     <hr />
     <Assignments limit={3} />
   </div>
 );
 
-export default withAuthorization(session => session && session.me)(
-  AssignmentPage
-);
+export default withSession(AssignmentPage);
