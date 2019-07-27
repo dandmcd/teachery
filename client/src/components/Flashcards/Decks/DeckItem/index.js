@@ -38,6 +38,8 @@ const DeckItemBase = ({ deck, session }) => {
     console.log(count);
   };
 
+  const isInvalid = count === "";
+
   return (
     <div>
       <h2>
@@ -47,22 +49,23 @@ const DeckItemBase = ({ deck, session }) => {
         <Link to={cardListLink}>{deck.cards.length} Cards</Link>
       </h5>
       <h4>
-        How many cards to study (Chosen at random)
+        How many cards to study? (Chosen at random)
         <form onSubmit={e => onSubmit(e)}>
           <input
             name="count"
             value={count}
             onChange={onChange}
             type="number"
-            min="0"
+            min="1"
             max={deck.cards.length}
             step="1"
-            placeholder="How many cards to study?"
           />
           <button type="button" onClick={handleClick}>
             All
           </button>
-          <button type="submit">Start</button>
+          <button disabled={isInvalid} type="submit">
+            Start
+          </button>
         </form>
       </h4>
 
