@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { withApollo } from "react-apollo";
 import gql from "graphql-tag";
 
-import TagLink from "../DeckItem/TagLink";
+import TagLink from "../DeckItem/DeckTags/TagLink";
 
 const TAG_SEARCH_QUERY = gql`
   query TagSearchQuery($tagName: String!) {
@@ -21,7 +21,6 @@ class Search extends Component {
   };
 
   render() {
-    console.log(this.state);
     return (
       <div>
         <div>
@@ -51,13 +50,11 @@ class Search extends Component {
       query: TAG_SEARCH_QUERY,
       variables: { tagName }
     });
-    console.log(result);
     if (result.data.getTagsByName.length === 0) {
       this.setState({ noResult: true });
     } else {
       const tags = result.data.getTagsByName;
       this.setState({ tags });
-      console.log(tags);
     }
   };
 }

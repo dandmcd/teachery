@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
-import ErrorMessage from "../../../../Error";
+import ErrorMessage from "../../../../../Error";
 
 const ADD_TAG_TO_DECK = gql`
   mutation($id: ID!, $tagName: String!) {

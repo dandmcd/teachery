@@ -1,5 +1,5 @@
-import React, { Fragment } from "react";
-import { Link, NavLink } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 
 import * as routes from "../../constants/routes";
 import SignOutButton from "../SignOut";
@@ -26,9 +26,6 @@ const Navigation = ({ session }) => (
 const NavigationAuth = ({ session }) => (
   <ul class="menu">
     <li>
-      <Link to={routes.LANDING}>Landing</Link>
-    </li>
-    <li>
       <Link to={routes.FLASHCARDS}>Flashcards</Link>
     </li>
     <li>
@@ -52,9 +49,6 @@ const NavigationNonAuth = () => (
   <ul class="menu">
     <li>
       <Link to={routes.SIGN_IN}>Sign In</Link>
-    </li>
-    <li>
-      <Link to={routes.LANDING}>Landing</Link>
     </li>
   </ul>
 );

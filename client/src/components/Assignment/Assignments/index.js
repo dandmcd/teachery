@@ -13,14 +13,12 @@ const AssignedTasks = ({ limit, me }) => (
       }
 
       const { assignedTasks } = data;
-      console.log(assignedTasks);
 
       if (loading || !assignedTasks) {
         return <Loading />;
       }
 
       const { edges, pageInfo } = assignedTasks;
-      console.log(edges);
       return (
         <Fragment>
           <AssignedTaskList assignedTasks={edges} me={me} />
@@ -74,7 +72,6 @@ const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
 class AssignedTaskList extends Component {
   render() {
     const { assignedTasks, me } = this.props;
-    console.log(assignedTasks);
     return assignedTasks.map(assignedTask => (
       <AssignedTaskItem
         key={assignedTask.id}

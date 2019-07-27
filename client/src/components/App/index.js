@@ -13,12 +13,11 @@ import FlashCardPage from "../FlashCards";
 import Cards from "../FlashCards/Cards";
 import CardList from "../FlashCards/Cards/CardList";
 import Search from "../FlashCards/Decks/DeckSearch";
-import Tags from "../FlashCards/Decks/DeckItem/TagItem";
+import Tags from "../FlashCards/Decks/DeckItem/DeckTags/TagItem";
 
 import * as routes from "../../constants/routes";
 import history from "../../constants/history";
 import "./style.css";
-import Profile from "../Profile";
 
 const App = ({ session, refetch }) => (
   <Router history={history}>
@@ -36,7 +35,6 @@ const App = ({ session, refetch }) => (
           path={routes.SIGN_IN}
           component={() => <SignInPage refetch={refetch} />}
         />
-        <Route exact path={routes.PROFILE} component={() => <Profile />} />
         <Route exact path={routes.ACCOUNT} component={() => <AccountPage />} />
         <Route
           exact

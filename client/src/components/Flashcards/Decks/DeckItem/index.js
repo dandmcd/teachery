@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Moment from "react-moment";
 
-import TagLink from "../DeckItem/TagLink";
+import TagLink from "./DeckTags/TagLink";
 import { Link } from "react-router-dom";
 import history from "../../../../constants/history";
 import DeckDelete from "./../DeckDelete";
-import AddDeckTag from "./AddDeckTag";
+import AddDeckTag from "./DeckTags/AddDeckTag";
 import CardCreate from "../../Cards/CardCreate/";
 
 const DeckItemBase = ({ deck, session }) => {
@@ -31,14 +31,12 @@ const DeckItemBase = ({ deck, session }) => {
   const onChange = e => {
     setSessionCount({ ...sessionCount, [e.target.name]: e.target.value });
   };
-  console.log(sessionCount);
 
   const handleClick = () => {
     setSessionCount({ count: deck.cards.length });
-    console.log(count);
   };
 
-  const isInvalid = count === "";
+  const isInvalid = count === "" || count <= "0";
 
   return (
     <div>
@@ -59,6 +57,7 @@ const DeckItemBase = ({ deck, session }) => {
             min="1"
             max={deck.cards.length}
             step="1"
+            placeholder={deck.cards.length}
           />
           <button type="button" onClick={handleClick}>
             All

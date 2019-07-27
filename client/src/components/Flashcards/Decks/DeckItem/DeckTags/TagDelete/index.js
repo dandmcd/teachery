@@ -2,7 +2,7 @@ import React from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
-import GET_PAGINATED_DECKS_WITH_USERS from "../../DeckSchema";
+import GET_PAGINATED_DECKS_WITH_USERS from "../../../DeckSchema";
 
 const DELETE_TAG = gql`
   mutation($id: ID!) {
