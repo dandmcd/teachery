@@ -3,10 +3,9 @@ import { Query } from "react-apollo";
 
 import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
-import AssignmentDelete from "../AssignmentDelete";
 import Loading from "../../Loading";
 
-const Assignments = ({ limit, me }) => (
+const AssignedTasks = ({ limit, me }) => (
   <Query query={GET_PAGINATED_ASSIGNMENTS_WITH_USERS} variables={{ limit }}>
     {({ data, loading, error, fetchMore }) => {
       if (!data) {
@@ -24,16 +23,16 @@ const Assignments = ({ limit, me }) => (
       console.log(edges);
       return (
         <Fragment>
-          <AssignmentList assignedTasks={edges} me={me} />
+          <AssignedTaskList assignedTasks={edges} me={me} />
 
           {pageInfo.hasNextPage && (
-            <MoreAssignmentsButton
+            <MoreAssignedTasksButton
               limit={limit}
               pageInfo={pageInfo}
               fetchMore={fetchMore}
             >
               More
-            </MoreAssignmentsButton>
+            </MoreAssignedTasksButton>
           )}
         </Fragment>
       );
@@ -41,7 +40,7 @@ const Assignments = ({ limit, me }) => (
   </Query>
 );
 
-const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
+const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
   <button
     type="button"
     onClick={() =>
@@ -72,12 +71,12 @@ const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
   </button>
 );
 
-class AssignmentList extends Component {
+class AssignedTaskList extends Component {
   render() {
     const { assignedTasks, me } = this.props;
     console.log(assignedTasks);
     return assignedTasks.map(assignedTask => (
-      <AssignmentItem
+      <AssignedTaskItem
         key={assignedTask.id}
         assignedTask={assignedTask}
         me={me}
@@ -99,14 +98,17 @@ const AssignmentItemBase = ({
   <div>
     <h3>{assignmentName}</h3>
     <strong>{dueDate}</strong>
-    <p>
-      <a href="{link}">{link}</a>
-    </p>
+
     <p>{note}</p>
     <p>{status}</p>
+    <p>
+      <a href={link} rel="noopener noreferrer" target="_blank">
+        View Link
+      </a>
+    </p>
   </div>
 );
 
-const AssignmentItem = withSession(AssignmentItemBase);
+const AssignedTaskItem = withSession(AssignmentItemBase);
 
-export default Assignments;
+export default AssignedTasks;

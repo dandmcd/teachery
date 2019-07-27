@@ -3,7 +3,7 @@ import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
 import ErrorMessage from "../../Error";
-import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
+import GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS from "../AssignmentAdmin/AssignmentAdminSchema";
 
 const CREATE_ASSIGNMENT = gql`
   mutation($assignmentName: String!, $note: String, $link: String) {
@@ -20,6 +20,10 @@ const CREATE_ASSIGNMENT = gql`
       user {
         id
         username
+      }
+      assignedTasks {
+        status
+        dueDate
       }
     }
   }
@@ -55,11 +59,11 @@ class AssignmentCreate extends Component {
         variables={{ assignmentName, note, link }}
         update={(cache, { data: { createAssignment } }) => {
           const data = cache.readQuery({
-            query: GET_PAGINATED_ASSIGNMENTS_WITH_USERS
+            query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS
           });
 
           cache.writeQuery({
-            query: GET_PAGINATED_ASSIGNMENTS_WITH_USERS,
+            query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS,
             data: {
               ...data,
               assignments: {

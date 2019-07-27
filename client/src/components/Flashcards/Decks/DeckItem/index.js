@@ -24,11 +24,6 @@ const DeckItemBase = ({ deck, session }) => {
     history.push(`/deck/${deck.id}`, { count: count });
   };
 
-  const deckLink = {
-    pathname: `/deck/${deck.id}`,
-    count: count
-  };
-
   const cardListLink = {
     pathname: `/deck/${deck.id}/list`
   };
