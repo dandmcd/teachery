@@ -80,7 +80,12 @@ const DeckItemBase = ({ deck, session }) => {
         ))}
       </h5>
       {!cardMutate && (
-        <button type="button" onClick={() => setCardMutate(true)}>
+        <button
+          type="button"
+          onClick={() => {
+            setCardMutate(true);
+          }}
+        >
           Add Card
         </button>
       )}

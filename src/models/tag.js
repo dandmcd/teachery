@@ -2,7 +2,10 @@ const tag = (sequelize, DataTypes) => {
   const Tag = sequelize.define("tag", {
     tagName: {
       type: DataTypes.STRING,
-      unique: true,
+      unique: {
+        args: true,
+        msg: "A tag with this name already exists for this deck."
+      },
       validate: {
         notEmpty: {
           args: true,

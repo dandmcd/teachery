@@ -30,7 +30,7 @@ class Search extends Component {
             onChange={e =>
               this.setState({ tagName: e.target.value, noResult: false })
             }
-            placeholder="Search by language"
+            placeholder="Search by language or tag"
           />
           <button onClick={() => this._executeSearch()}>OK</button>
           {this.state.noResult && (
@@ -50,7 +50,9 @@ class Search extends Component {
       query: TAG_SEARCH_QUERY,
       variables: { tagName }
     });
-    if (result.data.getTagsByName.length === 0) {
+    if (tagName === "") {
+      this.setState({ noResult: true });
+    } else if (result.data.getTagsByName.length === 0) {
       this.setState({ noResult: true });
     } else {
       const tags = result.data.getTagsByName;

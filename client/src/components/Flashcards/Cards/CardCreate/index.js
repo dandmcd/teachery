@@ -6,7 +6,7 @@ import ErrorMessage from "../../../Error";
 import GET_PAGINATED_DECKS_WITH_USERS from "../../Decks/DeckSchema/index";
 
 const CREATE_CARD = gql`
-  mutation($deckId: Int!, $front: String!, $back: String!) {
+  mutation($deckId: Int!, $front: String!, $back: String) {
     createCard(deckId: $deckId, front: $front, back: $back) {
       id
       front
@@ -45,6 +45,8 @@ const CardCreate = ({ deck }) => {
     }
   }, [deck]);
 
+  const isInvalid = front === "" || undefined;
+  console.log(front);
   return (
     <Mutation
       mutation={CREATE_CARD}
@@ -69,7 +71,9 @@ const CardCreate = ({ deck }) => {
             type="text"
             placeholder="Back of the card ..."
           />
-          <button type="submit">Submit</button>
+          <button disabled={isInvalid} type="submit">
+            Submit
+          </button>
 
           {error && <ErrorMessage error={error} />}
         </form>

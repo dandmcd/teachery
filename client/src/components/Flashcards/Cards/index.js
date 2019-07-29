@@ -23,10 +23,8 @@ const CARDS_QUERY = gql`
 `;
 
 export const Cards = (props, { deck }) => {
-  console.log(props);
   let { id } = props.match.params;
   id = parseInt(id);
-  console.log(deck);
   return (
     <Query query={CARDS_QUERY} variables={{ id }}>
       {({ data, error, loading }) => {
@@ -36,15 +34,12 @@ export const Cards = (props, { deck }) => {
         if (error) {
           return <p>Error</p>;
         }
-        console.log(data.deck.cards);
 
         const shuffledCards = shuffle(data.deck.cards);
         const withCount = shuffledCards.slice(
           0,
           parseInt(props.location.state.count)
         );
-        console.log(props.location.state.count);
-        console.log(withCount);
 
         return <CardDeck cards={withCount} />;
       }}

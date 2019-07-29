@@ -57,7 +57,10 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       if (message === "UNAUTHENTICATED") {
         signOut(client);
       } else {
-        if (message === "Your session expired. Sign in again.") {
+        if (
+          message ===
+          "Context creation failed: Your session expired. Sign in again."
+        ) {
           signOut(client);
         }
       }
