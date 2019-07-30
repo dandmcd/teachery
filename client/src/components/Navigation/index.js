@@ -12,7 +12,7 @@ const Navigation = ({ session }) => (
       <Link to={routes.LANDING}>Teachery</Link>
     </span>
     <input className="menu-btn" type="checkbox" id="menu-btn" />
-    <label className="menu-icon" for="menu-btn">
+    <label className="menu-icon" htmlFor="menu-btn">
       <span className="navicon" />
     </label>
     {session && session.me ? (
@@ -24,7 +24,7 @@ const Navigation = ({ session }) => (
 );
 
 const NavigationAuth = ({ session }) => (
-  <ul class="menu">
+  <ul className="menu">
     <li>
       <Link to={routes.FLASHCARDS}>Flashcards</Link>
     </li>
@@ -46,7 +46,7 @@ const NavigationAuth = ({ session }) => (
 );
 
 const NavigationNonAuth = () => (
-  <ul class="menu">
+  <ul className="menu">
     <li>
       <Link to={routes.SIGN_IN}>Sign In</Link>
     </li>
