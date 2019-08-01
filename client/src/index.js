@@ -20,7 +20,7 @@ const httpLink = new HttpLink({
 
 //Production use wss://fuwuyuan.herokuapp.com/graphql
 const wsLink = new WebSocketLink({
-  uri: `/graphql`,
+  uri: `ws://fuwuyuan.herokuapp.com/graphql`,
   options: {
     reconnect: true
   }
