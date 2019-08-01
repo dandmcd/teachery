@@ -2,9 +2,11 @@ import React, { Component, Fragment } from "react";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
 import { Link } from "react-router-dom";
-import withAuthorization from "../../../../../Session/withAuthorization";
 
+import withAuthorization from "../../../../../Session/withAuthorization";
 import Loading from "../../../../../Loading";
+import DeckItemBase from "../../../DeckItem";
+import withSession from "../../../../../Session/withSession";
 
 const TAGS_QUERY = gql`
   query TagsQuery($id: ID!) {
@@ -13,6 +15,20 @@ const TAGS_QUERY = gql`
       decks {
         id
         deckName
+        user {
+          id
+          username
+        }
+        description
+        cards {
+          id
+          front
+          back
+        }
+        tags {
+          id
+          tagName
+        }
       }
     }
   }
@@ -33,12 +49,11 @@ export class Tags extends Component {
               return <p>Error</p>;
             }
             const taggedDecksToRender = data.tag.decks;
+            console.log(taggedDecksToRender);
             return (
               <Fragment>
                 {taggedDecksToRender.map(deck => (
-                  <li key={deck.id}>
-                    <Link to={`/deck/${deck.id}`}>{deck.deckName}</Link>
-                  </li>
+                  <DeckItem key={deck.id} deck={deck} />
                 ))}
               </Fragment>
             );
@@ -49,4 +64,6 @@ export class Tags extends Component {
   }
 }
 
-export default withAuthorization(session => session && session.me)(Tags);
+const DeckItem = withSession(DeckItemBase);
+
+export default Tags;
