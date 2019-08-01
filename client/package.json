@@ -30,8 +30,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build && move build ../public",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "heroku-postbuild": "echo Skip build on Heroku"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
