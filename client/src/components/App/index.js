@@ -9,7 +9,7 @@ import AssignmentPage from "../Assignment";
 import AccountPage from "../Account";
 import AdminPage from "../Admin";
 import withSession from "../Session/withSession";
-import FlashCardPage from "../FlashCards";
+import FlashCardPage from "../FlashCards/index";
 import Cards from "../FlashCards/Cards";
 import CardList from "../FlashCards/Cards/CardList";
 import Search from "../FlashCards/Decks/DeckSearch";
