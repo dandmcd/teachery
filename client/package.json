@@ -2,7 +2,7 @@
   "name": "teachery",
   "version": "0.1.0",
   "engines": {
-    "node": "10.13.0"
+    "node": "10.16.0"
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.6.2",
@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && mv build ../public",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
