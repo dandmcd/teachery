@@ -38,8 +38,6 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   formatError: error => {
-    // remove the internal sequelize error message
-    // leave only the important validation error
     const message = error.message
       .replace("SequelizeValidationError: ", "")
       .replace("Validation error: ", "");
@@ -101,8 +99,8 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
   });
 });
 
-app.use(express.static("public"));
+app.use(express.static("build"));
 
-app.get("/", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "public", "index.html"));
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "build", "index.html"));
 });
