@@ -101,8 +101,8 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
   });
 });
 
-app.use(express.static("build"));
+app.use(express.static("public"));
 
-app.get("/*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "build", "index.html"));
+app.get("/", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "public", "index.html"));
 });
