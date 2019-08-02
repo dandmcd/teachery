@@ -15,7 +15,7 @@ import { signOut } from "./components/SignOut";
 import "./style.css";
 
 const httpLink = new HttpLink({
-  uri: "https://fuwuyuan.herokuapp.com/graphql"
+  uri: "/graphql"
 });
 
 //Production use wss://fuwuyuan.herokuapp.com/graphql
@@ -48,6 +48,15 @@ const authLink = new ApolloLink((operation, forward) => {
 
   return forward(operation);
 });
+
+const errorHandler = (err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+  const { status } = err;
+  res.status(status).json(err);
+};
+app.use(errorHandler);
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
