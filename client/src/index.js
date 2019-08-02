@@ -49,15 +49,6 @@ const authLink = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-const errorHandler = (err, req, res, next) => {
-  if (res.headersSent) {
-    return next(err);
-  }
-  const { status } = err;
-  res.status(status).json(err);
-};
-app.use(errorHandler);
-
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, locations, path }) => {
@@ -81,6 +72,12 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
     if (networkError.statusCode === 401) {
       signOut(client);
+    } else {
+      try {
+        JSON.parse(networkError.bodyText);
+      } catch (e) {
+        networkError.message = networkError.bodyText;
+      }
     }
   }
 });
