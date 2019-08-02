@@ -15,7 +15,7 @@ import { signOut } from "./components/SignOut";
 import "./style.css";
 
 const httpLink = new HttpLink({
-  uri: "https://fuwuyuan.herokuapp.com/graphql"
+  uri: "/graphql"
 });
 
 //Production use wss://fuwuyuan.herokuapp.com/graphql
@@ -72,12 +72,6 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
     if (networkError.statusCode === 401) {
       signOut(client);
-    } else {
-      try {
-        JSON.parse(networkError.bodyText);
-      } catch (e) {
-        networkError.message = networkError.bodyText;
-      }
     }
   }
 });
