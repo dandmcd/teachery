@@ -7,6 +7,8 @@ import student from "../../assets/student.jpg";
 import teacher from "../../assets/teacher.jpg";
 import * as routes from "../../constants/routes";
 
+import { MessageCreate, Messages } from "../Message";
+
 const Landing = () => {
   const [toggleST, setToggleST] = useState(0);
 
@@ -20,6 +22,8 @@ const Landing = () => {
 
   return (
     <div>
+      <MessageCreate />
+      <Messages limit={3} />
       <h2>Welcome</h2>
       <hr />
       <table>
