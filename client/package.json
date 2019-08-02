@@ -15,6 +15,7 @@
     "graphql": "^14.4.2",
     "graphql-tag": "^2.10.1",
     "history": "^4.9.0",
+    "http-proxy-middleware": "^0.19.1",
     "moment": "^2.24.0",
     "react": "^16.8.6",
     "react-apollo": "^2.5.8",
@@ -40,6 +41,5 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
-  "proxy": "http://localhost:8000"
+  ]
 }

@@ -14,6 +14,11 @@ import { signOut } from "./components/SignOut";
 
 import "./style.css";
 
+const proxy = require("http-proxy-middleware");
+module.exports = function(app) {
+  app.use(proxy("/graphql/**", { target: "http://localhost:8000" }));
+};
+
 const httpLink = new HttpLink({
   uri: "/graphql"
 });
