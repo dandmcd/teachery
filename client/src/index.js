@@ -72,6 +72,12 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
     if (networkError.statusCode === 401) {
       signOut(client);
+    } else {
+      try {
+        JSON.parse(networkError.bodyText);
+      } catch (e) {
+        networkError.message = networkError.bodyText;
+      }
     }
   }
 });
