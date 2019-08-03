@@ -15,7 +15,7 @@ import { signOut } from "./components/SignOut";
 import "./style.css";
 
 const httpLink = new HttpLink({
-  uri: "http://fuwuyuan.herokuapp.com/graphql"
+  uri: "https://fuwuyuan.herokuapp.com/graphql"
 });
 
 //Production use wss://fuwuyuan.herokuapp.com/graphql
