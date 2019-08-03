@@ -99,13 +99,8 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
   });
 });
 
-app.use(express.static(path.resolve(__dirname, "../client/build")));
-
-app.get("/graphql", function(req, res) {
-  res.set("Content-Type", "application/json");
-  res.send('{"message":"Hello from the custom server!"}');
-});
+app.use(express.static("public"));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "..client/build", "index.html"));
+  res.sendFile(path.resolve(__dirname, "client/public", "index.html"));
 });
