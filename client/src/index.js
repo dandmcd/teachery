@@ -19,11 +19,21 @@ const httpLink = new HttpLink({
 });
 
 //Production use wss://fuwuyuan.herokuapp.com/graphql
+const wsLink = new WebSocketLink({
+  uri: "wss://fuwuyuan.herokuapp.com/graphql",
+  options: {
+    reconnect: true
+  }
+});
 
-const terminatingLink = split(({ query }) => {
-  const { kind, operation } = getMainDefinition(query);
-  return kind === "OperationDefinition" && operation === "subscription";
-}, httpLink);
+const terminatingLink = split(
+  ({ query }) => {
+    const { kind, operation } = getMainDefinition(query);
+    return kind === "OperationDefinition" && operation === "subscription";
+  },
+  wsLink,
+  httpLink
+);
 
 const authLink = new ApolloLink((operation, forward) => {
   operation.setContext(({ headers = {} }) => {
