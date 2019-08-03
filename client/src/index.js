@@ -15,12 +15,12 @@ import { signOut } from "./components/SignOut";
 import "./style.css";
 
 const httpLink = new HttpLink({
-  uri: "https://fuwuyuan.herokuapp.com/graphql"
+  uri: "http://fuwuyuan.herokuapp.com/graphql"
 });
 
 //Production use wss://fuwuyuan.herokuapp.com/graphql
 const wsLink = new WebSocketLink({
-  uri: `wss://fuwuyuan.herokuapp.com/graphql`,
+  uri: `ws://fuwuyuan.herokuapp.com/graphql`,
   options: {
     reconnect: true
   }
