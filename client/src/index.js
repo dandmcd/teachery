@@ -1,3 +1,5 @@
+import "react-app-polyfill/ie9";
+import "react-app-polyfill/stable";
 import React from "react";
 import ReactDOM from "react-dom";
 import { ApolloProvider } from "react-apollo";
@@ -8,6 +10,7 @@ import { HttpLink } from "apollo-link-http";
 import { WebSocketLink } from "apollo-link-ws";
 import { onError } from "apollo-link-error";
 import { InMemoryCache } from "apollo-cache-inmemory";
+import fetch from "unfetch";
 
 import App from "./components/App";
 import { signOut } from "./components/SignOut";
@@ -15,6 +18,7 @@ import { signOut } from "./components/SignOut";
 import "./style.css";
 
 const httpLink = new HttpLink({
+  fetch: fetch,
   uri: "/graphql"
 });
 
@@ -81,6 +85,7 @@ const link = ApolloLink.from([authLink, errorLink, terminatingLink]);
 const cache = new InMemoryCache();
 
 const client = new ApolloClient({
+  fetchOptions: { fetch },
   link,
   cache
 });
