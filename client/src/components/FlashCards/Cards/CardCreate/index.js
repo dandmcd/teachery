@@ -1,43 +1,116 @@
 import React, { useState, useEffect } from "react";
-import { Mutation } from "react-apollo";
+import { useMutation } from "react-apollo";
 import gql from "graphql-tag";
+import axios from "axios";
+import moment from "moment";
 
-import ErrorMessage from "../../../Error";
-import GET_PAGINATED_DECKS_WITH_USERS from "../../Decks/DeckSchema/index";
+import DropZone from "../CardUpload";
 
+//Mutations
 const CREATE_CARD = gql`
-  mutation($deckId: Int!, $front: String!, $back: String) {
-    createCard(deckId: $deckId, front: $front, back: $back) {
+  mutation(
+    $deckId: Int!
+    $front: String!
+    $back: String
+    $pictureName: String
+    $pictureUrl: String
+  ) {
+    createCard(
+      deckId: $deckId
+      front: $front
+      back: $back
+      pictureName: $pictureName
+      pictureUrl: $pictureUrl
+    ) {
       id
-      front
-      back
-      createdAt
     }
   }
 `;
 
-const CardCreate = ({ deck }) => {
+const S3SIGNMUTATION = gql`
+  mutation($filename: String!, $filetype: String!) {
+    signS3(filename: $filename, filetype: $filetype) {
+      url
+      signedRequest
+    }
+  }
+`;
+
+//Component
+function CardCreate({ deck, props }) {
+  const [s3SignMutation, { loading }] = useMutation(S3SIGNMUTATION);
+  const [createCard] = useMutation(CREATE_CARD);
+
+  const [drop, setDrop] = useState(null);
   const [state, setState] = useState({
     deckId: null,
     front: "",
-    back: ""
+    back: "",
+    pictureName: "",
+    pictureUrl: ""
   });
+  const { front, back } = state;
 
-  const { deckId, front, back } = state;
-  const onSubmit = async (e, createCard) => {
+  //S3 Sign and format
+  const uploadToS3 = async (file, signedRequest) => {
+    const options = {
+      headers: {
+        "Content-Type": file.type
+      }
+    };
+    await axios.put(signedRequest, file, options);
+  };
+
+  const formatFilename = filename => {
+    const date = moment().format("YYYYMMDD");
+    const randomString = Math.random()
+      .toString(36)
+      .substring(2, 7);
+    const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-");
+    const newFilename = `images/${date}-${randomString}-${cleanFileName}`;
+    return newFilename.substring(0, 60);
+  };
+
+  const onSubmit = async e => {
     e.preventDefault();
-
-    try {
-      setState({
-        deckId: parseInt(deck.id, 10),
-        front: "",
-        back: ""
+    if (drop) {
+      const response = await s3SignMutation({
+        variables: {
+          filename: formatFilename(drop.name),
+          filetype: drop.type
+        }
       });
-      await createCard();
-    } catch (error) {}
+
+      const { signedRequest, url } = response.data.signS3;
+      await uploadToS3(drop, signedRequest);
+
+      await createCard({
+        variables: {
+          deckId: parseInt(deck.id, 10),
+          front,
+          back,
+          pictureName: drop.name,
+          pictureUrl: url
+        },
+        refetchQueries: ["getDecks"]
+      });
+      await setState({ front: "", back: "", pictureName: "", pictureUrl: "" });
+    } else {
+      await createCard({
+        variables: {
+          deckId: parseInt(deck.id, 10),
+          front,
+          back
+        },
+        refetchQueries: ["getDecks"]
+      });
+      await setState({ front: "", back: "", pictureName: "", pictureUrl: "" });
+    }
   };
 
   const onChange = e => setState({ ...state, [e.target.name]: e.target.value });
+
+  const handleChange = e => setDrop(e.target.value);
 
   useEffect(() => {
     if (deck && deck.id) {
@@ -46,40 +119,32 @@ const CardCreate = ({ deck }) => {
   }, [deck]);
 
   const isInvalid = front === "" || undefined;
-  console.log(front);
   return (
-    <Mutation
-      mutation={CREATE_CARD}
-      variables={{ deckId, front, back }}
-      refetchQueries={[
-        { query: GET_PAGINATED_DECKS_WITH_USERS, variables: { limit: 3 } }
-      ]}
-    >
-      {(createCard, { data, loading, error }) => (
-        <form onSubmit={e => onSubmit(e, createCard)}>
-          <textarea
-            name="front"
-            value={front}
-            onChange={onChange}
-            type="text"
-            placeholder="Face of the flashcard ... (REQUIRED)"
-          />
-          <textarea
-            name="back"
-            value={back}
-            onChange={onChange}
-            type="text"
-            placeholder="Back of the card ..."
-          />
-          <button disabled={isInvalid} type="submit">
-            Submit
-          </button>
+    <div>
+      <p>{loading && "Loading ..."}</p>
 
-          {error && <ErrorMessage error={error} />}
-        </form>
-      )}
-    </Mutation>
+      <form onSubmit={onSubmit}>
+        <textarea
+          name="front"
+          value={front}
+          onChange={onChange}
+          type="text"
+          placeholder="Face of the flashcard ... (REQUIRED)"
+        />
+        <textarea
+          name="back"
+          value={back}
+          onChange={onChange}
+          type="text"
+          placeholder="Back of the card ..."
+        />
+        <DropZone drop={drop} setDrop={setDrop} handleChange={handleChange} />
+        <button type="submit" disabled={isInvalid}>
+          Submit
+        </button>
+      </form>
+    </div>
   );
-};
+}
 
 export default CardCreate;

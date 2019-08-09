@@ -17,6 +17,8 @@ const CARDS_QUERY = gql`
         id
         front
         back
+        pictureName
+        pictureUrl
       }
     }
   }

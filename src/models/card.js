@@ -9,6 +9,12 @@ const card = (sequelize, DataTypes) => {
         }
       }
     },
+    pictureName: {
+      type: DataTypes.STRING
+    },
+    pictureUrl: {
+      type: DataTypes.STRING
+    },
     back: {
       type: DataTypes.STRING,
       allowNull: true

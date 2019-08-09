@@ -9,7 +9,9 @@ import "./style.css";
 const Navigation = ({ session }) => (
   <div className="header">
     <span className="logo">
-      <Link to={routes.LANDING}>Teachery</Link>
+      <Link to={routes.LANDING}>
+        Teachery <small>v0.50a</small>
+      </Link>
     </span>
     <input className="menu-btn" type="checkbox" id="menu-btn" />
     <label className="menu-icon" htmlFor="menu-btn">

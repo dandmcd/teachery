@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 const GET_PAGINATED_DECKS_WITH_USERS = gql`
-  query($cursor: String, $limit: Int!) {
+  query getDecks($cursor: String, $limit: Int!) {
     decks(cursor: $cursor, limit: $limit) @connection(key: "DeckConnection") {
       edges {
         id
@@ -20,6 +20,8 @@ const GET_PAGINATED_DECKS_WITH_USERS = gql`
           id
           front
           back
+          pictureName
+          pictureUrl
         }
       }
       pageInfo {

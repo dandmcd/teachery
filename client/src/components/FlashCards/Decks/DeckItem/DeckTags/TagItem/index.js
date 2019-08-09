@@ -1,9 +1,7 @@
 import React, { Component, Fragment } from "react";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
-import { Link } from "react-router-dom";
 
-import withAuthorization from "../../../../../Session/withAuthorization";
 import Loading from "../../../../../Loading";
 import DeckItemBase from "../../../DeckItem";
 import withSession from "../../../../../Session/withSession";
@@ -49,7 +47,6 @@ export class Tags extends Component {
               return <p>Error</p>;
             }
             const taggedDecksToRender = data.tag.decks;
-            console.log(taggedDecksToRender);
             return (
               <Fragment>
                 {taggedDecksToRender.map(deck => (

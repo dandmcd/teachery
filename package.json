@@ -32,6 +32,7 @@
     "@playlyfe/gql": "^2.6.1",
     "apollo-server": "^2.6.9",
     "apollo-server-express": "^2.6.9",
+    "aws-sdk": "^2.503.0",
     "bcrypt": "^3.0.6",
     "cors": "^2.8.5",
     "dataloader": "^1.4.0",

@@ -17,7 +17,15 @@ export default gql`
     Creates a card to insert in a deck -
     Deck id and front-facing card text are required!
     """
-    createCard(deckId: Int!, front: String!, back: String): Card!
+    createCard(
+      deckId: Int!
+      front: String!
+      back: String
+      pictureName: String
+      pictureUrl: String
+    ): Card!
+
+    signS3(filename: String!, filetype: String!): S3Payload!
 
     """
     Deletes a card
@@ -35,6 +43,11 @@ export default gql`
     endCursor: String!
   }
 
+  type S3Payload {
+    signedRequest: String!
+    url: String!
+  }
+
   type Card {
     id: ID!
 
@@ -47,6 +60,8 @@ export default gql`
     Back-facing card text
     """
     back: String
+    pictureName: String
+    pictureUrl: String
     createdAt: Date!
     deck: Deck!
     user: User!

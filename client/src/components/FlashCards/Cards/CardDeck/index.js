@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 
+import "./style.css";
+
 export default class CardDeck extends Component {
   constructor(props) {
     super(props);
@@ -23,7 +25,6 @@ export default class CardDeck extends Component {
       index: this.state.index + 1,
       isFlipped: false
     });
-    console.log(this.state.countRight + " " + this.state.countWrong);
   };
 
   onClickDecrement = () => {
@@ -32,7 +33,6 @@ export default class CardDeck extends Component {
       index: this.state.index + 1,
       isFlipped: false
     });
-    console.log(this.state.countRight + " " + this.state.countWrong);
   };
 
   onGoToNext = () =>
@@ -50,7 +50,7 @@ export default class CardDeck extends Component {
 
   render() {
     const item = this.props.cards[this.state.index];
-
+    console.log(item);
     if (this.state.index >= this.props.cards.length) {
       return (
         <div>
@@ -64,8 +64,9 @@ export default class CardDeck extends Component {
     } else {
       return (
         <Fragment>
-          <div>
+          <div className="cardImage">
             <h1>{item.front}</h1>
+            <img src={item.pictureUrl} alt={item.front} />
             {this.state.isFlipped && <h1>{item.back}</h1>}
             <hr />
             <button onClick={this.handleCardFlip}>
