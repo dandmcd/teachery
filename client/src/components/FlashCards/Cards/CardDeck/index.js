@@ -66,7 +66,7 @@ export default class CardDeck extends Component {
         <Fragment>
           <div className="cardImage">
             <h1>{item.front}</h1>
-            <img src={item.pictureUrl} alt={item.front} />
+            {item.pictureUrl && <img src={item.pictureUrl} alt={item.front} />}
             {this.state.isFlipped && <h1>{item.back}</h1>}
             <hr />
             <button onClick={this.handleCardFlip}>
