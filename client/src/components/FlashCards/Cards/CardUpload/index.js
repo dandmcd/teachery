@@ -7,6 +7,7 @@ export default function DropZone({ drop, setDrop, handleChange }) {
     acceptedFiles,
     getRootProps,
     getInputProps,
+    open,
     isDragActive,
     isDragAccept,
     isDragReject
@@ -42,7 +43,7 @@ export default function DropZone({ drop, setDrop, handleChange }) {
   return (
     <section className="container">
       <div {...getRootProps({ style })}>
-        <input {...getInputProps()} onChange={handleChange} />
+        <input {...getInputProps()} onChange={handleChange} onClick={open} />
         <p>Drag 'n' drop a file here, or click to select a file</p>
         <em>(Only *.jpg, *.gif, *.png and *.pdf images will be accepted)</em>
       </div>
