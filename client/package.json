@@ -46,5 +46,6 @@
     "not dead",
     "not ie >= 9",
     "not op_mini all"
-  ]
+  ],
+  "homepage": "http://fuwuyuan.herokuapp.com"
 }
