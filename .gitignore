@@ -27,6 +27,4 @@ yarn-error.log*
 
 .gqlconfig
 
-android-chrome*
-apple-touch*
-favicon*
+
