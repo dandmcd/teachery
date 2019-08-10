@@ -89,8 +89,11 @@ const isTest = !!process.env.DATABASE;
 const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 8000;
 
-sequelize.sync({ force: isTest || isProduction }).then(async () => {
-  if (isTest || isProduction) {
+console.log("Server is running in production? " + isProduction);
+
+//Dev seed changes required, add || isProduction to sync and if statement
+sequelize.sync({ force: isTest }).then(async () => {
+  if (isTest) {
     createUsersWithMessagesAndDecks(new Date());
   }
 
