@@ -1,23 +1,36 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
 export default function DropZone({ drop, setDrop, handleChange }) {
+  const onDrop = useCallback(
+    acceptedFiles => {
+      const reader = new FileReader();
+
+      reader.onabort = () => console.log("file reading was aborted");
+      reader.onerror = () => console.log("file reading has failed");
+      reader.onload = () => {
+        console.log(acceptedFiles);
+      };
+
+      setDrop(acceptedFiles[0]);
+    },
+    [setDrop]
+  );
   const {
     rejectedFiles,
     acceptedFiles,
     getRootProps,
     getInputProps,
-    open,
     isDragActive,
     isDragAccept,
     isDragReject
   } = useDropzone({
+    onDrop,
+    noKeyboard: true,
     maxSize: 10485760,
     multiple: false,
-    accept: ["image/*", ".pdf"],
-    onDrop: files => setDrop(files[0])
+    accept: ["image/*"]
   });
-  console.log(drop);
   const style = useMemo(
     () => ({
       ...baseStyle,
@@ -25,10 +38,12 @@ export default function DropZone({ drop, setDrop, handleChange }) {
       ...(isDragAccept ? acceptStyle : {}),
       ...(isDragReject ? rejectStyle : {})
     }),
-    [isDragActive, isDragReject]
+    [isDragActive, isDragAccept, isDragReject]
   );
+  console.log(acceptedFiles);
+  console.log(drop);
 
-  const files = acceptedFiles.map(file => (
+  const acceptedFilesItems = acceptedFiles.map(file => (
     <li key={file.path}>
       {file.path} - {file.size} bytes
     </li>
@@ -43,13 +58,13 @@ export default function DropZone({ drop, setDrop, handleChange }) {
   return (
     <section className="container">
       <div {...getRootProps({ style })}>
-        <input {...getInputProps()} onChange={handleChange} onClick={open} />
+        <input {...getInputProps()} />
         <p>Drag 'n' drop a file here, or click to select a file</p>
-        <em>(Only *.jpg, *.gif, *.png and *.pdf images will be accepted)</em>
+        <em>(Only image files will be accepted)</em>
       </div>
       <aside>
         <h4>Files</h4>
-        <ul>{files}</ul>
+        <ul>{acceptedFilesItems}</ul>
         <h4>Rejected Files</h4>
         <ul>{rejectedFilesItems}</ul>
       </aside>
