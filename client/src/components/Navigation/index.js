@@ -10,7 +10,7 @@ const Navigation = ({ session }) => (
   <div className="header">
     <span className="logo">
       <Link to={routes.LANDING}>
-        Teachery <small>v0.50a</small>
+        Teachery <small>v0.60a</small>
       </Link>
     </span>
     <input className="menu-btn" type="checkbox" id="menu-btn" />
