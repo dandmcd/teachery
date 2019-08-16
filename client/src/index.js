@@ -15,8 +15,6 @@ import fetch from "unfetch";
 import App from "./components/App";
 import { signOut } from "./components/SignOut";
 
-import "./style.css";
-
 const httpLink = new HttpLink({
   fetch: fetch,
   uri: "/graphql"

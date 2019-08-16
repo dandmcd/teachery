@@ -1,58 +1,51 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 
-import * as routes from "../../constants/routes";
-import SignOutButton from "../SignOut";
+import DesktopNavbar from "./DesktopNavbar";
+import MobileNavbar from "./MobileNavbar";
 
-import "./style.css";
+const Navbar = styled.div`
+  overflow-x: hidden;
+  width: 100%;
+  position: fixed};
+  top: 0;
+  z-index: 20;
+`;
 
-const Navigation = ({ session }) => (
-  <div className="header">
-    <span className="logo">
-      <Link to={routes.LANDING}>
-        Teachery <small>v0.60a</small>
-      </Link>
-    </span>
-    <input className="menu-btn" type="checkbox" id="menu-btn" />
-    <label className="menu-icon" htmlFor="menu-btn">
-      <span className="navicon" />
-    </label>
-    {session && session.me ? (
-      <NavigationAuth session={session} />
-    ) : (
-      <NavigationNonAuth />
-    )}
-  </div>
-);
+const Navigation = () => {
+  const [displayMobileNavbar, setDisplayMobileNavbar] = useState(false);
+  const [scrollingLock, setScrollingLock] = useState(false);
 
-const NavigationAuth = ({ session }) => (
-  <ul className="menu">
-    <li>
-      <Link to={routes.FLASHCARDS}>Flashcards</Link>
-    </li>
-    <li>
-      <Link to={routes.ASSIGNMENTS}>Assignments</Link>
-    </li>
-    <li>
-      <Link to={routes.ACCOUNT}>Account ({session.me.username})</Link>
-    </li>
-    {session && session.me && session.me.role === "ADMIN" && (
-      <li>
-        <Link to={routes.ADMIN}>Admin</Link>
-      </li>
-    )}
-    <li>
-      <SignOutButton />
-    </li>
-  </ul>
-);
+  useEffect(() => {
+    window.addEventListener("resize", AutoHideMobileNavbar);
 
-const NavigationNonAuth = () => (
-  <ul className="menu">
-    <li>
-      <Link to={routes.SIGN_IN}>Sign In</Link>
-    </li>
-  </ul>
-);
+    return () => {
+      window.removeEventListener("resize", AutoHideMobileNavbar);
+    };
+  });
+
+  const toggleMobileNavbar = () => {
+    setDisplayMobileNavbar(displayMobileNavbar === false ? true : false);
+  };
+  console.log(displayMobileNavbar);
+
+  const AutoHideMobileNavbar = () => {
+    const screenWidth = window.innerWidth;
+
+    if (displayMobileNavbar && screenWidth > 768) {
+      setDisplayMobileNavbar(false);
+    }
+  };
+
+  return (
+    <Navbar>
+      <DesktopNavbar toggleMobileNavbar={toggleMobileNavbar} />
+      <MobileNavbar
+        displayMobileNavbar={displayMobileNavbar}
+        setDisplayMobileNavbar={setDisplayMobileNavbar}
+      />
+    </Navbar>
+  );
+};
 
 export default Navigation;

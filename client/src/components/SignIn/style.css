@@ -1,12 +1,13 @@
 .box {
   width: 300px;
   padding: 40px;
-  position: absolute;
+  position: relative;
+  z-index: 20;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: #f4f4f4;
-  border-radius: 24px;
+  border-radius: 24pwox;
   text-align: center;
 }
 
