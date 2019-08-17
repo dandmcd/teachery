@@ -22,7 +22,7 @@ body {
 
 }
 a {
-  color: #c51f1d;
+  color: ${props => props.theme.primaryColor};
   text-decoration: none;
 }
 

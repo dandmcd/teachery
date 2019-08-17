@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { Query } from "react-apollo";
+import styled from "styled-components";
 
 import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
 import Loading from "../../Loading";
@@ -71,9 +72,23 @@ const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (
   </button>
 );
 
+const DeckContainer = styled.div`
+  padding: 4rem 2rem;
+  display: grid;
+  align-items: center;
+  grid-gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+`;
+
 const DeckList = ({ decks, me }) => {
   console.log(decks);
-  return decks.map(deck => <DeckItem key={deck.id} deck={deck} me={me} />);
+  return (
+    <DeckContainer>
+      {decks.map(deck => (
+        <DeckItem key={deck.id} deck={deck} me={me} />
+      ))}
+    </DeckContainer>
+  );
 };
 
 const DeckItem = withSession(DeckItemBase);

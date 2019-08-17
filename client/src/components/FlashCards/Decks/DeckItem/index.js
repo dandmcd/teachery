@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Moment from "react-moment";
+import styled from "styled-components";
 
 import TagLink from "./DeckTags/TagLink";
 import { Link } from "react-router-dom";
@@ -38,8 +39,13 @@ const DeckItemBase = ({ deck, session }) => {
 
   const isInvalid = count === "" || count <= "0";
 
+  const DeckItemContainer = styled.div`
+    height: 500px;
+    border: #ccc 1px dotted;
+  `;
+
   return (
-    <div>
+    <DeckItemContainer>
       <h2>
         <Link to={cardListLink}>{deck.deckName}</Link>
       </h2>
@@ -100,7 +106,7 @@ const DeckItemBase = ({ deck, session }) => {
         </button>
       )}
       {isOn && <AddDeckTag deck={deck} />}
-    </div>
+    </DeckItemContainer>
   );
 };
 export default DeckItemBase;

@@ -7,9 +7,9 @@ import MobileNavbar from "./MobileNavbar";
 const Navbar = styled.div`
   overflow-x: hidden;
   width: 100%;
-  position: fixed};
+  position: fixed;
   top: 0;
-  z-index: 20;
+  z-index: ${props => (props.displayMobileNavbar ? 20 : 1)};
 `;
 
 const Navigation = () => {
@@ -18,7 +18,6 @@ const Navigation = () => {
 
   useEffect(() => {
     window.addEventListener("resize", AutoHideMobileNavbar);
-
     return () => {
       window.removeEventListener("resize", AutoHideMobileNavbar);
     };
@@ -38,7 +37,7 @@ const Navigation = () => {
   };
 
   return (
-    <Navbar>
+    <Navbar displayMobileNavbar={displayMobileNavbar}>
       <DesktopNavbar toggleMobileNavbar={toggleMobileNavbar} />
       <MobileNavbar
         displayMobileNavbar={displayMobileNavbar}

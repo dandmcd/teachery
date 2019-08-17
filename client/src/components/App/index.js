@@ -22,12 +22,14 @@ import history from "../../constants/history";
 import GlobalStyle from "../../theme/globalStyle";
 
 const Container = styled.div`
+  max-width: 1100px;
+  margin: auto;
+  overflow: hidden;
+  padding: 0 2rem;
   vertical-align: top;
-  display: flex;
-  position: absolute;
-  justify-content: space-evenly;
+  position: relative;
   top: 60px;
-  z-index: 1;
+  z-index: 15;
 `;
 
 const App = ({ session, refetch }) => (

@@ -11,9 +11,11 @@ import { WebSocketLink } from "apollo-link-ws";
 import { onError } from "apollo-link-error";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import fetch from "unfetch";
+import { ThemeProvider } from "styled-components";
 
 import App from "./components/App";
 import { signOut } from "./components/SignOut";
+import theme from "./theme/theme";
 
 const httpLink = new HttpLink({
   fetch: fetch,
@@ -90,7 +92,9 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <App />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
   </ApolloProvider>,
   document.getElementById("root")
 );
