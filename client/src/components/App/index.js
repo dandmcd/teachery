@@ -23,9 +23,11 @@ import GlobalStyle from "../../theme/globalStyle";
 
 const Container = styled.div`
   max-width: 1100px;
+  display: block;
   margin: auto;
+  padding-left: 15px;
+  padding-right: 15px;
   overflow: hidden;
-  padding: 0 2rem;
   vertical-align: top;
   position: relative;
   top: 60px;

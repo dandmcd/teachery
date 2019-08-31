@@ -22,17 +22,12 @@ body {
 
 }
 a {
-  color: ${props => props.theme.primaryColor};
+  color: ${props => props.theme.primary};
   text-decoration: none;
 }
 
 a:hover {
   color: #666;
-}
-
-
-img {
-  width: 100%;
 }
 `;
 

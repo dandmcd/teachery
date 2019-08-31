@@ -36,16 +36,3 @@
   width: 280px;
   border-color: #2ecc71;
 }
-
-button {
-  background: none;
-  border-radius: 24px;
-  border: 2px solid #233841;
-  color: #233841;
-  margin: 0.2em;
-  padding: 0.25em 1em;
-}
-:disabled {
-  color: rgba(35, 56, 65, 0.5);
-  border: 2px solid rgba(35, 56, 65, 0.3);
-}

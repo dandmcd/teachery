@@ -1,20 +1,38 @@
 import React from "react";
 import withAuthorization from "../Session/withAuthorization";
+import styled from "styled-components";
 
 import Decks from "./Decks";
 import Search from "./Decks/DeckSearch";
 import DeckCreate from "./Decks/DeckCreate";
 
+const Container = styled.div`
+  max-width: 100%;
+  margin: auto;
+`;
+
+const FlashCardHeader = styled.div`
+  width: 100%;
+  margin-bottom: 5px;
+`;
+
+const Menu = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 const FlashCardPage = () => (
-  <div>
-    <h2>Flashcards</h2>
-    <h3>
-      <DeckCreate />
-    </h3>
-    <Search />
-    <hr />
+  <Container>
+    <FlashCardHeader>
+      <h4>Flashcard Decks</h4>
+      <Menu>
+        <Search />
+        <DeckCreate />
+      </Menu>
+    </FlashCardHeader>
     <Decks limit={3} />
-  </div>
+  </Container>
 );
 
 export default withAuthorization(session => session && session.me)(

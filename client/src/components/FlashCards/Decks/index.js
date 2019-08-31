@@ -7,6 +7,8 @@ import Loading from "../../Loading";
 import withSession from "../../Session/withSession";
 import DeckItemBase from "./DeckItem";
 
+import student from "../../../assets/student.jpg";
+
 const Decks = ({ limit, me }) => (
   <Query query={GET_PAGINATED_DECKS_WITH_USERS} variables={{ limit }}>
     {({ data, loading, error, fetchMore }) => {
@@ -73,11 +75,10 @@ const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (
 );
 
 const DeckContainer = styled.div`
-  padding: 4rem 2rem;
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  row-gap: 20px;
   align-items: center;
-  grid-gap: 0.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 `;
 
 const DeckList = ({ decks, me }) => {

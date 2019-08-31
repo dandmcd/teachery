@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Moment from "react-moment";
-import styled from "styled-components";
 
 import TagLink from "./DeckTags/TagLink";
 import { Link } from "react-router-dom";
@@ -8,6 +7,31 @@ import history from "../../../../constants/history";
 import DeckDelete from "./../DeckDelete";
 import AddDeckTag from "./DeckTags/AddDeckTag";
 import CardCreate from "../../Cards/CardCreate/";
+import {
+  DeckItemContainer,
+  CardGrid,
+  DeckImg,
+  DeckInfo,
+  Title,
+  Description,
+  CreatedItem,
+  CreatedBy,
+  CreatedOn,
+  Tags,
+  Practice,
+  PracticeText,
+  PracticeInstruct,
+  PracticeCardCount,
+  PracticeForm,
+  PracticeInput,
+  PracticeAll,
+  PracticeStart,
+  DeckButtons,
+  AddCardButton,
+  AddTagButton
+} from "./style";
+
+import teststudent from "../../../../assets/teststudent.jpg";
 
 const DeckItemBase = ({ deck, session }) => {
   const [cardMutate, setCardMutate] = useState(false);
@@ -39,73 +63,83 @@ const DeckItemBase = ({ deck, session }) => {
 
   const isInvalid = count === "" || count <= "0";
 
-  const DeckItemContainer = styled.div`
-    height: 500px;
-    border: #ccc 1px dotted;
-  `;
-
   return (
     <DeckItemContainer>
-      <h2>
-        <Link to={cardListLink}>{deck.deckName}</Link>
-      </h2>
-      <h5>
-        <Link to={cardListLink}>{deck.cards.length} Cards</Link>
-      </h5>
-      <h4>
-        How many cards to study? (Chosen at random)
-        <form onSubmit={e => onSubmit(e)}>
-          <input
-            name="count"
-            value={count}
-            onChange={onChange}
-            type="number"
-            min="1"
-            max={deck.cards.length}
-            step="1"
-            placeholder={deck.cards.length}
-          />
-          <button type="button" onClick={handleClick}>
-            All
-          </button>
-          <button disabled={isInvalid} type="submit">
-            Start
-          </button>
-        </form>
-      </h4>
+      <CardGrid>
+        <DeckImg src={teststudent} alt="Deck Logo" />
+        <DeckInfo>
+          <Title>
+            <Link to={cardListLink}>{deck.deckName.toUpperCase()}</Link>
+          </Title>
 
-      <p>{deck.description}</p>
-      <small>
-        Created on <Moment format="YYYY-MM-DD HH:mm">{deck.createdAt}</Moment>
-        <h5>created by: {deck.user.username}</h5>
-      </small>
+          <Description>{deck.description}</Description>
+        </DeckInfo>
+        <CreatedItem>
+          <CreatedBy>Created by: {deck.user.username}</CreatedBy>
 
-      <h5>
-        {deck.tags.map(tag => (
-          <TagLink key={tag.id} tag={tag} />
-        ))}
-      </h5>
-      {!cardMutate && (
-        <button
-          type="button"
-          onClick={() => {
-            setCardMutate(true);
-          }}
-        >
-          Add Card
-        </button>
-      )}
-      {cardMutate && <CardCreate key={deck.id} deck={deck} />}
+          <CreatedOn>
+            Created on <Moment format="YYYY-MM-DD">{deck.createdAt}</Moment>
+          </CreatedOn>
+          <Tags>
+            {deck.tags.map(tag => (
+              <TagLink key={tag.id} tag={tag} />
+            ))}
+          </Tags>
+        </CreatedItem>
+        <Practice>
+          <PracticeText>Study Now</PracticeText>
+          <PracticeInstruct>
+            Enter an amount to study below or choose All to Start...
+          </PracticeInstruct>
+          <PracticeCardCount>
+            <Link to={cardListLink}>
+              <em>{deck.cards.length}</em> Cards
+            </Link>
+          </PracticeCardCount>
 
-      {session && session.me && deck.user.id === session.me.id && (
-        <DeckDelete deck={deck} />
-      )}
-      {!isOn && (
-        <button type="button" onClick={() => setIsOn(true)}>
-          Add Tags
-        </button>
-      )}
-      {isOn && <AddDeckTag deck={deck} />}
+          <PracticeForm onSubmit={e => onSubmit(e)}>
+            <PracticeInput
+              name="count"
+              value={count}
+              onChange={onChange}
+              type="number"
+              min="1"
+              max={deck.cards.length}
+              step="1"
+              placeholder="__"
+            />
+            <PracticeAll type="button" onClick={handleClick}>
+              All
+            </PracticeAll>
+            <PracticeStart disabled={isInvalid} type="submit">
+              Start
+            </PracticeStart>
+          </PracticeForm>
+        </Practice>
+        <DeckButtons>
+          {!cardMutate && (
+            <AddCardButton
+              type="button"
+              onClick={() => {
+                setCardMutate(true);
+              }}
+            >
+              Add Card
+            </AddCardButton>
+          )}
+          {cardMutate && <CardCreate key={deck.id} deck={deck} />}
+
+          {session && session.me && deck.user.id === session.me.id && (
+            <DeckDelete deck={deck} />
+          )}
+          {!isOn && (
+            <AddTagButton type="button" onClick={() => setIsOn(true)}>
+              Add Tags
+            </AddTagButton>
+          )}
+          {isOn && <AddDeckTag deck={deck} />}
+        </DeckButtons>
+      </CardGrid>
     </DeckItemContainer>
   );
 };

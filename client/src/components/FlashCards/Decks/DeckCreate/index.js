@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
+import styled from "styled-components";
+
+import Button from "../../../../theme/Button";
 
 import ErrorMessage from "../../../Error";
 import GET_PAGINATED_DECKS_WITH_USERS from "../DeckSchema";
@@ -29,6 +32,8 @@ const CREATE_DECK = gql`
   }
 `;
 
+const Container = styled.div``;
+
 const DeckCreate = () => {
   const [toggleMutate, setToggleMutate] = useState(false);
   const [deckState, setDeckState] = useState({
@@ -51,11 +56,11 @@ const DeckCreate = () => {
     setDeckState({ ...deckState, [e.target.name]: e.target.value });
 
   return (
-    <div>
+    <Container>
       {!toggleMutate && (
-        <button type="button" onClick={() => setToggleMutate(true)}>
-          Create a new Deck
-        </button>
+        <Button type="button" onClick={() => setToggleMutate(true)}>
+          Create Deck
+        </Button>
       )}
 
       {toggleMutate && (
@@ -96,14 +101,14 @@ const DeckCreate = () => {
                 type="text"
                 placeholder="Add details and descriptions ..."
               />
-              <button type="submit">Submit</button>
+              <Button type="submit">Submit</Button>
 
               {error && <ErrorMessage error={error} />}
             </form>
           )}
         </Mutation>
       )}
-    </div>
+    </Container>
   );
 };
 
