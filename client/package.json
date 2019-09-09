@@ -5,8 +5,8 @@
     "node": "10.16.0"
   },
   "dependencies": {
-    "apollo-cache-inmemory": "^1.6.2",
-    "apollo-client": "^2.6.3",
+    "apollo-cache-inmemory": "^1.6.3",
+    "apollo-client": "^2.6.4",
     "apollo-link": "^1.2.12",
     "apollo-link-context": "^1.0.18",
     "apollo-link-error": "^1.1.11",
@@ -20,7 +20,7 @@
     "http-proxy-middleware": "^0.19.1",
     "moment": "^2.24.0",
     "react": "^16.8.6",
-    "react-apollo": "^3.0.0",
+    "react-apollo": "^3.0.1",
     "react-app-polyfill": "^1.0.1",
     "react-dom": "^16.8.6",
     "react-dropzone": "^10.1.7",
