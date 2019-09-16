@@ -7,12 +7,15 @@ import * as routes from "../../../constants/routes";
 import SignOutButton from "../../SignOut";
 
 const Navbar = styled.nav`
+  overflow-x: hidden;
+  width: 100%;
+  position: fixed;
+  top: 0;
   margin-top: 0px;
   width: 100%;
   background: white;
   align-self: flex-end;
-  z-index: 15;
-  position: relative;
+  z-index: ${props => (props.displayMobileNavbar ? 20 : 1)};
   transition: transform 1s;
   transform: translateX(
     ${props => (props.displayMobileNavbar ? "0%" : "calc(100% + 15px)")}
@@ -21,7 +24,7 @@ const Navbar = styled.nav`
 
 const NavRight = styled.div`
   position: relative;
-  z-index: 15;
+
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -31,7 +34,6 @@ const NavRight = styled.div`
 `;
 
 const NavLinks = styled.ul`
-  z-index: 15;
   position: relative;
 
   display: flex;
@@ -43,7 +45,6 @@ const NavLinks = styled.ul`
 `;
 
 const NavLink = styled.li`
-  z-index: 15;
   position: relative;
   text-decoration: none;
 `;

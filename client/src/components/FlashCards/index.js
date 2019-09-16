@@ -7,6 +7,7 @@ import Search from "./Decks/DeckSearch";
 import DeckCreate from "./Decks/DeckCreate";
 
 const Container = styled.div`
+  z-index: 15;
   max-width: 100%;
   margin: auto;
 `;
@@ -34,7 +35,6 @@ const FlashCardPage = () => (
     <Decks limit={3} />
   </Container>
 );
-
 export default withAuthorization(session => session && session.me)(
   FlashCardPage
 );

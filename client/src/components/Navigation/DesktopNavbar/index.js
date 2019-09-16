@@ -7,7 +7,10 @@ import * as routes from "../../../constants/routes";
 import SignOutButton from "../../SignOut";
 
 const Navbar = styled.nav`
-  position: relative;
+  overflow-x: hidden;
+  width: 100%;
+  position: fixed;
+  top: 0;
   z-index: 20;
   display: flex;
   height: 60px;

@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import { useMutation } from "react-apollo";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
+
+import * as Styled from "../../../../theme/Popup";
+import Button from "../../../../theme/Button";
 
 import DropZone from "../CardUpload";
 
@@ -37,7 +40,7 @@ const S3SIGNMUTATION = gql`
 `;
 
 //Component
-function CardCreate({ deck, props }) {
+const CardCreate = ({ deck, setIsOn }) => {
   const [s3SignMutation, { loading }] = useMutation(S3SIGNMUTATION);
   const [createCard] = useMutation(CREATE_CARD);
 
@@ -119,32 +122,41 @@ function CardCreate({ deck, props }) {
   }, [deck]);
 
   const isInvalid = front === "" || undefined;
-  return (
-    <div>
-      <p>{loading && "Loading ..."}</p>
 
-      <form onSubmit={onSubmit}>
-        <textarea
-          name="front"
-          value={front}
-          onChange={onChange}
-          type="text"
-          placeholder="Face of the flashcard ... (REQUIRED)"
-        />
-        <textarea
-          name="back"
-          value={back}
-          onChange={onChange}
-          type="text"
-          placeholder="Back of the card ..."
-        />
-        <DropZone drop={drop} setDrop={setDrop} handleChange={handleChange} />
-        <button type="submit" disabled={isInvalid}>
-          Submit
-        </button>
-      </form>
-    </div>
+  const togglePopup = () => {
+    setIsOn(false);
+  };
+
+  return (
+    <Fragment>
+      <Styled.PopupTitle>Create a card for your deck...</Styled.PopupTitle>
+      <Styled.PopupBody>
+        <form onSubmit={onSubmit}>
+          <textarea
+            name="front"
+            value={front}
+            onChange={onChange}
+            type="text"
+            placeholder="Face of the flashcard ... (REQUIRED)"
+          />
+          <textarea
+            name="back"
+            value={back}
+            onChange={onChange}
+            type="text"
+            placeholder="Back of the card ..."
+          />
+          <DropZone drop={drop} setDrop={setDrop} handleChange={handleChange} />
+          <Button type="submit" disabled={isInvalid}>
+            Submit
+          </Button>
+        </form>
+      </Styled.PopupBody>
+      <Styled.PopupFooterButton onClick={togglePopup}>
+        Close
+      </Styled.PopupFooterButton>
+    </Fragment>
   );
-}
+};
 
 export default CardCreate;

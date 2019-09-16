@@ -1,41 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Moment from "react-moment";
 
+import useOuterClickNotifier from "../../../Alerts";
 import TagLink from "./DeckTags/TagLink";
 import { Link } from "react-router-dom";
 import history from "../../../../constants/history";
 import DeckDelete from "./../DeckDelete";
 import AddDeckTag from "./DeckTags/AddDeckTag";
 import CardCreate from "../../Cards/CardCreate/";
-import {
-  DeckItemContainer,
-  CardGrid,
-  DeckImg,
-  DeckInfo,
-  Title,
-  Description,
-  CreatedItem,
-  CreatedBy,
-  CreatedOn,
-  Tags,
-  Practice,
-  PracticeText,
-  PracticeInstruct,
-  PracticeCardCount,
-  PracticeForm,
-  PracticeInput,
-  PracticeAll,
-  PracticeStart,
-  DeckButtons,
-  AddCardButton,
-  AddTagButton
-} from "./style";
+import * as PopStyled from "../../../../theme/Popup";
+import * as Styled from "./style";
 
 import teststudent from "../../../../assets/teststudent.jpg";
 
 const DeckItemBase = ({ deck, session }) => {
-  const [cardMutate, setCardMutate] = useState(false);
   const [isOn, setIsOn] = useState(false);
+  const [addCardActive, setAddCardActive] = useState(false);
+  const [addTagActive, setAddTagActive] = useState(false);
   const [sessionCount, setSessionCount] = useState({
     count: ""
   });
@@ -63,84 +44,113 @@ const DeckItemBase = ({ deck, session }) => {
 
   const isInvalid = count === "" || count <= "0";
 
+  const innerRef = useRef(null);
+  useOuterClickNotifier(e => {
+    setIsOn(false);
+    setAddCardActive(false);
+  }, innerRef);
+
   return (
-    <DeckItemContainer>
-      <CardGrid>
-        <DeckImg src={teststudent} alt="Deck Logo" />
-        <DeckInfo>
-          <Title>
-            <Link to={cardListLink}>{deck.deckName.toUpperCase()}</Link>
-          </Title>
+    <Styled.Container>
+      {isOn && addCardActive ? (
+        <PopStyled.PopupContainer>
+          <PopStyled.PopupInner ref={innerRef}>
+            <CardCreate key={deck.id} deck={deck} setIsOn={setIsOn} />
+          </PopStyled.PopupInner>
+        </PopStyled.PopupContainer>
+      ) : isOn && addTagActive ? (
+        <PopStyled.PopupContainer>
+          <PopStyled.PopupInner ref={innerRef}>
+            <AddDeckTag deck={deck} setIsOn={setIsOn} />
+          </PopStyled.PopupInner>
+        </PopStyled.PopupContainer>
+      ) : null}
+      <Styled.DeckItemContainer>
+        <Styled.CardGrid>
+          <Styled.DeckImg src={teststudent} alt="Deck Logo" />
+          <Styled.DeckInfo>
+            <Styled.Title>
+              <Link to={cardListLink}>{deck.deckName.toUpperCase()}</Link>
+            </Styled.Title>
 
-          <Description>{deck.description}</Description>
-        </DeckInfo>
-        <CreatedItem>
-          <CreatedBy>Created by: {deck.user.username}</CreatedBy>
+            <Styled.Description>{deck.description}</Styled.Description>
+          </Styled.DeckInfo>
+          <Styled.CreatedItem>
+            <Styled.CreatedBy>
+              Created by: {deck.user.username}
+            </Styled.CreatedBy>
 
-          <CreatedOn>
-            Created on <Moment format="YYYY-MM-DD">{deck.createdAt}</Moment>
-          </CreatedOn>
-          <Tags>
-            {deck.tags.map(tag => (
-              <TagLink key={tag.id} tag={tag} />
-            ))}
-          </Tags>
-        </CreatedItem>
-        <Practice>
-          <PracticeText>Study Now</PracticeText>
-          <PracticeInstruct>
-            Enter an amount to study below or choose All to Start...
-          </PracticeInstruct>
-          <PracticeCardCount>
-            <Link to={cardListLink}>
-              <em>{deck.cards.length}</em> Cards
-            </Link>
-          </PracticeCardCount>
+            <Styled.CreatedOn>
+              Created on <Moment format="YYYY-MM-DD">{deck.createdAt}</Moment>
+            </Styled.CreatedOn>
+            <Styled.Tags>
+              {deck.tags.map(tag => (
+                <TagLink key={tag.id} tag={tag} />
+              ))}
+            </Styled.Tags>
+          </Styled.CreatedItem>
+          <Styled.Practice>
+            <Styled.PracticeText>Study Now</Styled.PracticeText>
+            <Styled.PracticeInstruct>
+              Enter an amount to study below or choose All to Start...
+            </Styled.PracticeInstruct>
+            <Styled.PracticeCardCount>
+              <Link to={cardListLink}>
+                <em>{deck.cards.length}</em> Cards
+              </Link>
+            </Styled.PracticeCardCount>
 
-          <PracticeForm onSubmit={e => onSubmit(e)}>
-            <PracticeInput
-              name="count"
-              value={count}
-              onChange={onChange}
-              type="number"
-              min="1"
-              max={deck.cards.length}
-              step="1"
-              placeholder="__"
-            />
-            <PracticeAll type="button" onClick={handleClick}>
-              All
-            </PracticeAll>
-            <PracticeStart disabled={isInvalid} type="submit">
-              Start
-            </PracticeStart>
-          </PracticeForm>
-        </Practice>
-        <DeckButtons>
-          {!cardMutate && (
-            <AddCardButton
-              type="button"
-              onClick={() => {
-                setCardMutate(true);
-              }}
-            >
-              Add Card
-            </AddCardButton>
-          )}
-          {cardMutate && <CardCreate key={deck.id} deck={deck} />}
+            <Styled.PracticeForm onSubmit={e => onSubmit(e)}>
+              <Styled.PracticeInput
+                name="count"
+                value={count}
+                onChange={onChange}
+                type="number"
+                min="1"
+                max={deck.cards.length}
+                step="1"
+                placeholder="__"
+              />
+              <Styled.PracticeAll type="button" onClick={handleClick}>
+                All
+              </Styled.PracticeAll>
+              <Styled.PracticeStart disabled={isInvalid} type="submit">
+                Start
+              </Styled.PracticeStart>
+            </Styled.PracticeForm>
+          </Styled.Practice>
+          <Styled.DeckButtons>
+            {!isOn && (
+              <Styled.AddCardButton
+                type="button"
+                onClick={() => {
+                  setIsOn(true);
+                  setAddCardActive(true);
+                }}
+              >
+                Add Card
+              </Styled.AddCardButton>
+            )}
 
-          {session && session.me && deck.user.id === session.me.id && (
-            <DeckDelete deck={deck} />
-          )}
-          {!isOn && (
-            <AddTagButton type="button" onClick={() => setIsOn(true)}>
-              Add Tags
-            </AddTagButton>
-          )}
-          {isOn && <AddDeckTag deck={deck} />}
-        </DeckButtons>
-      </CardGrid>
-    </DeckItemContainer>
+            {session && session.me && deck.user.id === session.me.id && (
+              <DeckDelete deck={deck} />
+            )}
+            {!isOn && (
+              <Styled.AddTagButton
+                type="button"
+                onClick={() => {
+                  setIsOn(true);
+                  setAddTagActive(true);
+                }}
+              >
+                Add Tags
+              </Styled.AddTagButton>
+            )}
+          </Styled.DeckButtons>
+        </Styled.CardGrid>
+      </Styled.DeckItemContainer>
+    </Styled.Container>
   );
 };
+
 export default DeckItemBase;

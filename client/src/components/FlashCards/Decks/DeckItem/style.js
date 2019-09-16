@@ -1,7 +1,10 @@
 import styled from "styled-components";
 import Button from "../../../../theme/Button";
 
+export const Container = styled.div``;
+
 export const DeckItemContainer = styled.div`
+  z-index: 15;
   width: 330px;
   background-color: #fff;
 
@@ -12,6 +15,7 @@ export const DeckItemContainer = styled.div`
 
 export const CardGrid = styled.div`
   display: grid;
+  z-index: 15;
   grid-template-rows: 200px 150px 1fr 40px;
   grid-template-columns: repeat(3, 110px);
   justify-content: start start;

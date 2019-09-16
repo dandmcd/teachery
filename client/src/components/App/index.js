@@ -31,7 +31,7 @@ const Container = styled.div`
   vertical-align: top;
   position: relative;
   top: 60px;
-  z-index: 15;
+  z-index: 1;
 `;
 
 const App = ({ session, refetch }) => (
