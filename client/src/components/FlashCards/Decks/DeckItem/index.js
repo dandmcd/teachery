@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { Fragment, useState, useRef } from "react";
 import Moment from "react-moment";
 
 import useOuterClickNotifier from "../../../Alerts";
@@ -51,7 +51,7 @@ const DeckItemBase = ({ deck, session }) => {
   }, innerRef);
 
   return (
-    <Styled.Container>
+    <Fragment>
       {isOn && addCardActive ? (
         <PopStyled.PopupContainer>
           <PopStyled.PopupInner ref={innerRef}>
@@ -81,7 +81,7 @@ const DeckItemBase = ({ deck, session }) => {
             </Styled.CreatedBy>
 
             <Styled.CreatedOn>
-              Created on <Moment format="YYYY-MM-DD">{deck.createdAt}</Moment>
+              On: <Moment format="YYYY-MM-DD">{deck.createdAt}</Moment>
             </Styled.CreatedOn>
             <Styled.Tags>
               {deck.tags.map(tag => (
@@ -149,7 +149,7 @@ const DeckItemBase = ({ deck, session }) => {
           </Styled.DeckButtons>
         </Styled.CardGrid>
       </Styled.DeckItemContainer>
-    </Styled.Container>
+    </Fragment>
   );
 };
 

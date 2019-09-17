@@ -187,7 +187,7 @@ const createUsersWithMessagesAndDecks = async date => {
       assignedTasks: [
         {
           assignmentId: 2,
-          assignedTo: 2,
+          assignedTo: 1,
           dueDate: "2019-5-20",
           status: "COMPLETE",
           createdAt: date.setSeconds(date.getSeconds() + 1)

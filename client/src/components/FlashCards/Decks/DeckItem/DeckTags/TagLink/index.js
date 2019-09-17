@@ -7,7 +7,6 @@ import styled from "styled-components";
 
 const TagItem = styled.h5`
   margin: 0px;
-  color: ${props => props.theme.neutralColor};
 `;
 
 function TagLink({ tag, session }) {

@@ -1,16 +1,16 @@
 import styled from "styled-components";
 import Button from "../../../../theme/Button";
 
-export const Container = styled.div``;
-
 export const DeckItemContainer = styled.div`
   z-index: 15;
   width: 330px;
   background-color: #fff;
 
-  -webkit-box-shadow: 6px 10px 10px -5px rgba(204, 193, 193, 1);
-  -moz-box-shadow: 6px 10px 10px -5px rgba(204, 193, 193, 1);
-  box-shadow: 6px 10px 10px -5px rgba(204, 193, 193, 1);
+  -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
+    0 6px 6px rgba(0, 0, 0, 0.23);
+  -moz-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
+    0 6px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 `;
 
 export const CardGrid = styled.div`
@@ -46,6 +46,7 @@ export const DeckInfo = styled.div`
 
 export const Title = styled.h3`
   letter-spacing: 0.05em;
+  line-height: 1.4;
   text-decoration: underline;
   text-decoration-color: ${props => props.theme.primary};
   grid-row: 1 / 2;
@@ -60,7 +61,6 @@ export const Title = styled.h3`
 `;
 
 export const Description = styled.p`
-  font-size: 0.8em;
   grid-row: 2 / 3;
   grid-column: 1 / 2;
   margin: 0px 0px 0px 5px;
@@ -76,30 +76,33 @@ export const CreatedItem = styled.div`
   background-color: white;
 `;
 
-export const CreatedBy = styled.h5`
+export const CreatedBy = styled.h6`
   grid-row: 1 / 2;
   grid-column: 1 / 3;
-  font-size: 0.6em;
   margin: 0;
+  color: ${props => props.theme.textLight};
 `;
 
-export const CreatedOn = styled.h5`
+export const CreatedOn = styled.h6`
   grid-row: 2 / 3;
   grid-column: 1 / 3;
-  font-size: 0.6em;
   margin: 0;
+  color: ${props => props.theme.textLight};
 `;
 
 export const Tags = styled.div`
   grid-row: 3 / 4;
   grid-column: 1 / 3;
-  font-size: 0.6em;
-  text-indent: 5px;
+  text-indent: 2px;
   display: grid;
   grid-template-rows: auto;
   grid-template-columns: 1fr 1fr;
   a {
-    color: ${props => props.theme.primaryMed};
+    font-size: 0.7em;
+    color: ${props => props.theme.primaryDark};
+    :hover {
+      color: ${props => props.theme.primary};
+    }
   }
 `;
 
@@ -122,7 +125,7 @@ export const Practice = styled.div`
   );
 `;
 
-export const PracticeText = styled.h2`
+export const PracticeText = styled.h3`
   grid-row: 1 / 2;
   grid-column: 1 / 3;
   margin: 0px 0px 0px 5px;
@@ -138,7 +141,7 @@ export const PracticeInstruct = styled.p`
   font-style: italic;
 `;
 
-export const PracticeCardCount = styled.h5`
+export const PracticeCardCount = styled.h4`
   grid-row: 1 / 2;
   grid-column: 3 / 4;
   margin: 0;

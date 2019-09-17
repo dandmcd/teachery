@@ -30,7 +30,8 @@ const NavLeft = styled.div`
   align-items: center;
   margin-left: 10px;
   text-align: left;
-  font-size: 2rem;
+  font-size: 36px;
+  font-weight: lighter;
 `;
 
 const NavRight = styled.div`
@@ -93,8 +94,6 @@ const MenuButton = styled.input`
 
 const MenuSpan = styled.span`
   @media (max-width: 768px) {
-    display: none;
-
     display: block;
     width: 33px;
     height: 4px;
@@ -130,10 +129,23 @@ const NavLinks = styled.ul`
 `;
 
 const NavLink = styled.li`
+  font-size: 16px;
   position: relative;
   z-index: 20;
   text-decoration: none;
-  margin: 0 5px;
+  margin: 0 7px;
+  a {
+    color: ${props => props.theme.primary};
+    :hover {
+      bottom: -5px;
+      border-radius: 6px;
+      background: #f9f9f9;
+      height: 4px;
+      transition-property: width;
+      transition-duration: 0.3s;
+      transition-timing-function: ease-out;
+    }
+  }
 `;
 
 const DesktopNavbar = ({ toggleMobileNavbar, session }) => {
@@ -162,7 +174,7 @@ const DesktopNavbar = ({ toggleMobileNavbar, session }) => {
 const NavigationAuth = ({ session }) => (
   <NavLinks>
     <NavLink>
-      <Link to={routes.FLASHCARDS}>Flashcards</Link>
+      <Link to={routes.FLASHCARDS}>FlashCards</Link>
     </NavLink>
     <NavLink>
       <Link to={routes.ASSIGNMENTS}>Assignments</Link>

@@ -5,12 +5,12 @@ body {
   position: relative;
   z-index: 1;
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 16px;
+  line-height: 1.5;
   background-color: #fff;
   color: #333;
 
-  @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i" rel="stylesheet');
+  @import url('https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet');
   font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -27,8 +27,27 @@ a {
 }
 
 a:hover {
-  color: #666;
+  color: ${props => props.theme.primaryMed};
 }
+
+h1 {
+      font-size: 36px;
+  }
+    h2 {
+      font-size: 24px;
+  }
+    h3 {
+      font-size: 18px;
+  }
+    h4 {
+      font-size: 14px;
+  }
+    h5 {
+      font-size: 12px;
+  }
+    h6 {
+      font-size: 8px;
+  }
 `;
 
 export default GlobalStyle;

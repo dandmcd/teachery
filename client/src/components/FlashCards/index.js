@@ -26,7 +26,7 @@ const Menu = styled.div`
 const FlashCardPage = () => (
   <Container>
     <FlashCardHeader>
-      <h4>Flashcard Decks</h4>
+      <h3>Flashcard Decks</h3>
       <Menu>
         <Search />
         <DeckCreate />

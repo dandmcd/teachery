@@ -14,6 +14,9 @@ const GET_PAGINATED_ASSIGNMENTS_WITH_USERS = gql`
           assignmentName
           note
           link
+          user {
+            username
+          }
           createdAt
         }
       }

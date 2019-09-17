@@ -22,8 +22,8 @@ const TagDelete = ({ tag }) => (
       <input
         type="image"
         src={require("./remove-item.png")}
-        width="8"
-        height="8"
+        width="5"
+        height="5"
         alt="Delete Tag"
         onClick={deleteTag}
       />
