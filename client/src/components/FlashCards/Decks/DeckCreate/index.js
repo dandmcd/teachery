@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
+import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
+import useOuterClickNotifier from "../../../Alerts";
 
 import ErrorMessage from "../../../Error";
 import GET_PAGINATED_DECKS_WITH_USERS from "../DeckSchema";
@@ -35,7 +37,7 @@ const CREATE_DECK = gql`
 const Container = styled.div``;
 
 const DeckCreate = () => {
-  const [toggleMutate, setToggleMutate] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const [deckState, setDeckState] = useState({
     deckName: "",
     description: ""
@@ -55,15 +57,20 @@ const DeckCreate = () => {
   const onChange = e =>
     setDeckState({ ...deckState, [e.target.name]: e.target.value });
 
+  const togglePopup = () => {
+    setShowPopup(false);
+  };
+
+  const innerRef = useRef(null);
+  useOuterClickNotifier(e => setShowPopup(false), innerRef);
+
   return (
     <Container>
-      {!toggleMutate && (
-        <Button type="button" onClick={() => setToggleMutate(true)}>
-          Create Deck
-        </Button>
-      )}
+      <Button type="button" onClick={() => setShowPopup(true)}>
+        Create Deck
+      </Button>
 
-      {toggleMutate && (
+      {showPopup ? (
         <Mutation
           mutation={CREATE_DECK}
           variables={{ deckName, description }}
@@ -86,28 +93,40 @@ const DeckCreate = () => {
           }}
         >
           {(createDeck, { data, loading, error }) => (
-            <form onSubmit={e => onSubmit(e, createDeck)}>
-              <textarea
-                name="deckName"
-                value={deckName}
-                onChange={onChange}
-                type="text"
-                placeholder="Your deck name ... (REQUIRED)"
-              />
-              <textarea
-                name="description"
-                value={description}
-                onChange={onChange}
-                type="text"
-                placeholder="Add details and descriptions ..."
-              />
-              <Button type="submit">Submit</Button>
+            <Styled.PopupContainer>
+              <Styled.PopupInner ref={innerRef}>
+                <Styled.PopupTitle>
+                  Create a name and description for your deck...
+                </Styled.PopupTitle>
+                <Styled.PopupBody>
+                  <form onSubmit={e => onSubmit(e, createDeck)}>
+                    <textarea
+                      name="deckName"
+                      value={deckName}
+                      onChange={onChange}
+                      type="text"
+                      placeholder="Your deck name ... (REQUIRED)"
+                    />
+                    <textarea
+                      name="description"
+                      value={description}
+                      onChange={onChange}
+                      type="text"
+                      placeholder="Add details and descriptions ..."
+                    />
+                    <Button type="submit">Submit</Button>
 
-              {error && <ErrorMessage error={error} />}
-            </form>
+                    {error && <ErrorMessage error={error} />}
+                  </form>
+                </Styled.PopupBody>
+                <Styled.PopupFooterButton onClick={togglePopup}>
+                  Close
+                </Styled.PopupFooterButton>
+              </Styled.PopupInner>
+            </Styled.PopupContainer>
           )}
         </Mutation>
-      )}
+      ) : null}
     </Container>
   );
 };

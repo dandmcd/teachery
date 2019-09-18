@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Query } from "react-apollo";
 import styled from "styled-components";
 
@@ -6,8 +6,6 @@ import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
 import Loading from "../../Loading";
 import withSession from "../../Session/withSession";
 import DeckItemBase from "./DeckItem";
-
-import student from "../../../assets/student.jpg";
 
 const Decks = ({ limit, me }) => (
   <Query query={GET_PAGINATED_DECKS_WITH_USERS} variables={{ limit }}>
@@ -75,18 +73,27 @@ const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (
 );
 
 const DeckContainer = styled.div`
+  z-index: 10;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
   row-gap: 20px;
+  column-gap: 5px;
   align-items: center;
+  margin-bottom: 20px;
 `;
 
 const DeckList = ({ decks, me }) => {
-  console.log(decks);
+  const [showPopup, setShowPopup] = useState(false);
   return (
     <DeckContainer>
       {decks.map(deck => (
-        <DeckItem key={deck.id} deck={deck} me={me} />
+        <DeckItem
+          key={deck.id}
+          deck={deck}
+          me={me}
+          showPopup={showPopup}
+          setShowPopup={setShowPopup}
+        />
       ))}
     </DeckContainer>
   );

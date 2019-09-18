@@ -7,6 +7,7 @@ import Search from "./Decks/DeckSearch";
 import DeckCreate from "./Decks/DeckCreate";
 
 const Container = styled.div`
+  z-index: 15;
   max-width: 100%;
   margin: auto;
 `;
@@ -25,7 +26,7 @@ const Menu = styled.div`
 const FlashCardPage = () => (
   <Container>
     <FlashCardHeader>
-      <h4>Flashcard Decks</h4>
+      <h3>Flashcard Decks</h3>
       <Menu>
         <Search />
         <DeckCreate />
@@ -34,7 +35,6 @@ const FlashCardPage = () => (
     <Decks limit={3} />
   </Container>
 );
-
 export default withAuthorization(session => session && session.me)(
   FlashCardPage
 );

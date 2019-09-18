@@ -4,17 +4,11 @@ import styled from "styled-components";
 import DesktopNavbar from "./DesktopNavbar";
 import MobileNavbar from "./MobileNavbar";
 
-const Navbar = styled.div`
-  overflow-x: hidden;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  z-index: ${props => (props.displayMobileNavbar ? 20 : 1)};
-`;
+const Navbar = styled.div``;
 
 const Navigation = () => {
+  const [isChecked, setIsChecked] = useState(false);
   const [displayMobileNavbar, setDisplayMobileNavbar] = useState(false);
-  const [scrollingLock, setScrollingLock] = useState(false);
 
   useEffect(() => {
     window.addEventListener("resize", AutoHideMobileNavbar);
@@ -25,8 +19,9 @@ const Navigation = () => {
 
   const toggleMobileNavbar = () => {
     setDisplayMobileNavbar(displayMobileNavbar === false ? true : false);
+    setIsChecked(isChecked === false ? true : false);
+    console.log(displayMobileNavbar);
   };
-  console.log(displayMobileNavbar);
 
   const AutoHideMobileNavbar = () => {
     const screenWidth = window.innerWidth;
@@ -37,11 +32,17 @@ const Navigation = () => {
   };
 
   return (
-    <Navbar displayMobileNavbar={displayMobileNavbar}>
-      <DesktopNavbar toggleMobileNavbar={toggleMobileNavbar} />
+    <Navbar>
+      <DesktopNavbar
+        isChecked={isChecked}
+        toggleMobileNavbar={toggleMobileNavbar}
+      />
       <MobileNavbar
+        isChecked={isChecked}
+        setIsChecked={setIsChecked}
         displayMobileNavbar={displayMobileNavbar}
         setDisplayMobileNavbar={setDisplayMobileNavbar}
+        toggleMobileNavbar={toggleMobileNavbar}
       />
     </Navbar>
   );

@@ -7,12 +7,15 @@ import * as routes from "../../../constants/routes";
 import SignOutButton from "../../SignOut";
 
 const Navbar = styled.nav`
+  overflow-x: hidden;
+  width: 100%;
+  position: fixed;
+  top: 60px;
   margin-top: 0px;
   width: 100%;
   background: white;
   align-self: flex-end;
-  z-index: 15;
-  position: relative;
+  z-index: ${props => (props.displayMobileNavbar ? 20 : 1)};
   transition: transform 1s;
   transform: translateX(
     ${props => (props.displayMobileNavbar ? "0%" : "calc(100% + 15px)")}
@@ -21,7 +24,7 @@ const Navbar = styled.nav`
 
 const NavRight = styled.div`
   position: relative;
-  z-index: 15;
+
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -31,9 +34,7 @@ const NavRight = styled.div`
 `;
 
 const NavLinks = styled.ul`
-  z-index: 15;
   position: relative;
-
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -43,14 +44,27 @@ const NavLinks = styled.ul`
 `;
 
 const NavLink = styled.li`
-  z-index: 15;
+  font-size: 16px;
   position: relative;
   text-decoration: none;
+  a {
+    color: ${props => props.theme.primary};
+    :hover {
+      bottom: -5px;
+      border-radius: 6px;
+      background: #f9f9f9;
+      height: 4px;
+      transition-property: width;
+      transition-duration: 0.3s;
+      transition-timing-function: ease-out;
+    }
+  }
 `;
 
 const MobileNavbar = ({
   displayMobileNavbar,
-  setDisplayMobileNavbar,
+
+  toggleMobileNavbar,
   session
 }) => {
   return (
@@ -58,7 +72,7 @@ const MobileNavbar = ({
       <NavRight>
         {session && session.me ? (
           <NavigationAuth
-            setDisplayMobileNavbar={setDisplayMobileNavbar}
+            toggleMobileNavbar={toggleMobileNavbar}
             session={session}
           />
         ) : (
@@ -69,8 +83,8 @@ const MobileNavbar = ({
   );
 };
 
-const NavigationAuth = ({ setDisplayMobileNavbar, session }) => (
-  <NavLinks onClick={() => setDisplayMobileNavbar(false)}>
+const NavigationAuth = ({ toggleMobileNavbar, session }) => (
+  <NavLinks onClick={toggleMobileNavbar}>
     <NavLink>
       <Link to={routes.FLASHCARDS}>Flashcards</Link>
     </NavLink>

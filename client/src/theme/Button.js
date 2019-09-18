@@ -9,17 +9,15 @@ const Button = styled.button`
   color: ${props => props.theme.text};
   margin: 0.2em;
   padding: 0.25em 1em;
-  font-size: 0.8em;
-  transition: all 0.3s ease-in-out;
-  transform: scale(1);
+  font-size: 12px;
+  transition: all 0.15s ease-in-out;
+  transform: scale(1) translateZ(0);
   display: inline-table;
-  will-change: transform;
   cursor: pointer;
   :hover {
     color: white;
     background: #1ab2b2;
-    transform: scale(1.05) perspective(1px);
-    transform-origin: 50% 50%;
+    transform: scale(1.05);
   }
   :disabled {
     color: rgba(35, 56, 65, 0.5);

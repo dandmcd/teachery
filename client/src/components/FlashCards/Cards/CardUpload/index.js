@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default function DropZone({ drop, setDrop, handleChange }) {
+export default function DropZone({ drop, setDrop }) {
   const onDrop = useCallback(
     acceptedFiles => {
       const reader = new FileReader();
@@ -65,8 +65,6 @@ export default function DropZone({ drop, setDrop, handleChange }) {
       <aside>
         <h4>Files</h4>
         <ul>{acceptedFilesItems}</ul>
-        <h4>Rejected Files</h4>
-        <ul>{rejectedFilesItems}</ul>
       </aside>
     </section>
   );

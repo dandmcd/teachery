@@ -1,15 +1,28 @@
 import React from "react";
 import { ApolloConsumer } from "react-apollo";
+import styled from "styled-components";
 
 import * as routes from "../../constants/routes";
 import history from "../../constants/history";
 
+import Button from "../../theme/Button";
+
+const SOButton = styled(Button)`
+  height: 25px;
+  width: 80px;
+  border: 2px solid ${props => props.theme.secondaryDark};
+  :hover {
+    color: ${props => props.theme.text};
+    background: #fff;
+  }
+`;
+
 const SignOutButton = () => (
   <ApolloConsumer>
     {client => (
-      <button type="button" onClick={() => signOut(client)}>
+      <SOButton type="button" onClick={() => signOut(client)}>
         Sign Out
-      </button>
+      </SOButton>
     )}
   </ApolloConsumer>
 );

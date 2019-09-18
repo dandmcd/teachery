@@ -6,7 +6,7 @@ import gql from "graphql-tag";
 import { SignUpLink } from "../SignUp";
 import * as routes from "../../constants/routes";
 import ErrorMessage from "../Error";
-import "./style.css";
+import * as Styled from "./style";
 
 const SIGN_IN = gql`
   mutation($login: String!, $password: String!) {
@@ -17,11 +17,12 @@ const SIGN_IN = gql`
 `;
 
 const SignInPage = ({ history, refetch }) => (
-  <div>
-    <h1>Sign In</h1>
+  <Styled.Container>
+    <Styled.SignInHeader>
+      <h3>Sign In</h3>
+    </Styled.SignInHeader>
     <SignInForm history={history} refetch={refetch} />
-    <SignUpLink />
-  </div>
+  </Styled.Container>
 );
 
 const INITIAL_STATE = {
@@ -59,12 +60,9 @@ class SignInForm extends Component {
     return (
       <Mutation mutation={SIGN_IN} variables={{ login, password }}>
         {(signIn, { data, loading, error }) => (
-          <form
-            className="box"
-            onSubmit={event => this.onSubmit(event, signIn)}
-          >
-            <h1>Login</h1>
-            <input
+          <Styled.Box onSubmit={event => this.onSubmit(event, signIn)}>
+            <Styled.Title>Login</Styled.Title>
+            <Styled.InputUserName
               name="login"
               value={login}
               onChange={this.onChange}
@@ -72,7 +70,7 @@ class SignInForm extends Component {
               placeholder="Email or Username"
               autoComplete="username"
             />
-            <input
+            <Styled.InputPassword
               name="password"
               value={password}
               onChange={this.onChange}
@@ -80,16 +78,17 @@ class SignInForm extends Component {
               placeholder="Password"
               autoComplete="current-password"
             />
-            <button
+            <Styled.SubmitButton
               className="button"
               disabled={isInvalid || loading}
               type="submit"
             >
               Sign In
-            </button>
+            </Styled.SubmitButton>
 
             {error && <ErrorMessage error={error} />}
-          </form>
+            <SignUpLink />
+          </Styled.Box>
         )}
       </Mutation>
     );

@@ -2,16 +2,20 @@ import styled from "styled-components";
 import Button from "../../../../theme/Button";
 
 export const DeckItemContainer = styled.div`
+  z-index: 15;
   width: 330px;
   background-color: #fff;
 
-  -webkit-box-shadow: 6px 10px 10px -5px rgba(204, 193, 193, 1);
-  -moz-box-shadow: 6px 10px 10px -5px rgba(204, 193, 193, 1);
-  box-shadow: 6px 10px 10px -5px rgba(204, 193, 193, 1);
+  -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
+    0 6px 6px rgba(0, 0, 0, 0.23);
+  -moz-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
+    0 6px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 `;
 
 export const CardGrid = styled.div`
   display: grid;
+  z-index: 15;
   grid-template-rows: 200px 150px 1fr 40px;
   grid-template-columns: repeat(3, 110px);
   justify-content: start start;
@@ -42,6 +46,7 @@ export const DeckInfo = styled.div`
 
 export const Title = styled.h3`
   letter-spacing: 0.05em;
+  line-height: 1.4;
   text-decoration: underline;
   text-decoration-color: ${props => props.theme.primary};
   grid-row: 1 / 2;
@@ -56,7 +61,6 @@ export const Title = styled.h3`
 `;
 
 export const Description = styled.p`
-  font-size: 0.8em;
   grid-row: 2 / 3;
   grid-column: 1 / 2;
   margin: 0px 0px 0px 5px;
@@ -72,30 +76,33 @@ export const CreatedItem = styled.div`
   background-color: white;
 `;
 
-export const CreatedBy = styled.h5`
+export const CreatedBy = styled.h6`
   grid-row: 1 / 2;
   grid-column: 1 / 3;
-  font-size: 0.6em;
   margin: 0;
+  color: ${props => props.theme.text};
 `;
 
-export const CreatedOn = styled.h5`
+export const CreatedOn = styled.h6`
   grid-row: 2 / 3;
   grid-column: 1 / 3;
-  font-size: 0.6em;
   margin: 0;
+  color: ${props => props.theme.text};
 `;
 
 export const Tags = styled.div`
   grid-row: 3 / 4;
   grid-column: 1 / 3;
-  font-size: 0.6em;
-  text-indent: 5px;
+  text-indent: 2px;
   display: grid;
   grid-template-rows: auto;
   grid-template-columns: 1fr 1fr;
   a {
+    font-size: 0.7em;
     color: ${props => props.theme.primaryMed};
+    :hover {
+      color: ${props => props.theme.primary};
+    }
   }
 `;
 
@@ -118,7 +125,7 @@ export const Practice = styled.div`
   );
 `;
 
-export const PracticeText = styled.h2`
+export const PracticeText = styled.h3`
   grid-row: 1 / 2;
   grid-column: 1 / 3;
   margin: 0px 0px 0px 5px;
@@ -130,11 +137,11 @@ export const PracticeInstruct = styled.p`
   grid-row: 2 / 3;
   grid-column: 1 / 4;
   margin: 0px 0px 0px 5px;
-  font-size: 0.8em;
+  font-size: 0.75em;
   font-style: italic;
 `;
 
-export const PracticeCardCount = styled.h5`
+export const PracticeCardCount = styled.h4`
   grid-row: 1 / 2;
   grid-column: 3 / 4;
   margin: 0;
@@ -161,7 +168,7 @@ export const PracticeInput = styled.input`
   display: block;
   width: 60px;
   max-width: 60px;
-  font-size: 1.2em;
+  font-size: 18px;
   font-weight: bold;
   text-decoration: none;
   outline: none;
@@ -170,15 +177,14 @@ export const PracticeInput = styled.input`
   color: white;
   background-color: #55d3d3;
   border-radius: 100%;
-  overflow: none;
   text-align: center;
   padding: 0;
-  transition: all 0.5s ease-in-out;
-  transform: scale(1);
+  transition: all 0.25s ease-in-out;
+  transform: scale(1) translateZ(0);
   :hover {
     filter: brightness(105%);
     background: #1dc5c5;
-    transform: scale(1.1) perspective(1px);
+    transform: scale(1.1);
   }
   ::placeholder {
     color: white;
@@ -200,7 +206,7 @@ export const PracticeAll = styled.button`
   display: block;
   width: 60px;
   max-width: 60px;
-  font-size: 1.2em;
+  font-size: 18px;
   font-weight: bold;
   text-decoration: none;
   outline: none;
@@ -209,15 +215,14 @@ export const PracticeAll = styled.button`
   color: white;
   background-color: #55d3d3;
   border-radius: 100%;
-  overflow: none;
   text-align: center;
   padding: 0;
-  transition: all 0.5s ease-in-out;
-  transform: scale(1);
+  transition: all 0.25s ease-in-out;
+  transform: scale(1) translateZ(0);
   :hover {
     filter: brightness(105%);
     background: #1dc5c5;
-    transform: scale(1.1) perspective(1px);
+    transform: scale(1.1);
   }
 `;
 
@@ -228,7 +233,7 @@ export const PracticeStart = styled.button`
   display: block;
   width: 60px;
   max-width: 60px;
-  font-size: 1.2em;
+  font-size: 18;
   font-weight: bold;
   text-decoration: none;
   outline: none;
@@ -238,15 +243,14 @@ export const PracticeStart = styled.button`
   background-color: #55d3d3;
   border-radius: 100%;
   box-shadow: 0 0 10px 5px ${props => props.theme.success};
-  overflow: none;
   text-align: center;
   padding: 0;
-  transition: all 0.5s ease-in-out;
-  transform: scale(1);
+  transition: all 0.25s ease-in-out;
+  transform: scale(1) translateZ(0);
   :hover {
     filter: brightness(105%);
     background: #1dc5c5;
-    transform: scale(1.1) perspective(1px);
+    transform: scale(1.1);
   }
   :disabled {
     background-color: #faf9f9;

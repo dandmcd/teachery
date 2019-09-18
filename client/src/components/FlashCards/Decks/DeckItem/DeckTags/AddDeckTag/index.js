@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
 import ErrorMessage from "../../../../../Error";
+import * as Styled from "../../../../../../theme/Popup";
 
 const ADD_TAG_TO_DECK = gql`
   mutation($id: ID!, $tagName: String!) {
@@ -16,7 +17,7 @@ const ADD_TAG_TO_DECK = gql`
   }
 `;
 
-const AddDeckTag = ({ deck }) => {
+const AddDeckTag = ({ deck, setIsOn }) => {
   const [state, setState] = useState({
     id: null,
     tagName: ""
@@ -44,23 +45,35 @@ const AddDeckTag = ({ deck }) => {
     }
   }, [deck]);
 
-  return (
-    <Mutation mutation={ADD_TAG_TO_DECK} variables={{ id, tagName }}>
-      {(addTagToDeck, { data, loading, error }) => (
-        <form onSubmit={e => onSubmit(e, addTagToDeck)}>
-          <textarea
-            name="tagName"
-            value={tagName}
-            onChange={onChange}
-            type="text"
-            placeholder="Tag Nameeee (REQUIRED)"
-          />
-          <button type="submit">Submit</button>
+  const togglePopup = () => {
+    setIsOn(false);
+  };
 
-          {error && <ErrorMessage error={error} />}
-        </form>
-      )}
-    </Mutation>
+  return (
+    <Fragment>
+      <Styled.PopupTitle>Create a tag for this deck...</Styled.PopupTitle>
+      <Styled.PopupBody>
+        <Mutation mutation={ADD_TAG_TO_DECK} variables={{ id, tagName }}>
+          {(addTagToDeck, { data, loading, error }) => (
+            <form onSubmit={e => onSubmit(e, addTagToDeck)}>
+              <textarea
+                name="tagName"
+                value={tagName}
+                onChange={onChange}
+                type="text"
+                placeholder="Tag Nameeee (REQUIRED)"
+              />
+              <button type="submit">Submit</button>
+
+              {error && <ErrorMessage error={error} />}
+            </form>
+          )}
+        </Mutation>
+      </Styled.PopupBody>
+      <Styled.PopupFooterButton onClick={togglePopup}>
+        Close
+      </Styled.PopupFooterButton>
+    </Fragment>
   );
 };
 

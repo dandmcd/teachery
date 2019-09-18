@@ -3,12 +3,12 @@ import { useApolloClient } from "react-apollo";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
+import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
 
 import TagLink from "../DeckItem/DeckTags/TagLink";
 import search from "../../../../assets/search.png";
 import useOuterClickNotifier from "../../../Alerts";
-import Popup from "../../../Popup";
 
 const SearchContainer = styled.div`
   display: flex;
@@ -25,43 +25,6 @@ const SearchInput = styled.input`
   border: 0;
   outline: 0;
   border-bottom: 2px solid ${props => props.theme.primary};
-`;
-
-const SearchButton = styled(Button)`
-  width: 32px;
-  height: 20px;
-  padding: 0;
-  border: 2px solid #232323;
-  font-size: 0.7em;
-`;
-
-const PopupContainer = styled.div`
-  position: fixed;
-  z-index: 40;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-  background-color: rgba(0, 0, 0, 0.5);
-`;
-
-const PopupInner = styled.div`
-  position: absolute;
-  left: 25%;
-  right: 25%;
-  top: 25%;
-  bottom: 25%;
-  margin: auto;
-  border-radius: 20px;
-  background: white;
-  text-align: center;
-`;
-
-const PopupTitle = styled.h1`
-  text-align: center;
 `;
 
 const TAG_SEARCH_QUERY = gql`
@@ -131,15 +94,21 @@ const Search = () => {
           <p>Sorry, your search did not find any results...</p>
         )}
         {state.showPopup ? (
-          <PopupContainer>
-            <PopupInner ref={innerRef}>
-              <PopupTitle>Tags that match {tagName} ...</PopupTitle>
-              {tags.map(tag => (
-                <TagLink key={tag.id} tag={tag} />
-              ))}
-              <button onClick={togglePopup}>close me</button>
-            </PopupInner>
-          </PopupContainer>
+          <Styled.PopupContainer>
+            <Styled.PopupInner ref={innerRef}>
+              <Styled.PopupTitle>
+                Tags that match {tagName} ...
+              </Styled.PopupTitle>
+              <Styled.PopupBody>
+                {tags.map(tag => (
+                  <TagLink key={tag.id} tag={tag} />
+                ))}
+              </Styled.PopupBody>
+              <Styled.PopupFooterButton onClick={togglePopup}>
+                Close
+              </Styled.PopupFooterButton>
+            </Styled.PopupInner>
+          </Styled.PopupContainer>
         ) : null}
       </div>
     </SearchContainer>

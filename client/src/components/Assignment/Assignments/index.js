@@ -1,9 +1,11 @@
 import React, { Component, Fragment } from "react";
 import { Query } from "react-apollo";
+import Moment from "react-moment";
 
 import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
 import Loading from "../../Loading";
+import * as Styled from "./style";
 
 const AssignedTasks = ({ limit, me }) => (
   <Query query={GET_PAGINATED_ASSIGNMENTS_WITH_USERS} variables={{ limit }}>
@@ -20,7 +22,7 @@ const AssignedTasks = ({ limit, me }) => (
 
       const { edges, pageInfo } = assignedTasks;
       return (
-        <Fragment>
+        <Styled.AssignmentContainer>
           <AssignedTaskList assignedTasks={edges} me={me} />
 
           {pageInfo.hasNextPage && (
@@ -32,7 +34,7 @@ const AssignedTasks = ({ limit, me }) => (
               More
             </MoreAssignedTasksButton>
           )}
-        </Fragment>
+        </Styled.AssignmentContainer>
       );
     }}
   </Query>
@@ -72,6 +74,7 @@ const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
 class AssignedTaskList extends Component {
   render() {
     const { assignedTasks, me } = this.props;
+    console.log(assignedTasks);
     return assignedTasks.map(assignedTask => (
       <AssignedTaskItem
         key={assignedTask.id}
@@ -88,22 +91,38 @@ const AssignmentItemBase = ({
     id,
     status,
     createdAt,
-    assignment: { assignmentName, link, note }
+    assignment: {
+      assignmentName,
+      link,
+      note,
+      user: { username }
+    }
   },
   session
 }) => (
-  <div>
-    <h3>{assignmentName}</h3>
-    <strong>{dueDate}</strong>
+  <Styled.AssignmentItemContainer>
+    <Styled.CardGrid>
+      <Styled.Title>{assignmentName}</Styled.Title>
+      <Styled.Status status={status}>{status}</Styled.Status>
+      <Styled.DueDate>Due: {dueDate}</Styled.DueDate>
 
-    <p>{note}</p>
-    <p>{status}</p>
-    <p>
-      <a href={link} rel="noopener noreferrer" target="_blank">
+      <Styled.Note>{note}</Styled.Note>
+
+      <Styled.ExternalLink
+        href={link}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         View Link
-      </a>
-    </p>
-  </div>
+      </Styled.ExternalLink>
+      <Styled.CreatedInfo>
+        <Styled.CreatedAt>
+          Created on: <Moment format="YYYY-MM-DD">{createdAt}</Moment>
+        </Styled.CreatedAt>
+        <Styled.CreatedBy>Created by: {username}</Styled.CreatedBy>
+      </Styled.CreatedInfo>
+    </Styled.CardGrid>
+  </Styled.AssignmentItemContainer>
 );
 
 const AssignedTaskItem = withSession(AssignmentItemBase);
