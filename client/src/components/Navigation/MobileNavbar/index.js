@@ -10,7 +10,7 @@ const Navbar = styled.nav`
   overflow-x: hidden;
   width: 100%;
   position: fixed;
-  top: 0;
+  top: 60px;
   margin-top: 0px;
   width: 100%;
   background: white;
@@ -35,7 +35,6 @@ const NavRight = styled.div`
 
 const NavLinks = styled.ul`
   position: relative;
-
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -45,13 +44,27 @@ const NavLinks = styled.ul`
 `;
 
 const NavLink = styled.li`
+  font-size: 16px;
   position: relative;
   text-decoration: none;
+  a {
+    color: ${props => props.theme.primary};
+    :hover {
+      bottom: -5px;
+      border-radius: 6px;
+      background: #f9f9f9;
+      height: 4px;
+      transition-property: width;
+      transition-duration: 0.3s;
+      transition-timing-function: ease-out;
+    }
+  }
 `;
 
 const MobileNavbar = ({
   displayMobileNavbar,
-  setDisplayMobileNavbar,
+
+  toggleMobileNavbar,
   session
 }) => {
   return (
@@ -59,7 +72,7 @@ const MobileNavbar = ({
       <NavRight>
         {session && session.me ? (
           <NavigationAuth
-            setDisplayMobileNavbar={setDisplayMobileNavbar}
+            toggleMobileNavbar={toggleMobileNavbar}
             session={session}
           />
         ) : (
@@ -70,8 +83,8 @@ const MobileNavbar = ({
   );
 };
 
-const NavigationAuth = ({ setDisplayMobileNavbar, session }) => (
-  <NavLinks onClick={() => setDisplayMobileNavbar(false)}>
+const NavigationAuth = ({ toggleMobileNavbar, session }) => (
+  <NavLinks onClick={toggleMobileNavbar}>
     <NavLink>
       <Link to={routes.FLASHCARDS}>Flashcards</Link>
     </NavLink>

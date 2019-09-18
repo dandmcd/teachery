@@ -7,9 +7,6 @@ import Loading from "../../Loading";
 import withSession from "../../Session/withSession";
 import DeckItemBase from "./DeckItem";
 
-import student from "../../../assets/student.jpg";
-import CardCreate from "../Cards/CardCreate";
-
 const Decks = ({ limit, me }) => (
   <Query query={GET_PAGINATED_DECKS_WITH_USERS} variables={{ limit }}>
     {({ data, loading, error, fetchMore }) => {

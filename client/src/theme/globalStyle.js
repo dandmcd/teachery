@@ -1,6 +1,12 @@
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
+* {
+  @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,800&display=swap');
+  font-family: "Open Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 body {
   position: relative;
   z-index: 1;
@@ -10,10 +16,7 @@ body {
   background-color: #fff;
   color: #333;
 
-  @import url('https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet');
-  font-family: "Open Sans", sans-serif;
-  -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+
 }
 #root {
 
@@ -38,6 +41,7 @@ h1 {
   }
     h3 {
       font-size: 18px;
+      font-weight: 600;
   }
     h4 {
       font-size: 14px;

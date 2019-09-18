@@ -7,6 +7,7 @@ import MobileNavbar from "./MobileNavbar";
 const Navbar = styled.div``;
 
 const Navigation = () => {
+  const [isChecked, setIsChecked] = useState(false);
   const [displayMobileNavbar, setDisplayMobileNavbar] = useState(false);
 
   useEffect(() => {
@@ -18,8 +19,9 @@ const Navigation = () => {
 
   const toggleMobileNavbar = () => {
     setDisplayMobileNavbar(displayMobileNavbar === false ? true : false);
+    setIsChecked(isChecked === false ? true : false);
+    console.log(displayMobileNavbar);
   };
-  console.log(displayMobileNavbar);
 
   const AutoHideMobileNavbar = () => {
     const screenWidth = window.innerWidth;
@@ -31,10 +33,16 @@ const Navigation = () => {
 
   return (
     <Navbar>
-      <DesktopNavbar toggleMobileNavbar={toggleMobileNavbar} />
+      <DesktopNavbar
+        isChecked={isChecked}
+        toggleMobileNavbar={toggleMobileNavbar}
+      />
       <MobileNavbar
+        isChecked={isChecked}
+        setIsChecked={setIsChecked}
         displayMobileNavbar={displayMobileNavbar}
         setDisplayMobileNavbar={setDisplayMobileNavbar}
+        toggleMobileNavbar={toggleMobileNavbar}
       />
     </Navbar>
   );

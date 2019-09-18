@@ -148,7 +148,7 @@ const NavLink = styled.li`
   }
 `;
 
-const DesktopNavbar = ({ toggleMobileNavbar, session }) => {
+const DesktopNavbar = ({ isChecked, toggleMobileNavbar, session }) => {
   return (
     <Navbar>
       <NavLeft>
@@ -162,7 +162,12 @@ const DesktopNavbar = ({ toggleMobileNavbar, session }) => {
         )}
       </NavRight>
       <MenuToggle>
-        <MenuButton type="checkbox" onClick={toggleMobileNavbar} />
+        <MenuButton
+          type="checkbox"
+          checked={isChecked}
+          onClick={toggleMobileNavbar}
+          onChange={toggleMobileNavbar}
+        />
         <MenuSpan />
         <MenuSpan />
         <MenuSpan />
