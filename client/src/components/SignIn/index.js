@@ -18,9 +18,6 @@ const SIGN_IN = gql`
 
 const SignInPage = ({ history, refetch }) => (
   <Styled.Container>
-    <Styled.SignInHeader>
-      <h3>Sign In</h3>
-    </Styled.SignInHeader>
     <SignInForm history={history} refetch={refetch} />
   </Styled.Container>
 );

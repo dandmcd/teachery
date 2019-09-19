@@ -109,20 +109,12 @@ export const Tags = styled.div`
 export const Practice = styled.div`
   grid-row: 3 / 4;
   grid-column: 1 / 4;
-  background-color: #e5dfdf;
-  border-radius: 0% 0% 10% 10%;
+
   box-shadow: 0 2px 6px -6px black;
   display: grid;
   grid-template-rows: 45px 20px 75px;
   grid-template-columns: 1fr 1fr 1fr;
   border-top: 2px outset #c51d1d;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(250, 249, 249, 1) 33%,
-    rgba(239, 236, 236, 1) 67%,
-    rgba(229, 223, 223, 1) 100%
-  );
 `;
 
 export const PracticeText = styled.h3`
@@ -165,10 +157,12 @@ export const PracticeInput = styled.input`
   grid-row: 1 / 2;
   grid-column: 1 / 2;
   margin: 0 auto;
-  display: block;
+  display: table-cell;
+  vertical-align: middle;
+  height: auto;
   width: 60px;
   max-width: 60px;
-  font-size: 18px;
+  font-size: 24px;
   font-weight: bold;
   text-decoration: none;
   outline: none;
@@ -203,10 +197,12 @@ export const PracticeAll = styled.button`
   grid-row: 1 / 2;
   grid-column: 2 / 3;
   margin: 0 auto;
-  display: block;
+  display: table-cell;
+  vertical-align: middle;
+  height: auto;
   width: 60px;
   max-width: 60px;
-  font-size: 18px;
+  font-size: 24px;
   font-weight: bold;
   text-decoration: none;
   outline: none;
@@ -230,10 +226,12 @@ export const PracticeStart = styled.button`
   grid-row: 1 / 2;
   grid-column: 3 / 4;
   margin: 0 auto;
-  display: block;
+  display: table-cell;
+  vertical-align: middle;
+  height: auto;
   width: 60px;
   max-width: 60px;
-  font-size: 18;
+  font-size: 20px;
   font-weight: bold;
   text-decoration: none;
   outline: none;
@@ -250,7 +248,7 @@ export const PracticeStart = styled.button`
   :hover {
     filter: brightness(105%);
     background: #1dc5c5;
-    transform: scale(1.1);
+    transform: scale(1.25);
   }
   :disabled {
     background-color: #faf9f9;

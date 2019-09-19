@@ -8,9 +8,11 @@ import history from "../../constants/history";
 import Button from "../../theme/Button";
 
 const SOButton = styled(Button)`
-  height: 25px;
+  height: auto;
   width: 80px;
   border: 2px solid ${props => props.theme.secondaryDark};
+  display: table-cell;
+  vertical-align: middle;
   :hover {
     color: ${props => props.theme.text};
     background: #fff;

@@ -10,6 +10,7 @@ const Button = styled.button`
   margin: 0.2em;
   padding: 0.25em 1em;
   font-size: 12px;
+  font-family: inherit;
   transition: all 0.15s ease-in-out;
   transform: scale(1) translateZ(0);
   display: inline-table;
@@ -18,10 +19,6 @@ const Button = styled.button`
     color: white;
     background: #1ab2b2;
     transform: scale(1.05);
-  }
-  :disabled {
-    color: rgba(35, 56, 65, 0.5);
-    border: 2px solid rgba(35, 56, 65, 0.3);
   }
 `;
 
