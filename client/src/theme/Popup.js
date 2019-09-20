@@ -25,7 +25,7 @@ export const PopupInner = styled.div`
   margin: auto;
   overflow-y: scroll;
   border-radius: 20px;
-  background: white;
+  background: ${props => props.theme.neutralLight};
   text-align: center;
   display: grid;
   grid-template-rows: auto 1fr auto;
@@ -37,13 +37,55 @@ export const PopupInner = styled.div`
   }
 `;
 
+export const PopupInnerExtended = styled(PopupInner)`
+  top: 10%;
+  bottom: 10%;
+`;
+
 export const PopupTitle = styled.h3`
   text-align: center;
 `;
 
 export const PopupBody = styled.div``;
 
+export const Input = styled.input`
+  border: 0;
+  background-color: #fff;
+  display: block;
+  margin: 20px auto;
+  text-align: center;
+  border: 2px solid ${props => props.theme.secondary};
+  padding: 14px 10px;
+  width: 200px;
+  outline: none;
+  border-radius: 24px;
+  transition: 0.25s;
+  :focus {
+    width: 280px;
+    border-color: ${props => props.theme.secondaryLight};
+  }
+`;
+
+export const InputTextArea = styled.textarea`
+  border: 0;
+  background-color: #fff;
+  display: block;
+  margin: 20px auto;
+  text-align: center;
+  border: 2px solid ${props => props.theme.secondary};
+  padding: 14px 10px;
+  width: 200px;
+  outline: none;
+  border-radius: 24px;
+  transition: 0.25s;
+  :focus {
+    width: 280px;
+    border-color: ${props => props.theme.secondaryLight};
+  }
+`;
+
 export const PopupFooterButton = styled(Button)`
+  border-color: ${props => props.theme.secondaryDark};
   align-self: center;
   justify-self: center;
 `;

@@ -132,14 +132,14 @@ const CardCreate = ({ deck, setIsOn }) => {
       <Styled.PopupTitle>Create a card for your deck...</Styled.PopupTitle>
       <Styled.PopupBody>
         <form onSubmit={onSubmit}>
-          <textarea
+          <Styled.InputTextArea
             name="front"
             value={front}
             onChange={onChange}
             type="text"
-            placeholder="Face of the flashcard ... (REQUIRED)"
+            placeholder="Face of the flashcard ... REQUIRED"
           />
-          <textarea
+          <Styled.InputTextArea
             name="back"
             value={back}
             onChange={onChange}

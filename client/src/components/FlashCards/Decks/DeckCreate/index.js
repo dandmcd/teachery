@@ -100,14 +100,14 @@ const DeckCreate = () => {
                 </Styled.PopupTitle>
                 <Styled.PopupBody>
                   <form onSubmit={e => onSubmit(e, createDeck)}>
-                    <textarea
+                    <Styled.Input
                       name="deckName"
                       value={deckName}
                       onChange={onChange}
                       type="text"
                       placeholder="Your deck name ... (REQUIRED)"
                     />
-                    <textarea
+                    <Styled.InputTextArea
                       name="description"
                       value={description}
                       onChange={onChange}

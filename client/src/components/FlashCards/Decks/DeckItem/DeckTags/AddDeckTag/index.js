@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 
 import ErrorMessage from "../../../../../Error";
 import * as Styled from "../../../../../../theme/Popup";
+import Button from "../../../../../../theme/Button";
 
 const ADD_TAG_TO_DECK = gql`
   mutation($id: ID!, $tagName: String!) {
@@ -56,14 +57,14 @@ const AddDeckTag = ({ deck, setIsOn }) => {
         <Mutation mutation={ADD_TAG_TO_DECK} variables={{ id, tagName }}>
           {(addTagToDeck, { data, loading, error }) => (
             <form onSubmit={e => onSubmit(e, addTagToDeck)}>
-              <textarea
+              <Styled.Input
                 name="tagName"
                 value={tagName}
                 onChange={onChange}
                 type="text"
-                placeholder="Tag Nameeee (REQUIRED)"
+                placeholder="Enter a Tag Name"
               />
-              <button type="submit">Submit</button>
+              <Button type="submit">Submit</Button>
 
               {error && <ErrorMessage error={error} />}
             </form>

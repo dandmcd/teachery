@@ -54,9 +54,9 @@ const DeckItemBase = ({ deck, session }) => {
     <Fragment>
       {isOn && addCardActive ? (
         <PopStyled.PopupContainer>
-          <PopStyled.PopupInner ref={innerRef}>
+          <PopStyled.PopupInnerExtended ref={innerRef}>
             <CardCreate key={deck.id} deck={deck} setIsOn={setIsOn} />
-          </PopStyled.PopupInner>
+          </PopStyled.PopupInnerExtended>
         </PopStyled.PopupContainer>
       ) : isOn && addTagActive ? (
         <PopStyled.PopupContainer>
