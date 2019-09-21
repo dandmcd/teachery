@@ -1,5 +1,15 @@
-import React from "react";
+import React, { Fragment } from "react";
 
-const Loading = () => <div>Loading...</div>;
+import bluespinner from "../../assets/bluespinner.gif";
+
+const Loading = () => (
+  <Fragment>
+    <img
+      src={bluespinner}
+      alt="Loading..."
+      style={{ width: "200px", margin: "auto", display: "block" }}
+    />
+  </Fragment>
+);
 
 export default Loading;
