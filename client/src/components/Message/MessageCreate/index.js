@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
-import ErrorMessage from "../../Error";
+import ErrorMessage from "../../Alerts/Error";
 
 const CREATE_MESSAGE = gql`
   mutation($text: String!) {
@@ -35,29 +35,7 @@ const MessageCreate = () => {
   };
 
   return (
-    <Mutation
-      mutation={CREATE_MESSAGE}
-      variables={{ text }}
-      // Not used anymore because of Subscription
-
-      // update={(cache, { data: { createMessage } }) => {
-      //   const data = cache.readQuery({
-      //     query: GET_ALL_MESSAGES_WITH_USERS,
-      //   });
-
-      //   cache.writeQuery({
-      //     query: GET_ALL_MESSAGES_WITH_USERS,
-      //     data: {
-      //       ...data,
-      //       messages: {
-      //         ...data.messages,
-      //         edges: [createMessage, ...data.messages.edges],
-      //         pageInfo: data.messages.pageInfo,
-      //       },
-      //     },
-      //   });
-      // }}
-    >
+    <Mutation mutation={CREATE_MESSAGE} variables={{ text }}>
       {(createMessage, { data, loading, error }) => (
         <form onSubmit={e => onSubmit(e, createMessage)}>
           <textarea

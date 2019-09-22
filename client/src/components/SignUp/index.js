@@ -5,7 +5,7 @@ import gql from "graphql-tag";
 
 import Loading from "../Loading";
 import * as routes from "../../constants/routes";
-import ErrorMessage from "../Error";
+import ErrorMessage from "../Alerts/Error";
 import * as Styled from "./style";
 
 const SIGN_UP = gql`

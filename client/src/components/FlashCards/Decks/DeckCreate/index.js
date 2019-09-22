@@ -7,7 +7,8 @@ import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
 import useOuterClickNotifier from "../../../Alerts";
 
-import ErrorMessage from "../../../Error";
+import ErrorMessage from "../../../Alerts/Error";
+import SuccessMessage from "../../../Alerts/Success";
 import GET_PAGINATED_DECKS_WITH_USERS from "../DeckSchema";
 
 const CREATE_DECK = gql`
@@ -36,7 +37,16 @@ const CREATE_DECK = gql`
 
 const Container = styled.div``;
 
+const TestComplete = () => {
+  return (
+    <div>
+      <p>It worked!</p>
+    </div>
+  );
+};
+
 const DeckCreate = () => {
+  const [isSuccess, setIsSuccess] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [deckState, setDeckState] = useState({
     deckName: "",
@@ -69,11 +79,17 @@ const DeckCreate = () => {
       <Button type="button" onClick={() => setShowPopup(true)}>
         Create Deck
       </Button>
-
       {showPopup ? (
         <Mutation
           mutation={CREATE_DECK}
           variables={{ deckName, description }}
+          onError={data => setIsSuccess(false)}
+          onCompleted={data => {
+            setIsSuccess(true);
+            setTimeout(() => {
+              setIsSuccess(false);
+            }, 5000);
+          }}
           update={(cache, { data: { createDeck } }) => {
             const data = cache.readQuery({
               query: GET_PAGINATED_DECKS_WITH_USERS
@@ -115,7 +131,7 @@ const DeckCreate = () => {
                       placeholder="Add details and descriptions ..."
                     />
                     <Button type="submit">Submit</Button>
-
+                    {isSuccess && <SuccessMessage />}
                     {error && <ErrorMessage error={error} />}
                   </form>
                 </Styled.PopupBody>

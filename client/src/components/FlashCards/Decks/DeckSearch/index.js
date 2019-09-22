@@ -4,11 +4,12 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 
 import * as Styled from "../../../../theme/Popup";
-import Button from "../../../../theme/Button";
 
 import TagLink from "../DeckItem/DeckTags/TagLink";
 import search from "../../../../assets/search.png";
 import useOuterClickNotifier from "../../../Alerts";
+import Loading from "../../../Loading";
+import ErrorMessage from "../../../Alerts/Error";
 
 const SearchContainer = styled.div`
   display: flex;
@@ -58,10 +59,16 @@ const Search = () => {
     e.preventDefault();
     setState({ noResult: false });
     setTags([]);
-    const { data } = await client.query({
+    const { data, loading, error } = await client.query({
       query: TAG_SEARCH_QUERY,
       variables: { tagName }
     });
+    if (loading || !data) {
+      return <Loading />;
+    }
+    if (error) {
+      return <ErrorMessage error={error} />;
+    }
     if (tagName === "") {
       setState({ noResult: true });
     } else if (data.getTagsByName.length === 0) {

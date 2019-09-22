@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
 import Loading from "../../Loading";
+import ErrorMessage from "../../Alerts/Error";
 import withSession from "../../Session/withSession";
 import DeckItemBase from "./DeckItem";
 
@@ -18,6 +19,9 @@ const Decks = ({ limit, me }) => (
 
       if (loading || !decks) {
         return <Loading />;
+      }
+      if (error) {
+        return <ErrorMessage error={error} />;
       }
 
       const { edges, pageInfo } = decks;

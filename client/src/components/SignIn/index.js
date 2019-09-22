@@ -6,7 +6,7 @@ import gql from "graphql-tag";
 import { SignUpLink } from "../SignUp";
 import Loading from "../Loading";
 import * as routes from "../../constants/routes";
-import ErrorMessage from "../Error";
+import ErrorMessage from "../Alerts/Error";
 import * as Styled from "./style";
 
 const SIGN_IN = gql`
@@ -78,7 +78,7 @@ class SignInForm extends Component {
             />
             <Styled.SubmitButton
               className="button"
-              disabled={isInvalid || loading}
+              disabled={loading}
               type="submit"
             >
               Sign In

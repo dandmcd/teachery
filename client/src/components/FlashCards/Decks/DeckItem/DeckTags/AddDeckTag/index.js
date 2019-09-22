@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
-import ErrorMessage from "../../../../../Error";
+import ErrorMessage from "../../../../../Alerts/Error";
 import * as Styled from "../../../../../../theme/Popup";
 import Button from "../../../../../../theme/Button";
 

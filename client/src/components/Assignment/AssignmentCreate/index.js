@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
-import ErrorMessage from "../../Error";
+import ErrorMessage from "../../Alerts/Error";
 import GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS from "../AssignmentAdmin/AssignmentAdminSchema";
 
 const CREATE_ASSIGNMENT = gql`
