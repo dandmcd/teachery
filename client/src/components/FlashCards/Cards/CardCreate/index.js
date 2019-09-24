@@ -45,8 +45,20 @@ const S3SIGNMUTATION = gql`
 //Component
 const CardCreate = ({ deck, setIsOn }) => {
   const [isSuccess, setIsSuccess] = useState(false);
-  const [s3SignMutation] = useMutation(S3SIGNMUTATION);
-  const [createCard, { loading, error }] = useMutation(CREATE_CARD);
+  const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
+    S3SIGNMUTATION
+  );
+  const [createCard, { loading, error }] = useMutation(CREATE_CARD, {
+    onError: err => {
+      setIsSuccess(false);
+    },
+    onCompleted: data => {
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 5000);
+    }
+  });
 
   const [drop, setDrop] = useState(null);
   const [state, setState] = useState({
@@ -78,15 +90,10 @@ const CardCreate = ({ deck, setIsOn }) => {
     return newFilename.substring(0, 60);
   };
 
-  const onSubmit = async e => {
+  const onSubmit = async (e, createCard) => {
     e.preventDefault();
-    if (front === "" || front === undefined) {
-      try {
-        await createCard();
-      } catch (error) {
-        console.log("error");
-      }
-    } else if (drop) {
+    if (drop) {
+      console.log("Option B");
       const response = await s3SignMutation({
         variables: {
           filename: formatFilename(drop.name),
@@ -107,7 +114,6 @@ const CardCreate = ({ deck, setIsOn }) => {
         },
         refetchQueries: ["getDecks"]
       });
-      setIsSuccess(true);
       await setState({
         front: "",
         back: "",
@@ -115,21 +121,21 @@ const CardCreate = ({ deck, setIsOn }) => {
         pictureUrl: ""
       });
     } else {
-      await createCard({
-        variables: {
-          deckId: parseInt(deck.id, 10),
-          front,
-          back
-        },
-        refetchQueries: ["getDecks"]
-      });
-      setIsSuccess(true);
-      await setState({
-        front: "",
-        back: "",
-        pictureName: "",
-        pictureUrl: ""
-      });
+      try {
+        setState({
+          front: "",
+          back: "",
+          pictureName: "",
+          pictureUrl: ""
+        });
+        await createCard({
+          variables: {
+            deckId: parseInt(deck.id, 10),
+            front: front,
+            back: back
+          }
+        });
+      } catch (error) {}
     }
   };
 
@@ -139,7 +145,13 @@ const CardCreate = ({ deck, setIsOn }) => {
 
   useEffect(() => {
     if (deck && deck.id) {
-      setState({ deckId: parseInt(deck.id, 10) });
+      setState({
+        deckId: parseInt(deck.id, 10),
+        front: "",
+        back: "",
+        pictureName: "",
+        pictureUrl: ""
+      });
     }
   }, [deck]);
 
@@ -151,7 +163,7 @@ const CardCreate = ({ deck, setIsOn }) => {
     <Fragment>
       <Styled.PopupTitle>Create a card for your deck...</Styled.PopupTitle>
       <Styled.PopupBody>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={e => onSubmit(e, createCard)}>
           <Styled.InputTextArea
             name="front"
             value={front}
@@ -168,9 +180,9 @@ const CardCreate = ({ deck, setIsOn }) => {
           />
           <DropZone drop={drop} setDrop={setDrop} handleChange={handleChange} />
           <Button type="submit">Submit</Button>
-          {loading && <Loading />}
+          {(loading || s3Loading) && <Loading />}
           {isSuccess && <SuccessMessage />}
-          {error && <ErrorMessage error={error} />}
+          {(error || s3Error) && <ErrorMessage error={error} />}
         </form>
       </Styled.PopupBody>
       <Styled.PopupFooterButton onClick={togglePopup}>

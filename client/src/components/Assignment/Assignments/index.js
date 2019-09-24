@@ -6,6 +6,7 @@ import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
 import Loading from "../../Loading";
 import * as Styled from "./style";
+import ErrorMessage from "../../Alerts/Error";
 
 const AssignedTasks = ({ limit, me }) => (
   <Query query={GET_PAGINATED_ASSIGNMENTS_WITH_USERS} variables={{ limit }}>
@@ -18,6 +19,9 @@ const AssignedTasks = ({ limit, me }) => (
 
       if (loading || !assignedTasks) {
         return <Loading />;
+      }
+      if (error) {
+        return <ErrorMessage error={error} />;
       }
 
       const { edges, pageInfo } = assignedTasks;

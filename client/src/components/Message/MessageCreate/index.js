@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
+import styled from "styled-components";
+
+import * as Styled from "../../../theme/Popup";
+import Button from "../../../theme/Button";
 
 import ErrorMessage from "../../Alerts/Error";
 
@@ -16,6 +20,12 @@ const CREATE_MESSAGE = gql`
       }
     }
   }
+`;
+
+const SendButton = styled(Button)`
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 const MessageCreate = () => {
@@ -38,14 +48,14 @@ const MessageCreate = () => {
     <Mutation mutation={CREATE_MESSAGE} variables={{ text }}>
       {(createMessage, { data, loading, error }) => (
         <form onSubmit={e => onSubmit(e, createMessage)}>
-          <textarea
+          <Styled.InputTextArea
             name="text"
             value={text}
             onChange={onChange}
             type="text"
             placeholder="Your message ..."
           />
-          <button type="submit">Send</button>
+          <SendButton type="submit">Send</SendButton>
 
           {error && <ErrorMessage error={error} />}
         </form>

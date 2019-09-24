@@ -10,6 +10,7 @@ import useOuterClickNotifier from "../../../Alerts";
 import ErrorMessage from "../../../Alerts/Error";
 import SuccessMessage from "../../../Alerts/Success";
 import GET_PAGINATED_DECKS_WITH_USERS from "../DeckSchema";
+import Loading from "../../../Loading";
 
 const CREATE_DECK = gql`
   mutation($deckName: String!, $description: String!) {
@@ -123,6 +124,7 @@ const DeckCreate = () => {
                       placeholder="Add details and descriptions"
                     />
                     <Button type="submit">Submit</Button>
+                    {loading && <Loading />}
                     {isSuccess && <SuccessMessage />}
                     {error && <ErrorMessage error={error} />}
                   </form>

@@ -49,6 +49,9 @@ export default {
         { assignmentName, note, link, status, dueDate },
         { models, me }
       ) => {
+        if (link === "") {
+          link = null;
+        }
         const assignment = await models.Assignment.create({
           assignmentName,
           note,

@@ -15,13 +15,13 @@ const assignment = (sequelize, DataTypes) => {
     },
     link: {
       type: DataTypes.STRING,
+      allowNull: true,
       validate: {
         isUrl: {
           args: true,
           msg: "The URL is not valid."
         }
-      },
-      allowNull: true
+      }
     }
   });
   Assignment.associate = models => {

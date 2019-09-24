@@ -5,6 +5,8 @@ import gql from "graphql-tag";
 import ErrorMessage from "../../../../../Alerts/Error";
 import * as Styled from "../../../../../../theme/Popup";
 import Button from "../../../../../../theme/Button";
+import SuccessMessage from "../../../../../Alerts/Success";
+import Loading from "../../../../../Loading";
 
 const ADD_TAG_TO_DECK = gql`
   mutation($id: ID!, $tagName: String!) {
@@ -19,6 +21,7 @@ const ADD_TAG_TO_DECK = gql`
 `;
 
 const AddDeckTag = ({ deck, setIsOn }) => {
+  const [isSuccess, setIsSuccess] = useState(false);
   const [state, setState] = useState({
     id: null,
     tagName: ""
@@ -42,7 +45,7 @@ const AddDeckTag = ({ deck, setIsOn }) => {
 
   useEffect(() => {
     if (deck && deck.id) {
-      setState({ id: deck.id });
+      setState({ id: deck.id, tagName: "" });
     }
   }, [deck]);
 
@@ -54,7 +57,17 @@ const AddDeckTag = ({ deck, setIsOn }) => {
     <Fragment>
       <Styled.PopupTitle>Create a tag for this deck...</Styled.PopupTitle>
       <Styled.PopupBody>
-        <Mutation mutation={ADD_TAG_TO_DECK} variables={{ id, tagName }}>
+        <Mutation
+          mutation={ADD_TAG_TO_DECK}
+          variables={{ id, tagName }}
+          onError={data => setIsSuccess(false)}
+          onCompleted={data => {
+            setIsSuccess(true);
+            setTimeout(() => {
+              setIsSuccess(false);
+            }, 5000);
+          }}
+        >
           {(addTagToDeck, { data, loading, error }) => (
             <form onSubmit={e => onSubmit(e, addTagToDeck)}>
               <Styled.Input
@@ -65,7 +78,8 @@ const AddDeckTag = ({ deck, setIsOn }) => {
                 placeholder="Enter a Tag Name"
               />
               <Button type="submit">Submit</Button>
-
+              {loading && <Loading />}
+              {isSuccess && <SuccessMessage />}
               {error && <ErrorMessage error={error} />}
             </form>
           )}

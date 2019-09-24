@@ -5,20 +5,19 @@ import styled from "styled-components";
 import withAuthorization from "../Session/withAuthorization";
 
 const Container = styled.div`
-  vertical-align: top;
-  position: absolute;
-  top: 0px;
-  z-index: 1;
+  z-index: 15;
+  max-width: 100%;
+  margin: auto;
 `;
 
 const AccountPage = () => (
   <Container>
-    <h1>Account Page</h1>
+    <h3>Account Page</h3>
     <hr />
-    <h5>
+    <h4>
       This page is currently under development, please{" "}
       <Link to="/">go back to Home</Link>
-    </h5>
+    </h4>
   </Container>
 );
 

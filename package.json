@@ -43,8 +43,8 @@
     "graphql-resolvers": "^0.3.3",
     "graphql-scalars": "^0.4.6",
     "jsonwebtoken": "^8.5.1",
-    "pg": "^7.12.0",
-    "sequelize": "^5.11.0",
+    "pg": "^7.12.1",
+    "sequelize": "^5.19.0",
     "subscriptions-transport-ws": "^0.9.16",
     "uuid": "^3.3.3"
   },

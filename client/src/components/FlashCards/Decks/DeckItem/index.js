@@ -48,6 +48,7 @@ const DeckItemBase = ({ deck, session }) => {
   useOuterClickNotifier(e => {
     setIsOn(false);
     setAddCardActive(false);
+    setAddTagActive(false);
   }, innerRef);
 
   return (

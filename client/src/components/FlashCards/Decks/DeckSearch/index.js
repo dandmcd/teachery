@@ -74,6 +74,7 @@ const Search = () => {
     } else if (data.getTagsByName.length === 0) {
       setState({ tagName: tagName, noResult: true });
     } else {
+      setState({ showPopup: true });
       setTags(data.getTagsByName);
       setState({ tagName: tagName, showPopup: true });
     }
