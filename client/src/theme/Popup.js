@@ -60,6 +60,12 @@ export const Input = styled.input`
   outline: none;
   border-radius: 24px;
   transition: 0.25s;
+  ::placeholder {
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400px;
+    font-size: 12px;
+    color: ${props => props.theme.text};
+  }
   :focus {
     width: 280px;
     border-color: ${props => props.theme.secondaryLight};
@@ -78,6 +84,12 @@ export const InputTextArea = styled.textarea`
   outline: none;
   border-radius: 24px;
   transition: 0.25s;
+  ::placeholder {
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400px;
+    font-size: 12px;
+    color: ${props => props.theme.text};
+  }
   :focus {
     width: 280px;
     border-color: ${props => props.theme.secondaryLight};

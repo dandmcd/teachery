@@ -80,7 +80,7 @@ export default {
       async (
         parent,
         { deckId, front, back, pictureName, pictureUrl },
-        { models }
+        { models, me }
       ) => {
         const card = await models.Card.create({
           deckId,

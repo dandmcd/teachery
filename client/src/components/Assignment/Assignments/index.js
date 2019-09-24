@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { Query } from "react-apollo";
 import Moment from "react-moment";
 

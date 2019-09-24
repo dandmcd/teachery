@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { useMutation } from "react-apollo";
 import gql from "graphql-tag";
 import axios from "axios";
@@ -8,6 +8,9 @@ import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
 
 import DropZone from "../CardUpload";
+import Loading from "../../../Loading";
+import SuccessMessage from "../../../Alerts/Success";
+import ErrorMessage from "../../../Alerts/Error";
 
 //Mutations
 const CREATE_CARD = gql`
@@ -41,8 +44,9 @@ const S3SIGNMUTATION = gql`
 
 //Component
 const CardCreate = ({ deck, setIsOn }) => {
-  const [s3SignMutation, { loading }] = useMutation(S3SIGNMUTATION);
-  const [createCard] = useMutation(CREATE_CARD);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [s3SignMutation] = useMutation(S3SIGNMUTATION);
+  const [createCard, { loading, error }] = useMutation(CREATE_CARD);
 
   const [drop, setDrop] = useState(null);
   const [state, setState] = useState({
@@ -76,7 +80,13 @@ const CardCreate = ({ deck, setIsOn }) => {
 
   const onSubmit = async e => {
     e.preventDefault();
-    if (drop) {
+    if (front === "" || front === undefined) {
+      try {
+        await createCard();
+      } catch (error) {
+        console.log("error");
+      }
+    } else if (drop) {
       const response = await s3SignMutation({
         variables: {
           filename: formatFilename(drop.name),
@@ -97,7 +107,13 @@ const CardCreate = ({ deck, setIsOn }) => {
         },
         refetchQueries: ["getDecks"]
       });
-      await setState({ front: "", back: "", pictureName: "", pictureUrl: "" });
+      setIsSuccess(true);
+      await setState({
+        front: "",
+        back: "",
+        pictureName: "",
+        pictureUrl: ""
+      });
     } else {
       await createCard({
         variables: {
@@ -107,7 +123,13 @@ const CardCreate = ({ deck, setIsOn }) => {
         },
         refetchQueries: ["getDecks"]
       });
-      await setState({ front: "", back: "", pictureName: "", pictureUrl: "" });
+      setIsSuccess(true);
+      await setState({
+        front: "",
+        back: "",
+        pictureName: "",
+        pictureUrl: ""
+      });
     }
   };
 
@@ -120,8 +142,6 @@ const CardCreate = ({ deck, setIsOn }) => {
       setState({ deckId: parseInt(deck.id, 10) });
     }
   }, [deck]);
-
-  const isInvalid = front === "" || undefined;
 
   const togglePopup = () => {
     setIsOn(false);
@@ -137,19 +157,20 @@ const CardCreate = ({ deck, setIsOn }) => {
             value={front}
             onChange={onChange}
             type="text"
-            placeholder="Face of the flashcard ... REQUIRED"
+            placeholder="Front of the flashcard"
           />
           <Styled.InputTextArea
             name="back"
             value={back}
             onChange={onChange}
             type="text"
-            placeholder="Back of the card ..."
+            placeholder="Back of the card"
           />
           <DropZone drop={drop} setDrop={setDrop} handleChange={handleChange} />
-          <Button type="submit" disabled={isInvalid}>
-            Submit
-          </Button>
+          <Button type="submit">Submit</Button>
+          {loading && <Loading />}
+          {isSuccess && <SuccessMessage />}
+          {error && <ErrorMessage error={error} />}
         </form>
       </Styled.PopupBody>
       <Styled.PopupFooterButton onClick={togglePopup}>

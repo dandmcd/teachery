@@ -37,14 +37,6 @@ const CREATE_DECK = gql`
 
 const Container = styled.div``;
 
-const TestComplete = () => {
-  return (
-    <div>
-      <p>It worked!</p>
-    </div>
-  );
-};
-
 const DeckCreate = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -121,14 +113,14 @@ const DeckCreate = () => {
                       value={deckName}
                       onChange={onChange}
                       type="text"
-                      placeholder="Your deck name ... (REQUIRED)"
+                      placeholder="Enter a deck name"
                     />
                     <Styled.InputTextArea
                       name="description"
                       value={description}
                       onChange={onChange}
                       type="text"
-                      placeholder="Add details and descriptions ..."
+                      placeholder="Add details and descriptions"
                     />
                     <Button type="submit">Submit</Button>
                     {isSuccess && <SuccessMessage />}

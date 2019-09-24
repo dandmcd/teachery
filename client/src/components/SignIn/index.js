@@ -53,8 +53,6 @@ class SignInForm extends Component {
   render() {
     const { login, password } = this.state;
 
-    const isInvalid = password === "" || login === "";
-
     return (
       <Mutation mutation={SIGN_IN} variables={{ login, password }}>
         {(signIn, { data, loading, error }) => (
