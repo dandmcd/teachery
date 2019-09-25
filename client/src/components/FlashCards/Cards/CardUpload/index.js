@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 import Button from "../../../../theme/Button";
@@ -50,7 +50,39 @@ const RejectedItem = styled.li`
   font-size: 12px;
 `;
 
+const ThumbContainer = styled.aside`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 16px;
+`;
+
+const Thumb = styled.div`
+  display: inline-flex;
+  border-radius: 2px;
+  border: 1px solid #eaeaea;
+  margin-bottom: 8px;
+  margin-right: 8px;
+  width: 100px;
+  height: 100px;
+  padding: 4px;
+  box-sizing: border-box;
+`;
+
+const ThumbInner = styled.div`
+  display: flex;
+  min-width: 0px;
+  overflow: hidden;
+`;
+
+const Img = styled.img`
+  display: block;
+  width: auto;
+  height: 100%;
+`;
+
 export default function DropZone({ props, drop, setDrop }) {
+  const [files, setFiles] = useState([]);
   const onDrop = useCallback(
     acceptedFiles => {
       const reader = new FileReader();
@@ -60,6 +92,12 @@ export default function DropZone({ props, drop, setDrop }) {
       reader.onload = () => {
         console.log(acceptedFiles);
       };
+
+      setFiles(
+        acceptedFiles.map(file =>
+          Object.assign(file, { preview: URL.createObjectURL(file) })
+        )
+      );
 
       setDrop(acceptedFiles[0]);
     },
@@ -100,6 +138,21 @@ export default function DropZone({ props, drop, setDrop }) {
     </RejectedItem>
   ));
 
+  const thumbs = files.map(file => (
+    <Thumb key={file.name}>
+      <ThumbInner>
+        <Img src={file.preview} />
+      </ThumbInner>
+    </Thumb>
+  ));
+
+  useEffect(
+    () => () => {
+      files.forEach(file => URL.revokeObjectURL(file.preview));
+    },
+    [files]
+  );
+
   return (
     <section className="container">
       <Container
@@ -112,6 +165,7 @@ export default function DropZone({ props, drop, setDrop }) {
         </Button>
         <em>(Only image files will be accepted)</em>
       </Container>
+      <ThumbContainer>{thumbs}</ThumbContainer>
       <aside>
         <h4>File to be uploaded</h4>
         <ul>{acceptedFilesItems}</ul>
