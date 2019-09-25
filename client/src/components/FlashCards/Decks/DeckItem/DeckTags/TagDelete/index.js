@@ -21,7 +21,7 @@ const TagDelete = ({ tag }) => (
     {(deleteTag, { data, loading, error }) => (
       <input
         type="image"
-        src={require("./remove-item.png")}
+        src={require("../../../../../../assets/remove-item.png")}
         width="5"
         height="5"
         alt="Delete Tag"

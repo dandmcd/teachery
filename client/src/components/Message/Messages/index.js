@@ -1,10 +1,12 @@
 import React, { Component, Fragment } from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
+import styled from "styled-components";
 
 import MessageDelete from "../MessageDelete";
 import Loading from "../../Loading";
 import withSession from "../../Session/withSession";
+import Button from "../../../theme/Button";
 
 const MESSAGE_CREATED = gql`
   subscription {
@@ -43,6 +45,21 @@ const GET_PAGINATED_MESSAGES_WITH_USERS = gql`
   }
 `;
 
+const MessageContainer = styled.div`
+  position: block;
+  width: 300px;
+  margin: auto;
+  margin-bottom: 5px;
+  overflow-y: scroll;
+  border-radius: 20px;
+  background: ${props => props.theme.neutralLight};
+  text-align: center;
+  scrollbar-width: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
 const Messages = ({ limit }) => (
   <Query query={GET_PAGINATED_MESSAGES_WITH_USERS} variables={{ limit }}>
     {({ data, loading, error, fetchMore, subscribeToMore }) => {
@@ -59,7 +76,7 @@ const Messages = ({ limit }) => (
       const { edges, pageInfo } = messages;
 
       return (
-        <Fragment>
+        <MessageContainer>
           <MessageList messages={edges} subscribeToMore={subscribeToMore} />
 
           {pageInfo.hasNextPage && (
@@ -71,14 +88,16 @@ const Messages = ({ limit }) => (
               More
             </MoreMessagesButton>
           )}
-        </Fragment>
+        </MessageContainer>
       );
     }}
   </Query>
 );
 
+const MessageButton = styled(Button)``;
+
 const MoreMessagesButton = ({ limit, pageInfo, fetchMore, children }) => (
-  <button
+  <MessageButton
     type="button"
     onClick={() =>
       fetchMore({
@@ -105,7 +124,7 @@ const MoreMessagesButton = ({ limit, pageInfo, fetchMore, children }) => (
     }
   >
     {children}
-  </button>
+  </MessageButton>
 );
 
 class MessageList extends Component {
@@ -144,15 +163,18 @@ class MessageList extends Component {
 }
 
 const MessageItemBase = ({ message, session }) => (
-  <div>
+  <Fragment>
     <h3>{message.user.username}</h3>
-    <small>{message.createdAt}</small>
-    <p>{message.text}</p>
-
-    {session && session.me && message.user.id === session.me.id && (
-      <MessageDelete message={message} />
-    )}
-  </div>
+    <h6>{message.createdAt}</h6>
+    <p>
+      {message.text}{" "}
+      {session && session.me && message.user.id === session.me.id && (
+        <sup>
+          <MessageDelete message={message} />
+        </sup>
+      )}
+    </p>
+  </Fragment>
 );
 
 const MessageItem = withSession(MessageItemBase);
