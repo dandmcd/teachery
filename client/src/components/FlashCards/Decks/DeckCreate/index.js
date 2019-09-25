@@ -52,8 +52,8 @@ const DeckCreate = () => {
     e.preventDefault();
 
     try {
-      setDeckState({ deckName: "", description: "" });
       await createDeck();
+      setDeckState({ deckName: "", description: "" });
     } catch (error) {}
   };
 

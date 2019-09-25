@@ -1,13 +1,19 @@
 import React from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
+import styled from "styled-components";
 
 import GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS from "../AssignmentAdmin/AssignmentAdminSchema";
+import Button from "../../../theme/Button";
 
 const DELETE_ASSIGNMENT = gql`
   mutation($id: ID!) {
     deleteAssignment(id: $id)
   }
+`;
+
+const RemoveAssignmentButton = styled(Button)`
+  border: 2px solid ${props => props.theme.error};
 `;
 
 const AssignmentDelete = ({ assignment }) => (
@@ -35,9 +41,9 @@ const AssignmentDelete = ({ assignment }) => (
     }}
   >
     {(deleteAssignment, { data, loading, error }) => (
-      <button type="button" onClick={deleteAssignment}>
+      <RemoveAssignmentButton type="button" onClick={deleteAssignment}>
         Delete
-      </button>
+      </RemoveAssignmentButton>
     )}
   </Mutation>
 );

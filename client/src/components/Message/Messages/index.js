@@ -164,10 +164,10 @@ class MessageList extends Component {
 
 const MessageItemBase = ({ message, session }) => (
   <Fragment>
-    <h3>{message.user.username}</h3>
+    <h5>{message.user.username}</h5>
     <h6>{message.createdAt}</h6>
     <p>
-      {message.text}{" "}
+      {message.text}
       {session && session.me && message.user.id === session.me.id && (
         <sup>
           <MessageDelete message={message} />

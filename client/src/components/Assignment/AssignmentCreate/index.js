@@ -1,11 +1,15 @@
-import React, { Component } from "react";
+import React, { useState, useRef } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
+import styled from "styled-components";
 
+import useOuterClickNotifier from "../../Alerts";
 import ErrorMessage from "../../Alerts/Error";
 import GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS from "../AssignmentAdmin/AssignmentAdminSchema";
 import Loading from "../../Loading";
 import SuccessMessage from "../../Alerts/Success";
+import * as Styled from "../../../theme/Popup";
+import Button from "../../../theme/Button";
 
 const CREATE_ASSIGNMENT = gql`
   mutation($assignmentName: String!, $note: String, $link: String) {
@@ -30,93 +34,120 @@ const CREATE_ASSIGNMENT = gql`
     }
   }
 `;
+const Container = styled.div``;
 
-class AssignmentCreate extends Component {
-  state = {
+const AssignButton = styled(Button)`
+  font-size: 10px;
+`;
+
+const AssignmentCreate = () => {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [assignmentState, setAssignmentState] = useState({
     assignmentName: "",
     note: "",
-    link: "",
-    isSuccess: false
+    link: ""
+  });
+
+  const { assignmentName, note, link } = assignmentState;
+
+  const onChange = e => {
+    setAssignmentState({ ...assignmentState, [e.target.name]: e.target.value });
   };
 
-  onChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
-  };
-
-  onSubmit = async (event, createAssignment) => {
+  const onSubmit = async (event, createAssignment) => {
     event.preventDefault();
-    console.log(this.state);
+
     try {
       await createAssignment();
-      this.setState({ assignmentName: "", note: "", link: "" });
+      setAssignmentState({ assignmentName: "", note: "", link: "" });
     } catch (error) {}
   };
 
-  render() {
-    const { assignmentName, note, link, isSuccess } = this.state;
+  const togglePopup = () => {
+    setShowPopup(false);
+  };
 
-    return (
-      <Mutation
-        mutation={CREATE_ASSIGNMENT}
-        variables={{ assignmentName, note, link }}
-        onError={data => this.setState({ isSuccess: false })}
-        onCompleted={data => {
-          this.setState({ isSuccess: true });
-          setTimeout(() => {
-            this.setState({ isSuccess: false });
-          }, 5000);
-        }}
-        update={(cache, { data: { createAssignment } }) => {
-          const data = cache.readQuery({
-            query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS
-          });
+  const innerRef = useRef(null);
+  useOuterClickNotifier(e => setShowPopup(false), innerRef);
 
-          cache.writeQuery({
-            query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS,
-            data: {
-              ...data,
-              assignments: {
-                ...data.assignments,
-                edges: [createAssignment, ...data.assignments.edges],
-                pageInfo: data.assignments.pageInfo
+  return (
+    <Container>
+      <AssignButton type="button" onClick={() => setShowPopup(true)}>
+        New Assignment
+      </AssignButton>
+      {showPopup ? (
+        <Mutation
+          mutation={CREATE_ASSIGNMENT}
+          variables={{ assignmentName, note, link }}
+          onError={data => setIsSuccess(false)}
+          onCompleted={data => {
+            setIsSuccess(true);
+            setTimeout(() => {
+              setIsSuccess(false);
+            }, 5000);
+          }}
+          update={(cache, { data: { createAssignment } }) => {
+            const data = cache.readQuery({
+              query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS
+            });
+
+            cache.writeQuery({
+              query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS,
+              data: {
+                ...data,
+                assignments: {
+                  ...data.assignments,
+                  edges: [createAssignment, ...data.assignments.edges],
+                  pageInfo: data.assignments.pageInfo
+                }
               }
-            }
-          });
-        }}
-      >
-        {(createAssignment, { data, loading, error }) => (
-          <form onSubmit={event => this.onSubmit(event, createAssignment)}>
-            <textarea
-              name="assignmentName"
-              value={assignmentName}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Your assignment name ... (REQUIRED)"
-            />
-            <textarea
-              name="note"
-              value={note}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Add details and notes ..."
-            />
-            <textarea
-              name="link"
-              value={link}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Add a URL link"
-            />
-            <button type="submit">Submit</button>
-            {loading && <Loading />}
-            {isSuccess && <SuccessMessage />}
-            {error && <ErrorMessage error={error} />}
-          </form>
-        )}
-      </Mutation>
-    );
-  }
-}
+            });
+          }}
+        >
+          {(createAssignment, { data, loading, error }) => (
+            <Styled.PopupContainer>
+              <Styled.PopupInner ref={innerRef}>
+                <Styled.PopupTitle>Create an assignment...</Styled.PopupTitle>
+                <Styled.PopupBody>
+                  <form onSubmit={e => onSubmit(e, createAssignment)}>
+                    <Styled.Input
+                      name="assignmentName"
+                      value={assignmentName}
+                      onChange={onChange}
+                      type="text"
+                      placeholder="Assignment Name*"
+                    />
+                    <Styled.InputTextArea
+                      name="note"
+                      value={note}
+                      onChange={onChange}
+                      type="text"
+                      placeholder="Add details and notes"
+                    />
+                    <Styled.Input
+                      name="link"
+                      value={link}
+                      onChange={onChange}
+                      type="text"
+                      placeholder="Add a URL link"
+                    />
+                    <Button type="submit">Submit</Button>
+                    {loading && <Loading />}
+                    {isSuccess && <SuccessMessage />}
+                    {error && <ErrorMessage error={error} />}
+                  </form>
+                </Styled.PopupBody>
+                <Styled.PopupFooterButton onClick={togglePopup}>
+                  Close
+                </Styled.PopupFooterButton>
+              </Styled.PopupInner>
+            </Styled.PopupContainer>
+          )}
+        </Mutation>
+      ) : null}
+    </Container>
+  );
+};
 
 export default AssignmentCreate;

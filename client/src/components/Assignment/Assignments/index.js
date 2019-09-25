@@ -7,6 +7,7 @@ import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
 import Loading from "../../Loading";
 import * as Styled from "./style";
 import ErrorMessage from "../../Alerts/Error";
+import Button from "../../../theme/Button";
 
 const AssignedTasks = ({ limit, me }) => (
   <Query query={GET_PAGINATED_ASSIGNMENTS_WITH_USERS} variables={{ limit }}>
@@ -45,7 +46,7 @@ const AssignedTasks = ({ limit, me }) => (
 );
 
 const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
-  <button
+  <Button
     type="button"
     onClick={() =>
       fetchMore({
@@ -72,13 +73,12 @@ const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
     }
   >
     {children}
-  </button>
+  </Button>
 );
 
 class AssignedTaskList extends Component {
   render() {
     const { assignedTasks, me } = this.props;
-    console.log(assignedTasks);
     return assignedTasks.map(assignedTask => (
       <AssignedTaskItem
         key={assignedTask.id}
