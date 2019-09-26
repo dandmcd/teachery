@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 import Button from "../../../../theme/Button";
+
 const getColor = props => {
   if (props.isDragAccept) {
     return "#91d251";
@@ -12,7 +13,7 @@ const getColor = props => {
   if (props.isDragActive) {
     return "#e49999";
   }
-  return "#eeeeee";
+  return "#bdafaf";
 };
 
 const Container = styled.div`
@@ -21,14 +22,30 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  margin-left: 5px;
+  margin-right: 5px;
   border-width: 2px;
   border-radius: 2px;
   border-color: ${props => getColor(props)};
   border-style: dashed;
-  background-color: #fafafa;
-  color: #bdbdbd;
+  background-color: #faf9f9;
+  color: ${props => props.theme.textLight};
   outline: none;
   transition: border 0.24s ease-in-out;
+`;
+
+const AcceptedList = styled.ul`
+  list-style-type: none;
+  list-style-position: inside;
+  margin: 0;
+  padding: 0;
+`;
+
+const AcceptedItem = styled.li`
+  list-style-type: none;
+  list-style-position: inside;
+  margin: 0;
+  padding: 0;
 `;
 
 const RejectedList = styled.ul`
@@ -86,9 +103,9 @@ export default function DropZone({ props, drop, setDrop }) {
   console.log(drop);
 
   const acceptedFilesItems = acceptedFiles.map(file => (
-    <li key={file.path}>
+    <AcceptedItem key={file.path}>
       {file.path} - {file.size} bytes
-    </li>
+    </AcceptedItem>
   ));
 
   const rejectedFilesItems = rejectedFiles.map(file => (
@@ -114,7 +131,7 @@ export default function DropZone({ props, drop, setDrop }) {
       </Container>
       <aside>
         <h4>File to be uploaded</h4>
-        <ul>{acceptedFilesItems}</ul>
+        <AcceptedList>{acceptedFilesItems}</AcceptedList>
         <RejectedList>{rejectedFilesItems}</RejectedList>
       </aside>
     </section>
