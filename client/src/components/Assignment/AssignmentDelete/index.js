@@ -41,7 +41,17 @@ const AssignmentDelete = ({ assignment }) => (
     }}
   >
     {(deleteAssignment, { data, loading, error }) => (
-      <RemoveAssignmentButton type="button" onClick={deleteAssignment}>
+      <RemoveAssignmentButton
+        type="button"
+        onClick={e => {
+          if (
+            window.confirm(
+              "Are you sure you wish to delete this assignment?  All users will be no longer able to view it."
+            )
+          )
+            deleteAssignment(e);
+        }}
+      >
         Delete
       </RemoveAssignmentButton>
     )}

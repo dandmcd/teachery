@@ -11,20 +11,15 @@ import DeckItemBase from "./DeckItem";
 const Decks = ({ limit, me }) => (
   <Query query={GET_PAGINATED_DECKS_WITH_USERS} variables={{ limit }}>
     {({ data, loading, error, fetchMore }) => {
-      if (!data) {
-        return <div>There are no decks yet ...</div>;
-      }
-
-      const { decks } = data;
-
-      if (loading || !decks) {
+      if (loading && !data) {
         return <Loading />;
-      }
-      if (error) {
+      } else if (!data) {
+        return <div>There are no decks yet ...</div>;
+      } else if (error) {
         return <ErrorMessage error={error} />;
       }
 
-      const { edges, pageInfo } = decks;
+      const { edges, pageInfo } = data.decks;
 
       return (
         <Fragment>

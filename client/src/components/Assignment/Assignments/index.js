@@ -12,20 +12,16 @@ import Button from "../../../theme/Button";
 const AssignedTasks = ({ limit, me }) => (
   <Query query={GET_PAGINATED_ASSIGNMENTS_WITH_USERS} variables={{ limit }}>
     {({ data, loading, error, fetchMore }) => {
-      if (!data) {
-        return <div>There are no assignments yet ...</div>;
-      }
-
-      const { assignedTasks } = data;
-
-      if (loading || !assignedTasks) {
+      if (loading && !data) {
         return <Loading />;
-      }
-      if (error) {
+      } else if (!data) {
+        return <div>There are no assignments right now ...</div>;
+      } else if (error) {
         return <ErrorMessage error={error} />;
       }
 
-      const { edges, pageInfo } = assignedTasks;
+      const { edges, pageInfo } = data.assignedTasks;
+
       return (
         <Styled.AssignmentContainer>
           <AssignedTaskList assignedTasks={edges} me={me} />

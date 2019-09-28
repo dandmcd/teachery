@@ -32,6 +32,10 @@ const Container = styled.div`
   position: relative;
   top: 60px;
   z-index: 1;
+  @media only screen and (max-device-width: 330px) {
+    padding-left: 0;
+    padding-right: 0;
+  }
 `;
 
 const App = ({ session, refetch }) => (

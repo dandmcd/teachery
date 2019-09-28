@@ -56,7 +56,10 @@ const MessageDelete = ({ message }) => (
         width="8"
         height="8"
         alt="Delete Message"
-        onClick={deleteMessage}
+        onClick={e => {
+          if (window.confirm("Are you sure you wish to delete this message?"))
+            deleteMessage(e);
+        }}
       />
     )}
   </Mutation>

@@ -7,6 +7,7 @@ import MessageDelete from "../MessageDelete";
 import Loading from "../../Loading";
 import withSession from "../../Session/withSession";
 import Button from "../../../theme/Button";
+import ErrorMessage from "../../Alerts/Error";
 
 const MESSAGE_CREATED = gql`
   subscription {
@@ -63,17 +64,15 @@ const MessageContainer = styled.div`
 const Messages = ({ limit }) => (
   <Query query={GET_PAGINATED_MESSAGES_WITH_USERS} variables={{ limit }}>
     {({ data, loading, error, fetchMore, subscribeToMore }) => {
-      if (!data) {
-        return <div>There are no messages yet ...</div>;
-      }
-
-      const { messages } = data;
-
-      if (loading || !messages) {
+      if (loading && !data) {
         return <Loading />;
+      } else if (!data) {
+        return <div>There are no messages yet ...</div>;
+      } else if (error) {
+        return <ErrorMessage error={error} />;
       }
 
-      const { edges, pageInfo } = messages;
+      const { edges, pageInfo } = data.messages;
 
       return (
         <MessageContainer>

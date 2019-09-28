@@ -71,7 +71,7 @@ body {
   font-size: 16px;
   line-height: 1.5;
   background-color: #fff;
-  color: #333;
+  color: #4b3b3b;
 
 
 }

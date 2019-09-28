@@ -25,7 +25,10 @@ const TagDelete = ({ tag }) => (
         width="5"
         height="5"
         alt="Delete Tag"
-        onClick={deleteTag}
+        onClick={e => {
+          if (window.confirm("Are you sure you wish to delete this tag?"))
+            deleteTag(e);
+        }}
       />
     )}
   </Mutation>

@@ -35,6 +35,10 @@ export const PopupInner = styled.div`
   ::-webkit-scrollbar {
     display: none;
   }
+  @media only screen and (max-device-width: 480px) {
+    left: 10%;
+    right: 10%;
+  }
 `;
 
 export const PopupInnerExtended = styled(PopupInner)`

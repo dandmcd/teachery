@@ -44,7 +44,17 @@ const DeckDelete = ({ deck }) => (
     }}
   >
     {(deleteDeck, { data, loading, error }) => (
-      <DeleteButton type="button" onClick={deleteDeck}>
+      <DeleteButton
+        type="button"
+        onClick={e => {
+          if (
+            window.confirm(
+              "Are you sure you wish to delete this deck and all cards associated with it?"
+            )
+          )
+            deleteDeck(e);
+        }}
+      >
         Delete Deck
       </DeleteButton>
     )}

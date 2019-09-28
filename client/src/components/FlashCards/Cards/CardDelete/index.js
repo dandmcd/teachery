@@ -1,12 +1,23 @@
 import React from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
+import styled from "styled-components";
 
+import Button from "../../../../theme/Button";
 import GET_PAGINATED_DECKS_WITH_USERS from "../../Decks/DeckSchema";
 
 const DELETE_CARD = gql`
   mutation($id: ID!) {
     deleteCard(id: $id)
+  }
+`;
+
+const DeleteButton = styled(Button)`
+  border: 2px solid ${props => props.theme.error};
+  color: #233841;
+  :hover {
+    color: white;
+    background: #b11a1a;
   }
 `;
 
@@ -33,9 +44,15 @@ const CardDelete = ({ card }) => (
     }}
   >
     {(deleteCard, { data, loading, error }) => (
-      <button type="button" onClick={deleteCard}>
-        Delete
-      </button>
+      <DeleteButton
+        type="button"
+        onClick={e => {
+          if (window.confirm("Are you sure you wish to delete this card?"))
+            deleteCard(e);
+        }}
+      >
+        Delete Card
+      </DeleteButton>
     )}
   </Mutation>
 );

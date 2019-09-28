@@ -33,6 +33,7 @@ const createUsersWithMessagesAndDecks = async date => {
       username: "hotpot",
       email: "hotpot@123.com",
       password: "hotpot123",
+      role: "ADMIN",
       messages: [
         {
           text: "I like cats!",
@@ -88,7 +89,7 @@ const createUsersWithMessagesAndDecks = async date => {
 
       description: "Learn A to Z English",
       createdAt: date.setSeconds(date.getSeconds() + 1),
-      userId: "2",
+      userId: "1",
       cards: [
         {
           front: "Pizza",
@@ -183,7 +184,7 @@ const createUsersWithMessagesAndDecks = async date => {
       link:
         "https://www.nbcnews.com/news/us-news/brother-american-arrested-russia-spying-charges-says-he-was-there-n953526",
       createdAt: date.setSeconds(date.getSeconds() + 1),
-      userId: "2",
+      userId: "1",
       assignedTasks: [
         {
           assignmentId: 2,

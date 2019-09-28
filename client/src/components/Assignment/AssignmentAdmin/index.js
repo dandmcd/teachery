@@ -16,22 +16,16 @@ const Assignments = ({ limit, me }) => (
     variables={{ limit }}
   >
     {({ data, loading, error, fetchMore }) => {
-      if (!data) {
-        return <div>There are no assignments yet ...</div>;
-      }
-
-      const { assignments } = data;
-
-      if (loading || !assignments) {
+      if (loading && !data) {
         return <Loading />;
-      }
-      if (error) {
+      } else if (!data) {
+        return <div>There are no assignments yet ...</div>;
+      } else if (error) {
         return <ErrorMessage error={error} />;
       }
 
-      const { edges, pageInfo } = assignments;
+      const { edges, pageInfo } = data.assignments;
 
-      console.log(edges);
       return (
         <Styled.AssignmentContainer>
           <AssignmentList assignments={edges} me={me} />

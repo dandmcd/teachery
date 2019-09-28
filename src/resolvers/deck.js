@@ -87,6 +87,11 @@ export default {
     deleteDeck: combineResolvers(
       isAdmin,
       async (parent, { id }, { models }) => {
+        await models.Card.destroy({
+          where: {
+            deckId: id
+          }
+        });
         return await models.Deck.destroy({
           where: { id }
         });

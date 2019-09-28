@@ -1,8 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import withAuthorization from "../Session/withAuthorization";
+import GoBack from "../Navigation/GoBack";
 
 const Container = styled.div`
   z-index: 15;
@@ -15,8 +15,8 @@ const AccountPage = () => (
     <h3>Account Page</h3>
     <hr />
     <h4>
-      This page is currently under development, please{" "}
-      <Link to="/">go back to Home</Link>
+      This page is currently under development, please go back{" "}
+      <GoBack message="Return" />
     </h4>
   </Container>
 );
