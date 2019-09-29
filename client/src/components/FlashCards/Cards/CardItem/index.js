@@ -34,7 +34,7 @@ const ALink = styled.a`
   color: ${props => props.theme.primaryMed};
 `;
 
-const CardItem = ({ card, deckUserId, session }) => {
+const CardItem = ({ card, deckUserId, session, setIsSuccess }) => {
   console.log(
     deckUserId + " " + session + " " + session.me + " " + session.me.id
   );
@@ -60,7 +60,7 @@ const CardItem = ({ card, deckUserId, session }) => {
         Created on: <Moment format="YYYY-MM-DD HH:mm">{card.createdAt}</Moment>
       </Created>
       {session && session.me && deckUserId === session.me.id && (
-        <CardDelete card={card} />
+        <CardDelete card={card} setIsSuccess={setIsSuccess} />
       )}
       <Hr />
     </CardListContainer>

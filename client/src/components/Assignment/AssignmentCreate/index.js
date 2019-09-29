@@ -134,7 +134,9 @@ const AssignmentCreate = () => {
                     />
                     <Button type="submit">Submit</Button>
                     {loading && <Loading />}
-                    {isSuccess && <SuccessMessage />}
+                    {isSuccess && (
+                      <SuccessMessage message="Assignment Created!" />
+                    )}
                     {error && <ErrorMessage error={error} />}
                   </form>
                 </Styled.PopupBody>

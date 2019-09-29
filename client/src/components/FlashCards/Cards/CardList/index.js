@@ -1,34 +1,18 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { withRouter } from "react-router-dom";
-import gql from "graphql-tag";
 import { Query } from "react-apollo";
 
+import CARDS_QUERY from "./CardListSchema/CardListSchema";
 import withAuthorization from "../../../Session/withAuthorization";
 import Loading from "../../../Loading";
 import CardItem from "../CardItem";
 import ErrorMessage from "../../../Alerts/Error/index";
 import GoBack from "../../../Navigation/GoBack";
-
-const CARDS_QUERY = gql`
-  query CardsQuery($id: ID!) {
-    deck(id: $id) {
-      id
-      user {
-        id
-      }
-      cards {
-        id
-        front
-        back
-        pictureName
-        pictureUrl
-        createdAt
-      }
-    }
-  }
-`;
+import SuccessMessage from "../../../Alerts/Success";
 
 export const CardList = props => {
+  const [isSuccess, setIsSuccess] = useState(false);
+
   console.log(props);
   let { id } = props.match.params;
   id = parseInt(id);
@@ -39,9 +23,9 @@ export const CardList = props => {
       <h3>
         <GoBack message="Go Back" /> Card Listing
       </h3>
-
+      {isSuccess && <SuccessMessage message="Card successfully deleted!" />}
       <Query query={CARDS_QUERY} variables={{ id }}>
-        {({ data, error, loading, fetchMore }) => {
+        {({ data, error, loading }) => {
           if (loading && !data) {
             return <Loading />;
           } else if (!data) {
@@ -56,6 +40,7 @@ export const CardList = props => {
               key={card.id}
               card={card}
               deckUserId={data.deck.user.id}
+              setIsSuccess={setIsSuccess}
             />
           ));
         }}

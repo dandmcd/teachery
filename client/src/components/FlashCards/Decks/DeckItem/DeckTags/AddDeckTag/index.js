@@ -79,7 +79,7 @@ const AddDeckTag = ({ deck, setIsOn }) => {
               />
               <Button type="submit">Submit</Button>
               {loading && <Loading />}
-              {isSuccess && <SuccessMessage />}
+              {isSuccess && <SuccessMessage message="Tag Created!" />}
               {error && <ErrorMessage error={error} />}
             </form>
           )}

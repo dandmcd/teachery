@@ -181,7 +181,7 @@ const CardCreate = ({ deck, setIsOn }) => {
           <DropZone drop={drop} setDrop={setDrop} handleChange={handleChange} />
           <Button type="submit">Submit</Button>
           {(loading || s3Loading) && <Loading />}
-          {isSuccess && <SuccessMessage />}
+          {isSuccess && <SuccessMessage message="Card Created!" />}
           {(error || s3Error) && <ErrorMessage error={error} />}
         </form>
       </Styled.PopupBody>

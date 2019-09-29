@@ -1,10 +1,11 @@
-import React from "react";
-import { Mutation } from "react-apollo";
+import React, { Fragment } from "react";
+import { useMutation } from "react-apollo";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
 import Button from "../../../../theme/Button";
-import GET_PAGINATED_DECKS_WITH_USERS from "../../Decks/DeckSchema";
+import Loading from "../../../Loading";
+import ErrorMessage from "../../../Alerts/Error";
 
 const DELETE_CARD = gql`
   mutation($id: ID!) {
@@ -21,40 +22,42 @@ const DeleteButton = styled(Button)`
   }
 `;
 
-const CardDelete = ({ card }) => (
-  <Mutation
-    mutation={DELETE_CARD}
-    variables={{ id: card.id }}
-    update={cache => {
-      const data = cache.readQuery({
-        query: GET_PAGINATED_DECKS_WITH_USERS
-      });
+const CardDelete = ({ card, setIsSuccess }) => {
+  const [deleteCard, { loading, error }] = useMutation(DELETE_CARD, {
+    onError: err => {
+      setIsSuccess(false);
+    },
+    onCompleted: data => {
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 5000);
+    }
+  });
 
-      cache.writeQuery({
-        query: GET_PAGINATED_DECKS_WITH_USERS,
-        data: {
-          ...data,
-          cards: {
-            ...data.cards,
-            edges: data.cards.edges.filter(node => node.id !== card.id),
-            pageInfo: data.cards.pageInfo
-          }
-        }
-      });
-    }}
-  >
-    {(deleteCard, { data, loading, error }) => (
+  const onSubmit = (e, deleteCard) => {
+    e.preventDefault();
+    deleteCard({
+      variables: { id: card.id },
+      refetchQueries: ["CardsQuery"]
+    });
+  };
+
+  return (
+    <Fragment>
       <DeleteButton
         type="button"
         onClick={e => {
           if (window.confirm("Are you sure you wish to delete this card?"))
-            deleteCard(e);
+            onSubmit(e, deleteCard);
         }}
       >
         Delete Card
       </DeleteButton>
-    )}
-  </Mutation>
-);
+      {loading && <Loading />}
+      {error && <ErrorMessage error={error} />}
+    </Fragment>
+  );
+};
 
 export default CardDelete;

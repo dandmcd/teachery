@@ -125,7 +125,7 @@ const DeckCreate = () => {
                     />
                     <Button type="submit">Submit</Button>
                     {loading && <Loading />}
-                    {isSuccess && <SuccessMessage />}
+                    {isSuccess && <SuccessMessage message="Deck created!" />}
                     {error && <ErrorMessage error={error} />}
                   </form>
                 </Styled.PopupBody>

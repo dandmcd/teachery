@@ -11,10 +11,10 @@ const Success = styled.h5`
   color: ${props => props.theme.success};
 `;
 
-const SuccessMessage = () => {
+const SuccessMessage = ({ message }) => {
   return (
     <SuccessContainer>
-      <Success>Item Created!</Success>
+      <Success>{message}</Success>
     </SuccessContainer>
   );
 };
