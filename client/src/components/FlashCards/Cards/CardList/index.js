@@ -41,13 +41,15 @@ export const CardList = props => {
       </h3>
 
       <Query query={CARDS_QUERY} variables={{ id }}>
-        {({ data, error, loading }) => {
-          if (loading) {
+        {({ data, error, loading, fetchMore }) => {
+          if (loading && !data) {
             return <Loading />;
-          }
-          if (error) {
+          } else if (!data) {
+            return <div>This deck does not have any cards yet ...</div>;
+          } else if (error) {
             return <ErrorMessage error={error} />;
           }
+          console.log(data);
           const { cards } = data.deck;
           return cards.map(card => (
             <CardItem
