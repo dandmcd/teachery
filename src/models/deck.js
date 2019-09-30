@@ -21,6 +21,14 @@ const deck = (sequelize, DataTypes) => {
           msg: "Description must be under 110 characters."
         }
       }
+    },
+    deckImageName: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    deckImageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   });
 

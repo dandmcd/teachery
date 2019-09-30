@@ -28,21 +28,23 @@ export const CardList = props => {
         {({ data, error, loading }) => {
           if (loading && !data) {
             return <Loading />;
-          } else if (!data) {
-            return <div>This deck does not have any cards yet ...</div>;
           } else if (error) {
             return <ErrorMessage error={error} />;
           }
           console.log(data);
           const { cards } = data.deck;
-          return cards.map(card => (
-            <CardItem
-              key={card.id}
-              card={card}
-              deckUserId={data.deck.user.id}
-              setIsSuccess={setIsSuccess}
-            />
-          ));
+          if (cards.length === 0)
+            return <div>This deck does not have any cards yet ...</div>;
+          else {
+            return cards.map(card => (
+              <CardItem
+                key={card.id}
+                card={card}
+                deckUserId={data.deck.user.id}
+                setIsSuccess={setIsSuccess}
+              />
+            ));
+          }
         }}
       </Query>
     </Fragment>

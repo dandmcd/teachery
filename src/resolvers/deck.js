@@ -3,6 +3,8 @@ import { combineResolvers } from "graphql-resolvers";
 
 import { isAdmin, isAuthenticated } from "./authorization";
 
+const s3Bucket = process.env.S3_BUCKET;
+
 const toCursorHash = string => Buffer.from(string).toString("base64");
 
 const fromCursorHash = string =>
@@ -47,11 +49,17 @@ export default {
   Mutation: {
     createDeck: combineResolvers(
       isAuthenticated,
-      async (parent, { deckName, description }, { models, me }) => {
+      async (
+        parent,
+        { deckName, description, deckImageName, deckImageUrl },
+        { models, me }
+      ) => {
         const deck = await models.Deck.create({
           deckName,
           description,
-          userId: me.id
+          userId: me.id,
+          deckImageName,
+          deckImageUrl
         });
         return deck;
       }

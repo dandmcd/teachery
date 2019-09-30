@@ -93,7 +93,6 @@ const CardCreate = ({ deck, setIsOn }) => {
   const onSubmit = async (e, createCard) => {
     e.preventDefault();
     if (drop) {
-      console.log("Option B");
       const response = await s3SignMutation({
         variables: {
           filename: formatFilename(drop.name),
@@ -102,6 +101,7 @@ const CardCreate = ({ deck, setIsOn }) => {
       });
 
       const { signedRequest, url } = response.data.signS3;
+
       await uploadToS3(drop, signedRequest);
 
       await createCard({

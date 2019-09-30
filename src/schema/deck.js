@@ -17,7 +17,13 @@ export default gql`
     Creates a deck -
     Deck name is required!
     """
-    createDeck(deckName: String!, description: String!): Deck!
+    createDeck(
+      deckName: String!
+      description: String!
+      deckImageName: String
+      deckImageUrl: String
+    ): Deck!
+
     """
     Deletes a deck
     """
@@ -50,6 +56,8 @@ export default gql`
     Description of the deck
     """
     description: String!
+    deckImageName: String
+    deckImageUrl: String
     createdAt: Date!
     user: User!
     cards: [Card!]

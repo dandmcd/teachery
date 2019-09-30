@@ -68,7 +68,7 @@ const DeckItemBase = ({ deck, session }) => {
       ) : null}
       <Styled.DeckItemContainer>
         <Styled.CardGrid>
-          <Styled.DeckImg src={teststudent} alt="Deck Logo" />
+          <Styled.DeckImg src={deck.deckImageUrl} alt="Deck Logo" />
           <Styled.DeckInfo>
             <Styled.Title>
               <Link to={cardListLink}>{deck.deckName.toUpperCase()}</Link>
