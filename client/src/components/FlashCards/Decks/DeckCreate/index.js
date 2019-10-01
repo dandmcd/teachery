@@ -9,7 +9,7 @@ import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
 import useOuterClickNotifier from "../../../Alerts";
 
-import DropZone from "../DeckUpload";
+import DropZone from "../../../Uploader";
 import ErrorMessage from "../../../Alerts/Error";
 import SuccessMessage from "../../../Alerts/Success";
 import GET_PAGINATED_DECKS_WITH_USERS from "../DeckSchema";
@@ -63,6 +63,7 @@ const S3SIGNMUTATION = gql`
 const Container = styled.div``;
 
 const DeckCreate = () => {
+  const [isDeck, setIsDeck] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
     S3SIGNMUTATION
@@ -152,7 +153,9 @@ const DeckCreate = () => {
   const onChange = e =>
     setDeckState({ ...deckState, [e.target.name]: e.target.value });
 
-  const handleChange = e => setDrop(e.target.value);
+  const handleChange = e => {
+    setDrop(e.target.value);
+  };
 
   const togglePopup = () => {
     setShowPopup(false);
@@ -163,7 +166,13 @@ const DeckCreate = () => {
 
   return (
     <Container>
-      <Button type="button" onClick={() => setShowPopup(true)}>
+      <Button
+        type="button"
+        onClick={() => {
+          setIsDeck(true);
+          setShowPopup(true);
+        }}
+      >
         Create Deck
       </Button>
       {showPopup ? (
@@ -217,11 +226,10 @@ const DeckCreate = () => {
                       placeholder="Add details and descriptions*"
                     />
                     <DropZone
-                      drop={drop}
                       setDrop={setDrop}
-                      image={image}
                       setImage={setImage}
                       handleChange={handleChange}
+                      isDeck={isDeck}
                     />
                     <Button type="submit">Submit</Button>
                     {(loading || s3Loading) && <Loading />}

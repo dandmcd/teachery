@@ -15,6 +15,7 @@ import teststudent from "../../../../assets/teststudent.jpg";
 
 const DeckItemBase = ({ deck, session }) => {
   const [isOn, setIsOn] = useState(false);
+  const [isCard, setIsCard] = useState(false);
   const [addCardActive, setAddCardActive] = useState(false);
   const [addTagActive, setAddTagActive] = useState(false);
   const [sessionCount, setSessionCount] = useState({
@@ -56,7 +57,13 @@ const DeckItemBase = ({ deck, session }) => {
       {isOn && addCardActive ? (
         <PopStyled.PopupContainer>
           <PopStyled.PopupInnerExtended ref={innerRef}>
-            <CardCreate key={deck.id} deck={deck} setIsOn={setIsOn} />
+            <CardCreate
+              key={deck.id}
+              deck={deck}
+              setIsOn={setIsOn}
+              setIsDeck={setIsCard}
+              isCard={isCard}
+            />
           </PopStyled.PopupInnerExtended>
         </PopStyled.PopupContainer>
       ) : isOn && addTagActive ? (
@@ -68,7 +75,11 @@ const DeckItemBase = ({ deck, session }) => {
       ) : null}
       <Styled.DeckItemContainer>
         <Styled.CardGrid>
-          <Styled.DeckImg src={deck.deckImageUrl} alt="Deck Logo" />
+          {deck.deckImageUrl === null ? (
+            <Styled.DeckImg src={teststudent} alt="Deck Logo" />
+          ) : (
+            <Styled.DeckImg src={deck.deckImageUrl} alt="Deck Logo" />
+          )}
           <Styled.DeckInfo>
             <Styled.Title>
               <Link to={cardListLink}>{deck.deckName.toUpperCase()}</Link>
@@ -126,6 +137,7 @@ const DeckItemBase = ({ deck, session }) => {
                 type="button"
                 onClick={() => {
                   setIsOn(true);
+                  setIsCard(true);
                   setAddCardActive(true);
                 }}
               >

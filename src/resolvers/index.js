@@ -7,6 +7,7 @@ import deckResolvers from "../resolvers/deck";
 import assignmentResolvers from "../resolvers/assignment";
 import tagResolvers from "../resolvers/tag";
 import assignedTaskResolvers from "./assigned";
+import uploadResolvers from "./upload";
 
 const customScalarResolver = {
   Date: GraphQLDateTime
@@ -20,5 +21,6 @@ export default [
   deckResolvers,
   assignmentResolvers,
   tagResolvers,
-  assignedTaskResolvers
+  assignedTaskResolvers,
+  uploadResolvers
 ];

@@ -7,7 +7,7 @@ import moment from "moment";
 import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
 
-import DropZone from "../CardUpload";
+import DropZone from "../../../Uploader";
 import Loading from "../../../Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
@@ -43,7 +43,7 @@ const S3SIGNMUTATION = gql`
 `;
 
 //Component
-const CardCreate = ({ deck, setIsOn }) => {
+const CardCreate = ({ deck, setIsOn, isCard }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
     S3SIGNMUTATION
@@ -92,6 +92,7 @@ const CardCreate = ({ deck, setIsOn }) => {
 
   const onSubmit = async (e, createCard) => {
     e.preventDefault();
+    console.log(drop);
     if (drop) {
       const response = await s3SignMutation({
         variables: {
@@ -141,7 +142,9 @@ const CardCreate = ({ deck, setIsOn }) => {
 
   const onChange = e => setState({ ...state, [e.target.name]: e.target.value });
 
-  const handleChange = e => setDrop(e.target.value);
+  const handleChange = e => {
+    setDrop(e.target.value);
+  };
 
   useEffect(() => {
     if (deck && deck.id) {
@@ -153,12 +156,12 @@ const CardCreate = ({ deck, setIsOn }) => {
         pictureUrl: ""
       });
     }
-  }, [deck]);
+  }, [deck, setState]);
 
   const togglePopup = () => {
     setIsOn(false);
   };
-
+  console.log(isCard);
   return (
     <Fragment>
       <Styled.PopupTitle>Create a card for your deck...</Styled.PopupTitle>
@@ -178,7 +181,11 @@ const CardCreate = ({ deck, setIsOn }) => {
             type="text"
             placeholder="Back of the card"
           />
-          <DropZone drop={drop} setDrop={setDrop} handleChange={handleChange} />
+          <DropZone
+            setDrop={setDrop}
+            handleChange={handleChange}
+            isCard={isCard}
+          />
           <Button type="submit">Submit</Button>
           {(loading || s3Loading) && <Loading />}
           {isSuccess && <SuccessMessage message="Card Created!" />}

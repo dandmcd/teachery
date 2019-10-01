@@ -1,10 +1,11 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import Resizer from "react-image-file-resizer";
 
 import * as Styled from "./style";
-import Button from "../../../../theme/Button";
+import Button from "../../theme/Button";
 
-export default function DropZone({ props, drop, setDrop }) {
+export default function DropZone({ props, setDrop, setImage, isCard, isDeck }) {
   const [files, setFiles] = useState([]);
   const onDrop = useCallback(
     acceptedFiles => {
@@ -12,19 +13,37 @@ export default function DropZone({ props, drop, setDrop }) {
 
       reader.onabort = () => console.log("file reading was aborted");
       reader.onerror = () => console.log("file reading has failed");
-      reader.onload = () => {
-        console.log(acceptedFiles);
-      };
-
+      reader.onload = () => {};
+      acceptedFiles.forEach(file => reader.readAsBinaryString(file));
       setFiles(
         acceptedFiles.map(file =>
           Object.assign(file, { preview: URL.createObjectURL(file) })
         )
       );
+      if (isCard) {
+        console.log("Is Card");
+        setDrop(acceptedFiles[0]);
+      } else if (isDeck) {
+        console.log("Is Deck");
+        setDrop(acceptedFiles[0]);
 
-      setDrop(acceptedFiles[0]);
+        acceptedFiles.forEach(file => {
+          Resizer.imageFileResizer(
+            file,
+            500,
+            500,
+            "PNG",
+            100,
+            0,
+            blob => {
+              setImage(blob);
+            },
+            "blob"
+          );
+        });
+      }
     },
-    [setDrop]
+    [setDrop, setImage, isCard, isDeck]
   );
   const {
     rejectedFiles,
@@ -43,8 +62,6 @@ export default function DropZone({ props, drop, setDrop }) {
     multiple: false,
     accept: ["image/*"]
   });
-  console.log(acceptedFiles);
-  console.log(drop);
 
   const acceptedFilesItems = acceptedFiles.map(file => (
     <Styled.AcceptedItem key={file.path}>
