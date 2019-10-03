@@ -14,7 +14,6 @@ const Navbar = styled.nav`
   z-index: 20;
   display: flex;
   height: 60px;
-  width: 100%;
   justify-content: space-between;
   align-items: center;
   background-color: #fff;
@@ -40,7 +39,7 @@ const NavRight = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
-  align-items: center;
+  align-items: baseline;
   text-align: right;
   font-size: 0.8rem;
   margin-right: 10px;
