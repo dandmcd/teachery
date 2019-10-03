@@ -15,8 +15,20 @@ const deck = (sequelize, DataTypes) => {
         notEmpty: {
           args: true,
           msg: "A deck must have a description."
+        },
+        len: {
+          args: [0, 110],
+          msg: "Description must be under 110 characters."
         }
       }
+    },
+    deckImageName: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    deckImageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   });
 

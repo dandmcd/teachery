@@ -1,6 +1,6 @@
-import React from 'react';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
+import React from "react";
+import { Mutation } from "react-apollo";
+import gql from "graphql-tag";
 
 const GET_ALL_MESSAGES_WITH_USERS = gql`
   query {
@@ -33,7 +33,7 @@ const MessageDelete = ({ message }) => (
     variables={{ id: message.id }}
     update={cache => {
       const data = cache.readQuery({
-        query: GET_ALL_MESSAGES_WITH_USERS,
+        query: GET_ALL_MESSAGES_WITH_USERS
       });
 
       cache.writeQuery({
@@ -42,19 +42,25 @@ const MessageDelete = ({ message }) => (
           ...data,
           messages: {
             ...data.messages,
-            edges: data.messages.edges.filter(
-              node => node.id !== message.id,
-            ),
-            pageInfo: data.messages.pageInfo,
-          },
-        },
+            edges: data.messages.edges.filter(node => node.id !== message.id),
+            pageInfo: data.messages.pageInfo
+          }
+        }
       });
     }}
   >
     {(deleteMessage, { data, loading, error }) => (
-      <button type="button" onClick={deleteMessage}>
-        Delete
-      </button>
+      <input
+        type="image"
+        src={require("../../../assets/remove-item.png")}
+        width="8"
+        height="8"
+        alt="Delete Message"
+        onClick={e => {
+          if (window.confirm("Are you sure you wish to delete this message?"))
+            deleteMessage(e);
+        }}
+      />
     )}
   </Mutation>
 );

@@ -1,17 +1,24 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 import withAuthorization from "../Session/withAuthorization";
+import GoBack from "../Navigation/GoBack";
+
+const Container = styled.div`
+  z-index: 15;
+  max-width: 100%;
+  margin: auto;
+`;
 
 const AccountPage = () => (
-  <div>
-    <h1>Account Page</h1>
+  <Container>
+    <h3>Account Page</h3>
     <hr />
-    <h5>
-      This page is currently under development, please{" "}
-      <Link to="/">go back to Home</Link>
-    </h5>
-  </div>
+    <h4>
+      This page is currently under development, please go back{" "}
+      <GoBack message="Return" />
+    </h4>
+  </Container>
 );
 
 export default withAuthorization(session => session && session.me)(AccountPage);

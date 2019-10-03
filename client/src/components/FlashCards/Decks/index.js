@@ -1,25 +1,25 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Query } from "react-apollo";
+import styled from "styled-components";
 
 import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
 import Loading from "../../Loading";
+import ErrorMessage from "../../Alerts/Error";
 import withSession from "../../Session/withSession";
 import DeckItemBase from "./DeckItem";
 
 const Decks = ({ limit, me }) => (
   <Query query={GET_PAGINATED_DECKS_WITH_USERS} variables={{ limit }}>
     {({ data, loading, error, fetchMore }) => {
-      if (!data) {
-        return <div>There are no decks yet ...</div>;
-      }
-
-      const { decks } = data;
-
-      if (loading || !decks) {
+      if (loading && !data) {
         return <Loading />;
+      } else if (!data) {
+        return <div>There are no decks yet ...</div>;
+      } else if (error) {
+        return <ErrorMessage error={error} />;
       }
 
-      const { edges, pageInfo } = decks;
+      const { edges, pageInfo } = data.decks;
 
       return (
         <Fragment>
@@ -71,9 +71,31 @@ const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (
   </button>
 );
 
+const DeckContainer = styled.div`
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  row-gap: 20px;
+  column-gap: 5px;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
 const DeckList = ({ decks, me }) => {
-  console.log(decks);
-  return decks.map(deck => <DeckItem key={deck.id} deck={deck} me={me} />);
+  const [showPopup, setShowPopup] = useState(false);
+  return (
+    <DeckContainer>
+      {decks.map(deck => (
+        <DeckItem
+          key={deck.id}
+          deck={deck}
+          me={me}
+          showPopup={showPopup}
+          setShowPopup={setShowPopup}
+        />
+      ))}
+    </DeckContainer>
+  );
 };
 
 const DeckItem = withSession(DeckItemBase);

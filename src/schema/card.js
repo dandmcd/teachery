@@ -25,8 +25,6 @@ export default gql`
       pictureUrl: String
     ): Card!
 
-    signS3(filename: String!, filetype: String!): S3Payload!
-
     """
     Deletes a card
     """
@@ -41,11 +39,6 @@ export default gql`
   type CardPageInfo {
     hasNextPage: Boolean!
     endCursor: String!
-  }
-
-  type S3Payload {
-    signedRequest: String!
-    url: String!
   }
 
   type Card {

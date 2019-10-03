@@ -21,11 +21,14 @@ const TagDelete = ({ tag }) => (
     {(deleteTag, { data, loading, error }) => (
       <input
         type="image"
-        src={require("./remove-item.png")}
-        width="8"
-        height="8"
+        src={require("../../../../../../assets/remove-item.png")}
+        width="5"
+        height="5"
         alt="Delete Tag"
-        onClick={deleteTag}
+        onClick={e => {
+          if (window.confirm("Are you sure you wish to delete this tag?"))
+            deleteTag(e);
+        }}
       />
     )}
   </Mutation>

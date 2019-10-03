@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
+import styled from "styled-components";
 
-import ErrorMessage from "../../Error";
+import * as Styled from "../../../theme/Popup";
+import Button from "../../../theme/Button";
+
+import ErrorMessage from "../../Alerts/Error";
 
 const CREATE_MESSAGE = gql`
   mutation($text: String!) {
@@ -16,6 +20,12 @@ const CREATE_MESSAGE = gql`
       }
     }
   }
+`;
+
+const SendButton = styled(Button)`
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 const MessageCreate = () => {
@@ -35,39 +45,17 @@ const MessageCreate = () => {
   };
 
   return (
-    <Mutation
-      mutation={CREATE_MESSAGE}
-      variables={{ text }}
-      // Not used anymore because of Subscription
-
-      // update={(cache, { data: { createMessage } }) => {
-      //   const data = cache.readQuery({
-      //     query: GET_ALL_MESSAGES_WITH_USERS,
-      //   });
-
-      //   cache.writeQuery({
-      //     query: GET_ALL_MESSAGES_WITH_USERS,
-      //     data: {
-      //       ...data,
-      //       messages: {
-      //         ...data.messages,
-      //         edges: [createMessage, ...data.messages.edges],
-      //         pageInfo: data.messages.pageInfo,
-      //       },
-      //     },
-      //   });
-      // }}
-    >
+    <Mutation mutation={CREATE_MESSAGE} variables={{ text }}>
       {(createMessage, { data, loading, error }) => (
         <form onSubmit={e => onSubmit(e, createMessage)}>
-          <textarea
+          <Styled.InputTextArea
             name="text"
             value={text}
             onChange={onChange}
             type="text"
             placeholder="Your message ..."
           />
-          <button type="submit">Send</button>
+          <SendButton type="submit">Send</SendButton>
 
           {error && <ErrorMessage error={error} />}
         </form>

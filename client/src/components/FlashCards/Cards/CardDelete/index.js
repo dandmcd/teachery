@@ -1,8 +1,11 @@
-import React from "react";
-import { Mutation } from "react-apollo";
+import React, { Fragment } from "react";
+import { useMutation } from "react-apollo";
 import gql from "graphql-tag";
+import styled from "styled-components";
 
-import GET_PAGINATED_DECKS_WITH_USERS from "../../Decks/DeckSchema";
+import Button from "../../../../theme/Button";
+import Loading from "../../../Loading";
+import ErrorMessage from "../../../Alerts/Error";
 
 const DELETE_CARD = gql`
   mutation($id: ID!) {
@@ -10,34 +13,51 @@ const DELETE_CARD = gql`
   }
 `;
 
-const CardDelete = ({ card }) => (
-  <Mutation
-    mutation={DELETE_CARD}
-    variables={{ id: card.id }}
-    update={cache => {
-      const data = cache.readQuery({
-        query: GET_PAGINATED_DECKS_WITH_USERS
-      });
+const DeleteButton = styled(Button)`
+  border: 2px solid ${props => props.theme.error};
+  color: #233841;
+  :hover {
+    color: white;
+    background: #b11a1a;
+  }
+`;
 
-      cache.writeQuery({
-        query: GET_PAGINATED_DECKS_WITH_USERS,
-        data: {
-          ...data,
-          cards: {
-            ...data.cards,
-            edges: data.cards.edges.filter(node => node.id !== card.id),
-            pageInfo: data.cards.pageInfo
-          }
-        }
-      });
-    }}
-  >
-    {(deleteCard, { data, loading, error }) => (
-      <button type="button" onClick={deleteCard}>
-        Delete
-      </button>
-    )}
-  </Mutation>
-);
+const CardDelete = ({ card, setIsSuccess }) => {
+  const [deleteCard, { loading, error }] = useMutation(DELETE_CARD, {
+    onError: err => {
+      setIsSuccess(false);
+    },
+    onCompleted: data => {
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 5000);
+    }
+  });
+
+  const onSubmit = (e, deleteCard) => {
+    e.preventDefault();
+    deleteCard({
+      variables: { id: card.id },
+      refetchQueries: ["CardsQuery"]
+    });
+  };
+
+  return (
+    <Fragment>
+      <DeleteButton
+        type="button"
+        onClick={e => {
+          if (window.confirm("Are you sure you wish to delete this card?"))
+            onSubmit(e, deleteCard);
+        }}
+      >
+        Delete Card
+      </DeleteButton>
+      {loading && <Loading />}
+      {error && <ErrorMessage error={error} />}
+    </Fragment>
+  );
+};
 
 export default CardDelete;

@@ -43,7 +43,7 @@ const assignedTask = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: "A deck must have a name."
+            msg: "A deck must have a due date."
           }
         },
         validate: {

@@ -3,8 +3,10 @@ import { Link, withRouter } from "react-router-dom";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
+import Loading from "../Loading";
 import * as routes from "../../constants/routes";
-import ErrorMessage from "../Error";
+import ErrorMessage from "../Alerts/Error";
+import * as Styled from "./style";
 
 const SIGN_UP = gql`
   mutation($username: String!, $email: String!, $password: String!) {
@@ -22,10 +24,9 @@ const INITIAL_STATE = {
 };
 
 const SignUpPage = ({ history, refetch }) => (
-  <div>
-    <h1>SignUp</h1>
+  <Styled.Container>
     <SignUpForm history={history} refetch={refetch} />
-  </div>
+  </Styled.Container>
 );
 
 class SignUpForm extends Component {
@@ -62,15 +63,16 @@ class SignUpForm extends Component {
     return (
       <Mutation mutation={SIGN_UP} variables={{ username, email, password }}>
         {(signUp, { data, loading, error }) => (
-          <form onSubmit={event => this.onSubmit(event, signUp)}>
-            <input
+          <Styled.Box onSubmit={event => this.onSubmit(event, signUp)}>
+            <Styled.Title>Sign Up</Styled.Title>
+            <Styled.InputUserName
               name="username"
               value={username}
               onChange={this.onChange}
               type="text"
-              placeholder="Full Name"
+              placeholder="Username"
             />
-            <input
+            <Styled.InputEmail
               name="email"
               value={email}
               onChange={this.onChange}
@@ -78,7 +80,7 @@ class SignUpForm extends Component {
               placeholder="Email Address"
               autoComplete="username"
             />
-            <input
+            <Styled.InputPassword
               name="password"
               value={password}
               onChange={this.onChange}
@@ -86,7 +88,7 @@ class SignUpForm extends Component {
               placeholder="Password"
               autoComplete="new-password"
             />
-            <input
+            <Styled.InputConfirmPassword
               name="passwordConfirmation"
               value={passwordConfirmation}
               onChange={this.onChange}
@@ -94,12 +96,12 @@ class SignUpForm extends Component {
               placeholder="Confirm Password"
               autoComplete="new-password"
             />
-            <button disabled={isInvalid || loading} type="submit">
+            <Styled.SubmitButton disabled={isInvalid || loading} type="submit">
               Sign Up
-            </button>
-
+            </Styled.SubmitButton>
+            {loading && <Loading />}
             {error && <ErrorMessage error={error} />}
-          </form>
+          </Styled.Box>
         )}
       </Mutation>
     );

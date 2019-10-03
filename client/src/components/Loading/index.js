@@ -1,5 +1,18 @@
-import React from "react";
+import React, { Fragment } from "react";
+import styled from "styled-components";
 
-const Loading = () => <div>Loading...</div>;
+import bluespinner from "../../assets/bluespinner.gif";
+
+const Spinner = styled.img`
+  width: 200px;
+  margin: auto;
+  display: block;
+`;
+
+const Loading = () => (
+  <Fragment>
+    <Spinner src={bluespinner} alt="Loading..." />
+  </Fragment>
+);
 
 export default Loading;

@@ -1,32 +1,33 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { Query } from "react-apollo";
+import Moment from "react-moment";
 
 import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS from "../AssignmentAdmin/AssignmentAdminSchema";
 import AssignmentDelete from "../AssignmentDelete";
 import Loading from "../../Loading";
+import * as Styled from "./style";
+import ErrorMessage from "../../Alerts/Error";
+import Button from "../../../theme/Button";
+
 const Assignments = ({ limit, me }) => (
   <Query
     query={GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS}
     variables={{ limit }}
   >
     {({ data, loading, error, fetchMore }) => {
-      if (!data) {
-        return <div>There are no assignments yet ...</div>;
-      }
-
-      const { assignments } = data;
-      console.log(assignments);
-
-      if (loading || !assignments) {
+      if (loading && !data) {
         return <Loading />;
+      } else if (!data) {
+        return <div>There are no assignments yet ...</div>;
+      } else if (error) {
+        return <ErrorMessage error={error} />;
       }
 
-      const { edges, pageInfo } = assignments;
+      const { edges, pageInfo } = data.assignments;
 
-      console.log(edges);
       return (
-        <Fragment>
+        <Styled.AssignmentContainer>
           <AssignmentList assignments={edges} me={me} />
 
           {pageInfo.hasNextPage && (
@@ -38,13 +39,13 @@ const Assignments = ({ limit, me }) => (
               More
             </MoreAssignmentsButton>
           )}
-        </Fragment>
+        </Styled.AssignmentContainer>
       );
     }}
   </Query>
 );
 const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
-  <button
+  <Button
     type="button"
     onClick={() =>
       fetchMore({
@@ -71,7 +72,7 @@ const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
     }
   >
     {children}
-  </button>
+  </Button>
 );
 
 class AssignmentList extends Component {
@@ -85,17 +86,31 @@ class AssignmentList extends Component {
 }
 
 const AssignmentItemBase = ({ assignment, session }) => (
-  <div>
-    <h3>{assignment.user.username}</h3>
-    <small>{assignment.createdAt}</small>
-    <p>{assignment.assignmentName}</p>
-    <p>{assignment.note}</p>
-    <p>{assignment.link}</p>
-
-    {session && session.me && assignment.user.id === session.me.id && (
-      <AssignmentDelete assignment={assignment} />
-    )}
-  </div>
+  <Styled.AssignmentItemContainer>
+    <Styled.CardGrid>
+      <Styled.Title>{assignment.assignmentName}</Styled.Title>
+      <Styled.Note>{assignment.note}</Styled.Note>
+      <Styled.ExternalLink
+        href={assignment.link}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        View Link
+      </Styled.ExternalLink>
+      <Styled.CreatedInfo>
+        <Styled.CreatedAt>
+          Created on:{" "}
+          <Moment format="YYYY-MM-DD">{assignment.createdAt}</Moment>
+        </Styled.CreatedAt>
+        <Styled.CreatedBy>
+          Created by: {assignment.user.username}
+        </Styled.CreatedBy>
+      </Styled.CreatedInfo>
+      {session && session.me && assignment.user.id === session.me.id && (
+        <AssignmentDelete assignment={assignment} />
+      )}
+    </Styled.CardGrid>
+  </Styled.AssignmentItemContainer>
 );
 
 const AssignmentItem = withSession(AssignmentItemBase);

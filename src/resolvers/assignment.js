@@ -49,6 +49,9 @@ export default {
         { assignmentName, note, link, status, dueDate },
         { models, me }
       ) => {
+        if (link === "") {
+          link = null;
+        }
         const assignment = await models.Assignment.create({
           assignmentName,
           note,
@@ -65,6 +68,12 @@ export default {
       isAuthenticated,
       isAssignmentOwner,
       async (parent, { id }, { models }) => {
+        await models.AssignedTask.destroy({
+          where: {
+            assignmentId: id
+          }
+        });
+
         return await models.Assignment.destroy({ where: { id } });
       }
     )

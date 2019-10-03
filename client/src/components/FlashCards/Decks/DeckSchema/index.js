@@ -7,6 +7,8 @@ const GET_PAGINATED_DECKS_WITH_USERS = gql`
         id
         deckName
         description
+        deckImageUrl
+        deckImageName
         createdAt
         user {
           id
