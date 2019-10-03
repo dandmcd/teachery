@@ -90,11 +90,6 @@ const port = process.env.PORT || 8000;
 
 console.log("Server is running in production? " + isProduction);
 
-  httpServer.listen({ port }, () => {
-    console.log(`Apollo Server on port:${port}!`);
-  });
-});
-
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
   app.get("/*", function(req, res) {
