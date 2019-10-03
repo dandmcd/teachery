@@ -11,7 +11,6 @@ import schema from "./schema";
 import resolvers from "./resolvers";
 import models, { sequelize } from "./models";
 import loaders from "./loaders";
-import createUsersWithMessagesAndDecks from "./seed";
 import path from "path";
 
 const app = express();
@@ -90,12 +89,6 @@ const isProduction = !!process.env.DATABASE_URL;
 const port = process.env.PORT || 8000;
 
 console.log("Server is running in production? " + isProduction);
-
-//Dev seed changes required, add || isProduction to sync and if statement
-sequelize.sync({ force: isTest }).then(async () => {
-  if (isTest) {
-    createUsersWithMessagesAndDecks(new Date());
-  }
 
   httpServer.listen({ port }, () => {
     console.log(`Apollo Server on port:${port}!`);
