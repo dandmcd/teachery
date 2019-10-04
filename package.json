@@ -45,6 +45,7 @@
     "jsonwebtoken": "^8.5.1",
     "pg": "^7.12.1",
     "sequelize": "^5.19.2",
+    "sequelize-cli": "^5.5.1",
     "subscriptions-transport-ws": "^0.9.16",
     "uuid": "^3.3.3"
   },
