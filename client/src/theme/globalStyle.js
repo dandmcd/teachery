@@ -72,8 +72,7 @@ body {
   line-height: 1.5;
   background-color: #fff;
   color: #4b3b3b;
-
-
+  outline: none;
 }
 #root {
 

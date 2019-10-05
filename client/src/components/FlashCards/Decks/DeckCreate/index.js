@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Mutation, useMutation } from "react-apollo";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import axios from "axios";
@@ -65,6 +65,39 @@ const Container = styled.div``;
 const DeckCreate = () => {
   const [isDeck, setIsDeck] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [createDeck, { loading, error }] = useMutation(CREATE_DECK, {
+    onError: err => {
+      setIsSuccess(false);
+    },
+    onCompleted: data => {
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 5000);
+    },
+    update(
+      cache,
+      {
+        data: { createDeck }
+      }
+    ) {
+      const data = cache.readQuery({
+        query: GET_PAGINATED_DECKS_WITH_USERS
+      });
+
+      cache.writeQuery({
+        query: GET_PAGINATED_DECKS_WITH_USERS,
+        data: {
+          ...data,
+          decks: {
+            ...data.decks,
+            edges: [createDeck, ...data.decks.edges],
+            pageInfo: data.decks.pageInfo
+          }
+        }
+      });
+    }
+  });
   const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
     S3SIGNMUTATION
   );
@@ -176,74 +209,44 @@ const DeckCreate = () => {
         Create Deck
       </Button>
       {showPopup ? (
-        <Mutation
-          mutation={CREATE_DECK}
-          onError={data => setIsSuccess(false)}
-          onCompleted={data => {
-            setIsSuccess(true);
-            setTimeout(() => {
-              setIsSuccess(false);
-            }, 5000);
-          }}
-          update={(cache, { data: { createDeck } }) => {
-            const data = cache.readQuery({
-              query: GET_PAGINATED_DECKS_WITH_USERS
-            });
-
-            cache.writeQuery({
-              query: GET_PAGINATED_DECKS_WITH_USERS,
-              data: {
-                ...data,
-                decks: {
-                  ...data.decks,
-                  edges: [createDeck, ...data.decks.edges],
-                  pageInfo: data.decks.pageInfo
-                }
-              }
-            });
-          }}
-        >
-          {(createDeck, { data, loading, error }) => (
-            <Styled.PopupContainer>
-              <Styled.PopupInnerExtended ref={innerRef}>
-                <Styled.PopupTitle>
-                  Create a name and description for your deck...
-                </Styled.PopupTitle>
-                <Styled.PopupBody>
-                  <form onSubmit={e => onSubmit(e, createDeck)}>
-                    <Styled.Input
-                      name="deckName"
-                      value={deckName}
-                      onChange={onChange}
-                      type="text"
-                      placeholder="Enter a deck name*"
-                    />
-                    <Styled.InputTextArea
-                      name="description"
-                      value={description}
-                      onChange={onChange}
-                      type="text"
-                      placeholder="Add details and descriptions*"
-                    />
-                    <DropZone
-                      setDrop={setDrop}
-                      setImage={setImage}
-                      handleChange={handleChange}
-                      isDeck={isDeck}
-                    />
-                    <Button type="submit">Submit</Button>
-                    {(loading || s3Loading) && <Loading />}
-                    {isSuccess && <SuccessMessage message="Deck created!" />}
-                    {(error || s3Error) && <ErrorMessage error={error} />}
-                  </form>
-                </Styled.PopupBody>
-                <Styled.PopupFooterButton onClick={togglePopup}>
-                  Close
-                </Styled.PopupFooterButton>
-              </Styled.PopupInnerExtended>
-            </Styled.PopupContainer>
-          )}
-        </Mutation>
+        <Styled.PopupContainer>
+          <Styled.PopupInnerExtended ref={innerRef}>
+            <Styled.PopupTitle>
+              Create a name and description for your deck...
+            </Styled.PopupTitle>
+            <Styled.PopupBody>
+              <form onSubmit={e => onSubmit(e, createDeck)}>
+                <Styled.Input
+                  name="deckName"
+                  value={deckName}
+                  onChange={onChange}
+                  type="text"
+                  placeholder="Enter a deck name*"
+                />
+                <Styled.InputTextArea
+                  name="description"
+                  value={description}
+                  onChange={onChange}
+                  type="text"
+                  placeholder="Add details and descriptions*"
+                />
+                <DropZone
+                  setDrop={setDrop}
+                  setImage={setImage}
+                  handleChange={handleChange}
+                  isDeck={isDeck}
+                />
+                <Button type="submit">Submit</Button>
+                {(loading || s3Loading) && <Loading />}
+                {isSuccess && <SuccessMessage message="Deck created!" />}
+                {(error || s3Error) && <ErrorMessage error={error} />}
+              </form>
+            </Styled.PopupBody>
+            <Styled.PopupFooterButton onClick={togglePopup}>
+              Close
+            </Styled.PopupFooterButton>
+          </Styled.PopupInnerExtended>
+        </Styled.PopupContainer>
       ) : null}
     </Container>
   );

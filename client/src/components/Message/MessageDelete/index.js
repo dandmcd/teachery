@@ -1,6 +1,7 @@
-import React from "react";
-import { Mutation } from "react-apollo";
+import React, { Fragment } from "react";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import ErrorMessage from "../../Alerts/Error";
 
 const GET_ALL_MESSAGES_WITH_USERS = gql`
   query {
@@ -27,15 +28,15 @@ const DELETE_MESSAGE = gql`
   }
 `;
 
-const MessageDelete = ({ message }) => (
-  <Mutation
-    mutation={DELETE_MESSAGE}
-    variables={{ id: message.id }}
-    update={cache => {
-      const data = cache.readQuery({
-        query: GET_ALL_MESSAGES_WITH_USERS
-      });
-
+const MessageDelete = ({ message }) => {
+  const [deleteMessage, { error }] = useMutation(DELETE_MESSAGE, {
+    update(
+      cache,
+      {
+        data: { deleteMessage }
+      }
+    ) {
+      const data = cache.readQuery({ query: GET_ALL_MESSAGES_WITH_USERS });
       cache.writeQuery({
         query: GET_ALL_MESSAGES_WITH_USERS,
         data: {
@@ -47,9 +48,17 @@ const MessageDelete = ({ message }) => (
           }
         }
       });
-    }}
-  >
-    {(deleteMessage, { data, loading, error }) => (
+    }
+  });
+
+  const onSubmit = (e, deleteCard) => {
+    e.preventDefault();
+    deleteCard({
+      variables: { id: message.id }
+    });
+  };
+  return (
+    <Fragment>
       <input
         type="image"
         src={require("../../../assets/remove-item.png")}
@@ -58,11 +67,12 @@ const MessageDelete = ({ message }) => (
         alt="Delete Message"
         onClick={e => {
           if (window.confirm("Are you sure you wish to delete this message?"))
-            deleteMessage(e);
+            onSubmit(e, deleteMessage);
         }}
       />
-    )}
-  </Mutation>
-);
+      {error && <ErrorMessage error={error} />}
+    </Fragment>
+  );
+};
 
 export default MessageDelete;

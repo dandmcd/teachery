@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Mutation } from "react-apollo";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
 import * as Styled from "../../../theme/Popup";
 import Button from "../../../theme/Button";
-
 import ErrorMessage from "../../Alerts/Error";
+import Loading from "../../Loading";
 
 const CREATE_MESSAGE = gql`
   mutation($text: String!) {
@@ -29,6 +29,7 @@ const SendButton = styled(Button)`
 `;
 
 const MessageCreate = () => {
+  const [createMessage, { loading, error }] = useMutation(CREATE_MESSAGE);
   const [text, setText] = useState("");
 
   const onChange = e => {
@@ -39,28 +40,25 @@ const MessageCreate = () => {
     e.preventDefault();
 
     try {
-      await createMessage();
+      await createMessage({ variables: { text: text } });
       setText("");
     } catch (error) {}
   };
 
   return (
-    <Mutation mutation={CREATE_MESSAGE} variables={{ text }}>
-      {(createMessage, { data, loading, error }) => (
-        <form onSubmit={e => onSubmit(e, createMessage)}>
-          <Styled.InputTextArea
-            name="text"
-            value={text}
-            onChange={onChange}
-            type="text"
-            placeholder="Your message ..."
-          />
-          <SendButton type="submit">Send</SendButton>
+    <form onSubmit={e => onSubmit(e, createMessage)}>
+      <Styled.InputTextArea
+        name="text"
+        value={text}
+        onChange={onChange}
+        type="text"
+        placeholder="Your message ..."
+      />
+      <SendButton type="submit">Send</SendButton>
 
-          {error && <ErrorMessage error={error} />}
-        </form>
-      )}
-    </Mutation>
+      {loading && <Loading />}
+      {error && <ErrorMessage error={error} />}
+    </form>
   );
 };
 

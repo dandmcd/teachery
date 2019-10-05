@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Query } from "react-apollo";
+import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
 
 import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
@@ -7,41 +7,49 @@ import Loading from "../../Loading";
 import ErrorMessage from "../../Alerts/Error";
 import withSession from "../../Session/withSession";
 import DeckItemBase from "./DeckItem";
+import Button from "../../../theme/Button";
 
-const Decks = ({ limit, me }) => (
-  <Query query={GET_PAGINATED_DECKS_WITH_USERS} variables={{ limit }}>
-    {({ data, loading, error, fetchMore }) => {
-      if (loading && !data) {
-        return <Loading />;
-      } else if (!data) {
-        return <div>There are no decks yet ...</div>;
-      } else if (error) {
-        return <ErrorMessage error={error} />;
-      }
+const Decks = ({ limit, me }) => {
+  const { data, loading, error, fetchMore } = useQuery(
+    GET_PAGINATED_DECKS_WITH_USERS,
+    { variables: { limit } }
+  );
+  if (loading && !data) {
+    return <Loading />;
+  } else if (!data) {
+    return <div>There are no decks yet ...</div>;
+  } else if (error) {
+    return <ErrorMessage error={error} />;
+  }
 
-      const { edges, pageInfo } = data.decks;
+  const { edges, pageInfo } = data.decks;
 
-      return (
-        <Fragment>
-          <DeckList decks={edges} me={me} />
+  return (
+    <Fragment>
+      <DeckList decks={edges} me={me} />
 
-          {pageInfo.hasNextPage && (
-            <MoreDecksButton
-              limit={limit}
-              pageInfo={pageInfo}
-              fetchMore={fetchMore}
-            >
-              More
-            </MoreDecksButton>
-          )}
-        </Fragment>
-      );
-    }}
-  </Query>
-);
+      {pageInfo.hasNextPage && (
+        <MoreDecksButton
+          limit={limit}
+          pageInfo={pageInfo}
+          fetchMore={fetchMore}
+        >
+          More
+        </MoreDecksButton>
+      )}
+    </Fragment>
+  );
+};
+
+const DeckButton = styled(Button)`
+  margin: auto;
+  display: block;
+  width: 205px;
+  border: 2px solid ${props => props.theme.primaryDark};
+`;
 
 const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (
-  <button
+  <DeckButton
     type="button"
     onClick={() =>
       fetchMore({
@@ -68,7 +76,7 @@ const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (
     }
   >
     {children}
-  </button>
+  </DeckButton>
 );
 
 const DeckContainer = styled.div`

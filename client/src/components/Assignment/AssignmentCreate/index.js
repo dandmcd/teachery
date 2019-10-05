@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Mutation } from "react-apollo";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
@@ -48,18 +48,60 @@ const AssignmentCreate = () => {
     note: "",
     link: ""
   });
-
   const { assignmentName, note, link } = assignmentState;
+
+  const [createAssignment, { loading, error }] = useMutation(
+    CREATE_ASSIGNMENT,
+    {
+      onError: err => {
+        setIsSuccess(false);
+      },
+      onCompleted: data => {
+        setIsSuccess(true);
+        setTimeout(() => {
+          setIsSuccess(false);
+        }, 5000);
+      },
+      update(
+        cache,
+        {
+          data: { createAssignment }
+        }
+      ) {
+        const data = cache.readQuery({
+          query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS
+        });
+
+        cache.writeQuery({
+          query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS,
+          data: {
+            ...data,
+            assignments: {
+              ...data.assignments,
+              edges: [createAssignment, ...data.assignments.edges],
+              pageInfo: data.assignments.pageInfo
+            }
+          }
+        });
+      }
+    }
+  );
 
   const onChange = e => {
     setAssignmentState({ ...assignmentState, [e.target.name]: e.target.value });
   };
 
-  const onSubmit = async (event, createAssignment) => {
-    event.preventDefault();
+  const onSubmit = async (e, createAssignment) => {
+    e.preventDefault();
 
     try {
-      await createAssignment();
+      await createAssignment({
+        variables: {
+          assignmentName: assignmentName,
+          note: note,
+          link: link
+        }
+      });
       setAssignmentState({ assignmentName: "", note: "", link: "" });
     } catch (error) {}
   };
@@ -77,76 +119,43 @@ const AssignmentCreate = () => {
         New Assignment
       </AssignButton>
       {showPopup ? (
-        <Mutation
-          mutation={CREATE_ASSIGNMENT}
-          variables={{ assignmentName, note, link }}
-          onError={data => setIsSuccess(false)}
-          onCompleted={data => {
-            setIsSuccess(true);
-            setTimeout(() => {
-              setIsSuccess(false);
-            }, 5000);
-          }}
-          update={(cache, { data: { createAssignment } }) => {
-            const data = cache.readQuery({
-              query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS
-            });
-
-            cache.writeQuery({
-              query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS,
-              data: {
-                ...data,
-                assignments: {
-                  ...data.assignments,
-                  edges: [createAssignment, ...data.assignments.edges],
-                  pageInfo: data.assignments.pageInfo
-                }
-              }
-            });
-          }}
-        >
-          {(createAssignment, { data, loading, error }) => (
-            <Styled.PopupContainer>
-              <Styled.PopupInner ref={innerRef}>
-                <Styled.PopupTitle>Create an assignment...</Styled.PopupTitle>
-                <Styled.PopupBody>
-                  <form onSubmit={e => onSubmit(e, createAssignment)}>
-                    <Styled.Input
-                      name="assignmentName"
-                      value={assignmentName}
-                      onChange={onChange}
-                      type="text"
-                      placeholder="Assignment Name*"
-                    />
-                    <Styled.InputTextArea
-                      name="note"
-                      value={note}
-                      onChange={onChange}
-                      type="text"
-                      placeholder="Add details and notes"
-                    />
-                    <Styled.Input
-                      name="link"
-                      value={link}
-                      onChange={onChange}
-                      type="text"
-                      placeholder="Add a URL link"
-                    />
-                    <Button type="submit">Submit</Button>
-                    {loading && <Loading />}
-                    {isSuccess && (
-                      <SuccessMessage message="Assignment Created!" />
-                    )}
-                    {error && <ErrorMessage error={error} />}
-                  </form>
-                </Styled.PopupBody>
-                <Styled.PopupFooterButton onClick={togglePopup}>
-                  Close
-                </Styled.PopupFooterButton>
-              </Styled.PopupInner>
-            </Styled.PopupContainer>
-          )}
-        </Mutation>
+        <Styled.PopupContainer>
+          <Styled.PopupInner ref={innerRef}>
+            <Styled.PopupTitle>Create an assignment...</Styled.PopupTitle>
+            <Styled.PopupBody>
+              <form onSubmit={e => onSubmit(e, createAssignment)}>
+                <Styled.Input
+                  name="assignmentName"
+                  value={assignmentName}
+                  onChange={onChange}
+                  type="text"
+                  placeholder="Assignment Name*"
+                />
+                <Styled.InputTextArea
+                  name="note"
+                  value={note}
+                  onChange={onChange}
+                  type="text"
+                  placeholder="Add details and notes"
+                />
+                <Styled.Input
+                  name="link"
+                  value={link}
+                  onChange={onChange}
+                  type="text"
+                  placeholder="Add a URL link"
+                />
+                <Button type="submit">Submit</Button>
+                {loading && <Loading />}
+                {isSuccess && <SuccessMessage message="Assignment Created!" />}
+                {error && <ErrorMessage error={error} />}
+              </form>
+            </Styled.PopupBody>
+            <Styled.PopupFooterButton onClick={togglePopup}>
+              Close
+            </Styled.PopupFooterButton>
+          </Styled.PopupInner>
+        </Styled.PopupContainer>
       ) : null}
     </Container>
   );

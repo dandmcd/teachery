@@ -1,10 +1,11 @@
-import React from "react";
-import { Mutation } from "react-apollo";
+import React, { Fragment } from "react";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
 import Button from "../../../../theme/Button";
 import GET_PAGINATED_DECKS_WITH_USERS from "../DeckSchema";
+import ErrorMessage from "../../../Alerts/Error";
 
 const DELETE_DECK = gql`
   mutation($id: ID!) {
@@ -21,11 +22,14 @@ const DeleteButton = styled(Button)`
   }
 `;
 
-const DeckDelete = ({ deck }) => (
-  <Mutation
-    mutation={DELETE_DECK}
-    variables={{ id: deck.id }}
-    update={cache => {
+const DeckDelete = ({ deck }) => {
+  const [deleteDeck, { error }] = useMutation(DELETE_DECK, {
+    update(
+      cache,
+      {
+        data: { deleteDeck }
+      }
+    ) {
       const data = cache.readQuery({
         query: GET_PAGINATED_DECKS_WITH_USERS
       });
@@ -41,9 +45,18 @@ const DeckDelete = ({ deck }) => (
           }
         }
       });
-    }}
-  >
-    {(deleteDeck, { data, loading, error }) => (
+    }
+  });
+
+  const onSubmit = (e, deleteDeck) => {
+    e.preventDefault();
+    deleteDeck({
+      variables: { id: deck.id }
+    });
+  };
+
+  return (
+    <Fragment>
       <DeleteButton
         type="button"
         onClick={e => {
@@ -52,13 +65,14 @@ const DeckDelete = ({ deck }) => (
               "Are you sure you wish to delete this deck and all cards associated with it?"
             )
           )
-            deleteDeck(e);
+            onSubmit(e, deleteDeck);
         }}
       >
         Delete Deck
       </DeleteButton>
-    )}
-  </Mutation>
-);
+      {error && <ErrorMessage error={error} />}
+    </Fragment>
+  );
+};
 
 export default DeckDelete;

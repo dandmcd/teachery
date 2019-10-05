@@ -1,6 +1,7 @@
-import React, { Component } from "react";
-import { Query } from "react-apollo";
+import React from "react";
+import { useQuery } from "@apollo/react-hooks";
 import Moment from "react-moment";
+import styled from "styled-components";
 
 import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
@@ -9,40 +10,47 @@ import * as Styled from "./style";
 import ErrorMessage from "../../Alerts/Error";
 import Button from "../../../theme/Button";
 
-const AssignedTasks = ({ limit, me }) => (
-  <Query query={GET_PAGINATED_ASSIGNMENTS_WITH_USERS} variables={{ limit }}>
-    {({ data, loading, error, fetchMore }) => {
-      if (loading && !data) {
-        return <Loading />;
-      } else if (!data) {
-        return <div>There are no assignments right now ...</div>;
-      } else if (error) {
-        return <ErrorMessage error={error} />;
-      }
+const AssignedTasks = ({ limit, me }) => {
+  const { data, loading, error, fetchMore } = useQuery(
+    GET_PAGINATED_ASSIGNMENTS_WITH_USERS,
+    { variables: { limit } }
+  );
+  if (loading && !data) {
+    return <Loading />;
+  } else if (!data) {
+    return <div>There are no assignments right now ...</div>;
+  } else if (error) {
+    return <ErrorMessage error={error} />;
+  }
 
-      const { edges, pageInfo } = data.assignedTasks;
+  const { edges, pageInfo } = data.assignedTasks;
 
-      return (
-        <Styled.AssignmentContainer>
-          <AssignedTaskList assignedTasks={edges} me={me} />
+  return (
+    <Styled.AssignmentContainer>
+      <AssignedTaskList assignedTasks={edges} me={me} />
 
-          {pageInfo.hasNextPage && (
-            <MoreAssignedTasksButton
-              limit={limit}
-              pageInfo={pageInfo}
-              fetchMore={fetchMore}
-            >
-              More
-            </MoreAssignedTasksButton>
-          )}
-        </Styled.AssignmentContainer>
-      );
-    }}
-  </Query>
-);
+      {pageInfo.hasNextPage && (
+        <MoreAssignedTasksButton
+          limit={limit}
+          pageInfo={pageInfo}
+          fetchMore={fetchMore}
+        >
+          More
+        </MoreAssignedTasksButton>
+      )}
+    </Styled.AssignmentContainer>
+  );
+};
+
+const AssignmentButton = styled(Button)`
+  margin: auto;
+  display: block;
+  width: 205px;
+  border: 2px solid ${props => props.theme.primaryDark};
+`;
 
 const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
-  <Button
+  <AssignmentButton
     type="button"
     onClick={() =>
       fetchMore({
@@ -69,21 +77,18 @@ const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
     }
   >
     {children}
-  </Button>
+  </AssignmentButton>
 );
 
-class AssignedTaskList extends Component {
-  render() {
-    const { assignedTasks, me } = this.props;
-    return assignedTasks.map(assignedTask => (
-      <AssignedTaskItem
-        key={assignedTask.id}
-        assignedTask={assignedTask}
-        me={me}
-      />
-    ));
-  }
-}
+const AssignedTaskList = ({ assignedTasks, me }) => {
+  return assignedTasks.map(assignedTask => (
+    <AssignedTaskItem
+      key={assignedTask.id}
+      assignedTask={assignedTask}
+      me={me}
+    />
+  ));
+};
 
 const AssignmentItemBase = ({
   assignedTask: {

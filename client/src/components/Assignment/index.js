@@ -15,7 +15,7 @@ const AssignmentsHeader = styled.h3`
   margin-bottom: 10px;
 `;
 
-const AssignmentPage = session => (
+const AssignmentPage = () => (
   <Container>
     <AssignmentsHeader>Assignments</AssignmentsHeader>
     <AssignedTasks limit={3} />

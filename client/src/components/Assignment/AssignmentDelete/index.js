@@ -1,10 +1,11 @@
-import React from "react";
-import { Mutation } from "react-apollo";
+import React, { Fragment } from "react";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
 import GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS from "../AssignmentAdmin/AssignmentAdminSchema";
 import Button from "../../../theme/Button";
+import ErrorMessage from "../../Alerts/Error";
 
 const DELETE_ASSIGNMENT = gql`
   mutation($id: ID!) {
@@ -16,11 +17,14 @@ const RemoveAssignmentButton = styled(Button)`
   border: 2px solid ${props => props.theme.error};
 `;
 
-const AssignmentDelete = ({ assignment }) => (
-  <Mutation
-    mutation={DELETE_ASSIGNMENT}
-    variables={{ id: assignment.id }}
-    update={cache => {
+const AssignmentDelete = ({ assignment }) => {
+  const [deleteAssignment, { error }] = useMutation(DELETE_ASSIGNMENT, {
+    update(
+      cache,
+      {
+        data: { deleteAssignment }
+      }
+    ) {
       const data = cache.readQuery({
         query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS
       });
@@ -38,9 +42,20 @@ const AssignmentDelete = ({ assignment }) => (
           }
         }
       });
-    }}
-  >
-    {(deleteAssignment, { data, loading, error }) => (
+    }
+  });
+
+  const onSubmit = (e, deleteAssignment) => {
+    e.preventDefault();
+    deleteAssignment({
+      variables: {
+        id: assignment.id
+      }
+    });
+  };
+
+  return (
+    <Fragment>
       <RemoveAssignmentButton
         type="button"
         onClick={e => {
@@ -49,13 +64,14 @@ const AssignmentDelete = ({ assignment }) => (
               "Are you sure you wish to delete this assignment?  All users will be no longer able to view it."
             )
           )
-            deleteAssignment(e);
+            onSubmit(e, deleteAssignment);
         }}
       >
         Delete
       </RemoveAssignmentButton>
-    )}
-  </Mutation>
-);
+      {error && <ErrorMessage error={error} />}
+    </Fragment>
+  );
+};
 
 export default AssignmentDelete;

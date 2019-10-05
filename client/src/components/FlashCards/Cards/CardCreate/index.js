@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { useMutation } from "react-apollo";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
@@ -42,9 +42,9 @@ const S3SIGNMUTATION = gql`
   }
 `;
 
-//Component
+// Component
 const CardCreate = ({ deck, setIsOn, isCard }) => {
-  const [isSuccess, setIsSuccess] = useState(false);
+  // Mutation Hooks
   const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
     S3SIGNMUTATION
   );
@@ -60,6 +60,8 @@ const CardCreate = ({ deck, setIsOn, isCard }) => {
     }
   });
 
+  // State
+  const [isSuccess, setIsSuccess] = useState(false);
   const [drop, setDrop] = useState(null);
   const [state, setState] = useState({
     deckId: null,
@@ -70,7 +72,7 @@ const CardCreate = ({ deck, setIsOn, isCard }) => {
   });
   const { front, back } = state;
 
-  //S3 Sign and format
+  // S3 Sign and format
   const uploadToS3 = async (file, signedRequest) => {
     const options = {
       headers: {
@@ -79,7 +81,6 @@ const CardCreate = ({ deck, setIsOn, isCard }) => {
     };
     await axios.put(signedRequest, file, options);
   };
-
   const formatFilename = filename => {
     const date = moment().format("YYYYMMDD");
     const randomString = Math.random()
@@ -90,6 +91,7 @@ const CardCreate = ({ deck, setIsOn, isCard }) => {
     return newFilename.substring(0, 60);
   };
 
+  // Mutation Submit
   const onSubmit = async (e, createCard) => {
     e.preventDefault();
     console.log(drop);
@@ -123,18 +125,19 @@ const CardCreate = ({ deck, setIsOn, isCard }) => {
       });
     } else {
       try {
-        setState({
-          front: "",
-          back: "",
-          pictureName: "",
-          pictureUrl: ""
-        });
         await createCard({
           variables: {
             deckId: parseInt(deck.id, 10),
             front: front,
             back: back
-          }
+          },
+          refetchQueries: ["getDecks"]
+        });
+        await setState({
+          front: "",
+          back: "",
+          pictureName: "",
+          pictureUrl: ""
         });
       } catch (error) {}
     }
