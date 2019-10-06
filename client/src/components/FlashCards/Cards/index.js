@@ -1,13 +1,13 @@
 import React from "react";
-//Do we need withRouter here?
 import { withRouter } from "react-router-dom";
 import { shuffle } from "lodash";
 import gql from "graphql-tag";
-import { Query } from "react-apollo";
-import withAuthorization from "../../Session/withAuthorization";
+import { useQuery } from "@apollo/react-hooks";
 
+import withAuthorization from "../../Session/withAuthorization";
 import Loading from "../../Loading";
 import CardDeck from "./CardDeck";
+import ErrorMessage from "../../Alerts/Error";
 
 const CARDS_QUERY = gql`
   query CardsQuery($id: ID!) {
@@ -24,29 +24,24 @@ const CARDS_QUERY = gql`
   }
 `;
 
-export const Cards = (props, { deck }) => {
+export const Cards = props => {
   let { id } = props.match.params;
   id = parseInt(id);
-  return (
-    <Query query={CARDS_QUERY} variables={{ id }}>
-      {({ data, error, loading }) => {
-        if (loading) {
-          return <Loading />;
-        }
-        if (error) {
-          return <p>Error</p>;
-        }
 
-        const shuffledCards = shuffle(data.deck.cards);
-        const withCount = shuffledCards.slice(
-          0,
-          parseInt(props.location.state.count)
-        );
+  const { data, error, loading } = useQuery(CARDS_QUERY, { variables: { id } });
+  if (loading) {
+    return <Loading />;
+  } else if (error) {
+    return <ErrorMessage error={error} />;
+  }
 
-        return <CardDeck cards={withCount} />;
-      }}
-    </Query>
+  const shuffledCards = shuffle(data.deck.cards);
+  const withCount = shuffledCards.slice(
+    0,
+    parseInt(props.location.state.count)
   );
+
+  return <CardDeck cards={withCount} />;
 };
 
 export default withAuthorization(session => session && session.me)(

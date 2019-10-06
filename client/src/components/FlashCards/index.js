@@ -1,7 +1,7 @@
 import React from "react";
-import withAuthorization from "../Session/withAuthorization";
 import styled from "styled-components";
 
+import withAuthorization from "../Session/withAuthorization";
 import Decks from "./Decks";
 import Search from "./Decks/DeckSearch";
 import DeckCreate from "./Decks/DeckCreate";
@@ -32,7 +32,7 @@ const FlashCardPage = () => (
         <DeckCreate />
       </Menu>
     </FlashCardHeader>
-    <Decks limit={3} />
+    <Decks limit={6} />
   </Container>
 );
 export default withAuthorization(session => session && session.me)(

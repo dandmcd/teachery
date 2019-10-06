@@ -1,8 +1,6 @@
 import React from "react";
-import { Mutation } from "react-apollo";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-
-import GET_PAGINATED_DECKS_WITH_USERS from "../../../DeckSchema";
 
 const DELETE_TAG = gql`
   mutation($id: ID!) {
@@ -10,28 +8,49 @@ const DELETE_TAG = gql`
   }
 `;
 
-const TagDelete = ({ tag }) => (
-  <Mutation
-    mutation={DELETE_TAG}
-    variables={{ id: tag.id }}
-    refetchQueries={[
-      { query: GET_PAGINATED_DECKS_WITH_USERS, variables: { limit: 3 } }
-    ]}
-  >
-    {(deleteTag, { data, loading, error }) => (
-      <input
-        type="image"
-        src={require("../../../../../../assets/remove-item.png")}
-        width="5"
-        height="5"
-        alt="Delete Tag"
-        onClick={e => {
-          if (window.confirm("Are you sure you wish to delete this tag?"))
-            deleteTag(e);
-        }}
-      />
-    )}
-  </Mutation>
-);
+const DECK_TAG_QUERY = gql`
+  query getDeckTags($id: ID!) {
+    deck(id: $id) {
+      id
+      tags {
+        id
+        tagName
+      }
+    }
+  }
+`;
+
+const TagDelete = ({ tag, deckId }) => {
+  const [deleteTag] = useMutation(DELETE_TAG);
+
+  const onSubmit = (e, deleteTag) => {
+    e.preventDefault();
+    deleteTag({
+      variables: { id: tag.id },
+      refetchQueries: [
+        {
+          query: DECK_TAG_QUERY,
+          variables: {
+            id: deckId
+          }
+        }
+      ]
+    });
+  };
+
+  return (
+    <input
+      type="image"
+      src={require("../../../../../../assets/remove-item.png")}
+      width="5"
+      height="5"
+      alt="Delete Tag"
+      onClick={e => {
+        if (window.confirm("Are you sure you wish to delete this tag?"))
+          onSubmit(e, deleteTag);
+      }}
+    />
+  );
+};
 
 export default TagDelete;

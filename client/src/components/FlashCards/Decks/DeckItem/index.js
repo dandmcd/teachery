@@ -60,6 +60,7 @@ const DeckItemBase = ({ deck, session }) => {
             <CardCreate
               key={deck.id}
               deck={deck}
+              setAddCardActive={setAddCardActive}
               setIsOn={setIsOn}
               setIsDeck={setIsCard}
               isCard={isCard}
@@ -97,7 +98,7 @@ const DeckItemBase = ({ deck, session }) => {
             </Styled.CreatedOn>
             <Styled.Tags>
               {deck.tags.map(tag => (
-                <TagLink key={tag.id} tag={tag} />
+                <TagLink key={tag.id} tag={tag} deckId={deck.id} />
               ))}
             </Styled.Tags>
           </Styled.CreatedItem>

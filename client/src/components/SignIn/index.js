@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
-import { Mutation } from "react-apollo";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 import { SignUpLink } from "../SignUp";
@@ -8,6 +8,7 @@ import Loading from "../Loading";
 import * as routes from "../../constants/routes";
 import ErrorMessage from "../Alerts/Error";
 import * as Styled from "./style";
+import SuccessMessage from "../Alerts/Success";
 
 const SIGN_IN = gql`
   mutation($login: String!, $password: String!) {
@@ -28,68 +29,75 @@ const INITIAL_STATE = {
   password: ""
 };
 
-class SignInForm extends Component {
-  state = { ...INITIAL_STATE };
+const SignInForm = props => {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [state, setState] = useState({ ...INITIAL_STATE });
 
-  onChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
+  const [signIn, { loading, error }] = useMutation(SIGN_IN, {
+    onError: err => {
+      setIsSuccess(false);
+    },
+    onCompleted: data => {
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 5000);
+    }
+  });
+
+  const onChange = e => {
+    setState({ ...state, [e.target.name]: e.target.value });
   };
 
-  onSubmit = (event, signIn) => {
-    signIn().then(async ({ data }) => {
-      this.setState({ ...INITIAL_STATE });
+  const onSubmit = async (e, signIn) => {
+    e.preventDefault();
+    try {
+      await signIn({
+        variables: {
+          login: login,
+          password: password
+        }
+      }).then(async ({ data }) => {
+        setState({ ...INITIAL_STATE });
 
-      localStorage.setItem("token", data.signIn.token);
-
-      await this.props.refetch();
-
-      this.props.history.push(routes.LANDING);
-    });
-
-    event.preventDefault();
+        localStorage.setItem("token", data.signIn.token);
+        await props.refetch();
+        props.history.push(routes.LANDING);
+      });
+    } catch {}
   };
 
-  render() {
-    const { login, password } = this.state;
+  const { login, password } = state;
 
-    return (
-      <Mutation mutation={SIGN_IN} variables={{ login, password }}>
-        {(signIn, { data, loading, error }) => (
-          <Styled.Box onSubmit={event => this.onSubmit(event, signIn)}>
-            <Styled.Title>Login</Styled.Title>
-            <Styled.InputUserName
-              name="login"
-              value={login}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Email or Username"
-              autoComplete="username"
-            />
-            <Styled.InputPassword
-              name="password"
-              value={password}
-              onChange={this.onChange}
-              type="password"
-              placeholder="Password"
-              autoComplete="current-password"
-            />
-            <Styled.SubmitButton
-              className="button"
-              disabled={loading}
-              type="submit"
-            >
-              Sign In
-            </Styled.SubmitButton>
-            {loading && <Loading />}
-            {error && <ErrorMessage error={error} />}
-            <SignUpLink />
-          </Styled.Box>
-        )}
-      </Mutation>
-    );
-  }
-}
+  return (
+    <Styled.Box onSubmit={e => onSubmit(e, signIn)}>
+      <Styled.Title>Login</Styled.Title>
+      <Styled.InputUserName
+        name="login"
+        value={login}
+        onChange={onChange}
+        type="text"
+        placeholder="Email or Username"
+        autoComplete="username"
+      />
+      <Styled.InputPassword
+        name="password"
+        value={password}
+        onChange={onChange}
+        type="password"
+        placeholder="Password"
+        autoComplete="current-password"
+      />
+      <Styled.SubmitButton className="button" disabled={loading} type="submit">
+        Sign In
+      </Styled.SubmitButton>
+      {loading && <Loading />}
+      {isSuccess && <SuccessMessage message="Successfully Logged In!" />}
+      {error && <ErrorMessage error={error} />}
+      <SignUpLink />
+    </Styled.Box>
+  );
+};
 
 export default withRouter(SignInPage);
 

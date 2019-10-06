@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Mutation } from "react-apollo";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 import ErrorMessage from "../../../../../Alerts/Error";
@@ -27,6 +27,18 @@ const AddDeckTag = ({ deck, setIsOn }) => {
     tagName: ""
   });
 
+  const [addTagToDeck, { loading, error }] = useMutation(ADD_TAG_TO_DECK, {
+    onError: err => {
+      setIsSuccess(false);
+    },
+    onCompleted: data => {
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 5000);
+    }
+  });
+
   const { id, tagName } = state;
 
   const onSubmit = async (e, addTagToDeck) => {
@@ -37,7 +49,12 @@ const AddDeckTag = ({ deck, setIsOn }) => {
         id: deck.id,
         tagName: ""
       });
-      await addTagToDeck();
+      await addTagToDeck({
+        variables: {
+          id: id,
+          tagName: tagName
+        }
+      });
     } catch (error) {}
   };
 
@@ -57,33 +74,19 @@ const AddDeckTag = ({ deck, setIsOn }) => {
     <Fragment>
       <Styled.PopupTitle>Create a tag for this deck...</Styled.PopupTitle>
       <Styled.PopupBody>
-        <Mutation
-          mutation={ADD_TAG_TO_DECK}
-          variables={{ id, tagName }}
-          onError={data => setIsSuccess(false)}
-          onCompleted={data => {
-            setIsSuccess(true);
-            setTimeout(() => {
-              setIsSuccess(false);
-            }, 5000);
-          }}
-        >
-          {(addTagToDeck, { data, loading, error }) => (
-            <form onSubmit={e => onSubmit(e, addTagToDeck)}>
-              <Styled.Input
-                name="tagName"
-                value={tagName}
-                onChange={onChange}
-                type="text"
-                placeholder="Enter a Tag Name"
-              />
-              <Button type="submit">Submit</Button>
-              {loading && <Loading />}
-              {isSuccess && <SuccessMessage message="Tag Created!" />}
-              {error && <ErrorMessage error={error} />}
-            </form>
-          )}
-        </Mutation>
+        <form onSubmit={e => onSubmit(e, addTagToDeck)}>
+          <Styled.Input
+            name="tagName"
+            value={tagName}
+            onChange={onChange}
+            type="text"
+            placeholder="Enter a Tag Name"
+          />
+          <Button type="submit">Submit</Button>
+          {loading && <Loading />}
+          {isSuccess && <SuccessMessage message="Tag Created!" />}
+          {error && <ErrorMessage error={error} />}
+        </form>
       </Styled.PopupBody>
       <Styled.PopupFooterButton onClick={togglePopup}>
         Close

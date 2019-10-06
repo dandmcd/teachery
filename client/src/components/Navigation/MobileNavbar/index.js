@@ -61,12 +61,7 @@ const NavLink = styled.li`
   }
 `;
 
-const MobileNavbar = ({
-  displayMobileNavbar,
-
-  toggleMobileNavbar,
-  session
-}) => {
+const MobileNavbar = ({ displayMobileNavbar, toggleMobileNavbar, session }) => {
   return (
     <Navbar displayMobileNavbar={displayMobileNavbar}>
       <NavRight>

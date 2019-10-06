@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useApolloClient } from "react-apollo";
+import { useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
@@ -53,7 +53,6 @@ const Search = () => {
   };
 
   const onChange = e => setState({ tagName: e.target.value, noResult: false });
-  console.log(tagName);
 
   const onClick = async e => {
     e.preventDefault();

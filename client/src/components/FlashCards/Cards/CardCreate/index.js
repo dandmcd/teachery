@@ -6,11 +6,11 @@ import moment from "moment";
 
 import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
-
 import DropZone from "../../../Uploader";
 import Loading from "../../../Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
+import CARDS_QUERY from "../CardList/CardListSchema/CardListSchema";
 
 //Mutations
 const CREATE_CARD = gql`
@@ -43,7 +43,7 @@ const S3SIGNMUTATION = gql`
 `;
 
 // Component
-const CardCreate = ({ deck, setIsOn, isCard }) => {
+const CardCreate = ({ deck, setIsOn, setAddCardActive, isCard }) => {
   // Mutation Hooks
   const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
     S3SIGNMUTATION
@@ -131,7 +131,14 @@ const CardCreate = ({ deck, setIsOn, isCard }) => {
             front: front,
             back: back
           },
-          refetchQueries: ["getDecks"]
+          refetchQueries: [
+            {
+              query: CARDS_QUERY,
+              variables: {
+                id: deck.id
+              }
+            }
+          ]
         });
         await setState({
           front: "",
@@ -163,8 +170,9 @@ const CardCreate = ({ deck, setIsOn, isCard }) => {
 
   const togglePopup = () => {
     setIsOn(false);
+    setAddCardActive(false);
   };
-  console.log(isCard);
+
   return (
     <Fragment>
       <Styled.PopupTitle>Create a card for your deck...</Styled.PopupTitle>

@@ -76,11 +76,7 @@ const App = ({ session, refetch }) => (
         path={routes.CARDLIST}
         component={props => <CardList {...props} />}
       />
-      <Route
-        exact
-        path={routes.SEARCH}
-        component={props => <Search {...props} />}
-      />
+      <Route exact path={routes.SEARCH} component={() => <Search />} />
       <Route exact path={routes.TAGS} component={Tags} />
     </Container>
   </Router>

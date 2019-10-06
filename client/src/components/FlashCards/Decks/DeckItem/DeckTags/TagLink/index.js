@@ -9,13 +9,13 @@ const TagItem = styled.h5`
   margin: 0px;
 `;
 
-function TagLink({ tag, session }) {
+function TagLink({ tag, deckId, session }) {
   return (
     <TagItem>
       <Link to={`/tag/${tag.id}`}>{tag.tagName} </Link>
       {session && session.me && session.me.role === "ADMIN" && (
         <sup>
-          <TagDelete tag={tag} />
+          <TagDelete tag={tag} deckId={deckId} />
         </sup>
       )}
     </TagItem>
