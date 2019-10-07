@@ -108,4 +108,7 @@ export const InputConfirmPassword = styled.input`
 
 export const SubmitButton = styled(Button)`
   border: 2px solid ${props => props.theme.secondaryDark};
+  :disabled {
+    border: 2px solid ${props => props.theme.error};
+  }
 `;

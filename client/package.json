@@ -21,7 +21,6 @@
     "http-proxy-middleware": "^0.20.0",
     "moment": "^2.24.0",
     "react": "^16.10.1",
-    "react-apollo": "^3.1.2",
     "react-app-polyfill": "^1.0.3",
     "react-dom": "^16.10.1",
     "react-dropzone": "^10.1.9",
@@ -30,7 +29,6 @@
     "react-router-dom": "5.0.1",
     "react-scripts": "3.1.2",
     "react-test-renderer": "^16.10.1",
-    "recompose": "^0.30.0",
     "styled-components": "^4.4.0",
     "subscriptions-transport-ws": "^0.9.16",
     "unfetch": "^4.1.0"

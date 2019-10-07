@@ -2,7 +2,7 @@ import "react-app-polyfill/ie9";
 import "react-app-polyfill/stable";
 import React from "react";
 import ReactDOM from "react-dom";
-import { ApolloProvider } from "react-apollo";
+import { ApolloProvider } from "@apollo/react-hooks";
 import { ApolloClient } from "apollo-client";
 import { getMainDefinition } from "apollo-utilities";
 import { ApolloLink, split } from "apollo-link";

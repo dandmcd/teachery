@@ -1,12 +1,13 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Link, withRouter } from "react-router-dom";
-import { Mutation } from "react-apollo";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 import Loading from "../Loading";
 import * as routes from "../../constants/routes";
 import ErrorMessage from "../Alerts/Error";
 import * as Styled from "./style";
+import SuccessMessage from "../Alerts/Success";
 
 const SIGN_UP = gql`
   mutation($username: String!, $email: String!, $password: String!) {
@@ -29,84 +30,99 @@ const SignUpPage = ({ history, refetch }) => (
   </Styled.Container>
 );
 
-class SignUpForm extends Component {
-  state = { ...INITIAL_STATE };
+const SignUpForm = props => {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [state, setState] = useState({ ...INITIAL_STATE });
 
-  onChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
+  const [signUp, { loading, error }] = useMutation(SIGN_UP, {
+    onError: err => {
+      setIsSuccess(false);
+    },
+    onCompleted: data => {
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 5000);
+    }
+  });
+
+  const onChange = e => {
+    setState({ ...state, [e.target.name]: e.target.value });
   };
 
-  onSubmit = (event, signUp) => {
-    signUp().then(async ({ data }) => {
-      this.setState({ ...INITIAL_STATE });
+  const onSubmit = async (e, signUp) => {
+    e.preventDefault();
+    try {
+      await signUp({
+        variables: {
+          username: username,
+          email: email,
+          password: password
+        }
+      }).then(async ({ data }) => {
+        setState({ ...INITIAL_STATE });
 
-      localStorage.setItem("token", data.signUp.token);
-
-      await this.props.refetch();
-
-      this.props.history.push(routes.LANDING);
-    });
-
-    event.preventDefault();
+        localStorage.setItem("token", data.signUp.token);
+        await props.refetch();
+        props.history.push(routes.LANDING);
+      });
+    } catch {}
   };
 
-  render() {
-    const { username, email, password, passwordConfirmation } = this.state;
+  const { username, email, password, passwordConfirmation } = state;
 
-    const isInvalid =
-      password !== passwordConfirmation ||
-      password === "" ||
-      email === "" ||
-      username === "";
+  const isInvalid =
+    password !== passwordConfirmation ||
+    password === "" ||
+    email === "" ||
+    username === "";
 
-    return (
-      <Mutation mutation={SIGN_UP} variables={{ username, email, password }}>
-        {(signUp, { data, loading, error }) => (
-          <Styled.Box onSubmit={event => this.onSubmit(event, signUp)}>
-            <Styled.Title>Sign Up</Styled.Title>
-            <Styled.InputUserName
-              name="username"
-              value={username}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Username"
-            />
-            <Styled.InputEmail
-              name="email"
-              value={email}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Email Address"
-              autoComplete="username"
-            />
-            <Styled.InputPassword
-              name="password"
-              value={password}
-              onChange={this.onChange}
-              type="password"
-              placeholder="Password"
-              autoComplete="new-password"
-            />
-            <Styled.InputConfirmPassword
-              name="passwordConfirmation"
-              value={passwordConfirmation}
-              onChange={this.onChange}
-              type="password"
-              placeholder="Confirm Password"
-              autoComplete="new-password"
-            />
-            <Styled.SubmitButton disabled={isInvalid || loading} type="submit">
-              Sign Up
-            </Styled.SubmitButton>
-            {loading && <Loading />}
-            {error && <ErrorMessage error={error} />}
-          </Styled.Box>
-        )}
-      </Mutation>
-    );
-  }
-}
+  return (
+    <Styled.Box onSubmit={e => onSubmit(e, signUp)}>
+      <Styled.Title>Sign Up</Styled.Title>
+      <Styled.InputUserName
+        name="username"
+        value={username}
+        onChange={onChange}
+        type="text"
+        placeholder="Username"
+      />
+      <Styled.InputEmail
+        name="email"
+        value={email}
+        onChange={onChange}
+        type="email"
+        placeholder="Email Address"
+        autoComplete="username"
+        required
+      />
+      <Styled.InputPassword
+        name="password"
+        value={password}
+        onChange={onChange}
+        type="password"
+        placeholder="Password"
+        autoComplete="new-password"
+        required
+      />
+      <Styled.InputConfirmPassword
+        name="passwordConfirmation"
+        value={passwordConfirmation}
+        onChange={onChange}
+        type="password"
+        placeholder="Confirm Password"
+        autoComplete="new-password"
+        required
+      />
+      <Styled.SubmitButton disabled={isInvalid || loading} type="submit">
+        Sign Up
+      </Styled.SubmitButton>
+      {loading && <Loading />}
+      {isSuccess && <SuccessMessage message="Successfully Logged In!" />}
+      {error && <ErrorMessage error={error} />}
+    </Styled.Box>
+  );
+};
 
 const SignUpLink = () => (
   <p>
