@@ -4,7 +4,7 @@ import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 import Loading from "../Loading";
-import * as routes from "../../constants/routes";
+import * as routes from "../../routing/routes";
 import ErrorMessage from "../Alerts/Error";
 import * as Styled from "./style";
 import SuccessMessage from "../Alerts/Success";

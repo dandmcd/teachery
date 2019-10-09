@@ -1,6 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 
+const SuccessMessage = ({ message }) => {
+  return (
+    <SuccessContainer>
+      <Success>{message}</Success>
+    </SuccessContainer>
+  );
+};
+
 const SuccessContainer = styled.div`
   margin-left: 8px;
   margin-right: 8px;
@@ -10,13 +18,5 @@ const SuccessContainer = styled.div`
 const Success = styled.h5`
   color: ${props => props.theme.success};
 `;
-
-const SuccessMessage = ({ message }) => {
-  return (
-    <SuccessContainer>
-      <Success>{message}</Success>
-    </SuccessContainer>
-  );
-};
 
 export default SuccessMessage;

@@ -1,21 +1,30 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import gql from "graphql-tag";
+import { useApolloClient, useQuery } from "@apollo/react-hooks";
 
 import withSession from "../Session/withSession";
 import "./style.css";
 import student from "../../assets/student.jpg";
 import teacher from "../../assets/teacher.jpg";
-import * as routes from "../../constants/routes";
+import * as routes from "../../routing/routes";
 
 const Landing = () => {
-  const [toggleST, setToggleST] = useState(0);
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleLanding @client
+    }
+  `);
+
+  console.log(data);
 
   const handleStudentClick = () => {
-    setToggleST(1);
+    client.writeData({ data: { toggleLanding: 1 } });
   };
 
   const handleTeacherClick = () => {
-    setToggleST(2);
+    client.writeData({ data: { toggleLanding: 2 } });
   };
 
   return (
@@ -63,7 +72,7 @@ const Landing = () => {
           </tr>
         </tbody>
       </table>
-      {toggleST === 1 && (
+      {data.toggleLanding === 1 && (
         <ul>
           <h3>FOR STUDENTS</h3>
           <li>
@@ -89,7 +98,7 @@ const Landing = () => {
           </li>
         </ul>
       )}
-      {toggleST === 2 && (
+      {data.toggleLanding === 2 && (
         <ul>
           <h3>TEACHERS -- COMING SOON! </h3>
           <li>Assign homework for students, with due dates</li>

@@ -4,7 +4,7 @@ import Moment from "react-moment";
 import useOuterClickNotifier from "../../../Alerts";
 import TagLink from "./DeckTags/TagLink";
 import { Link } from "react-router-dom";
-import history from "../../../../constants/history";
+import history from "../../../../routing/history";
 import DeckDelete from "./../DeckDelete";
 import AddDeckTag from "./DeckTags/AddDeckTag";
 import CardCreate from "../../Cards/CardCreate/";

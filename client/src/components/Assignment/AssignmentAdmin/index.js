@@ -43,13 +43,6 @@ const Assignments = ({ limit, me }) => {
   );
 };
 
-const AssignmentButton = styled(Button)`
-  margin: auto;
-  display: block;
-  width: 205px;
-  border: 2px solid ${props => props.theme.primaryDark};
-`;
-
 const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
   <AssignmentButton
     type="button"
@@ -80,6 +73,13 @@ const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
     {children}
   </AssignmentButton>
 );
+
+const AssignmentButton = styled(Button)`
+  margin: auto;
+  display: block;
+  width: 205px;
+  border: 2px solid ${props => props.theme.primaryDark};
+`;
 
 const AssignmentList = ({ assignments, me }) => {
   return assignments.map(assignment => (

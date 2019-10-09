@@ -13,6 +13,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import fetch from "unfetch";
 import { ThemeProvider } from "styled-components";
 
+import { resolvers, typeDefs } from "./state/resolvers";
 import App from "./components/App";
 import { signOut } from "./components/SignOut";
 import theme from "./theme/theme";
@@ -87,8 +88,20 @@ const cache = new InMemoryCache();
 const client = new ApolloClient({
   fetchOptions: { fetch },
   link,
-  cache
+  cache,
+  typeDefs,
+  resolvers
 });
+
+const data = {
+  toggleLanding: 0,
+  togglePopup: false,
+  toggleSuccess: false
+};
+
+cache.writeData({ data });
+
+client.onResetStore(() => cache.writeData({ data }));
 
 ReactDOM.render(
   <ApolloProvider client={client}>

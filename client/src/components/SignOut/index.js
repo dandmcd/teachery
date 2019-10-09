@@ -2,8 +2,8 @@ import React from "react";
 import { ApolloConsumer } from "@apollo/react-hooks";
 import styled from "styled-components";
 
-import * as routes from "../../constants/routes";
-import history from "../../constants/history";
+import * as routes from "../../routing/routes";
+import history from "../../routing/history";
 import Button from "../../theme/Button";
 
 const SOButton = styled(Button)`

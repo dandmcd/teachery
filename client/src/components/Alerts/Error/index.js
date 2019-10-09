@@ -1,6 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 
+const ErrorMessage = ({ error }) => {
+  return (
+    <ErrorContainer>
+      <Error>{error.message.replace(/^.+:/, "")}</Error>
+    </ErrorContainer>
+  );
+};
+
 const ErrorContainer = styled.div`
   margin-left: 8px;
   margin-right: 8px;
@@ -11,11 +19,4 @@ const Error = styled.h5`
   color: ${props => props.theme.error};
 `;
 
-const ErrorMessage = ({ error }) => {
-  return (
-    <ErrorContainer>
-      <Error>{error.message.replace(/^.+:/, "")}</Error>
-    </ErrorContainer>
-  );
-};
 export default ErrorMessage;

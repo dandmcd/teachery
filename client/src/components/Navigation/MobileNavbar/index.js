@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 import withSession from "../../Session/withSession";
-import * as routes from "../../../constants/routes";
+import * as routes from "../../../routing/routes";
 import SignOutButton from "../../SignOut";
 
 const Navbar = styled.nav`

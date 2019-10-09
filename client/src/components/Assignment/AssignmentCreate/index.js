@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { useMutation } from "@apollo/react-hooks";
+import React, { useState, useRef, useEffect } from "react";
+import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
@@ -34,33 +34,34 @@ const CREATE_ASSIGNMENT = gql`
     }
   }
 `;
-const Container = styled.div``;
 
-const AssignButton = styled(Button)`
-  font-size: 10px;
-`;
+const INITIAL_STATE = {
+  assignmentName: "",
+  note: "",
+  link: ""
+};
 
 const AssignmentCreate = () => {
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
-  const [assignmentState, setAssignmentState] = useState({
-    assignmentName: "",
-    note: "",
-    link: ""
-  });
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleSuccess @client
+      togglePopup @client
+    }
+  `);
+  const { toggleSuccess, togglePopup } = data;
+
+  const [assignmentState, setAssignmentState] = useState({ INITIAL_STATE });
   const { assignmentName, note, link } = assignmentState;
 
   const [createAssignment, { loading, error }] = useMutation(
     CREATE_ASSIGNMENT,
     {
       onError: err => {
-        setIsSuccess(false);
+        client.writeData({ data: { toggleSuccess: false } });
       },
       onCompleted: data => {
-        setIsSuccess(true);
-        setTimeout(() => {
-          setIsSuccess(false);
-        }, 5000);
+        client.writeData({ data: { toggleSuccess: true } });
       },
       update(
         cache,
@@ -87,6 +88,27 @@ const AssignmentCreate = () => {
     }
   );
 
+  // Set success alert for up to 5 seconds
+  useEffect(() => {
+    if (toggleSuccess) {
+      setTimeout(() => {
+        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+      }, 5000);
+    }
+    return () => {
+      if (!toggleSuccess) {
+        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+      }
+    };
+  }, [client, toggleSuccess]);
+
+  // Onclick toggle popup for mutation form
+  const togglePopupModal = () => {
+    client.writeData({ data: { togglePopup: !togglePopup } });
+  };
+  const innerRef = useRef(null);
+  useOuterClickNotifier(togglePopupModal, innerRef);
+
   const onChange = e => {
     setAssignmentState({ ...assignmentState, [e.target.name]: e.target.value });
   };
@@ -101,27 +123,21 @@ const AssignmentCreate = () => {
           note: note,
           link: link
         }
+      }).then(async ({ data }) => {
+        setAssignmentState({ ...INITIAL_STATE });
       });
-      setAssignmentState({ assignmentName: "", note: "", link: "" });
-    } catch (error) {}
+    } catch {}
   };
-
-  const togglePopup = () => {
-    setShowPopup(false);
-  };
-
-  const innerRef = useRef(null);
-  useOuterClickNotifier(e => setShowPopup(false), innerRef);
 
   return (
     <Container>
-      <AssignButton type="button" onClick={() => setShowPopup(true)}>
+      <AssignButton type="button" onClick={togglePopupModal}>
         New Assignment
       </AssignButton>
-      {showPopup ? (
+      {togglePopup ? (
         <Styled.PopupContainer>
           <Styled.PopupInner ref={innerRef}>
-            <Styled.PopupTitle>Create an assignment...</Styled.PopupTitle>
+            <Styled.PopupTitle>Create an an assignment...</Styled.PopupTitle>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, createAssignment)}>
                 <Styled.Input
@@ -147,11 +163,13 @@ const AssignmentCreate = () => {
                 />
                 <Button type="submit">Submit</Button>
                 {loading && <Loading />}
-                {isSuccess && <SuccessMessage message="Assignment Created!" />}
+                {toggleSuccess && (
+                  <SuccessMessage message="Assignment Created!" />
+                )}
                 {error && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>
-            <Styled.PopupFooterButton onClick={togglePopup}>
+            <Styled.PopupFooterButton onClick={togglePopupModal}>
               Close
             </Styled.PopupFooterButton>
           </Styled.PopupInner>
@@ -160,5 +178,11 @@ const AssignmentCreate = () => {
     </Container>
   );
 };
+
+const Container = styled.div``;
+
+const AssignButton = styled(Button)`
+  font-size: 10px;
+`;
 
 export default AssignmentCreate;

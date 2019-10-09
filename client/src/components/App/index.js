@@ -16,27 +16,10 @@ import Search from "../FlashCards/Decks/DeckSearch";
 import Tags from "../FlashCards/Decks/DeckItem/DeckTags/TagItem";
 import styled from "styled-components";
 
-import * as routes from "../../constants/routes";
-import history from "../../constants/history";
+import * as routes from "../../routing/routes";
+import history from "../../routing/history";
 
 import GlobalStyle from "../../theme/globalStyle";
-
-const Container = styled.div`
-  max-width: 1100px;
-  display: block;
-  margin: auto;
-  padding-left: 15px;
-  padding-right: 15px;
-  overflow: hidden;
-  vertical-align: top;
-  position: relative;
-  top: 60px;
-  z-index: 1;
-  @media only screen and (max-device-width: 330px) {
-    padding-left: 0;
-    padding-right: 0;
-  }
-`;
 
 const App = ({ session, refetch }) => (
   <Router history={history}>
@@ -81,5 +64,22 @@ const App = ({ session, refetch }) => (
     </Container>
   </Router>
 );
+
+const Container = styled.div`
+  max-width: 1100px;
+  display: block;
+  margin: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+  overflow: hidden;
+  vertical-align: top;
+  position: relative;
+  top: 60px;
+  z-index: 1;
+  @media only screen and (max-device-width: 330px) {
+    padding-left: 0;
+    padding-right: 0;
+  }
+`;
 
 export default withSession(App);
