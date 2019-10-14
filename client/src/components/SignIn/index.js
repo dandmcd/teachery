@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
-import { useMutation } from "@apollo/react-hooks";
+import { useMutation, useApolloClient, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import PropTypes from "prop-types";
 
 import { SignUpLink } from "../SignUp";
 import Loading from "../Loading";
@@ -24,33 +25,52 @@ const SignInPage = ({ history, refetch }) => (
   </Styled.Container>
 );
 
+SignInPage.propTypes = {
+  history: PropTypes.object.isRequired,
+  refetch: PropTypes.func.isRequired
+};
+
 const INITIAL_STATE = {
   login: "",
   password: ""
 };
 
 const SignInForm = props => {
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [state, setState] = useState({ ...INITIAL_STATE });
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleSuccess @client
+    }
+  `);
+  const { toggleSuccess } = data;
+
+  const [{ login, password }, setState] = useState(INITIAL_STATE);
 
   const [signIn, { loading, error }] = useMutation(SIGN_IN, {
     onError: err => {
-      setIsSuccess(false);
+      client.writeData({ data: { toggleSuccess: false } });
     },
     onCompleted: data => {
-      setIsSuccess(true);
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, 5000);
+      client.writeData({ data: { toggleSuccess: true } });
     }
   });
 
+  useEffect(() => {
+    if (toggleSuccess) {
+      setTimeout(() => {
+        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+      }, 5000);
+    }
+  }, [client, toggleSuccess]);
+
   const onChange = e => {
-    setState({ ...state, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setState(prevState => ({ ...prevState, [name]: value }));
   };
 
   const onSubmit = async (e, signIn) => {
     e.preventDefault();
+
     try {
       await signIn({
         variables: {
@@ -66,8 +86,6 @@ const SignInForm = props => {
       });
     } catch {}
   };
-
-  const { login, password } = state;
 
   return (
     <Styled.Box onSubmit={e => onSubmit(e, signIn)}>
@@ -92,11 +110,15 @@ const SignInForm = props => {
         Sign In
       </Styled.SubmitButton>
       {loading && <Loading />}
-      {isSuccess && <SuccessMessage message="Successfully Logged In!" />}
+      {toggleSuccess && <SuccessMessage message="Successfully Logged In!" />}
       {error && <ErrorMessage error={error} />}
       <SignUpLink />
     </Styled.Box>
   );
+};
+
+SignInForm.propTypes = {
+  props: PropTypes.object
 };
 
 export default withRouter(SignInPage);

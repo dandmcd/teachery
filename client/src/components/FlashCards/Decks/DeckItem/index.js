@@ -1,5 +1,7 @@
 import React, { Fragment, useState, useRef } from "react";
 import Moment from "react-moment";
+import { useApolloClient, useQuery } from "@apollo/react-hooks";
+import gql from "graphql-tag";
 
 import useOuterClickNotifier from "../../../Alerts";
 import TagLink from "./DeckTags/TagLink";
@@ -14,10 +16,13 @@ import * as Styled from "./style";
 import teststudent from "../../../../assets/teststudent.jpg";
 
 const DeckItemBase = ({ deck, session }) => {
-  const [isOn, setIsOn] = useState(false);
-  const [isCard, setIsCard] = useState(false);
-  const [addCardActive, setAddCardActive] = useState(false);
-  const [addTagActive, setAddTagActive] = useState(false);
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      isAddTagActive @client
+    }
+  `);
+  const { isAddTagActive } = data;
   const [sessionCount, setSessionCount] = useState({
     count: ""
   });
@@ -45,34 +50,22 @@ const DeckItemBase = ({ deck, session }) => {
 
   const isInvalid = count === "" || count <= "0";
 
+  const togglePopupModal = () => {
+    client.writeData({
+      data: { isAddCardActive: false, isAddTagActive: false }
+    });
+  };
   const innerRef = useRef(null);
-  useOuterClickNotifier(e => {
-    setIsOn(false);
-    setAddCardActive(false);
-    setAddTagActive(false);
-  }, innerRef);
+  useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
     <Fragment>
-      {isOn && addCardActive ? (
-        <PopStyled.PopupContainer>
-          <PopStyled.PopupInnerExtended ref={innerRef}>
-            <CardCreate
-              key={deck.id}
-              deck={deck}
-              setAddCardActive={setAddCardActive}
-              setIsOn={setIsOn}
-              setIsDeck={setIsCard}
-              isCard={isCard}
-            />
-          </PopStyled.PopupInnerExtended>
-        </PopStyled.PopupContainer>
-      ) : isOn && addTagActive ? (
-        <PopStyled.PopupContainer>
+      {isAddTagActive ? (
+        <PopStyled.PopupGridContainer>
           <PopStyled.PopupInner ref={innerRef}>
-            <AddDeckTag deck={deck} setIsOn={setIsOn} />
+            <AddDeckTag deck={deck} />
           </PopStyled.PopupInner>
-        </PopStyled.PopupContainer>
+        </PopStyled.PopupGridContainer>
       ) : null}
       <Styled.DeckItemContainer>
         <Styled.CardGrid>
@@ -133,28 +126,17 @@ const DeckItemBase = ({ deck, session }) => {
             </Styled.PracticeForm>
           </Styled.Practice>
           <Styled.DeckButtons>
-            {!isOn && (
-              <Styled.AddCardButton
-                type="button"
-                onClick={() => {
-                  setIsOn(true);
-                  setIsCard(true);
-                  setAddCardActive(true);
-                }}
-              >
-                Add Card
-              </Styled.AddCardButton>
-            )}
-
+            <CardCreate key={deck.id} deck={deck} />
             {session && session.me && deck.user.id === session.me.id && (
               <DeckDelete deck={deck} />
             )}
-            {!isOn && (
+            {!isAddTagActive && (
               <Styled.AddTagButton
                 type="button"
                 onClick={() => {
-                  setIsOn(true);
-                  setAddTagActive(true);
+                  client.writeData({
+                    data: { isAddTagActive: !isAddTagActive }
+                  });
                 }}
               >
                 Add Tags

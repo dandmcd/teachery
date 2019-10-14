@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useCallback } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import MessageDelete from "../MessageDelete";
 import Loading from "../../Loading";
@@ -46,21 +47,6 @@ const GET_PAGINATED_MESSAGES_WITH_USERS = gql`
   }
 `;
 
-const MessageContainer = styled.div`
-  position: block;
-  width: 300px;
-  margin: auto;
-  margin-bottom: 5px;
-  overflow-y: scroll;
-  border-radius: 20px;
-  background: ${props => props.theme.neutralLight};
-  text-align: center;
-  scrollbar-width: none;
-  ::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
 const Messages = ({ limit }) => {
   const { data, loading, error, fetchMore, subscribeToMore } = useQuery(
     GET_PAGINATED_MESSAGES_WITH_USERS,
@@ -92,10 +78,27 @@ const Messages = ({ limit }) => {
   );
 };
 
-const MessageButton = styled(Button)``;
+Messages.propTypes = {
+  limit: PropTypes.number.isRequired
+};
+
+const MessageContainer = styled.div`
+  position: block;
+  width: 300px;
+  margin: auto;
+  margin-bottom: 5px;
+  overflow-y: scroll;
+  border-radius: 20px;
+  background: ${props => props.theme.neutralLight};
+  text-align: center;
+  scrollbar-width: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
 
 const MoreMessagesButton = ({ limit, pageInfo, fetchMore, children }) => (
-  <MessageButton
+  <Button
     type="button"
     onClick={() =>
       fetchMore({
@@ -122,8 +125,15 @@ const MoreMessagesButton = ({ limit, pageInfo, fetchMore, children }) => (
     }
   >
     {children}
-  </MessageButton>
+  </Button>
 );
+
+MoreMessagesButton.propTypes = {
+  limit: PropTypes.number.isRequired,
+  pageInfo: PropTypes.object.isRequired,
+  fetchMore: PropTypes.func.isRequired,
+  children: PropTypes.string.isRequired
+};
 
 const MessageList = props => {
   const subscribeToMoreMessage = useCallback(() => {
@@ -158,6 +168,10 @@ const MessageList = props => {
   ));
 };
 
+MessageList.propTypes = {
+  props: PropTypes.object
+};
+
 const MessageItemBase = ({ message, session }) => (
   <Fragment>
     <h5>{message.user.username}</h5>
@@ -172,6 +186,11 @@ const MessageItemBase = ({ message, session }) => (
     </p>
   </Fragment>
 );
+
+MessageItemBase.propTypes = {
+  message: PropTypes.object.isRequired,
+  session: PropTypes.object.isRequired
+};
 
 const MessageItem = withSession(MessageItemBase);
 

@@ -6,6 +6,22 @@ import * as routes from "../../routing/routes";
 import history from "../../routing/history";
 import Button from "../../theme/Button";
 
+const SignOutButton = () => (
+  <ApolloConsumer>
+    {client => (
+      <SOButton type="button" onClick={() => signOut(client)}>
+        <SOText>Sign Out</SOText>
+      </SOButton>
+    )}
+  </ApolloConsumer>
+);
+
+const signOut = client => {
+  localStorage.removeItem("token");
+  client.resetStore();
+  history.push(routes.SIGN_IN);
+};
+
 const SOButton = styled(Button)`
   height: auto;
   width: 80px;
@@ -23,22 +39,6 @@ const SOText = styled.span`
   margin-left: auto;
   margin-right: auto;
 `;
-
-const SignOutButton = () => (
-  <ApolloConsumer>
-    {client => (
-      <SOButton type="button" onClick={() => signOut(client)}>
-        <SOText>Sign Out</SOText>
-      </SOButton>
-    )}
-  </ApolloConsumer>
-);
-
-const signOut = client => {
-  localStorage.removeItem("token");
-  client.resetStore();
-  history.push(routes.SIGN_IN);
-};
 
 export { signOut };
 

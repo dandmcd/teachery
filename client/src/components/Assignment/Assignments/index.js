@@ -2,6 +2,7 @@ import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import Moment from "react-moment";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
@@ -42,12 +43,10 @@ const AssignedTasks = ({ limit, me }) => {
   );
 };
 
-const AssignmentButton = styled(Button)`
-  margin: auto;
-  display: block;
-  width: 205px;
-  border: 2px solid ${props => props.theme.primaryDark};
-`;
+AssignedTasks.propTypes = {
+  limit: PropTypes.number.isRequired,
+  me: PropTypes.object
+};
 
 const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
   <AssignmentButton
@@ -80,6 +79,20 @@ const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
   </AssignmentButton>
 );
 
+const AssignmentButton = styled(Button)`
+  margin: auto;
+  display: block;
+  width: 205px;
+  border: 2px solid ${props => props.theme.primaryDark};
+`;
+
+MoreAssignedTasksButton.propTypes = {
+  limit: PropTypes.number.isRequired,
+  pageInfo: PropTypes.object.isRequired,
+  fetchMore: PropTypes.func.isRequired,
+  children: PropTypes.string.isRequired
+};
+
 const AssignedTaskList = ({ assignedTasks, me }) => {
   return assignedTasks.map(assignedTask => (
     <AssignedTaskItem
@@ -88,6 +101,11 @@ const AssignedTaskList = ({ assignedTasks, me }) => {
       me={me}
     />
   ));
+};
+
+AssignedTaskList.propTypes = {
+  assignedTasks: PropTypes.array.isRequired,
+  me: PropTypes.object
 };
 
 const AssignmentItemBase = ({
@@ -129,6 +147,11 @@ const AssignmentItemBase = ({
     </Styled.CardGrid>
   </Styled.AssignmentItemContainer>
 );
+
+AssignmentItemBase.propTypes = {
+  assignedTask: PropTypes.object.isRequired,
+  me: PropTypes.object
+};
 
 const AssignedTaskItem = withSession(AssignmentItemBase);
 

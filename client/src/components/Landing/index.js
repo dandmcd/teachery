@@ -17,8 +17,6 @@ const Landing = () => {
     }
   `);
 
-  console.log(data);
-
   const handleStudentClick = () => {
     client.writeData({ data: { toggleLanding: 1 } });
   };

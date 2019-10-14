@@ -1,6 +1,8 @@
 import React, { Fragment } from "react";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import PropTypes from "prop-types";
+
 import ErrorMessage from "../../Alerts/Error";
 
 const GET_ALL_MESSAGES_WITH_USERS = gql`
@@ -73,6 +75,10 @@ const MessageDelete = ({ message }) => {
       {error && <ErrorMessage error={error} />}
     </Fragment>
   );
+};
+
+MessageDelete.propTypes = {
+  message: PropTypes.object.isRequired
 };
 
 export default MessageDelete;

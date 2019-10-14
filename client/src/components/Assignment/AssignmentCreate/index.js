@@ -51,8 +51,9 @@ const AssignmentCreate = () => {
   `);
   const { toggleSuccess, togglePopup } = data;
 
-  const [assignmentState, setAssignmentState] = useState({ INITIAL_STATE });
-  const { assignmentName, note, link } = assignmentState;
+  const [{ assignmentName, note, link }, setAssignmentState] = useState(
+    INITIAL_STATE
+  );
 
   const [createAssignment, { loading, error }] = useMutation(
     CREATE_ASSIGNMENT,
@@ -95,11 +96,6 @@ const AssignmentCreate = () => {
         client.writeData({ data: { toggleSuccess: !toggleSuccess } });
       }, 5000);
     }
-    return () => {
-      if (!toggleSuccess) {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
-      }
-    };
   }, [client, toggleSuccess]);
 
   // Onclick toggle popup for mutation form
@@ -110,7 +106,8 @@ const AssignmentCreate = () => {
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   const onChange = e => {
-    setAssignmentState({ ...assignmentState, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setAssignmentState(prevState => ({ ...prevState, [name]: value }));
   };
 
   const onSubmit = async (e, createAssignment) => {

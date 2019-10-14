@@ -1,9 +1,11 @@
-import React, { Fragment, useState, useEffect } from "react";
-import { useMutation } from "@apollo/react-hooks";
+import React, { useState, useRef, useEffect } from "react";
+import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
+import styled from "styled-components";
 
+import useOuterClickNotifier from "../../../Alerts";
 import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
 import DropZone from "../../../Uploader";
@@ -43,25 +45,40 @@ const S3SIGNMUTATION = gql`
 `;
 
 // Component
-const CardCreate = ({ deck, setIsOn, setAddCardActive, isCard }) => {
+const CardCreate = ({ deck }) => {
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleSuccess @client
+      togglePopup @client
+      isCard @client
+    }
+  `);
+  const { toggleSuccess, togglePopup, isCard } = data;
+
   // Mutation Hooks
   const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
     S3SIGNMUTATION
   );
   const [createCard, { loading, error }] = useMutation(CREATE_CARD, {
     onError: err => {
-      setIsSuccess(false);
+      client.writeData({ data: { toggleSuccess: false } });
     },
     onCompleted: data => {
-      setIsSuccess(true);
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, 5000);
+      client.writeData({ data: { toggleSuccess: true } });
     }
   });
 
+  // Set success alert for up to 5 seconds
+  useEffect(() => {
+    if (toggleSuccess) {
+      setTimeout(() => {
+        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+      }, 5000);
+    }
+  }, [client, toggleSuccess]);
+
   // State
-  const [isSuccess, setIsSuccess] = useState(false);
   const [drop, setDrop] = useState(null);
   const [state, setState] = useState({
     deckId: null,
@@ -168,46 +185,60 @@ const CardCreate = ({ deck, setIsOn, setAddCardActive, isCard }) => {
     }
   }, [deck, setState]);
 
-  const togglePopup = () => {
-    setIsOn(false);
-    setAddCardActive(false);
+  // Onclick toggle popup for mutation form
+  const togglePopupModal = () => {
+    client.writeData({ data: { togglePopup: !togglePopup, isCard: !isCard } });
   };
+  const innerRef = useRef(null);
+  useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Fragment>
-      <Styled.PopupTitle>Create a card for your deck...</Styled.PopupTitle>
-      <Styled.PopupBody>
-        <form onSubmit={e => onSubmit(e, createCard)}>
-          <Styled.InputTextArea
-            name="front"
-            value={front}
-            onChange={onChange}
-            type="text"
-            placeholder="Front of the flashcard"
-          />
-          <Styled.InputTextArea
-            name="back"
-            value={back}
-            onChange={onChange}
-            type="text"
-            placeholder="Back of the card"
-          />
-          <DropZone
-            setDrop={setDrop}
-            handleChange={handleChange}
-            isCard={isCard}
-          />
-          <Button type="submit">Submit</Button>
-          {(loading || s3Loading) && <Loading />}
-          {isSuccess && <SuccessMessage message="Card Created!" />}
-          {(error || s3Error) && <ErrorMessage error={error} />}
-        </form>
-      </Styled.PopupBody>
-      <Styled.PopupFooterButton onClick={togglePopup}>
-        Close
-      </Styled.PopupFooterButton>
-    </Fragment>
+    <Container>
+      <AddCardButton type="button" onClick={togglePopupModal}>
+        Add Card
+      </AddCardButton>
+      {togglePopup ? (
+        <Styled.PopupContainer>
+          <Styled.PopupInner ref={innerRef}>
+            <Styled.PopupTitle>
+              Create a card for your deck...
+            </Styled.PopupTitle>
+            <Styled.PopupBody>
+              <form onSubmit={e => onSubmit(e, createCard)}>
+                <Styled.InputTextArea
+                  name="front"
+                  value={front}
+                  onChange={onChange}
+                  type="text"
+                  placeholder="Front of the flashcard"
+                />
+                <Styled.InputTextArea
+                  name="back"
+                  value={back}
+                  onChange={onChange}
+                  type="text"
+                  placeholder="Back of the card"
+                />
+                <DropZone setDrop={setDrop} handleChange={handleChange} />
+                <Button type="submit">Submit</Button>
+                {(loading || s3Loading) && <Loading />}
+                {toggleSuccess && <SuccessMessage message="Card Created!" />}
+                {(error || s3Error) && <ErrorMessage error={error} />}
+              </form>
+            </Styled.PopupBody>
+            <Styled.PopupFooterButton onClick={togglePopupModal}>
+              Close
+            </Styled.PopupFooterButton>
+          </Styled.PopupInner>
+        </Styled.PopupContainer>
+      ) : null}
+    </Container>
   );
 };
+
+const Container = styled.div``;
+const AddCardButton = styled(Button)`
+  border: 2px solid #0d5d5d;
+`;
 
 export default CardCreate;

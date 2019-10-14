@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
 
@@ -90,17 +90,10 @@ const DeckContainer = styled.div`
 `;
 
 const DeckList = ({ decks, me }) => {
-  const [showPopup, setShowPopup] = useState(false);
   return (
     <DeckContainer>
       {decks.map(deck => (
-        <DeckItem
-          key={deck.id}
-          deck={deck}
-          me={me}
-          showPopup={showPopup}
-          setShowPopup={setShowPopup}
-        />
+        <DeckItem key={deck.id} deck={deck} me={me} />
       ))}
     </DeckContainer>
   );

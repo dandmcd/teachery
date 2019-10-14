@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { useMutation } from "@apollo/react-hooks";
+import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 import ErrorMessage from "../../../../../Alerts/Error";
@@ -20,7 +20,8 @@ const ADD_TAG_TO_DECK = gql`
   }
 `;
 
-const AddDeckTag = ({ deck, setIsOn }) => {
+const AddDeckTag = ({ deck }) => {
+  const client = useApolloClient();
   const [isSuccess, setIsSuccess] = useState(false);
   const [state, setState] = useState({
     id: null,
@@ -66,8 +67,8 @@ const AddDeckTag = ({ deck, setIsOn }) => {
     }
   }, [deck]);
 
-  const togglePopup = () => {
-    setIsOn(false);
+  const closePopup = () => {
+    client.writeData({ data: { isAddTagActive: false } });
   };
 
   return (
@@ -88,7 +89,7 @@ const AddDeckTag = ({ deck, setIsOn }) => {
           {error && <ErrorMessage error={error} />}
         </form>
       </Styled.PopupBody>
-      <Styled.PopupFooterButton onClick={togglePopup}>
+      <Styled.PopupFooterButton onClick={closePopup}>
         Close
       </Styled.PopupFooterButton>
     </Fragment>

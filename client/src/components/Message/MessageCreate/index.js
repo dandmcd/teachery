@@ -22,26 +22,28 @@ const CREATE_MESSAGE = gql`
   }
 `;
 
-const SendButton = styled(Button)`
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-`;
+const INITIAL_STATE = {
+  text: ""
+};
 
 const MessageCreate = () => {
   const [createMessage, { loading, error }] = useMutation(CREATE_MESSAGE);
-  const [text, setText] = useState("");
+  const [{ text }, setText] = useState(INITIAL_STATE);
 
   const onChange = e => {
-    setText(e.target.value);
+    const { name, value } = e.target;
+    setText(prevState => ({ ...prevState, [name]: value }));
   };
 
   const onSubmit = async (e, createMessage) => {
     e.preventDefault();
 
     try {
-      await createMessage({ variables: { text: text } });
-      setText("");
+      await createMessage({ variables: { text: text } }).then(
+        async ({ data }) => {
+          setText(INITIAL_STATE);
+        }
+      );
     } catch (error) {}
   };
 
@@ -61,5 +63,11 @@ const MessageCreate = () => {
     </form>
   );
 };
+
+const SendButton = styled(Button)`
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+`;
 
 export default MessageCreate;

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, withRouter } from "react-router-dom";
-import { useMutation } from "@apollo/react-hooks";
+import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import PropTypes from "prop-types";
 
 import Loading from "../Loading";
 import * as routes from "../../routing/routes";
@@ -17,6 +18,17 @@ const SIGN_UP = gql`
   }
 `;
 
+const SignUpPage = ({ history, refetch }) => (
+  <Styled.Container>
+    <SignUpForm history={history} refetch={refetch} />
+  </Styled.Container>
+);
+
+SignUpPage.propTypes = {
+  history: PropTypes.object.isRequired,
+  refetch: PropTypes.func.isRequired
+};
+
 const INITIAL_STATE = {
   username: "",
   email: "",
@@ -24,34 +36,45 @@ const INITIAL_STATE = {
   passwordConfirmation: ""
 };
 
-const SignUpPage = ({ history, refetch }) => (
-  <Styled.Container>
-    <SignUpForm history={history} refetch={refetch} />
-  </Styled.Container>
-);
-
 const SignUpForm = props => {
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [state, setState] = useState({ ...INITIAL_STATE });
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleSuccess @client
+    }
+  `);
+  const { toggleSuccess } = data;
+
+  const [
+    { username, email, password, passwordConfirmation },
+    setState
+  ] = useState(INITIAL_STATE);
 
   const [signUp, { loading, error }] = useMutation(SIGN_UP, {
     onError: err => {
-      setIsSuccess(false);
+      client.writeData({ data: { toggleSuccess: false } });
     },
     onCompleted: data => {
-      setIsSuccess(true);
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, 5000);
+      client.writeData({ data: { toggleSuccess: true } });
     }
   });
 
+  useEffect(() => {
+    if (toggleSuccess) {
+      setTimeout(() => {
+        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+      }, 5000);
+    }
+  }, [client, toggleSuccess]);
+
   const onChange = e => {
-    setState({ ...state, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setState(prevState => ({ ...prevState, [name]: value }));
   };
 
   const onSubmit = async (e, signUp) => {
     e.preventDefault();
+
     try {
       await signUp({
         variables: {
@@ -68,8 +91,6 @@ const SignUpForm = props => {
       });
     } catch {}
   };
-
-  const { username, email, password, passwordConfirmation } = state;
 
   const isInvalid =
     password !== passwordConfirmation ||
@@ -118,10 +139,14 @@ const SignUpForm = props => {
         Sign Up
       </Styled.SubmitButton>
       {loading && <Loading />}
-      {isSuccess && <SuccessMessage message="Successfully Logged In!" />}
+      {toggleSuccess && <SuccessMessage message="Successfully Logged In!" />}
       {error && <ErrorMessage error={error} />}
     </Styled.Box>
   );
+};
+
+SignUpForm.propTypes = {
+  props: PropTypes.object
 };
 
 const SignUpLink = () => (

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Button from "./Button";
 
 export const PopupContainer = styled.div`
-  overflow: initial;
+  overflow: auto;
   position: fixed;
   z-index: 40;
   width: 100%;
@@ -15,6 +15,10 @@ export const PopupContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
 `;
 
+export const PopupGridContainer = styled(PopupContainer)`
+  background-color: rgba(0, 0, 0, 0.4);
+`;
+
 export const PopupInner = styled.div`
   position: absolute;
   z-index: 40;
@@ -22,7 +26,7 @@ export const PopupInner = styled.div`
   right: 25%;
   top: 25%;
   bottom: 25%;
-  margin: auto;
+  margin: 10% auto;
   overflow-y: scroll;
   border-radius: 20px;
   background: ${props => props.theme.neutralLight};

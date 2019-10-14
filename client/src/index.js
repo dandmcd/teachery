@@ -96,7 +96,11 @@ const client = new ApolloClient({
 const data = {
   toggleLanding: 0,
   togglePopup: false,
-  toggleSuccess: false
+  toggleSuccess: false,
+  isCard: false,
+  isDeck: false,
+  isAddCardActive: false,
+  isAddTagActive: false
 };
 
 cache.writeData({ data });

@@ -2,6 +2,7 @@ import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import Moment from "react-moment";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS from "../AssignmentAdmin/AssignmentAdminSchema";
@@ -43,6 +44,11 @@ const Assignments = ({ limit, me }) => {
   );
 };
 
+Assignments.propTypes = {
+  limit: PropTypes.number.isRequired,
+  me: PropTypes.object
+};
+
 const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
   <AssignmentButton
     type="button"
@@ -74,6 +80,13 @@ const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
   </AssignmentButton>
 );
 
+MoreAssignmentsButton.propTypes = {
+  limit: PropTypes.number.isRequired,
+  pageInfo: PropTypes.object.isRequired,
+  fetchMore: PropTypes.func.isRequired,
+  children: PropTypes.string.isRequired
+};
+
 const AssignmentButton = styled(Button)`
   margin: auto;
   display: block;
@@ -85,6 +98,11 @@ const AssignmentList = ({ assignments, me }) => {
   return assignments.map(assignment => (
     <AssignmentItem key={assignment.id} assignment={assignment} me={me} />
   ));
+};
+
+AssignmentList.propTypes = {
+  assignments: PropTypes.array.isRequired,
+  me: PropTypes.object
 };
 
 const AssignmentItemBase = ({ assignment, session }) => (
@@ -114,6 +132,11 @@ const AssignmentItemBase = ({ assignment, session }) => (
     </Styled.CardGrid>
   </Styled.AssignmentItemContainer>
 );
+
+AssignmentItemBase.propTypes = {
+  assignment: PropTypes.object.isRequired,
+  me: PropTypes.object
+};
 
 const AssignmentItem = withSession(AssignmentItemBase);
 export default Assignments;

@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS from "../AssignmentAdmin/AssignmentAdminSchema";
 import Button from "../../../theme/Button";
@@ -11,10 +12,6 @@ const DELETE_ASSIGNMENT = gql`
   mutation($id: ID!) {
     deleteAssignment(id: $id)
   }
-`;
-
-const RemoveAssignmentButton = styled(Button)`
-  border: 2px solid ${props => props.theme.error};
 `;
 
 const AssignmentDelete = ({ assignment }) => {
@@ -73,5 +70,13 @@ const AssignmentDelete = ({ assignment }) => {
     </Fragment>
   );
 };
+
+AssignmentDelete.propTypes = {
+  assignment: PropTypes.object.isRequired
+};
+
+const RemoveAssignmentButton = styled(Button)`
+  border: 2px solid ${props => props.theme.error};
+`;
 
 export default AssignmentDelete;
