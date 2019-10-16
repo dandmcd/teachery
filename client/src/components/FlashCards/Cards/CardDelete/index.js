@@ -1,7 +1,8 @@
-import React, { Fragment } from "react";
-import { useMutation } from "@apollo/react-hooks";
+import React, { Fragment, useEffect } from "react";
+import { useMutation, useApolloClient, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import Button from "../../../../theme/Button";
 import Loading from "../../../Loading";
@@ -13,27 +14,31 @@ const DELETE_CARD = gql`
   }
 `;
 
-const DeleteButton = styled(Button)`
-  border: 2px solid ${props => props.theme.error};
-  color: #233841;
-  :hover {
-    color: white;
-    background: #b11a1a;
-  }
-`;
+const CardDelete = ({ card }) => {
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleSuccess @client
+    }
+  `);
+  const { toggleSuccess } = data;
 
-const CardDelete = ({ card, setIsSuccess }) => {
   const [deleteCard, { loading, error }] = useMutation(DELETE_CARD, {
     onError: err => {
-      setIsSuccess(false);
+      client.writeData({ data: { toggleSuccess: false } });
     },
     onCompleted: data => {
-      setIsSuccess(true);
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, 5000);
+      client.writeData({ data: { toggleSuccess: true } });
     }
   });
+
+  useEffect(() => {
+    if (toggleSuccess) {
+      setTimeout(() => {
+        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+      }, 5000);
+    }
+  }, [client, toggleSuccess]);
 
   const onSubmit = (e, deleteCard) => {
     e.preventDefault();
@@ -58,6 +63,19 @@ const CardDelete = ({ card, setIsSuccess }) => {
       {error && <ErrorMessage error={error} />}
     </Fragment>
   );
+};
+
+const DeleteButton = styled(Button)`
+  border: 2px solid ${props => props.theme.error};
+  color: #233841;
+  :hover {
+    color: white;
+    background: #b11a1a;
+  }
+`;
+
+CardDelete.propTypes = {
+  card: PropTypes.object.isRequired
 };
 
 export default CardDelete;

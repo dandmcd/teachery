@@ -4,6 +4,7 @@ const CARDS_QUERY = gql`
   query CardsQuery($id: ID!) {
     deck(id: $id) {
       id
+      deckName
       user {
         id
       }

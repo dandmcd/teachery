@@ -89,7 +89,6 @@ const AssignmentCreate = () => {
     }
   );
 
-  // Set success alert for up to 5 seconds
   useEffect(() => {
     if (toggleSuccess) {
       setTimeout(() => {
@@ -97,13 +96,6 @@ const AssignmentCreate = () => {
       }, 5000);
     }
   }, [client, toggleSuccess]);
-
-  // Onclick toggle popup for mutation form
-  const togglePopupModal = () => {
-    client.writeData({ data: { togglePopup: !togglePopup } });
-  };
-  const innerRef = useRef(null);
-  useOuterClickNotifier(togglePopupModal, innerRef);
 
   const onChange = e => {
     const { name, value } = e.target;
@@ -125,6 +117,13 @@ const AssignmentCreate = () => {
       });
     } catch {}
   };
+
+  // Onclick toggle popup for mutation form
+  const togglePopupModal = () => {
+    client.writeData({ data: { togglePopup: !togglePopup } });
+  };
+  const innerRef = useRef(null);
+  useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
     <Container>

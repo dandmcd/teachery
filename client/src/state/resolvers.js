@@ -7,8 +7,8 @@ export const typeDefs = gql`
     toggleSuccess: Boolean!
     isCard: Boolean!
     isDeck: Boolean!
-    isAddCardActive: Boolean!
-    isAddTagActive: Boolean!
+    toggleAddCard: Boolean!
+    toggleAddTag: Boolean!
   }
 `;
 

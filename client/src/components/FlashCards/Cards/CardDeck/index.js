@@ -1,8 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+
 import * as Styled from "./style";
 
-const CardDeck = props => {
+const CardDeck = ({ props: { cards } }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [state, setState] = useState({
     index: 0,
@@ -32,10 +34,9 @@ const CardDeck = props => {
   const handleCardFlip = e => {
     setIsFlipped(isFlipped === false ? true : false);
   };
-  console.log(props);
 
   //Preload card images
-  let cardsWithImages = props.cards.filter(card => card.pictureUrl);
+  let cardsWithImages = cards.filter(card => card.pictureUrl);
   const cardUrls = cardsWithImages.map(card => card.pictureUrl);
   useEffect(() => {
     cardUrls.forEach(image => {
@@ -43,8 +44,9 @@ const CardDeck = props => {
     });
   }, [cardUrls]);
 
-  const item = props.cards[index];
-  if (index >= props.cards.length) {
+  const card = cards[index];
+
+  if (index >= cards.length) {
     return (
       <Styled.Container>
         <h1>FINISHED</h1>
@@ -60,14 +62,14 @@ const CardDeck = props => {
     return (
       <Styled.Container>
         <Styled.Box>
-          <Styled.CardFront>{item.front}</Styled.CardFront>
-          {cardUrls.map(url => url) && item.pictureUrl && (
-            <Styled.CardImg src={item.pictureUrl} alt={item.front} />
+          <Styled.CardFront>{card.front}</Styled.CardFront>
+          {cardUrls.map(url => url) && card.pictureUrl && (
+            <Styled.CardImg src={card.pictureUrl} alt={card.front} />
           )}
           {isFlipped && (
             <Fragment>
               <Styled.Hr />
-              <Styled.CardBack>{item.back}</Styled.CardBack>
+              <Styled.CardBack>{card.back}</Styled.CardBack>
             </Fragment>
           )}
         </Styled.Box>
@@ -91,6 +93,10 @@ const CardDeck = props => {
       </Styled.Container>
     );
   }
+};
+
+CardDeck.propTypes = {
+  cards: PropTypes.array.isRequired
 };
 
 export default CardDeck;

@@ -44,17 +44,27 @@ const S3SIGNMUTATION = gql`
   }
 `;
 
-// Component
+const INITIAL_STATE = {
+  deckId: null,
+  front: "",
+  back: "",
+  pictureName: "",
+  pictureUrl: ""
+};
+
 const CardCreate = ({ deck }) => {
   const client = useApolloClient();
   const { data } = useQuery(gql`
     query Toggle {
       toggleSuccess @client
-      togglePopup @client
+      toggleAddCard @client
       isCard @client
     }
   `);
-  const { toggleSuccess, togglePopup, isCard } = data;
+  const { toggleSuccess, toggleAddCard, isCard } = data;
+
+  const [{ front, back }, setState] = useState(INITIAL_STATE);
+  const [drop, setDrop] = useState(null);
 
   // Mutation Hooks
   const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
@@ -69,7 +79,6 @@ const CardCreate = ({ deck }) => {
     }
   });
 
-  // Set success alert for up to 5 seconds
   useEffect(() => {
     if (toggleSuccess) {
       setTimeout(() => {
@@ -77,17 +86,6 @@ const CardCreate = ({ deck }) => {
       }, 5000);
     }
   }, [client, toggleSuccess]);
-
-  // State
-  const [drop, setDrop] = useState(null);
-  const [state, setState] = useState({
-    deckId: null,
-    front: "",
-    back: "",
-    pictureName: "",
-    pictureUrl: ""
-  });
-  const { front, back } = state;
 
   // S3 Sign and format
   const uploadToS3 = async (file, signedRequest) => {
@@ -106,6 +104,11 @@ const CardCreate = ({ deck }) => {
     const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-");
     const newFilename = `images/${date}-${randomString}-${cleanFileName}`;
     return newFilename.substring(0, 60);
+  };
+
+  const onChange = e => {
+    const { name, value } = e.target;
+    setState(prevState => ({ ...prevState, [name]: value }));
   };
 
   // Mutation Submit
@@ -132,13 +135,16 @@ const CardCreate = ({ deck }) => {
           pictureName: drop.name,
           pictureUrl: url
         },
-        refetchQueries: ["getDecks"]
-      });
-      await setState({
-        front: "",
-        back: "",
-        pictureName: "",
-        pictureUrl: ""
+        refetchQueries: [
+          {
+            query: CARDS_QUERY,
+            variables: {
+              id: deck.id
+            }
+          }
+        ]
+      }).then(async ({ data }) => {
+        setState({ ...INITIAL_STATE });
       });
     } else {
       try {
@@ -156,18 +162,12 @@ const CardCreate = ({ deck }) => {
               }
             }
           ]
-        });
-        await setState({
-          front: "",
-          back: "",
-          pictureName: "",
-          pictureUrl: ""
+        }).then(async ({ data }) => {
+          setState({ ...INITIAL_STATE });
         });
       } catch (error) {}
     }
   };
-
-  const onChange = e => setState({ ...state, [e.target.name]: e.target.value });
 
   const handleChange = e => {
     setDrop(e.target.value);
@@ -185,9 +185,10 @@ const CardCreate = ({ deck }) => {
     }
   }, [deck, setState]);
 
-  // Onclick toggle popup for mutation form
   const togglePopupModal = () => {
-    client.writeData({ data: { togglePopup: !togglePopup, isCard: !isCard } });
+    client.writeData({
+      data: { toggleAddCard: !toggleAddCard, isCard: !isCard }
+    });
   };
   const innerRef = useRef(null);
   useOuterClickNotifier(togglePopupModal, innerRef);
@@ -197,9 +198,9 @@ const CardCreate = ({ deck }) => {
       <AddCardButton type="button" onClick={togglePopupModal}>
         Add Card
       </AddCardButton>
-      {togglePopup ? (
+      {toggleAddCard ? (
         <Styled.PopupContainer>
-          <Styled.PopupInner ref={innerRef}>
+          <Styled.PopupInnerExtended ref={innerRef}>
             <Styled.PopupTitle>
               Create a card for your deck...
             </Styled.PopupTitle>
@@ -219,7 +220,11 @@ const CardCreate = ({ deck }) => {
                   type="text"
                   placeholder="Back of the card"
                 />
-                <DropZone setDrop={setDrop} handleChange={handleChange} />
+                <DropZone
+                  setDrop={setDrop}
+                  handleChange={handleChange}
+                  isCard={isCard}
+                />
                 <Button type="submit">Submit</Button>
                 {(loading || s3Loading) && <Loading />}
                 {toggleSuccess && <SuccessMessage message="Card Created!" />}
@@ -229,7 +234,7 @@ const CardCreate = ({ deck }) => {
             <Styled.PopupFooterButton onClick={togglePopupModal}>
               Close
             </Styled.PopupFooterButton>
-          </Styled.PopupInner>
+          </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
     </Container>
@@ -237,6 +242,7 @@ const CardCreate = ({ deck }) => {
 };
 
 const Container = styled.div``;
+
 const AddCardButton = styled(Button)`
   border: 2px solid #0d5d5d;
 `;

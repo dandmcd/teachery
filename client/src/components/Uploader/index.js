@@ -14,6 +14,7 @@ export default function DropZone({ props, setDrop, setImage, isDeck }) {
     }
   `);
   const { isCard } = data;
+
   const [files, setFiles] = useState([]);
   const onDrop = useCallback(
     acceptedFiles => {
