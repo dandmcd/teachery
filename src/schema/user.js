@@ -33,6 +33,12 @@ export default gql`
     deleteUser(id: ID!): Boolean!
   }
 
+  enum Role {
+    STUDENT
+    TEACHER
+    ADMIN
+  }
+
   type Token {
     token: String!
   }
@@ -46,7 +52,7 @@ export default gql`
     User level -
     Currently only 1 role used, ADMIN
     """
-    role: String
+    role: Role
     messages: [Message!]
     assignments: [Assignment!]
     assignedTasks: [AssignedTask!]

@@ -1,6 +1,11 @@
 import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
-import { isAuthenticated, isAssignmentOwner } from "./authorization";
+import {
+  isAuthenticated,
+  isAssignmentOwner,
+  isTeacher,
+  isAdmin
+} from "./authorization";
 
 const toCursorHash = string => Buffer.from(string).toString("base64");
 
@@ -44,6 +49,7 @@ export default {
   Mutation: {
     createAssignment: combineResolvers(
       isAuthenticated,
+      isTeacher,
       async (
         parent,
         { assignmentName, note, link, status, dueDate },

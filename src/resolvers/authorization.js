@@ -10,6 +10,14 @@ export const isAdmin = combineResolvers(
     role === "ADMIN" ? skip : new ForbiddenError("Not authorized as admin.")
 );
 
+export const isTeacher = combineResolvers(
+  isAuthenticated,
+  (parent, args, { me: { role } }) =>
+    role === "TEACHER" || "ADMIN"
+      ? skip
+      : new ForbiddenError("Not authorized as teacher.")
+);
+
 export const isMessageOwner = async (parent, { id }, { models, me }) => {
   const message = await models.Message.findByPk(id, { raw: true });
 
