@@ -7,7 +7,7 @@ import AssignedTasks from "./Assignments";
 const AssignmentPage = () => (
   <Container>
     <AssignmentsHeader>Assignments</AssignmentsHeader>
-    <AssignedTasks limit={3} />
+    <AssignedTasks limit={6} />
   </Container>
 );
 

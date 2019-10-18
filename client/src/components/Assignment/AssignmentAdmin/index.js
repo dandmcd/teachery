@@ -1,8 +1,9 @@
 import React from "react";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import Moment from "react-moment";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import gql from "graphql-tag";
 
 import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS from "../AssignmentAdmin/AssignmentAdminSchema";
@@ -105,38 +106,60 @@ AssignmentList.propTypes = {
   me: PropTypes.object
 };
 
-const AssignmentItemBase = ({ assignment, session }) => (
-  <Styled.AssignmentItemContainer>
-    <Styled.CardGrid>
-      <Styled.Title>{assignment.assignmentName}</Styled.Title>
-      <Styled.Note>{assignment.note}</Styled.Note>
-      <Styled.ExternalLink
-        href={assignment.link}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        View Link
-      </Styled.ExternalLink>
-      <Styled.CreatedInfo>
-        <Styled.CreatedAt>
-          Created on:{" "}
-          <Moment format="YYYY-MM-DD">{assignment.createdAt}</Moment>
-        </Styled.CreatedAt>
-        <Styled.CreatedBy>
-          Created by: {assignment.user.username}
-        </Styled.CreatedBy>
-      </Styled.CreatedInfo>
-      {session && session.me && assignment.user.id === session.me.id && (
-        <AssignmentDelete assignment={assignment} />
-      )}
-    </Styled.CardGrid>
-  </Styled.AssignmentItemContainer>
-);
+const AssignmentItemBase = ({ assignment, session }) => {
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleAssign @client
+    }
+  `);
+  const { toggleAssign } = data;
+  const togglePopupModal = () => {
+    client.writeData({
+      data: { toggleAssign: !toggleAssign, assignmentId: assignment.id }
+    });
+  };
+
+  return (
+    <Styled.AssignmentItemContainer>
+      <Styled.CardGrid>
+        <Styled.Title>{assignment.assignmentName}</Styled.Title>
+        <Styled.Note>{assignment.note}</Styled.Note>
+        <Styled.ExternalLink
+          href={assignment.link}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          View Link
+        </Styled.ExternalLink>
+        <Styled.CreatedInfo>
+          <Styled.CreatedAt>
+            Created on:{" "}
+            <Moment format="YYYY-MM-DD">{assignment.createdAt}</Moment>
+          </Styled.CreatedAt>
+          <Styled.CreatedBy>
+            Created by: {assignment.user.username}
+          </Styled.CreatedBy>
+        </Styled.CreatedInfo>
+        <AssignButton type="button" onClick={togglePopupModal}>
+          Assign Task
+        </AssignButton>
+        {session && session.me && assignment.user.id === session.me.id && (
+          <AssignmentDelete assignment={assignment} />
+        )}
+      </Styled.CardGrid>
+    </Styled.AssignmentItemContainer>
+  );
+};
 
 AssignmentItemBase.propTypes = {
   assignment: PropTypes.object.isRequired,
   me: PropTypes.object
 };
+
+const AssignButton = styled(Button)`
+  font-size: 10px;
+`;
 
 const AssignmentItem = withSession(AssignmentItemBase);
 export default Assignments;

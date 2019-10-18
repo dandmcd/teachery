@@ -10,7 +10,7 @@ export default gql`
   extend type Mutation {
     assignTask(
       assignmentId: Int!
-      assignedTo: Int!
+      assignedTo: String!
       dueDate: String!
       status: Status!
     ): AssignedTask!
@@ -38,7 +38,7 @@ export default gql`
     """
     User the task is assigned to
     """
-    assignedTo: Int!
+    assignedTo: String!
 
     """
     Date when the assignment is due

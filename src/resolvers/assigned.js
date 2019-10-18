@@ -1,7 +1,7 @@
 import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 
-import { isAdmin, isAuthenticated, isAssignedTaskOwner } from "./authorization";
+import { isAuthenticated, isTeacher } from "./authorization";
 import { UserInputError } from "apollo-server";
 
 const toCursorHash = string => Buffer.from(string).toString("base64");
@@ -55,7 +55,7 @@ export default {
 
   Mutation: {
     assignTask: combineResolvers(
-      isAdmin,
+      isTeacher,
       async (
         parent,
         { assignmentId, assignedTo, dueDate, status },
@@ -63,7 +63,7 @@ export default {
       ) => {
         const assignment = await models.Assignment.findByPk(assignmentId);
         const user = await models.User.findOne({
-          where: { id: assignedTo },
+          where: { email: assignedTo },
           raw: true,
           returning: true
         });

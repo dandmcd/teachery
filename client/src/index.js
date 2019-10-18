@@ -98,9 +98,11 @@ const data = {
   togglePopup: false,
   toggleAddCard: false,
   toggleAddTag: false,
+  toggleAssign: false,
   toggleSuccess: false,
   isCard: false,
-  isDeck: false
+  isDeck: false,
+  assignmentId: null
 };
 
 cache.writeData({ data });

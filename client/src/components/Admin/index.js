@@ -4,6 +4,7 @@ import withAuthorization from "../Session/withAuthorization";
 import { MessageCreate, Messages } from "../Message";
 import AssignmentCreate from "../Assignment/AssignmentCreate";
 import Assignments from "../Assignment/AssignmentAdmin";
+import AssignTask from "../Assignment/AssignmentAdmin/AssignTask";
 
 const AdminPage = () => (
   <div>
@@ -13,6 +14,7 @@ const AdminPage = () => (
     <Messages limit={3} />
     <hr />
     <AssignmentCreate />
+    <AssignTask />
     <Assignments limit={3} />
   </div>
 );

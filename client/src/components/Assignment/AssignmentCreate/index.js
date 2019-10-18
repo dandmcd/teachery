@@ -132,8 +132,8 @@ const AssignmentCreate = () => {
       </AssignButton>
       {togglePopup ? (
         <Styled.PopupContainer>
-          <Styled.PopupInner ref={innerRef}>
-            <Styled.PopupTitle>Create an an assignment...</Styled.PopupTitle>
+          <Styled.PopupInnerExtended ref={innerRef}>
+            <Styled.PopupTitle>Create an assignment ...</Styled.PopupTitle>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, createAssignment)}>
                 <Styled.Input
@@ -168,7 +168,7 @@ const AssignmentCreate = () => {
             <Styled.PopupFooterButton onClick={togglePopupModal}>
               Close
             </Styled.PopupFooterButton>
-          </Styled.PopupInner>
+          </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
     </Container>
