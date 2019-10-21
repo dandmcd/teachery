@@ -21,6 +21,8 @@ export default gql`
       assignmentName: String!
       note: String
       link: String
+      documentName: String
+      documentUrl: String
     ): Assignment!
 
     """
@@ -56,6 +58,8 @@ export default gql`
     A URL link related to the assignment
     """
     link: String
+    documentName: String
+    documentUrl: String
     createdAt: Date!
     user: User!
     assignedTasks: [AssignedTask!]!

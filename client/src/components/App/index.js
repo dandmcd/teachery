@@ -1,5 +1,9 @@
 import React from "react";
 import { Router, Route } from "react-router-dom";
+import styled from "styled-components";
+
+import * as routes from "../../routing/routes";
+import history from "../../routing/history";
 
 import Navigation from "../Navigation";
 import LandingPage from "../Landing";
@@ -14,10 +18,7 @@ import Cards from "../FlashCards/Cards";
 import CardList from "../FlashCards/Cards/CardList";
 import Search from "../FlashCards/Decks/DeckSearch";
 import Tags from "../FlashCards/Decks/DeckItem/DeckTags/TagItem";
-import styled from "styled-components";
-
-import * as routes from "../../routing/routes";
-import history from "../../routing/history";
+import TeacherPage from "../Teacher";
 
 import GlobalStyle from "../../theme/globalStyle";
 
@@ -44,6 +45,7 @@ const App = ({ session, refetch }) => (
         component={() => <AssignmentPage />}
       />
       <Route exact path={routes.ADMIN} component={() => <AdminPage />} />
+      <Route exact path={routes.TEACHER} component={() => <TeacherPage />} />
       <Route
         exact
         path={routes.FLASHCARDS}

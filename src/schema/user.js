@@ -31,6 +31,12 @@ export default gql`
     Requires ADMIN role
     """
     deleteUser(id: ID!): Boolean!
+
+    """
+    Update a user
+    Requires ADMIN role
+    """
+    updateUserRole(id: ID, email: String, role: Role): Boolean!
   }
 
   enum Role {

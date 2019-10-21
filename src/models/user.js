@@ -7,7 +7,10 @@ const user = (sequelize, DataTypes) => {
       unique: true,
       allowNull: false,
       validate: {
-        notEmpty: true
+        notEmpty: {
+          args: true,
+          msg: "A user must have a username."
+        }
       }
     },
     email: {
@@ -15,8 +18,14 @@ const user = (sequelize, DataTypes) => {
       unique: true,
       allowNull: false,
       validate: {
-        notEmpty: true,
-        isEmail: true
+        notEmpty: {
+          args: true,
+          msg: "A user must provide an email address."
+        },
+        isEmail: {
+          args: true,
+          msg: "Not a valid email."
+        }
       }
     },
     password: {

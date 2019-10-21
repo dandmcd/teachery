@@ -3,6 +3,7 @@ import { combineResolvers } from "graphql-resolvers";
 import { UserInputError, AuthenticationError } from "apollo-server-core";
 
 import { isAdmin } from "./authorization";
+import { decorateWithLogger } from "graphql-tools";
 
 const createToken = async (user, secret, expiresIn) => {
   const { id, email, username, role } = user;
@@ -64,6 +65,28 @@ export default {
         return await models.User.destroy({
           where: { id }
         });
+      }
+    ),
+
+    updateUserRole: combineResolvers(
+      isAdmin,
+      async (parent, { id, username, password, email, role }, { models }) => {
+        const user = await models.User.update(
+          {
+            id: id,
+            role: role,
+            email: email
+          },
+          { returning: true, validate: true, where: { email: email } }
+        )
+          .then(result => {
+            console.log(result);
+          })
+          .catch(err => {
+            console.log(err);
+            throw new UserInputError(err);
+          });
+        return true;
       }
     )
   },

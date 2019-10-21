@@ -89,6 +89,12 @@ const NavigationAuth = ({ toggleMobileNavbar, session }) => (
     <NavLink>
       <Link to={routes.ACCOUNT}>Account ({session.me.username})</Link>
     </NavLink>
+    {(session && session.me && session.me.role === "TEACHER") ||
+      ("ADMIN" && (
+        <NavLink>
+          <Link to={routes.TEACHER}>Teachers</Link>
+        </NavLink>
+      ))}
     {session && session.me && session.me.role === "ADMIN" && (
       <NavLink>
         <Link to={routes.ADMIN}>Admin</Link>

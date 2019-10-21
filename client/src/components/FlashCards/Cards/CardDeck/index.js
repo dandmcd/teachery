@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import * as Styled from "./style";
 
-const CardDeck = ({ props: { cards } }) => {
+const CardDeck = ({ cards }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [state, setState] = useState({
     index: 0,

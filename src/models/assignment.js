@@ -22,6 +22,14 @@ const assignment = (sequelize, DataTypes) => {
           msg: "The URL is not valid."
         }
       }
+    },
+    documentName: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    documentUrl: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   });
   Assignment.associate = models => {

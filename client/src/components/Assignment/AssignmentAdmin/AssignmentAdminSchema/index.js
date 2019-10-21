@@ -9,6 +9,8 @@ const GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS = gql`
         assignmentName
         note
         link
+        documentUrl
+        documentName
         createdAt
         user {
           id

@@ -220,11 +220,7 @@ const CardCreate = ({ deck }) => {
                   type="text"
                   placeholder="Back of the card"
                 />
-                <DropZone
-                  setDrop={setDrop}
-                  handleChange={handleChange}
-                  isCard={isCard}
-                />
+                <DropZone setDrop={setDrop} handleChange={handleChange} />
                 <Button type="submit">Submit</Button>
                 {(loading || s3Loading) && <Loading />}
                 {toggleSuccess && <SuccessMessage message="Card Created!" />}

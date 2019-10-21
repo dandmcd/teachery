@@ -100,14 +100,19 @@ const data = {
   toggleAddTag: false,
   toggleAssign: false,
   toggleSuccess: false,
+  toggleRoleChange: false,
   isCard: false,
   isDeck: false,
+  isDocument: false,
   assignmentId: null
 };
 
 cache.writeData({ data });
 
-client.onResetStore(() => cache.writeData({ data }));
+client.onResetStore(async () => cache.writeData({ data }));
+client.onClearStore(async () => {
+  cache.writeData({ data });
+});
 
 ReactDOM.render(
   <ApolloProvider client={client}>

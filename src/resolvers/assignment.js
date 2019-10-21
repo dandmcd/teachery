@@ -52,7 +52,7 @@ export default {
       isTeacher,
       async (
         parent,
-        { assignmentName, note, link, status, dueDate },
+        { assignmentName, note, link, documentName, documentUrl },
         { models, me }
       ) => {
         if (link === "") {
@@ -62,8 +62,8 @@ export default {
           assignmentName,
           note,
           link,
-          status,
-          dueDate,
+          documentName,
+          documentUrl,
           userId: me.id
         });
         return assignment;

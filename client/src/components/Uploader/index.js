@@ -11,9 +11,10 @@ export default function DropZone({ props, setDrop, setImage, isDeck }) {
   const { data } = useQuery(gql`
     query Toggle {
       isCard @client
+      isDocument @client
     }
   `);
-  const { isCard } = data;
+  const { isCard, isDocument } = data;
 
   const [files, setFiles] = useState([]);
   const onDrop = useCallback(
@@ -29,7 +30,7 @@ export default function DropZone({ props, setDrop, setImage, isDeck }) {
           Object.assign(file, { preview: URL.createObjectURL(file) })
         )
       );
-      if (isCard) {
+      if (isCard || isDocument) {
         console.log("Is Card");
         setDrop(acceptedFiles[0]);
       } else if (isDeck) {
@@ -52,8 +53,9 @@ export default function DropZone({ props, setDrop, setImage, isDeck }) {
         });
       }
     },
-    [setDrop, setImage, isCard, isDeck]
+    [setDrop, setImage, isCard, isDeck, isDocument]
   );
+
   const {
     rejectedFiles,
     acceptedFiles,
@@ -69,7 +71,7 @@ export default function DropZone({ props, setDrop, setImage, isDeck }) {
     noKeyboard: true,
     maxSize: 10485760,
     multiple: false,
-    accept: ["image/*"]
+    accept: ["image/*", "application/pdf"]
   });
 
   const acceptedFilesItems = acceptedFiles.map(file => (
@@ -112,7 +114,7 @@ export default function DropZone({ props, setDrop, setImage, isDeck }) {
         <Button type="button" onClick={open}>
           Select File
         </Button>
-        <em>(Only image files will be accepted)</em>
+        <em>(Only image or PDF files will be accepted)</em>
       </Styled.Container>
       <Styled.Aside>
         {acceptedFilesItems.length > 0 && (

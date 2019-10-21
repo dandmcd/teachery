@@ -5,24 +5,20 @@ import { MessageCreate, Messages } from "../Message";
 import AssignmentCreate from "../Assignment/AssignmentCreate";
 import Assignments from "../Assignment/AssignmentAdmin";
 import AssignTask from "../Assignment/AssignmentAdmin/AssignTask";
-import RoleChange from "./Roles";
 
-const AdminPage = () => (
+const TeacherPage = () => (
   <div>
-    <h1>Admin</h1>
+    <h1>Teacher Admin</h1>
     <hr />
     <MessageCreate />
     <Messages limit={3} />
     <hr />
     <AssignmentCreate />
-    <span>
-      <RoleChange />
-    </span>
     <AssignTask />
     <Assignments limit={3} />
   </div>
 );
 
 export default withAuthorization(
-  session => session && session.me && session.me.role === "ADMIN"
-)(AdminPage);
+  session => (session && session.me && session.me.role === "TEACHER") || "ADMIN"
+)(TeacherPage);
