@@ -89,12 +89,20 @@ const CardCreate = ({ deck }) => {
 
   // S3 Sign and format
   const uploadToS3 = async (file, signedRequest) => {
+    const config = {
+      onUploadProgress: progressEvent => {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        console.info(percentCompleted);
+      }
+    };
     const options = {
       headers: {
         "Content-Type": file.type
       }
     };
-    await axios.put(signedRequest, file, options);
+    await axios.put(signedRequest, file, config, options);
   };
   const formatFilename = filename => {
     const date = moment().format("YYYYMMDD");

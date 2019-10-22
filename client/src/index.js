@@ -10,7 +10,8 @@ import { HttpLink } from "apollo-link-http";
 import { WebSocketLink } from "apollo-link-ws";
 import { onError } from "apollo-link-error";
 import { InMemoryCache } from "apollo-cache-inmemory";
-import fetch from "unfetch";
+import axios from "axios";
+import { buildAxiosFetch } from "@lifeomic/axios-fetch";
 import { ThemeProvider } from "styled-components";
 
 import { resolvers, typeDefs } from "./state/resolvers";
@@ -19,7 +20,10 @@ import { signOut } from "./components/SignOut";
 import theme from "./theme/theme";
 
 const httpLink = new HttpLink({
-  fetch: fetch,
+  fetch: buildAxiosFetch(axios, (config, input, init) => ({
+    ...config,
+    onUploadProgress: init.onUploadProgress
+  })),
   uri: "/graphql"
 });
 

@@ -1,5 +1,6 @@
 import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
+import { UserInputError } from "apollo-server-core";
 
 import { isAdmin, isAuthenticated } from "./authorization";
 
@@ -82,8 +83,12 @@ export default {
             })
           );
           console.log(created);
+          if (!created) {
+            throw new UserInputError("Deck already has this tag.");
+          }
           return tag;
         });
+
         const deckTag = await models.DeckTag.create({
           tagId: tag.id,
           deckId: deck.id
