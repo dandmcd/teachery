@@ -151,6 +151,8 @@ const AssignmentCreate = () => {
     setAssignmentState(prevState => ({ ...prevState, [name]: value }));
   };
 
+  const isInvalid = assignmentName === "";
+
   const onSubmit = async (e, createAssignment) => {
     e.preventDefault();
     console.log(drop);
@@ -237,8 +239,14 @@ const AssignmentCreate = () => {
                   type="text"
                   placeholder="Add a URL link"
                 />
-                <DropZone setDrop={setDrop} handleChange={handleChange} />
-                <Button type="submit">Submit</Button>
+                <DropZone
+                  setDrop={setDrop}
+                  handleChange={handleChange}
+                  isDocument={isDocument}
+                />
+                <Button disabled={isInvalid || loading} type="submit">
+                  Submit
+                </Button>
                 {(loading || s3Loading) && <Loading />}
                 {toggleSuccess && (
                   <SuccessMessage message="Assignment Created!" />

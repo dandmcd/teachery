@@ -1,9 +1,40 @@
 import React from "react";
 import Moment from "react-moment";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import withSession from "../../../Session/withSession";
 import CardDelete from "../CardDelete";
+
+const CardItem = ({ card, deckUserId, session }) => (
+  <CardListContainer>
+    <CardField>Card Front: </CardField>
+    <CardInfo>{card.front}</CardInfo>
+    <CardField>Card Back: </CardField>
+    <CardInfo>{card.back}</CardInfo>
+    {card.pictureUrl != null ? (
+      <h5>
+        Image:{" "}
+        <ALink href={card.pictureUrl} rel="noopener noreferrer" target="_blank">
+          <CardInfo>{card.pictureUrl}</CardInfo>
+        </ALink>
+      </h5>
+    ) : null}
+    <Created>
+      Created on: <Moment format="YYYY-MM-DD HH:mm">{card.createdAt}</Moment>
+    </Created>
+    {session && session.me && deckUserId === session.me.id && (
+      <CardDelete card={card} />
+    )}
+    <Hr />
+  </CardListContainer>
+);
+
+CardItem.propTypes = {
+  card: PropTypes.object.isRequired,
+  deckUserId: PropTypes.string.isRequired,
+  session: PropTypes.object.isRequired
+};
 
 const CardListContainer = styled.div``;
 
@@ -33,29 +64,5 @@ const Hr = styled.hr`
 const ALink = styled.a`
   color: ${props => props.theme.primaryMed};
 `;
-
-const CardItem = ({ card, deckUserId, session, setIsSuccess }) => (
-  <CardListContainer>
-    <CardField>Card Front: </CardField>
-    <CardInfo>{card.front}</CardInfo>
-    <CardField>Card Back: </CardField>
-    <CardInfo>{card.back}</CardInfo>
-    {card.pictureUrl != null ? (
-      <h5>
-        Image:{" "}
-        <ALink href={card.pictureUrl} rel="noopener noreferrer" target="_blank">
-          <CardInfo>{card.pictureUrl}</CardInfo>
-        </ALink>
-      </h5>
-    ) : null}
-    <Created>
-      Created on: <Moment format="YYYY-MM-DD HH:mm">{card.createdAt}</Moment>
-    </Created>
-    {session && session.me && deckUserId === session.me.id && (
-      <CardDelete card={card} setIsSuccess={setIsSuccess} />
-    )}
-    <Hr />
-  </CardListContainer>
-);
 
 export default withSession(CardItem);

@@ -37,7 +37,7 @@ const AddDeckTag = ({ deck }) => {
   `);
   const { toggleSuccess, toggleAddTag } = data;
 
-  const [{ id, tagName }, setState] = useState(INITIAL_STATE);
+  const [{ tagName }, setState] = useState(INITIAL_STATE);
 
   useEffect(() => {
     if (deck && deck.id) {
@@ -67,13 +67,15 @@ const AddDeckTag = ({ deck }) => {
     setState(prevState => ({ ...prevState, [name]: value }));
   };
 
+  const isInvalid = tagName === "";
+
   const onSubmit = async (e, addTagToDeck) => {
     e.preventDefault();
 
     try {
       await addTagToDeck({
         variables: {
-          id: id,
+          id: deck.id,
           tagName: tagName
         }
       }).then(async ({ data }) => {
@@ -110,7 +112,9 @@ const AddDeckTag = ({ deck }) => {
                   type="text"
                   placeholder="Enter a Tag Name"
                 />
-                <Button type="submit">Submit</Button>
+                <Button disabled={isInvalid || loading} type="submit">
+                  Submit
+                </Button>
                 {loading && <Loading />}
                 {toggleSuccess && <SuccessMessage message="Tag Created!" />}
                 {error && <ErrorMessage error={error} />}

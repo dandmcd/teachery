@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import useOuterClickNotifier from "../../../Alerts";
 import ErrorMessage from "../../../Alerts/Error";
@@ -197,6 +198,10 @@ const AssignTask = ({ assignment }) => {
       ) : null}
     </Container>
   );
+};
+
+AssignTask.propTypes = {
+  assignment: PropTypes.object
 };
 
 const Container = styled.div``;

@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const SuccessMessage = ({ message }) => {
   return (
@@ -7,6 +8,10 @@ const SuccessMessage = ({ message }) => {
       <Success>{message}</Success>
     </SuccessContainer>
   );
+};
+
+SuccessMessage.propTypes = {
+  message: PropTypes.string.isRequired
 };
 
 const SuccessContainer = styled.div`

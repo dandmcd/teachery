@@ -1,21 +1,11 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import Resizer from "react-image-file-resizer";
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
 
 import * as Styled from "./style";
 import Button from "../../theme/Button";
 
-export default function DropZone({ props, setDrop, setImage, isDeck }) {
-  const { data } = useQuery(gql`
-    query Toggle {
-      isCard @client
-      isDocument @client
-    }
-  `);
-  const { isCard, isDocument } = data;
-
+const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
   const [files, setFiles] = useState([]);
   const onDrop = useCallback(
     acceptedFiles => {
@@ -126,4 +116,6 @@ export default function DropZone({ props, setDrop, setImage, isDeck }) {
       </Styled.Aside>
     </section>
   );
-}
+};
+
+export default DropZone;

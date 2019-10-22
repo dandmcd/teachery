@@ -18,27 +18,29 @@ const CardDelete = ({ card }) => {
   const client = useApolloClient();
   const { data } = useQuery(gql`
     query Toggle {
-      toggleSuccess @client
+      toggleDeleteSuccess @client
     }
   `);
-  const { toggleSuccess } = data;
+  const { toggleDeleteSuccess } = data;
 
   const [deleteCard, { loading, error }] = useMutation(DELETE_CARD, {
     onError: err => {
-      client.writeData({ data: { toggleSuccess: false } });
+      client.writeData({ data: { toggleDeleteSuccess: false } });
     },
     onCompleted: data => {
-      client.writeData({ data: { toggleSuccess: true } });
+      client.writeData({ data: { toggleDeleteSuccess: true } });
     }
   });
 
   useEffect(() => {
-    if (toggleSuccess) {
+    if (toggleDeleteSuccess) {
       setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+        client.writeData({
+          data: { toggleDeleteSuccess: !toggleDeleteSuccess }
+        });
       }, 5000);
     }
-  }, [client, toggleSuccess]);
+  }, [client, toggleDeleteSuccess]);
 
   const onSubmit = (e, deleteCard) => {
     e.preventDefault();
@@ -65,6 +67,10 @@ const CardDelete = ({ card }) => {
   );
 };
 
+CardDelete.propTypes = {
+  card: PropTypes.object.isRequired
+};
+
 const DeleteButton = styled(Button)`
   border: 2px solid ${props => props.theme.error};
   color: #233841;
@@ -73,9 +79,5 @@ const DeleteButton = styled(Button)`
     background: #b11a1a;
   }
 `;
-
-CardDelete.propTypes = {
-  card: PropTypes.object.isRequired
-};
 
 export default CardDelete;

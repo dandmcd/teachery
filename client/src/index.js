@@ -104,6 +104,7 @@ const data = {
   toggleAddTag: false,
   toggleAssign: false,
   toggleSuccess: false,
+  toggleDeleteSuccess: false,
   toggleRoleChange: false,
   isCard: false,
   isDeck: false,

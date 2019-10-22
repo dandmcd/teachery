@@ -17,6 +17,7 @@ const CARDS_QUERY = gql`
         createdAt
       }
     }
+    toggleDeleteSuccess @client
   }
 `;
 

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { withRouter } from "react-router-dom";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import CARDS_QUERY from "./CardListSchema/CardListSchema";
 import withAuthorization from "../../../Session/withAuthorization";
@@ -14,8 +15,6 @@ import CardCreate from "../CardCreate";
 import AddDeckTag from "../../Decks/DeckItem/DeckTags/AddDeckTag";
 
 export const CardList = props => {
-  const [isSuccess, setIsSuccess] = useState(false);
-
   let { id } = props.match.params;
   id = parseInt(id);
 
@@ -26,6 +25,7 @@ export const CardList = props => {
     return <ErrorMessage error={error} />;
   }
   const {
+    toggleDeleteSuccess,
     deck: { cards, deckName }
   } = data;
 
@@ -42,20 +42,21 @@ export const CardList = props => {
           <AddDeckTag deck={data.deck} />
         </Menu>
       </Header>
-      {isSuccess && <SuccessMessage message="Card successfully deleted!" />}
+      {toggleDeleteSuccess && (
+        <SuccessMessage message="Card successfully deleted!" />
+      )}
       {cards.length === 0 && (
         <div>This deck does not have any cards yet ...</div>
       )}
       {cards.map(card => (
-        <CardItem
-          key={card.id}
-          card={card}
-          deckUserId={data.deck.user.id}
-          setIsSuccess={setIsSuccess}
-        />
+        <CardItem key={card.id} card={card} deckUserId={data.deck.user.id} />
       ))}
     </Container>
   );
+};
+
+CardList.propTypes = {
+  props: PropTypes.object
 };
 
 const Container = styled.div`

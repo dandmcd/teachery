@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const ErrorMessage = ({ error }) => {
   return (
@@ -7,6 +8,10 @@ const ErrorMessage = ({ error }) => {
       <Error>{error.message.replace(/^.+:/, "")}</Error>
     </ErrorContainer>
   );
+};
+
+ErrorMessage.propTypes = {
+  error: PropTypes.object.isRequired
 };
 
 const ErrorContainer = styled.div`

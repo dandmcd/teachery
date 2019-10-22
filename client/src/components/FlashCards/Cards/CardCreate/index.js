@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import useOuterClickNotifier from "../../../Alerts";
 import * as Styled from "../../../../theme/Popup";
@@ -119,6 +120,8 @@ const CardCreate = ({ deck }) => {
     setState(prevState => ({ ...prevState, [name]: value }));
   };
 
+  const isInvalid = front === "";
+
   // Mutation Submit
   const onSubmit = async (e, createCard) => {
     e.preventDefault();
@@ -219,7 +222,7 @@ const CardCreate = ({ deck }) => {
                   value={front}
                   onChange={onChange}
                   type="text"
-                  placeholder="Front of the flashcard"
+                  placeholder="Front of the flashcard*"
                 />
                 <Styled.InputTextArea
                   name="back"
@@ -228,8 +231,14 @@ const CardCreate = ({ deck }) => {
                   type="text"
                   placeholder="Back of the card"
                 />
-                <DropZone setDrop={setDrop} handleChange={handleChange} />
-                <Button type="submit">Submit</Button>
+                <DropZone
+                  setDrop={setDrop}
+                  handleChange={handleChange}
+                  isCard={isCard}
+                />
+                <Button disabled={isInvalid || loading} type="submit">
+                  Submit
+                </Button>
                 {(loading || s3Loading) && <Loading />}
                 {toggleSuccess && <SuccessMessage message="Card Created!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
@@ -243,6 +252,10 @@ const CardCreate = ({ deck }) => {
       ) : null}
     </Container>
   );
+};
+
+CardCreate.propTyoes = {
+  deck: PropTypes.object
 };
 
 const Container = styled.div``;

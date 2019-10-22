@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import { shuffle } from "lodash";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
+import PropTypes from "prop-types";
 
 import withAuthorization from "../../Session/withAuthorization";
 import Loading from "../../Loading";
@@ -42,6 +43,10 @@ export const Cards = props => {
   );
 
   return <CardDeck cards={withCount} />;
+};
+
+Cards.propTypes = {
+  props: PropTypes.object
 };
 
 export default withAuthorization(session => session && session.me)(

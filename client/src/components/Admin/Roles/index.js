@@ -53,6 +53,8 @@ const RoleChange = () => {
   }
 
   const [{ email, role }, setState] = useState(INITIAL_STATE);
+
+  // useEffect for future use
   /*
     useEffect(() => {
         if (email) {

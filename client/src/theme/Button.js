@@ -20,6 +20,9 @@ const Button = styled.button`
     background: #1ab2b2;
     transform: scale(1.05);
   }
+  :disabled {
+    border: 2px solid ${props => props.theme.error};
+  }
 `;
 
 export default Button;

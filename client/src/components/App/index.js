@@ -1,6 +1,7 @@
 import React from "react";
 import { Router, Route } from "react-router-dom";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import * as routes from "../../routing/routes";
 import history from "../../routing/history";
@@ -66,6 +67,11 @@ const App = ({ session, refetch }) => (
     </Container>
   </Router>
 );
+
+App.propTypes = {
+  session: PropTypes.object,
+  refetch: PropTypes.func.isRequired
+};
 
 const Container = styled.div`
   max-width: 1100px;
