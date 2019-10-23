@@ -83,9 +83,6 @@ export default {
             })
           );
           console.log(created);
-          if (!created) {
-            throw new UserInputError("Deck already has this tag.");
-          }
           return tag;
         });
 
@@ -93,6 +90,7 @@ export default {
           tagId: tag.id,
           deckId: deck.id
         });
+        console.log(deckTag);
         return deck;
       }
     ),

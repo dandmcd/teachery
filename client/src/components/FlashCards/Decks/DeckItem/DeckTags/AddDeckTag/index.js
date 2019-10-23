@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useMutation, useApolloClient, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import useOuterClickNotifier from "../../../../../Alerts";
 import ErrorMessage from "../../../../../Alerts/Error";
@@ -128,6 +129,10 @@ const AddDeckTag = ({ deck }) => {
       ) : null}
     </Container>
   );
+};
+
+AddDeckTag.propTypes = {
+  deck: PropTypes.object.isRequired
 };
 
 const Container = styled.div``;

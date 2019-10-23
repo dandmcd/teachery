@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import Button from "../../../../theme/Button";
 import GET_PAGINATED_DECKS_WITH_USERS from "../DeckSchema";
@@ -10,15 +11,6 @@ import ErrorMessage from "../../../Alerts/Error";
 const DELETE_DECK = gql`
   mutation($id: ID!) {
     deleteDeck(id: $id)
-  }
-`;
-
-const DeleteButton = styled(Button)`
-  border: 2px solid ${props => props.theme.error};
-  color: #233841;
-  :hover {
-    color: white;
-    background: #b11a1a;
   }
 `;
 
@@ -74,5 +66,18 @@ const DeckDelete = ({ deck }) => {
     </Fragment>
   );
 };
+
+DeckDelete.propTypes = {
+  deck: PropTypes.object.isRequired
+};
+
+const DeleteButton = styled(Button)`
+  border: 2px solid ${props => props.theme.error};
+  color: #233841;
+  :hover {
+    color: white;
+    background: #b11a1a;
+  }
+`;
 
 export default DeckDelete;

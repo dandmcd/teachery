@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import Loading from "../../../../../Loading";
 import DeckItemBase from "../../../DeckItem";
@@ -39,17 +40,6 @@ const TAGS_QUERY = gql`
   }
 `;
 
-const DeckContainer = styled.div`
-  z-index: 10;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-  row-gap: 20px;
-  column-gap: 5px;
-  align-items: center;
-  margin-top: 10px;
-  margin-bottom: 20px;
-`;
-
 const Tags = props => {
   console.log(props);
   let { id } = props.match.params;
@@ -79,6 +69,21 @@ const Tags = props => {
     </DeckContainer>
   );
 };
+
+Tags.propTypes = {
+  props: PropTypes.array
+};
+
+const DeckContainer = styled.div`
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  row-gap: 20px;
+  column-gap: 5px;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 20px;
+`;
 
 const DeckItem = withSession(DeckItemBase);
 

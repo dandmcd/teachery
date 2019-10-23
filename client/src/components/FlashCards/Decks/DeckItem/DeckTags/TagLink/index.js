@@ -1,13 +1,10 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import withSession from "../../../../../Session/withSession";
 import { Link } from "react-router-dom";
 import TagDelete from "../TagDelete";
 import styled from "styled-components";
-
-const TagItem = styled.h5`
-  margin: 0px;
-`;
 
 function TagLink({ tag, deckId, session }) {
   return (
@@ -21,5 +18,15 @@ function TagLink({ tag, deckId, session }) {
     </TagItem>
   );
 }
+
+TagLink.propTypes = {
+  tag: PropTypes.object.isRequired,
+  deckId: PropTypes.string,
+  session: PropTypes.object.isRequired
+};
+
+const TagItem = styled.h5`
+  margin: 0px;
+`;
 
 export default withSession(TagLink);

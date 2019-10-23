@@ -1,6 +1,7 @@
 import React from "react";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import PropTypes from "prop-types";
 
 const DELETE_TAG = gql`
   mutation($id: ID!) {
@@ -51,6 +52,11 @@ const TagDelete = ({ tag, deckId }) => {
       }}
     />
   );
+};
+
+TagDelete.propTypes = {
+  tag: PropTypes.object.isRequired,
+  deckId: PropTypes.string
 };
 
 export default TagDelete;
