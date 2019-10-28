@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Moment from "react-moment";
+import PropTypes from "prop-types";
 
 import TagLink from "./DeckTags/TagLink";
 import { Link } from "react-router-dom";
@@ -109,6 +110,11 @@ const DeckItemBase = ({ deck, session }) => {
       </Styled.CardGrid>
     </Styled.DeckItemContainer>
   );
+};
+
+DeckItemBase.propTypes = {
+  deck: PropTypes.object.isRequired,
+  session: PropTypes.object.isRequired
 };
 
 export default DeckItemBase;

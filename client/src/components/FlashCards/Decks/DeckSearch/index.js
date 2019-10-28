@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { useApolloClient } from "@apollo/react-hooks";
+import React, { useRef } from "react";
+import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
@@ -10,23 +10,6 @@ import search from "../../../../assets/search.png";
 import useOuterClickNotifier from "../../../Alerts";
 import Loading from "../../../Loading";
 import ErrorMessage from "../../../Alerts/Error";
-
-const SearchContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const SearchImg = styled.img`
-  height: 15px;
-  width: 15px;
-`;
-
-const SearchInput = styled.input`
-  height: 35px;
-  border: 0;
-  outline: 0;
-  border-bottom: 2px solid ${props => props.theme.primary};
-`;
 
 const TAG_SEARCH_QUERY = gql`
   query tag($tagName: String!) {
@@ -39,25 +22,53 @@ const TAG_SEARCH_QUERY = gql`
 
 const Search = () => {
   const client = useApolloClient();
-  const [tags, setTags] = useState([]);
-  const [state, setState] = useState({
-    tagName: "",
-    showPopup: false,
-    noResult: false
-  });
-
-  const { tagName } = state;
+  const { data } = useQuery(gql`
+    query Search {
+      search @client {
+        tagName
+        showPopup
+        noResult
+        tags {
+          id
+          tagName
+        }
+      }
+    }
+  `);
+  const {
+    search: { tagName, showPopup, noResult, tags }
+  } = data;
 
   const togglePopup = () => {
-    setState({ tagName: tagName, showPopup: !state.showPopup });
+    client.writeData({
+      data: {
+        search: {
+          tagName: tagName,
+          showPopup: !showPopup,
+          __typename: "Search"
+        }
+      }
+    });
   };
 
-  const onChange = e => setState({ tagName: e.target.value, noResult: false });
+  const onChange = e =>
+    client.writeData({
+      data: {
+        search: {
+          tagName: e.target.value,
+          noResult: false,
+          __typename: "Search"
+        }
+      }
+    });
 
   const onClick = async e => {
     e.preventDefault();
-    setState({ noResult: false });
-    setTags([]);
+    client.writeData({
+      data: {
+        search: { noResult: false, tags: [], __typename: "Search" }
+      }
+    });
     const { data, loading, error } = await client.query({
       query: TAG_SEARCH_QUERY,
       variables: { tagName }
@@ -69,19 +80,38 @@ const Search = () => {
       return <ErrorMessage error={error} />;
     }
     if (tagName === "") {
-      setState({ noResult: true });
-    } else if (data.getTagsByName.length === 0) {
-      setState({ tagName: tagName, noResult: true });
+      client.writeData({
+        data: { search: { noResult: true, __typename: "Search" } }
+      });
+    }
+    if (data.getTagsByName.length === 0) {
+      client.writeData({
+        data: {
+          search: { tagName: tagName, noResult: true, __typename: "Search" }
+        }
+      });
     } else {
-      setState({ showPopup: true });
-      setTags(data.getTagsByName);
-      setState({ tagName: tagName, showPopup: true });
+      client.writeData({
+        data: {
+          search: {
+            showPopup: true,
+            tags: data.getTagsByName,
+            tagName: tagName,
+            __typename: "Search"
+          }
+        }
+      });
     }
   };
 
   const innerRef = useRef(null);
   useOuterClickNotifier(
-    e => setState({ showPopup: false, tagName: tagName }),
+    e =>
+      client.writeData({
+        data: {
+          search: { tagName: tagName, showPopup: false, __typename: "Search" }
+        }
+      }),
     innerRef
   );
 
@@ -97,10 +127,8 @@ const Search = () => {
       <SearchImg src={search} alt="Search" onClick={onClick} />
       <div>
         {console.log(tags)}
-        {state.noResult && (
-          <p>Sorry, your search did not find any results...</p>
-        )}
-        {state.showPopup ? (
+        {noResult && <p>Sorry, your search did not find any results...</p>}
+        {showPopup ? (
           <Styled.PopupContainer>
             <Styled.PopupInner ref={innerRef}>
               <Styled.PopupTitle>
@@ -121,5 +149,22 @@ const Search = () => {
     </SearchContainer>
   );
 };
+
+const SearchContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const SearchImg = styled.img`
+  height: 15px;
+  width: 15px;
+`;
+
+const SearchInput = styled.input`
+  height: 35px;
+  border: 0;
+  outline: 0;
+  border-bottom: 2px solid ${props => props.theme.primary};
+`;
 
 export default Search;

@@ -10,6 +10,10 @@ export const typeDefs = gql`
     toggleAddCard: Boolean!
     toggleAddTag: Boolean!
   }
+  extend type Search {
+    id: Int!
+    tagName: String!
+  }
 `;
 
 export const resolvers = {};

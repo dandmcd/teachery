@@ -109,7 +109,14 @@ const data = {
   isCard: false,
   isDeck: false,
   isDocument: false,
-  assignmentId: null
+  assignmentId: null,
+  search: {
+    __typename: "Search",
+    showPopup: false,
+    noResult: false,
+    tagName: "",
+    tags: []
+  }
 };
 
 cache.writeData({ data });
