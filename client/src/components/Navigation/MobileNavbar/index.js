@@ -1,70 +1,16 @@
 import React from "react";
-import styled from "styled-components";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
+import * as Styled from "./style";
 import withSession from "../../Session/withSession";
 import * as routes from "../../../routing/routes";
 import SignOutButton from "../../SignOut";
 
-const Navbar = styled.nav`
-  overflow-x: hidden;
-  width: 100%;
-  position: fixed;
-  top: 60px;
-  margin-top: 0px;
-  width: 100%;
-  background: white;
-  align-self: flex-end;
-  z-index: ${props => (props.displayMobileNavbar ? 20 : 1)};
-  transition: transform 1s;
-  transform: translateX(
-    ${props => (props.displayMobileNavbar ? "0%" : "calc(100% + 15px)")}
-  );
-`;
-
-const NavRight = styled.div`
-  position: relative;
-
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  text-align: center;
-  font-size: 0.8rem;
-  list-style: none;
-`;
-
-const NavLinks = styled.ul`
-  position: relative;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  list-style: none;
-  margin: 0 5px;
-  padding: 0px;
-`;
-
-const NavLink = styled.li`
-  font-size: 16px;
-  position: relative;
-  text-decoration: none;
-  a {
-    color: ${props => props.theme.primary};
-    :hover {
-      bottom: -5px;
-      border-radius: 6px;
-      background: #f9f9f9;
-      height: 4px;
-      transition-property: width;
-      transition-duration: 0.3s;
-      transition-timing-function: ease-out;
-    }
-  }
-`;
-
 const MobileNavbar = ({ displayMobileNavbar, toggleMobileNavbar, session }) => {
   return (
-    <Navbar displayMobileNavbar={displayMobileNavbar}>
-      <NavRight>
+    <Styled.Navbar displayMobileNavbar={displayMobileNavbar}>
+      <Styled.NavRight>
         {session && session.me ? (
           <NavigationAuth
             toggleMobileNavbar={toggleMobileNavbar}
@@ -73,45 +19,56 @@ const MobileNavbar = ({ displayMobileNavbar, toggleMobileNavbar, session }) => {
         ) : (
           <NavigationNonAuth />
         )}
-      </NavRight>
-    </Navbar>
+      </Styled.NavRight>
+    </Styled.Navbar>
   );
 };
 
+MobileNavbar.propTypes = {
+  displayMobileNavbar: PropTypes.bool.isRequired,
+  toggleMobileNavbar: PropTypes.func.isRequired,
+  session: PropTypes.object
+};
+
 const NavigationAuth = ({ toggleMobileNavbar, session }) => (
-  <NavLinks onClick={toggleMobileNavbar}>
-    <NavLink>
+  <Styled.NavLinks onClick={toggleMobileNavbar}>
+    <Styled.NavLink>
       <Link to={routes.FLASHCARDS}>Flashcards</Link>
-    </NavLink>
-    <NavLink>
+    </Styled.NavLink>
+    <Styled.NavLink>
       <Link to={routes.ASSIGNMENTS}>Assignments</Link>
-    </NavLink>
-    <NavLink>
+    </Styled.NavLink>
+    <Styled.NavLink>
       <Link to={routes.ACCOUNT}>Account ({session.me.username})</Link>
-    </NavLink>
+    </Styled.NavLink>
     {(session && session.me && session.me.role === "TEACHER") ||
       ("ADMIN" && (
-        <NavLink>
+        <Styled.NavLink>
           <Link to={routes.TEACHER}>Teachers</Link>
-        </NavLink>
+        </Styled.NavLink>
       ))}
     {session && session.me && session.me.role === "ADMIN" && (
-      <NavLink>
+      <Styled.NavLink>
         <Link to={routes.ADMIN}>Admin</Link>
-      </NavLink>
+      </Styled.NavLink>
     )}
-    <NavLink>
+    <Styled.NavLink>
       <SignOutButton />
-    </NavLink>
-  </NavLinks>
+    </Styled.NavLink>
+  </Styled.NavLinks>
 );
 
+NavigationAuth.propTypes = {
+  toggleMobileNavbar: PropTypes.func.isRequired,
+  session: PropTypes.object.isRequired
+};
+
 const NavigationNonAuth = () => (
-  <NavLinks>
-    <NavLink>
+  <Styled.NavLinks>
+    <Styled.NavLink>
       <Link to={routes.SIGN_IN}>Sign In</Link>
-    </NavLink>
-  </NavLinks>
+    </Styled.NavLink>
+  </Styled.NavLinks>
 );
 
 export default withSession(MobileNavbar);

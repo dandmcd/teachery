@@ -6,6 +6,19 @@ import Decks from "./Decks";
 import Search from "./Decks/DeckSearch";
 import DeckCreate from "./Decks/DeckCreate";
 
+const FlashCardPage = () => (
+  <Container>
+    <FlashCardHeader>
+      <h3>Flashcard Decks</h3>
+      <Menu>
+        <Search />
+        <DeckCreate />
+      </Menu>
+    </FlashCardHeader>
+    <Decks limit={6} />
+  </Container>
+);
+
 const Container = styled.div`
   z-index: 15;
   max-width: 100%;
@@ -23,18 +36,6 @@ const Menu = styled.div`
   align-items: center;
 `;
 
-const FlashCardPage = () => (
-  <Container>
-    <FlashCardHeader>
-      <h3>Flashcard Decks</h3>
-      <Menu>
-        <Search />
-        <DeckCreate />
-      </Menu>
-    </FlashCardHeader>
-    <Decks limit={6} />
-  </Container>
-);
 export default withAuthorization(session => session && session.me)(
   FlashCardPage
 );

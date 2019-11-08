@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
 import Loading from "../../Loading";
@@ -41,6 +42,11 @@ const Decks = ({ limit, me }) => {
   );
 };
 
+Decks.propTypes = {
+  limit: PropTypes.number.isRequired,
+  me: PropTypes.object
+};
+
 const DeckButton = styled(Button)`
   margin: auto;
   display: block;
@@ -79,6 +85,13 @@ const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (
   </DeckButton>
 );
 
+MoreDecksButton.propTypes = {
+  limit: PropTypes.number.isRequired,
+  pageInfo: PropTypes.object.isRequired,
+  fetchMore: PropTypes.func.isRequired,
+  children: PropTypes.string.isRequired
+};
+
 const DeckContainer = styled.div`
   z-index: 10;
   display: grid;
@@ -97,6 +110,11 @@ const DeckList = ({ decks, me }) => {
       ))}
     </DeckContainer>
   );
+};
+
+DeckList.propTypes = {
+  decks: PropTypes.array.isRequired,
+  me: PropTypes.object
 };
 
 const DeckItem = withSession(DeckItemBase);

@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import Resizer from "react-image-file-resizer";
+import PropTypes from "prop-types";
 
 import * as Styled from "./style";
 import Button from "../../theme/Button";
@@ -116,6 +117,15 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
       </Styled.Aside>
     </section>
   );
+};
+
+DropZone.propTypes = {
+  props: PropTypes.object,
+  setDrop: PropTypes.func.isRequired,
+  setImage: PropTypes.func,
+  isCard: PropTypes.bool,
+  isDeck: PropTypes.bool,
+  isDocument: PropTypes.bool
 };
 
 export default DropZone;

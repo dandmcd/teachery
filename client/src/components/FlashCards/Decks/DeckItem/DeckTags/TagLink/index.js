@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 import withSession from "../../../../../Session/withSession";
-import { Link } from "react-router-dom";
 import TagDelete from "../TagDelete";
-import styled from "styled-components";
 
 function TagLink({ tag, deckId, session }) {
   return (

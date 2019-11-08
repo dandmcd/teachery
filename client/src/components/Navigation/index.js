@@ -4,8 +4,6 @@ import styled from "styled-components";
 import DesktopNavbar from "./DesktopNavbar";
 import MobileNavbar from "./MobileNavbar";
 
-const Navbar = styled.div``;
-
 const Navigation = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [displayMobileNavbar, setDisplayMobileNavbar] = useState(false);
@@ -47,5 +45,7 @@ const Navigation = () => {
     </Navbar>
   );
 };
+
+const Navbar = styled.div``;
 
 export default Navigation;

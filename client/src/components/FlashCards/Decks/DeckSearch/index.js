@@ -4,18 +4,20 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 
 import * as Styled from "../../../../theme/Popup";
-
-import TagLink from "../DeckItem/DeckTags/TagLink";
 import search from "../../../../assets/search.png";
 import useOuterClickNotifier from "../../../Alerts";
 import Loading from "../../../Loading";
 import ErrorMessage from "../../../Alerts/Error";
+import SearchTagLink from "./SearchTagLink";
 
 const TAG_SEARCH_QUERY = gql`
   query tag($tagName: String!) {
     getTagsByName(tagName: $tagName) {
       tagName
       id
+      decks {
+        id
+      }
     }
   }
 `;
@@ -31,6 +33,9 @@ const Search = () => {
         tags {
           id
           tagName
+          decks {
+            id
+          }
         }
       }
     }
@@ -136,7 +141,7 @@ const Search = () => {
               </Styled.PopupTitle>
               <Styled.PopupBody>
                 {tags.map(tag => (
-                  <TagLink key={tag.id} tag={tag} />
+                  <SearchTagLink key={tag.id} tag={tag} />
                 ))}
               </Styled.PopupBody>
               <Styled.PopupFooterButton onClick={togglePopup}>
