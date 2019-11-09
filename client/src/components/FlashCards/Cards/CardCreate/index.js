@@ -60,17 +60,16 @@ const CardCreate = ({ deck }) => {
       toggleSuccess @client
       toggleAddCard @client
       isCard @client
+      isSubmitting @client
     }
   `);
-  const { toggleSuccess, toggleAddCard, isCard } = data;
+  const { toggleSuccess, toggleAddCard, isCard, isSubmitting } = data;
 
   const [{ front, back }, setState] = useState(INITIAL_STATE);
   const [drop, setDrop] = useState(null);
 
   // Mutation Hooks
-  const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
-    S3SIGNMUTATION
-  );
+  const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [createCard, { loading, error }] = useMutation(CREATE_CARD, {
     onError: err => {
       client.writeData({ data: { toggleSuccess: false } });
@@ -90,20 +89,12 @@ const CardCreate = ({ deck }) => {
 
   // S3 Sign and format
   const uploadToS3 = async (file, signedRequest) => {
-    const config = {
-      onUploadProgress: progressEvent => {
-        const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        );
-        console.info(percentCompleted);
-      }
-    };
     const options = {
       headers: {
         "Content-Type": file.type
       }
     };
-    await axios.put(signedRequest, file, config, options);
+    await axios.put(signedRequest, file, options);
   };
   const formatFilename = filename => {
     const date = moment().format("YYYYMMDD");
@@ -127,36 +118,42 @@ const CardCreate = ({ deck }) => {
     e.preventDefault();
     console.log(drop);
     if (drop) {
-      const response = await s3SignMutation({
-        variables: {
-          filename: formatFilename(drop.name),
-          filetype: drop.type
-        }
-      });
-
-      const { signedRequest, url } = response.data.signS3;
-
-      await uploadToS3(drop, signedRequest);
-
-      await createCard({
-        variables: {
-          deckId: parseInt(deck.id, 10),
-          front,
-          back,
-          pictureName: drop.name,
-          pictureUrl: url
-        },
-        refetchQueries: [
-          {
-            query: CARDS_QUERY,
-            variables: {
-              id: deck.id
-            }
+      try {
+        client.writeData({ data: { isSubmitting: true } });
+        const response = await s3SignMutation({
+          variables: {
+            filename: formatFilename(drop.name),
+            filetype: drop.type
           }
-        ]
-      }).then(async ({ data }) => {
-        setState({ ...INITIAL_STATE });
-      });
+        });
+
+        const { signedRequest, url } = response.data.signS3;
+
+        await uploadToS3(drop, signedRequest);
+
+        await createCard({
+          variables: {
+            deckId: parseInt(deck.id, 10),
+            front,
+            back,
+            pictureName: drop.name,
+            pictureUrl: url
+          },
+          refetchQueries: [
+            {
+              query: CARDS_QUERY,
+              variables: {
+                id: deck.id
+              }
+            }
+          ]
+        }).then(async ({ data }) => {
+          setState({ ...INITIAL_STATE });
+        });
+        client.writeData({ data: { isSubmitting: false } });
+      } catch (error) {
+        client.writeData({ data: { isSubmitting: false } });
+      }
     } else {
       try {
         await createCard({
@@ -176,7 +173,9 @@ const CardCreate = ({ deck }) => {
         }).then(async ({ data }) => {
           setState({ ...INITIAL_STATE });
         });
-      } catch (error) {}
+      } catch (error) {
+        client.writeData({ data: { isSubmitting: false } });
+      }
     }
   };
 
@@ -236,10 +235,14 @@ const CardCreate = ({ deck }) => {
                   handleChange={handleChange}
                   isCard={isCard}
                 />
-                <Button disabled={isInvalid || loading} type="submit">
-                  Submit
-                </Button>
-                {(loading || s3Loading) && <Loading />}
+                {!isSubmitting ? (
+                  <Button disabled={isInvalid} type="submit">
+                    Submit
+                  </Button>
+                ) : (
+                  <Loading />
+                )}
+                {loading && <Loading />}
                 {toggleSuccess && <SuccessMessage message="Card Created!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>

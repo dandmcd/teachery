@@ -74,9 +74,10 @@ const DeckCreate = () => {
       toggleSuccess @client
       togglePopup @client
       isDeck @client
+      isSubmitting @client
     }
   `);
-  const { toggleSuccess, togglePopup, isDeck } = data;
+  const { toggleSuccess, togglePopup, isDeck, isSubmitting } = data;
 
   const [{ deckName, description }, setDeckState] = useState(INITIAL_STATE);
 
@@ -84,9 +85,7 @@ const DeckCreate = () => {
   const [drop, setDrop] = useState(null);
 
   // Mutation hooks
-  const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
-    S3SIGNMUTATION
-  );
+  const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
 
   const [createDeck, { loading, error }] = useMutation(CREATE_DECK, {
     onError: err => {
@@ -157,29 +156,35 @@ const DeckCreate = () => {
   const onSubmit = async (e, createDeck) => {
     e.preventDefault();
     if (drop) {
-      console.log(drop);
-      console.log(new File([image], drop.name));
-      const response = await s3SignMutation({
-        variables: {
-          filename: formatFilename(drop.name),
-          filetype: drop.type
-        }
-      });
+      try {
+        client.writeData({ data: { isSubmitting: true } });
+        console.log(drop);
+        console.log(new File([image], drop.name));
+        const response = await s3SignMutation({
+          variables: {
+            filename: formatFilename(drop.name),
+            filetype: drop.type
+          }
+        });
 
-      const { signedRequest, url } = response.data.signS3;
+        const { signedRequest, url } = response.data.signS3;
 
-      await uploadToS3(image, signedRequest);
+        await uploadToS3(image, signedRequest);
 
-      await createDeck({
-        variables: {
-          deckName,
-          description,
-          deckImageName: drop.name,
-          deckImageUrl: url
-        }
-      }).then(async ({ data }) => {
-        setDeckState({ ...INITIAL_STATE });
-      });
+        await createDeck({
+          variables: {
+            deckName,
+            description,
+            deckImageName: drop.name,
+            deckImageUrl: url
+          }
+        }).then(async ({ data }) => {
+          setDeckState({ ...INITIAL_STATE });
+        });
+        client.writeData({ data: { isSubmitting: false } });
+      } catch (error) {
+        client.writeData({ data: { isSubmitting: false } });
+      }
     } else {
       try {
         await createDeck({
@@ -190,7 +195,9 @@ const DeckCreate = () => {
         }).then(async ({ data }) => {
           setDeckState({ ...INITIAL_STATE });
         });
-      } catch (error) {}
+      } catch (error) {
+        client.writeData({ data: { isSubmitting: false } });
+      }
     }
   };
 
@@ -240,10 +247,14 @@ const DeckCreate = () => {
                   handleChange={handleChange}
                   isDeck={isDeck}
                 />
-                <Button disabled={isInvalid || loading} type="submit">
-                  Submit
-                </Button>
-                {(loading || s3Loading) && <Loading />}
+                {!isSubmitting ? (
+                  <Button disabled={isInvalid} type="submit">
+                    Submit
+                  </Button>
+                ) : (
+                  <Loading />
+                )}
+                {loading && <Loading />}
                 {toggleSuccess && <SuccessMessage message="Deck created!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>

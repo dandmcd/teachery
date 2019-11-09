@@ -109,6 +109,7 @@ const data = {
   isCard: false,
   isDeck: false,
   isDocument: false,
+  isSubmitting: false,
   assignmentId: null,
   search: {
     __typename: "Search",
