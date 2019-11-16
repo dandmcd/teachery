@@ -87,7 +87,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
 const link = ApolloLink.from([authLink, errorLink, terminatingLink]);
 
-const cache = new InMemoryCache();
+const cache = new InMemoryCache({
+  dataIdFromObject: object => object.id
+});
 
 const client = new ApolloClient({
   fetchOptions: { fetch },
@@ -101,6 +103,7 @@ const data = {
   toggleLanding: 0,
   togglePopup: false,
   toggleAddCard: false,
+  toggleEditCard: false,
   toggleAddTag: false,
   toggleAssign: false,
   toggleSuccess: false,
@@ -111,6 +114,8 @@ const data = {
   isDocument: false,
   isSubmitting: false,
   assignmentId: null,
+  current: null,
+  editImg: false,
   search: {
     __typename: "Search",
     showPopup: false,

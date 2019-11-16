@@ -2,6 +2,8 @@ import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 
 import { isAdmin, isAuthenticated } from "./authorization";
+import { UserInputError } from "apollo-server";
+import { validate } from "graphql";
 
 const toCursorHash = string => Buffer.from(string).toString("base64");
 
@@ -59,6 +61,34 @@ export default {
           pictureUrl
         });
         return card;
+      }
+    ),
+
+    updateCard: combineResolvers(
+      isAuthenticated,
+      async (
+        parent,
+        { id, front, back, pictureName, pictureUrl },
+        { models }
+      ) => {
+        const card = await models.Card.update(
+          {
+            id: id,
+            front: front,
+            back: back,
+            pictureName: pictureName,
+            pictureUrl: pictureUrl
+          },
+          { returning: true, validate: true, where: { id: id } }
+        )
+          .then(result => {
+            console.log(result);
+          })
+          .catch(err => {
+            console.log(err);
+            throw new UserInputError(err);
+          });
+        return true;
       }
     ),
 

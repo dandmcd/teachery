@@ -8,7 +8,6 @@ import moment from "moment";
 import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
 import useOuterClickNotifier from "../../../Alerts";
-
 import DropZone from "../../../Uploader";
 import ErrorMessage from "../../../Alerts/Error";
 import SuccessMessage from "../../../Alerts/Success";

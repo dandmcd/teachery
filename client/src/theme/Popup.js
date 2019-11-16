@@ -26,7 +26,7 @@ export const PopupInner = styled.div`
   right: 25%;
   top: 25%;
   bottom: 25%;
-  margin: 10% auto;
+  margin-top: 10%;
   overflow-y: scroll;
   border-radius: 20px;
   background: ${props => props.theme.neutralLight};
@@ -48,6 +48,8 @@ export const PopupInner = styled.div`
 export const PopupInnerExtended = styled(PopupInner)`
   top: 10%;
   bottom: 10%;
+  left: 10%;
+  right: 10%;
 `;
 
 export const PopupTitle = styled.h3`
@@ -108,4 +110,10 @@ export const PopupFooterButton = styled(Button)`
   border-color: ${props => props.theme.secondaryDark};
   align-self: center;
   justify-self: center;
+`;
+
+export const CardImg = styled.img`
+  object-fit: cover;
+  width: 200px;
+  height: 150px;
 `;

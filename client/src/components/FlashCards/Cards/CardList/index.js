@@ -13,12 +13,15 @@ import GoBack from "../../../Navigation/GoBack";
 import SuccessMessage from "../../../Alerts/Success";
 import CardCreate from "../CardCreate";
 import AddDeckTag from "../../Decks/DeckItem/DeckTags/AddDeckTag";
+import CardEdit from "../CardEdit";
 
 export const CardList = props => {
   let { id } = props.match.params;
   id = parseInt(id);
 
-  const { data, error, loading } = useQuery(CARDS_QUERY, { variables: { id } });
+  const { data, error, loading } = useQuery(CARDS_QUERY, {
+    variables: { id }
+  });
   if (loading && !data) {
     return <Loading />;
   } else if (error) {
@@ -37,7 +40,7 @@ export const CardList = props => {
             <GoBack message="Go Back" />{" "}
           </h3>
           <Title>Card Listing for {deckName}</Title>
-
+          <CardEdit />
           <CardCreate key={data.deck.id} deck={data.deck} />
           <AddDeckTag deck={data.deck} />
         </Menu>

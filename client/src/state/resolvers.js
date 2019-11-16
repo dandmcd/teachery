@@ -24,4 +24,32 @@ export const typeDefs = gql`
   }
 `;
 
-export const resolvers = {};
+const currentQuery = gql`
+  query Curent {
+    current @client
+  }
+`;
+
+export const resolvers = {
+  Mutation: {
+    setCurrent: (parent, { current }, { cache }, info) => {
+      cache.writeData({
+        data: {
+          current,
+          __typename: "Current"
+        }
+      });
+
+      return null;
+    }
+  },
+  Query: {
+    getCurrent: (parent, args, { cache }) => {
+      const { current } = cache.readQuery({
+        query: currentQuery
+      });
+
+      return current;
+    }
+  }
+};

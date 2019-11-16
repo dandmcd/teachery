@@ -29,6 +29,16 @@ export default gql`
     Deletes a card
     """
     deleteCard(id: ID!): Boolean!
+    """
+    Edit a card
+    """
+    updateCard(
+      id: ID!
+      front: String!
+      back: String
+      pictureName: String
+      pictureUrl: String
+    ): Boolean!
   }
 
   type CardConnection {
