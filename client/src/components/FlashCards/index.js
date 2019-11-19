@@ -5,6 +5,7 @@ import withAuthorization from "../Session/withAuthorization";
 import Decks from "./Decks";
 import Search from "./Decks/DeckSearch";
 import DeckCreate from "./Decks/DeckCreate";
+import DeckEdit from "./Decks/DeckEdit";
 
 const FlashCardPage = () => (
   <Container>
@@ -12,6 +13,7 @@ const FlashCardPage = () => (
       <h3>Flashcard Decks</h3>
       <Menu>
         <Search />
+        <DeckEdit />
         <DeckCreate />
       </Menu>
     </FlashCardHeader>

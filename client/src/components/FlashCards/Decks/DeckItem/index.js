@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
+import { useQuery, useApolloClient } from "@apollo/react-hooks";
+import gql from "graphql-tag";
 
 import TagLink from "./DeckTags/TagLink";
 import { Link } from "react-router-dom";
@@ -12,6 +14,13 @@ import Button from "../../../../theme/Button";
 import teststudent from "../../../../assets/teststudent.jpg";
 
 const DeckItemBase = ({ deck, session }) => {
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleEditDeck @client
+    }
+  `);
+  const { toggleEditDeck } = data;
   const [sessionCount, setSessionCount] = useState({
     count: ""
   });
@@ -37,6 +46,15 @@ const DeckItemBase = ({ deck, session }) => {
     setSessionCount({ count: deck.cards.length });
   };
 
+  const togglePopupModal = () => {
+    client.writeData({
+      data: {
+        toggleEditDeck: !toggleEditDeck,
+        current: deck.id
+      }
+    });
+    console.log(data);
+  };
   const isInvalid = count === "" || count <= "0";
 
   return (
@@ -97,7 +115,7 @@ const DeckItemBase = ({ deck, session }) => {
           </Styled.PracticeForm>
         </Styled.Practice>
         <Styled.DeckButtons>
-          <Button type="button" disabled>
+          <Button type="button" onClick={togglePopupModal}>
             Edit Deck
           </Button>
           {session && session.me && deck.user.id === session.me.id && (

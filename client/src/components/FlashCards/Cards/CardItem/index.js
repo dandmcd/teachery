@@ -9,7 +9,7 @@ import Button from "../../../../theme/Button";
 import withSession from "../../../Session/withSession";
 import CardDelete from "../CardDelete";
 
-const CardItem = ({ card, deckUserId, session }) => {
+const CardItem = ({ card, deckId, deckUserId, session }) => {
   const client = useApolloClient();
   const { data } = useQuery(gql`
     query Toggle {
@@ -53,7 +53,7 @@ const CardItem = ({ card, deckUserId, session }) => {
         Edit
       </Button>
       {session && session.me && deckUserId === session.me.id && (
-        <CardDelete card={card} />
+        <CardDelete card={card} deckId={deckId} />
       )}
       <Hr />
     </CardListContainer>

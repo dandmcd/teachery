@@ -1,27 +1,29 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import styled from "styled-components";
 import axios from "axios";
 import moment from "moment";
+import styled from "styled-components";
 
+import useOuterClickNotifier from "../../../Alerts";
 import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
-import useOuterClickNotifier from "../../../Alerts";
 import DropZone from "../../../Uploader";
-import ErrorMessage from "../../../Alerts/Error";
-import SuccessMessage from "../../../Alerts/Success";
-import GET_PAGINATED_DECKS_WITH_USERS from "../DeckSchema";
 import Loading from "../../../Loading";
+import SuccessMessage from "../../../Alerts/Success";
+import ErrorMessage from "../../../Alerts/Error";
 
-const CREATE_DECK = gql`
+//Mutations
+const UPDATE_DECK = gql`
   mutation(
+    $id: ID!
     $deckName: String!
     $description: String!
     $deckImageName: String
     $deckImageUrl: String
   ) {
-    createDeck(
+    updateDeck(
+      id: $id
       deckName: $deckName
       description: $description
       deckImageName: $deckImageName
@@ -32,20 +34,6 @@ const CREATE_DECK = gql`
       description
       deckImageName
       deckImageUrl
-      createdAt
-      user {
-        id
-        username
-      }
-      cards {
-        id
-        front
-        back
-      }
-      tags {
-        id
-        tagName
-      }
     }
   }
 `;
@@ -59,58 +47,71 @@ const S3SIGNMUTATION = gql`
   }
 `;
 
-const INITIAL_STATE = {
-  deckName: "",
-  description: "",
-  deckImageName: "",
-  deckImageUrl: ""
-};
-
-const DeckCreate = () => {
+const DeckEdit = () => {
   const client = useApolloClient();
   const { data } = useQuery(gql`
     query Toggle {
       toggleSuccess @client
-      togglePopup @client
+      toggleEditDeck @client
       isDeck @client
+      current @client
+      editImg @client
       isSubmitting @client
     }
   `);
-  const { toggleSuccess, togglePopup, isDeck, isSubmitting } = data;
+  const {
+    toggleSuccess,
+    toggleEditDeck,
+    isDeck,
+    isSubmitting,
+    current,
+    editImg
+  } = data;
 
-  const [{ deckName, description }, setDeckState] = useState(INITIAL_STATE);
-
-  const [image, setImage] = useState("");
-  const [drop, setDrop] = useState(null);
-
-  // Mutation hooks
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
-
-  const [createDeck, { loading, error }] = useMutation(CREATE_DECK, {
+  const [updateDeck, { loading, error }] = useMutation(UPDATE_DECK, {
     onError: err => {
       client.writeData({ data: { toggleSuccess: false } });
     },
     onCompleted: data => {
       client.writeData({ data: { toggleSuccess: true } });
-    },
-    update(cache, { data: { createDeck } }) {
-      const data = cache.readQuery({
-        query: GET_PAGINATED_DECKS_WITH_USERS
-      });
-
-      cache.writeQuery({
-        query: GET_PAGINATED_DECKS_WITH_USERS,
-        data: {
-          ...data,
-          decks: {
-            ...data.decks,
-            edges: [createDeck, ...data.decks.edges],
-            pageInfo: data.decks.pageInfo
-          }
-        }
-      });
     }
   });
+
+  useEffect(() => {
+    if (toggleEditDeck) {
+      client.writeData({
+        data: { isDeck: !isDeck }
+      });
+      const currentDeck = client.readFragment({
+        id: current,
+        fragment: gql`
+          fragment deck on Deck {
+            id
+            deckName
+            description
+            deckImageName
+            deckImageUrl
+            createdAt
+          }
+        `
+      });
+      console.log(currentDeck);
+      setState(currentDeck);
+    }
+  }, [client, current, toggleEditDeck]);
+
+  const [state, setState] = useState({
+    id: null,
+    deckName: "",
+    description: "",
+    deckImageName: "",
+    deckImageUrl: ""
+  });
+  const { id, deckName, description, deckImageUrl, deckImageName } = state;
+
+  const [image, setImage] = useState("");
+  const [drop, setDrop] = useState(null);
 
   useEffect(() => {
     if (toggleSuccess) {
@@ -120,7 +121,22 @@ const DeckCreate = () => {
     }
   }, [client, toggleSuccess]);
 
-  //S3 Sign and format
+  const onChange = e => {
+    const { name, value } = e.target;
+    setState(prevState => ({ ...prevState, [name]: value }));
+  };
+
+  const handleClick = () => {
+    client.writeData({ data: { editImg: !editImg } });
+  };
+
+  const handleDrop = e => {
+    setDrop(e.target.value);
+  };
+
+  const isInvalid = deckName === "";
+
+  // S3 Sign and format
   const uploadToS3 = async (file, signedRequest) => {
     const options = {
       headers: {
@@ -129,7 +145,6 @@ const DeckCreate = () => {
     };
     await axios.put(signedRequest, file, options);
   };
-
   const formatFilename = filename => {
     const date = moment().format("YYYYMMDD");
     const randomString = Math.random()
@@ -140,15 +155,9 @@ const DeckCreate = () => {
     return newFilename.substring(0, 60);
   };
 
-  const onChange = e => {
-    const { name, value } = e.target;
-    setDeckState(prevState => ({ ...prevState, [name]: value }));
-  };
-
-  const isInvalid = deckName === "" || description === "";
-
-  const onSubmit = async (e, createDeck) => {
+  const onSubmit = async (e, updateDeck) => {
     e.preventDefault();
+    console.log(drop);
     if (drop) {
       try {
         client.writeData({ data: { isSubmitting: true } });
@@ -165,29 +174,39 @@ const DeckCreate = () => {
 
         await uploadToS3(image, signedRequest);
 
-        await createDeck({
+        await updateDeck({
           variables: {
+            id: id,
             deckName,
             description,
             deckImageName: drop.name,
             deckImageUrl: url
           }
-        }).then(async ({ data }) => {
-          setDeckState({ ...INITIAL_STATE });
         });
         client.writeData({ data: { isSubmitting: false } });
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
       }
+    } else if (deckImageUrl === "") {
+      await updateDeck({
+        variables: {
+          id: id,
+          deckName: deckName,
+          description: description,
+          deckImageUrl: null,
+          deckImageName: null
+        }
+      });
     } else {
       try {
-        await createDeck({
+        await updateDeck({
           variables: {
+            id: id,
             deckName: deckName,
-            description: description
+            description: description,
+            deckImageUrl: deckImageUrl,
+            deckImageName: deckImageName
           }
-        }).then(async ({ data }) => {
-          setDeckState({ ...INITIAL_STATE });
         });
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
@@ -195,14 +214,13 @@ const DeckCreate = () => {
     }
   };
 
-  const handleChange = e => {
-    setDrop(e.target.value);
-  };
-
-  // Onclick toggle popup for mutation form
   const togglePopupModal = () => {
     client.writeData({
-      data: { togglePopup: !togglePopup, isDeck: !isDeck }
+      data: {
+        toggleEditDeck: !toggleEditDeck,
+        editImg: false,
+        isDeck: !isDeck
+      }
     });
   };
   const innerRef = useRef(null);
@@ -210,23 +228,18 @@ const DeckCreate = () => {
 
   return (
     <Container>
-      <Button type="button" onClick={togglePopupModal}>
-        Create Deck
-      </Button>
-      {togglePopup ? (
+      {toggleEditDeck ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupTitle>
-              Create a name and description for your deck...
-            </Styled.PopupTitle>
+            <Styled.PopupTitle>Edit Deck ...</Styled.PopupTitle>
             <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, createDeck)}>
-                <Styled.Input
+              <form onSubmit={e => onSubmit(e, updateDeck)}>
+                <Styled.InputTextArea
                   name="deckName"
                   value={deckName}
                   onChange={onChange}
                   type="text"
-                  placeholder="Enter a deck name*"
+                  placeholder="Deck Name*"
                 />
                 <Styled.InputTextArea
                   name="description"
@@ -235,12 +248,40 @@ const DeckCreate = () => {
                   type="text"
                   placeholder="Add details and description*"
                 />
-                <DropZone
-                  setDrop={setDrop}
-                  setImage={setImage}
-                  handleChange={handleChange}
-                  isDeck={isDeck}
-                />
+                {deckImageUrl !== null ? (
+                  <Styled.CardImg src={deckImageUrl} alt={deckImageUrl} />
+                ) : null}
+                <button type="button" onClick={handleClick}>
+                  {!editImg && deckImageUrl === null
+                    ? "Add Image"
+                    : !editImg
+                    ? "Change"
+                    : "Keep Original"}
+                </button>
+                {deckImageUrl !== null && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setState({
+                        id: id,
+                        deckName: deckName,
+                        description: description,
+                        deckImageUrl: "",
+                        deckImageName: ""
+                      })
+                    }
+                  >
+                    Delete Image
+                  </button>
+                )}
+                {editImg && (
+                  <DropZone
+                    setDrop={setDrop}
+                    setImage={setImage}
+                    handleDrop={handleDrop}
+                    isDeck={isDeck}
+                  />
+                )}
                 {!isSubmitting ? (
                   <Button disabled={isInvalid} type="submit">
                     Submit
@@ -249,7 +290,7 @@ const DeckCreate = () => {
                   <Loading />
                 )}
                 {loading && <Loading />}
-                {toggleSuccess && <SuccessMessage message="Deck created!" />}
+                {toggleSuccess && <SuccessMessage message="Deck Updated!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>
@@ -265,4 +306,4 @@ const DeckCreate = () => {
 
 const Container = styled.div``;
 
-export default DeckCreate;
+export default DeckEdit;

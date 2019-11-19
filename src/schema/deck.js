@@ -23,6 +23,16 @@ export default gql`
       deckImageName: String
       deckImageUrl: String
     ): Deck!
+    """
+    Edit a deck
+    """
+    updateDeck(
+      id: ID!
+      deckName: String!
+      description: String!
+      deckImageName: String
+      deckImageUrl: String
+    ): Deck!
 
     """
     Deletes a deck

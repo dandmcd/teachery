@@ -79,16 +79,16 @@ export default {
             pictureName: pictureName,
             pictureUrl: pictureUrl
           },
-          { returning: true, validate: true, where: { id: id } }
+          { returning: true, plain: true, validate: true, where: { id: id } }
         )
-          .then(result => {
-            console.log(result);
+          .spread((affectedCount, affectedRows) => {
+            return affectedRows;
           })
           .catch(err => {
             console.log(err);
             throw new UserInputError(err);
           });
-        return true;
+        return card;
       }
     ),
 

@@ -104,6 +104,7 @@ const data = {
   togglePopup: false,
   toggleAddCard: false,
   toggleEditCard: false,
+  toggleEditDeck: false,
   toggleAddTag: false,
   toggleAssign: false,
   toggleSuccess: false,

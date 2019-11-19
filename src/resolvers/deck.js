@@ -66,6 +66,34 @@ export default {
       }
     ),
 
+    updateDeck: combineResolvers(
+      isAdmin,
+      async (
+        parent,
+        { id, deckName, description, deckImageName, deckImageUrl },
+        { models, me }
+      ) => {
+        const deck = await models.Deck.update(
+          {
+            id: id,
+            deckName: deckName,
+            description: description,
+            deckImageName: deckImageName,
+            deckImageUrl: deckImageUrl
+          },
+          { returning: true, plain: true, validate: true, where: { id: id } }
+        )
+          .spread((affectedCount, affectedRows) => {
+            return affectedRows;
+          })
+          .catch(err => {
+            console.log(err);
+            throw new UserInputError(err);
+          });
+        return deck;
+      }
+    ),
+
     addTagToDeck: combineResolvers(
       isAdmin,
       async (parent, { id, tagName }, { models }) => {

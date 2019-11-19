@@ -52,7 +52,12 @@ export const CardList = props => {
         <div>This deck does not have any cards yet ...</div>
       )}
       {cards.map(card => (
-        <CardItem key={card.id} card={card} deckUserId={data.deck.user.id} />
+        <CardItem
+          key={card.id}
+          card={card}
+          deckId={id}
+          deckUserId={data.deck.user.id}
+        />
       ))}
     </Container>
   );

@@ -5,6 +5,7 @@ import axios from "axios";
 import moment from "moment";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { cloneDeep } from "lodash";
 
 import useOuterClickNotifier from "../../../Alerts";
 import * as Styled from "../../../../theme/Popup";
@@ -32,6 +33,11 @@ const CREATE_CARD = gql`
       pictureUrl: $pictureUrl
     ) {
       id
+      front
+      back
+      createdAt
+      pictureName
+      pictureUrl
     }
   }
 `;
@@ -65,12 +71,31 @@ const CardCreate = ({ deck }) => {
   `);
   const { toggleSuccess, toggleAddCard, isCard, isSubmitting } = data;
 
-  const [{ front, back }, setState] = useState(INITIAL_STATE);
+  const [{ deckId, front, back }, setState] = useState(INITIAL_STATE);
   const [drop, setDrop] = useState(null);
 
   // Mutation Hooks
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [createCard, { loading, error }] = useMutation(CREATE_CARD, {
+    update(cache, { data: { createCard } }) {
+      const localData = cloneDeep(
+        cache.readQuery({
+          query: CARDS_QUERY,
+          variables: { id: deckId }
+        })
+      );
+      console.log(localData.deck.id);
+
+      localData.deck.cards = [...localData.deck.cards, createCard];
+      //      localData.deck.cards = [...localData.deck.cards, createCard];
+      console.log(localData.deck.id);
+      cache.writeQuery({
+        query: CARDS_QUERY,
+        variables: { id: localData.deck.id },
+        data: { ...localData }
+      });
+      console.log(localData);
+    },
     onError: err => {
       client.writeData({ data: { toggleSuccess: false } });
     },
@@ -138,15 +163,16 @@ const CardCreate = ({ deck }) => {
             back,
             pictureName: drop.name,
             pictureUrl: url
-          },
-          refetchQueries: [
-            {
-              query: CARDS_QUERY,
-              variables: {
-                id: deck.id
-              }
-            }
-          ]
+          }
+          //,
+          // refetchQueries: [
+          //   {
+          //     query: CARDS_QUERY,
+          //     variables: {
+          //       id: deck.id
+          //     }
+          //   }
+          // ]
         }).then(async ({ data }) => {
           setState({ ...INITIAL_STATE });
         });
@@ -161,17 +187,24 @@ const CardCreate = ({ deck }) => {
             deckId: parseInt(deck.id, 10),
             front: front,
             back: back
-          },
-          refetchQueries: [
-            {
-              query: CARDS_QUERY,
-              variables: {
-                id: deck.id
-              }
-            }
-          ]
+          }
+          // ,
+          // refetchQueries: [
+          //   {
+          //     query: CARDS_QUERY,
+          //     variables: {
+          //       id: deck.id
+          //     }
+          //   }
+          // ]
         }).then(async ({ data }) => {
-          setState({ ...INITIAL_STATE });
+          setState({
+            deckId: parseInt(deck.id, 10),
+            front: "",
+            back: "",
+            pictureName: "",
+            pictureUrl: ""
+          });
         });
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });

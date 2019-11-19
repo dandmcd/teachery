@@ -28,7 +28,13 @@ const UPDATE_CARD = gql`
       back: $back
       pictureName: $pictureName
       pictureUrl: $pictureUrl
-    )
+    ) {
+      id
+      front
+      back
+      pictureName
+      pictureUrl
+    }
   }
 `;
 
@@ -171,8 +177,7 @@ const CardEdit = () => {
             back,
             pictureName: drop.name,
             pictureUrl: url
-          },
-          refetchQueries: ["CardsQuery"]
+          }
         });
         client.writeData({ data: { isSubmitting: false } });
       } catch (error) {
@@ -186,8 +191,7 @@ const CardEdit = () => {
           back: back,
           pictureUrl: null,
           pictureName: null
-        },
-        refetchQueries: ["CardsQuery"]
+        }
       });
     } else {
       try {
@@ -198,8 +202,7 @@ const CardEdit = () => {
             back: back,
             pictureUrl: pictureUrl,
             pictureName: pictureName
-          },
-          refetchQueries: ["CardsQuery"]
+          }
         });
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
@@ -282,7 +285,7 @@ const CardEdit = () => {
                   <Loading />
                 )}
                 {loading && <Loading />}
-                {toggleSuccess && <SuccessMessage message="Card Created!" />}
+                {toggleSuccess && <SuccessMessage message="Card Updated!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>

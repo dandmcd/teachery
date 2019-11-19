@@ -38,7 +38,7 @@ export default gql`
       back: String
       pictureName: String
       pictureUrl: String
-    ): Boolean!
+    ): Card!
   }
 
   type CardConnection {
