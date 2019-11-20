@@ -3,6 +3,7 @@ import Moment from "react-moment";
 import PropTypes from "prop-types";
 import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import styled from "styled-components";
 
 import TagLink from "./DeckTags/TagLink";
 import { Link } from "react-router-dom";
@@ -18,9 +19,11 @@ const DeckItemBase = ({ deck, session }) => {
   const { data } = useQuery(gql`
     query Toggle {
       toggleEditDeck @client
+      toggleAddTag @client
+      toggleAddCard @client
     }
   `);
-  const { toggleEditDeck } = data;
+  const { toggleEditDeck, toggleAddTag, toggleAddCard } = data;
   const [sessionCount, setSessionCount] = useState({
     count: ""
   });
@@ -46,14 +49,32 @@ const DeckItemBase = ({ deck, session }) => {
     setSessionCount({ count: deck.cards.length });
   };
 
-  const togglePopupModal = () => {
-    client.writeData({
-      data: {
-        toggleEditDeck: !toggleEditDeck,
-        current: deck.id
-      }
-    });
-    console.log(data);
+  const togglePopupModal = mutateType => {
+    if (mutateType === "addTag") {
+      client.writeData({
+        data: {
+          toggleAddTag: !toggleAddTag,
+          current: deck.id
+        }
+      });
+      console.log("Add Tag");
+    } else if (mutateType === "addCard") {
+      client.writeData({
+        data: {
+          toggleAddCard: !toggleAddCard,
+          current: deck.id
+        }
+      });
+      console.log("Add Card");
+    } else {
+      client.writeData({
+        data: {
+          toggleEditDeck: !toggleEditDeck,
+          current: deck.id
+        }
+      });
+      console.log("Else");
+    }
   };
   const isInvalid = count === "" || count <= "0";
 
@@ -115,9 +136,20 @@ const DeckItemBase = ({ deck, session }) => {
           </Styled.PracticeForm>
         </Styled.Practice>
         <Styled.DeckButtons>
-          <Button type="button" onClick={togglePopupModal}>
-            Edit Deck
-          </Button>
+          <EditDropDown>
+            <Button type="button" onClick={togglePopupModal}>
+              Edit Deck
+            </Button>
+            <EditDropDownContent>
+              <AddCardButton type="button">Test</AddCardButton>
+              <Button type="button" onClick={() => togglePopupModal("addTag")}>
+                Add Tag
+              </Button>
+              {session && session.me && deck.user.id === session.me.id && (
+                <DeckDelete deck={deck} />
+              )}
+            </EditDropDownContent>
+          </EditDropDown>
           {session && session.me && deck.user.id === session.me.id && (
             <DeckDelete deck={deck} />
           )}
@@ -134,5 +166,47 @@ DeckItemBase.propTypes = {
   deck: PropTypes.object.isRequired,
   session: PropTypes.object.isRequired
 };
+
+const EditDropDown = styled.div`
+  position: relative;
+  display: inline-block;
+  z-index: 100;
+`;
+
+const EditDropDownContent = styled.div`
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  ${EditDropDown}:hover & {
+    display: block;
+  }
+`;
+
+const DropButton = styled.button`
+  background-color: #4caf50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  :hover {
+    background: #1ab2b2;
+  }
+`;
+
+const EditButton = styled.button`
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  :hover {
+    background: #1ab2b2;
+  }
+`;
+
+const AddCardButton = styled(Button)`
+  border: 2px solid #0d5d5d;
+`;
 
 export default DeckItemBase;

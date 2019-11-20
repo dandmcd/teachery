@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useMutation, useApolloClient, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
-import PropTypes from "prop-types";
 
 import useOuterClickNotifier from "../../../../../Alerts";
 import ErrorMessage from "../../../../../Alerts/Error";
@@ -28,23 +27,24 @@ const INITIAL_STATE = {
   tagName: ""
 };
 
-const AddDeckTag = ({ deck }) => {
+const AddDeckTag = () => {
   const client = useApolloClient();
   const { data } = useQuery(gql`
     query Toggle {
       toggleSuccess @client
       toggleAddTag @client
+      current @client
     }
   `);
-  const { toggleSuccess, toggleAddTag } = data;
+  const { toggleSuccess, toggleAddTag, current } = data;
 
-  const [{ tagName }, setState] = useState(INITIAL_STATE);
+  const [{ id, tagName }, setState] = useState(INITIAL_STATE);
 
   useEffect(() => {
-    if (deck && deck.id) {
-      setState({ id: deck.id, tagName: "" });
+    if (toggleAddTag && current) {
+      setState({ id: current, tagName: "" });
     }
-  }, [deck]);
+  }, [toggleAddTag, current]);
 
   const [addTagToDeck, { loading, error }] = useMutation(ADD_TAG_TO_DECK, {
     onError: err => {
@@ -76,12 +76,13 @@ const AddDeckTag = ({ deck }) => {
     try {
       await addTagToDeck({
         variables: {
-          id: deck.id,
+          id: id,
           tagName: tagName
         }
       }).then(async ({ data }) => {
         setState({
-          ...INITIAL_STATE
+          id: current,
+          tagName: ""
         });
       });
     } catch (error) {}
@@ -97,9 +98,6 @@ const AddDeckTag = ({ deck }) => {
 
   return (
     <Container>
-      <AddTagButton type="button" onClick={togglePopupModal}>
-        Add Tag
-      </AddTagButton>
       {toggleAddTag ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
@@ -129,10 +127,6 @@ const AddDeckTag = ({ deck }) => {
       ) : null}
     </Container>
   );
-};
-
-AddDeckTag.propTypes = {
-  deck: PropTypes.object.isRequired
 };
 
 const Container = styled.div``;

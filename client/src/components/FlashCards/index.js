@@ -6,6 +6,8 @@ import Decks from "./Decks";
 import Search from "./Decks/DeckSearch";
 import DeckCreate from "./Decks/DeckCreate";
 import DeckEdit from "./Decks/DeckEdit";
+import AddDeckTag from "./Decks/DeckItem/DeckTags/AddDeckTag";
+import CardCreate from "./Cards/CardCreate";
 
 const FlashCardPage = () => (
   <Container>
@@ -13,6 +15,8 @@ const FlashCardPage = () => (
       <h3>Flashcard Decks</h3>
       <Menu>
         <Search />
+        <AddDeckTag />
+        <CardCreate />
         <DeckEdit />
         <DeckCreate />
       </Menu>

@@ -11,10 +11,12 @@ import DeckItemBase from "./DeckItem";
 import Button from "../../../theme/Button";
 
 const Decks = ({ limit, me }) => {
-  const { data, loading, error, fetchMore } = useQuery(
-    GET_PAGINATED_DECKS_WITH_USERS,
-    { variables: { limit } }
-  );
+  const {
+    data,
+    loading,
+    error,
+    fetchMore
+  } = useQuery(GET_PAGINATED_DECKS_WITH_USERS, { variables: { limit } });
   if (loading && !data) {
     return <Loading />;
   } else if (!data) {
@@ -93,6 +95,7 @@ MoreDecksButton.propTypes = {
 };
 
 const DeckContainer = styled.div`
+  position: relative;
   z-index: 10;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));

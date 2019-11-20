@@ -15,6 +15,7 @@ import Loading from "../../../Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import CARDS_QUERY from "../CardList/CardListSchema/CardListSchema";
+import { MenuToggle } from "../../../Navigation/DesktopNavbar/style";
 
 //Mutations
 const CREATE_CARD = gql`
@@ -67,9 +68,10 @@ const CardCreate = ({ deck }) => {
       toggleAddCard @client
       isCard @client
       isSubmitting @client
+      current @client
     }
   `);
-  const { toggleSuccess, toggleAddCard, isCard, isSubmitting } = data;
+  const { toggleSuccess, toggleAddCard, isCard, isSubmitting, current } = data;
 
   const [{ deckId, front, back }, setState] = useState(INITIAL_STATE);
   const [drop, setDrop] = useState(null);
@@ -81,7 +83,7 @@ const CardCreate = ({ deck }) => {
       const localData = cloneDeep(
         cache.readQuery({
           query: CARDS_QUERY,
-          variables: { id: deckId }
+          variables: { id: current }
         })
       );
       console.log(localData.deck.id);
@@ -158,7 +160,7 @@ const CardCreate = ({ deck }) => {
 
         await createCard({
           variables: {
-            deckId: parseInt(deck.id, 10),
+            deckId: parseInt(current, 10),
             front,
             back,
             pictureName: drop.name,
@@ -174,7 +176,13 @@ const CardCreate = ({ deck }) => {
           //   }
           // ]
         }).then(async ({ data }) => {
-          setState({ ...INITIAL_STATE });
+          setState({
+            deckId: deckId,
+            front: "",
+            back: "",
+            pictureName: "",
+            pictureUrl: ""
+          });
         });
         client.writeData({ data: { isSubmitting: false } });
       } catch (error) {
@@ -184,7 +192,7 @@ const CardCreate = ({ deck }) => {
       try {
         await createCard({
           variables: {
-            deckId: parseInt(deck.id, 10),
+            deckId: parseInt(current, 10),
             front: front,
             back: back
           }
@@ -199,7 +207,7 @@ const CardCreate = ({ deck }) => {
           // ]
         }).then(async ({ data }) => {
           setState({
-            deckId: parseInt(deck.id, 10),
+            deckId: deckId,
             front: "",
             back: "",
             pictureName: "",
@@ -217,16 +225,16 @@ const CardCreate = ({ deck }) => {
   };
 
   useEffect(() => {
-    if (deck && deck.id) {
+    if (toggleAddCard && current) {
       setState({
-        deckId: parseInt(deck.id, 10),
+        deckId: parseInt(current, 10),
         front: "",
         back: "",
         pictureName: "",
         pictureUrl: ""
       });
     }
-  }, [deck, setState]);
+  }, [toggleAddCard, current]);
 
   const togglePopupModal = () => {
     client.writeData({
@@ -238,9 +246,6 @@ const CardCreate = ({ deck }) => {
 
   return (
     <Container>
-      <AddCardButton type="button" onClick={togglePopupModal}>
-        Add Card
-      </AddCardButton>
       {toggleAddCard ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
