@@ -24,6 +24,8 @@ const DeckItemBase = ({ deck, session }) => {
     }
   `);
   const { toggleEditDeck, toggleAddTag, toggleAddCard } = data;
+
+  const [isChecked, setIsChecked] = useState(false);
   const [sessionCount, setSessionCount] = useState({
     count: ""
   });
@@ -47,6 +49,10 @@ const DeckItemBase = ({ deck, session }) => {
 
   const handleClick = () => {
     setSessionCount({ count: deck.cards.length });
+  };
+
+  const toggleEditMenu = () => {
+    setIsChecked(isChecked === false ? true : false);
   };
 
   const togglePopupModal = mutateType => {
@@ -137,17 +143,24 @@ const DeckItemBase = ({ deck, session }) => {
         </Styled.Practice>
         <Styled.DeckButtons>
           <EditDropDown>
-            <Button type="button" onClick={togglePopupModal}>
-              Edit Deck
+            <Button
+              type="checkbox"
+              checked={isChecked}
+              onClick={toggleEditMenu}
+              onChange={toggleEditMenu}
+            >
+              Manage
             </Button>
-            <EditDropDownContent>
-              <AddCardButton type="button">Test</AddCardButton>
-              <Button type="button" onClick={() => togglePopupModal("addTag")}>
-                Add Tag
-              </Button>
+            <EditDropDownContent isChecked={isChecked}>
               {session && session.me && deck.user.id === session.me.id && (
                 <DeckDelete deck={deck} />
               )}
+              <Button type="button" onClick={togglePopupModal}>
+                Edit Details
+              </Button>
+              <Button type="button" onClick={() => togglePopupModal("addTag")}>
+                Add Tag
+              </Button>
             </EditDropDownContent>
           </EditDropDown>
           {session && session.me && deck.user.id === session.me.id && (
@@ -174,14 +187,12 @@ const EditDropDown = styled.div`
 `;
 
 const EditDropDownContent = styled.div`
-  display: none;
+  display: ${props => (props.isChecked ? "block" : "none")};
   position: absolute;
   background-color: #fff;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 100;
-  ${EditDropDown}:hover & {
-    display: block;
-  }
+  bottom: 100%;
 `;
 
 const DropButton = styled.button`

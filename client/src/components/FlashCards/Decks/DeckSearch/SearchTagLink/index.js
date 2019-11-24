@@ -13,11 +13,6 @@ function SearchTagLink({ tag, deckId, session }) {
         <Column>
           <div>
             <Link to={`/tag/${tag.id}`}>{tag.tagName} </Link>
-            {session && session.me && session.me.role === "ADMIN" && (
-              <sup>
-                <TagDelete tag={tag} deckId={deckId} />
-              </sup>
-            )}
           </div>
         </Column>
 

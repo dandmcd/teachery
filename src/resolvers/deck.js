@@ -123,6 +123,15 @@ export default {
       }
     ),
 
+    removeTagFromDeck: combineResolvers(
+      isAdmin,
+      async (parent, { id, tagId }, { models }) => {
+        return await models.DeckTag.destroy({
+          where: { deckId: id, tagId: tagId }
+        });
+      }
+    ),
+
     deleteDeck: combineResolvers(
       isAdmin,
       async (parent, { id }, { models }) => {

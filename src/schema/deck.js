@@ -42,6 +42,10 @@ export default gql`
     Add tag to deck
     """
     addTagToDeck(id: ID!, tagName: String!): Deck!
+    """
+    Remove tag from deck
+    """
+    removeTagFromDeck(id: ID!, tagId: ID!): Boolean!
   }
 
   type DeckConnection {

@@ -36,10 +36,7 @@ const Navigation = () => {
         toggleMobileNavbar={toggleMobileNavbar}
       />
       <MobileNavbar
-        isChecked={isChecked}
-        setIsChecked={setIsChecked}
         displayMobileNavbar={displayMobileNavbar}
-        setDisplayMobileNavbar={setDisplayMobileNavbar}
         toggleMobileNavbar={toggleMobileNavbar}
       />
     </Navbar>
