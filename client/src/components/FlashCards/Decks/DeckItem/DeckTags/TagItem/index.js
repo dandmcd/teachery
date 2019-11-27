@@ -61,7 +61,6 @@ const Tags = (props, { me }) => {
   return (
     <DeckContainer>
       <AddDeckTag />
-      <CardCreate />
       <DeckEdit />
       {taggedDecksToRender.map(deck => (
         <DeckItem key={deck.id} deck={deck} me={me} />

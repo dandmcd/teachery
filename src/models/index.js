@@ -25,7 +25,8 @@ const models = {
   AssignedTask: sequelize.import("./assigned.js"),
   Tag: sequelize.import("./tag"),
   DeckTag: sequelize.import("./decktag"),
-  UserAssignment: sequelize.import("./userassignment.js")
+  UserAssignment: sequelize.import("./userassignment.js"),
+  BookmarkedDeck: sequelize.import("./bookmarkeddeck.js")
 };
 
 Object.keys(models).forEach(key => {

@@ -49,6 +49,12 @@ const user = (sequelize, DataTypes) => {
 
     User.hasMany(models.Assignment, { as: "userId", onDelete: "CASCADE" });
     User.hasMany(models.Deck);
+    User.belongsToMany(models.Deck, {
+      as: "UserBookmark",
+      through: models.BookmarkedDeck,
+      foreignKey: "userId",
+      onDelete: "CASCADE"
+    });
   };
 
   User.findByLogin = async login => {

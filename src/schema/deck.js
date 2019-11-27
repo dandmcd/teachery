@@ -76,5 +76,6 @@ export default gql`
     user: User!
     cards: [Card!]
     tags: [Tag!]!
+    users: [User!]!
   }
 `;

@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const GET_ME = gql`
   {
@@ -7,6 +7,29 @@ export const GET_ME = gql`
       username
       email
       role
+      bookmarkedDecks {
+        id
+        deckName
+        description
+        deckImageUrl
+        deckImageName
+        createdAt
+        user {
+          id
+          username
+        }
+        tags {
+          id
+          tagName
+        }
+        cards {
+          id
+          front
+          back
+          pictureName
+          pictureUrl
+        }
+      }
     }
   }
 `;

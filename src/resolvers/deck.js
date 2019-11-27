@@ -94,6 +94,28 @@ export default {
       }
     ),
 
+    bookmarkDeck: combineResolvers(
+      isAuthenticated,
+      async (parent, { id }, { models, me }) => {
+        const deck = await models.Deck.findByPk(id);
+        const bookmarkedDeck = await models.BookmarkedDeck.create({
+          deckId: deck.id,
+          userId: me.id
+        });
+        console.log(bookmarkedDeck);
+        return deck;
+      }
+    ),
+
+    removeBookmark: combineResolvers(
+      isAuthenticated,
+      async (parent, { id }, { models, me }) => {
+        return await models.BookmarkedDeck.destroy({
+          where: { deckId: id, userId: me.id }
+        });
+      }
+    ),
+
     addTagToDeck: combineResolvers(
       isAdmin,
       async (parent, { id, tagName }, { models }) => {
@@ -140,6 +162,12 @@ export default {
             deckId: id
           }
         });
+        await models.BookmarkedDeck.destroy({
+          where: { deckId: id }
+        });
+        await models.DeckTag.destroy({
+          where: { deckId: id }
+        });
         return await models.Deck.destroy({
           where: { id }
         });
@@ -163,6 +191,20 @@ export default {
             model: models.Deck,
             where: {
               id: deck.id
+            }
+          }
+        ]
+      });
+    },
+
+    users: async (deck, args, { models }) => {
+      return await models.User.findAll({
+        include: [
+          {
+            model: models.Deck,
+            as: "DeckBookmark",
+            where: {
+              deckId: deck.id
             }
           }
         ]

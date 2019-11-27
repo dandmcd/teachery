@@ -37,12 +37,12 @@ const INITIAL_STATE = {
 
 const SignInForm = props => {
   const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-    }
-  `);
-  const { toggleSuccess } = data;
+  // const { data } = useQuery(gql`
+  //   query Toggle {
+  //     toggleSuccess @client
+  //   }
+  // `);
+  // const { toggleSuccess } = data;
 
   const [{ login, password }, setState] = useState(INITIAL_STATE);
 
@@ -55,13 +55,13 @@ const SignInForm = props => {
     }
   });
 
-  useEffect(() => {
-    if (toggleSuccess) {
-      setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
-      }, 5000);
-    }
-  }, [client, toggleSuccess]);
+  // useEffect(() => {
+  //   if (toggleSuccess) {
+  //     setTimeout(() => {
+  //       client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+  //     }, 5000);
+  //   }
+  // }, [client, toggleSuccess]);
 
   const onChange = e => {
     const { name, value } = e.target;
@@ -110,7 +110,7 @@ const SignInForm = props => {
         Sign In
       </Styled.SubmitButton>
       {loading && <Loading />}
-      {toggleSuccess && <SuccessMessage message="Successfully Logged In!" />}
+      {/* {toggleSuccess && <SuccessMessage message="Successfully Logged In!" />} */}
       {error && <ErrorMessage error={error} />}
       <SignUpLink />
     </Styled.Box>

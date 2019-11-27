@@ -1,9 +1,14 @@
 import jwt from "jsonwebtoken";
+import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 import { UserInputError, AuthenticationError } from "apollo-server-core";
 
 import { isAdmin } from "./authorization";
-import { decorateWithLogger } from "graphql-tools";
+
+const toCursorHash = string => Buffer.from(string).toString("base64");
+
+const fromCursorHash = string =>
+  Buffer.from(string, "base64").toString("ascii");
 
 const createToken = async (user, secret, expiresIn) => {
   const { id, email, username, role } = user;
@@ -25,6 +30,48 @@ export default {
         return null;
       }
       return await models.User.findByPk(me.id);
+    },
+    bookmarkedDecks: async (
+      parent,
+      { cursor, limit = 100 },
+      { models, me }
+    ) => {
+      const cursorOptions = cursor
+        ? {
+            where: {
+              createdAt: {
+                [Sequelize.Op.lt]: fromCursorHash(cursor)
+              }
+            }
+          }
+        : {};
+
+      const bookmarkedDecks = await models.Deck.findAll({
+        order: [["createdAt", "DESC"]],
+        limit: limit + 1,
+        ...cursorOptions,
+        include: [
+          {
+            model: models.User,
+            as: "DeckBookmark",
+            where: {
+              id: me.id
+            }
+          }
+        ]
+      });
+      const hasNextPage = bookmarkedDecks.length > limit;
+      const edges = hasNextPage
+        ? bookmarkedDecks.slice(0, -1)
+        : bookmarkedDecks;
+
+      return {
+        edges,
+        pageInfo: {
+          hasNextPage,
+          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
+        }
+      };
     }
   },
 
@@ -118,6 +165,19 @@ export default {
         where: {
           assignedTo: user.id
         }
+      });
+    },
+    bookmarkedDecks: async (user, args, { models }) => {
+      return await models.Deck.findAll({
+        include: [
+          {
+            model: models.User,
+            as: "DeckBookmark",
+            where: {
+              id: user.id
+            }
+          }
+        ]
       });
     }
   }

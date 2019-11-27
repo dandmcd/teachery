@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
-import { useQuery, useApolloClient } from "@apollo/react-hooks";
+import { useQuery, useApolloClient, useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
@@ -13,6 +13,24 @@ import * as Styled from "./style";
 import Button from "../../../../theme/Button";
 
 import teststudent from "../../../../assets/teststudent.jpg";
+import like from "../../../../assets/like.png";
+import liked from "../../../../assets/liked.png";
+import { cloneDeep } from "lodash";
+import { GET_ME } from "../../../Session/queries";
+
+const BOOKMARK_DECK = gql`
+  mutation($id: ID!) {
+    bookmarkDeck(id: $id) {
+      id
+    }
+  }
+`;
+
+const REMOVE_BOOKMARK = gql`
+  mutation($id: ID!) {
+    removeBookmark(id: $id)
+  }
+`;
 
 const DeckItemBase = ({ deck, session }) => {
   const client = useApolloClient();
@@ -30,6 +48,56 @@ const DeckItemBase = ({ deck, session }) => {
     count: ""
   });
   const { count } = sessionCount;
+
+  console.log(session);
+
+  const isBookmarked = deckId => {
+    return deckId.id === deck.id;
+  };
+  console.log(session.me.bookmarkedDecks.find(isBookmarked));
+
+  const [bookmarkDeck, { error }] = useMutation(BOOKMARK_DECK, {
+    update(cache, { data: { bookmarkDeck } }) {
+      const localData = cloneDeep(
+        cache.readQuery({
+          query: GET_ME
+        })
+      );
+      console.log(localData);
+
+      localData.me.bookmarkedDecks = [
+        ...localData.me.bookmarkedDecks,
+        bookmarkDeck
+      ];
+      cache.writeQuery({
+        query: GET_ME,
+        data: { ...localData }
+      });
+      console.log(localData);
+    }
+  });
+  const [removeBookmark, { error: removeError }] = useMutation(
+    REMOVE_BOOKMARK,
+    {
+      update(cache, { data: { removeBookmark } }) {
+        const localData = cloneDeep(
+          cache.readQuery({
+            query: GET_ME
+          })
+        );
+        console.log(localData);
+
+        localData.me.bookmarkedDecks = localData.me.bookmarkedDecks.filter(
+          item => item.id !== deck.id
+        );
+        cache.writeQuery({
+          query: GET_ME,
+          data: { ...localData }
+        });
+        console.log(localData);
+      }
+    }
+  );
 
   const onSubmit = e => {
     e.preventDefault();
@@ -163,12 +231,24 @@ const DeckItemBase = ({ deck, session }) => {
               </Button>
             </EditDropDownContent>
           </EditDropDown>
-          {session && session.me && deck.user.id === session.me.id && (
-            <DeckDelete deck={deck} />
+          <LinkButton type="button">
+            <Link to={cardListLink}>Browse</Link>
+          </LinkButton>
+          {session.me.bookmarkedDecks.find(isBookmarked) ? (
+            <Button
+              type="button"
+              onClick={() => removeBookmark({ variables: { id: deck.id } })}
+            >
+              <LikeIcon src={liked} />
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={() => bookmarkDeck({ variables: { id: deck.id } })}
+            >
+              <LikeIcon src={like} />
+            </Button>
           )}
-          <Button type="button" disabled>
-            Bookmark
-          </Button>
         </Styled.DeckButtons>
       </Styled.CardGrid>
     </Styled.DeckItemContainer>
@@ -183,7 +263,7 @@ DeckItemBase.propTypes = {
 const EditDropDown = styled.div`
   position: relative;
   display: inline-block;
-  z-index: 100;
+  z-index: 30;
 `;
 
 const EditDropDownContent = styled.div`
@@ -191,33 +271,19 @@ const EditDropDownContent = styled.div`
   position: absolute;
   background-color: #fff;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 100;
+  z-index: 30;
   bottom: 100%;
 `;
 
-const DropButton = styled.button`
-  background-color: #4caf50;
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  :hover {
-    background: #1ab2b2;
+const LinkButton = styled(Button)`
+  a {
+    color: ${props => props.theme.text};
   }
 `;
 
-const EditButton = styled.button`
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  :hover {
-    background: #1ab2b2;
-  }
-`;
-
-const AddCardButton = styled(Button)`
-  border: 2px solid #0d5d5d;
+const LikeIcon = styled.img`
+  width: 24px;
+  height: 24px;
 `;
 
 export default DeckItemBase;
