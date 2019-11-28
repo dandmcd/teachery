@@ -1,7 +1,8 @@
-import React, { Fragment } from "react";
-import { useQuery } from "@apollo/react-hooks";
+import React, { Fragment, useEffect } from "react";
+import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import gql from "graphql-tag";
 
 import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
 import Loading from "../../Loading";
@@ -9,14 +10,29 @@ import ErrorMessage from "../../Alerts/Error";
 import withSession from "../../Session/withSession";
 import DeckItemBase from "./DeckItem";
 import Button from "../../../theme/Button";
+import liked from "../../../assets/liked.png";
 
 const Decks = ({ limit, me }) => {
-  const {
-    data,
-    loading,
-    error,
-    fetchMore
-  } = useQuery(GET_PAGINATED_DECKS_WITH_USERS, { variables: { limit } });
+  const client = useApolloClient();
+  const { data: toggleData } = useQuery(gql`
+    query Toggle {
+      toggleBookmarks @client
+    }
+  `);
+  const { toggleBookmarks } = toggleData;
+
+  const { data, loading, error, fetchMore, refetch } = useQuery(
+    GET_PAGINATED_DECKS_WITH_USERS,
+    {
+      variables: { limit, showBookmarks: toggleBookmarks }
+    }
+  );
+
+  const toggleBookmarkDecks = async () => {
+    await client.writeData({ data: { toggleBookmarks: !toggleBookmarks } });
+    await refetch();
+  };
+
   if (loading && !data) {
     return <Loading />;
   } else if (!data) {
@@ -29,11 +45,21 @@ const Decks = ({ limit, me }) => {
 
   return (
     <Fragment>
+      <ViewBookmarkDecks type="button" onClick={e => toggleBookmarkDecks(e)}>
+        {toggleBookmarks ? (
+          "View All"
+        ) : (
+          <Fragment>
+            <LikeIcon src={liked} /> View Saved
+          </Fragment>
+        )}
+      </ViewBookmarkDecks>
       <DeckList decks={edges} me={me} />
 
       {pageInfo.hasNextPage && (
         <MoreDecksButton
           limit={limit}
+          toggleBookmarks={toggleBookmarks}
           pageInfo={pageInfo}
           fetchMore={fetchMore}
         >
@@ -49,11 +75,18 @@ Decks.propTypes = {
   me: PropTypes.object
 };
 
+const ViewBookmarkDecks = styled(Button)``;
+
 const DeckButton = styled(Button)`
   margin: auto;
   display: block;
   width: 205px;
   border: 2px solid ${props => props.theme.primaryDark};
+`;
+
+const LikeIcon = styled.img`
+  width: 14px;
+  height: 14px;
 `;
 
 const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (

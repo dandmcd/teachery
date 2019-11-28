@@ -39,11 +39,7 @@ const App = ({ session, refetch }) => (
         path={routes.SIGN_IN}
         component={() => <SignInPage refetch={refetch} />}
       />
-      <Route
-        exact
-        path={routes.ACCOUNT}
-        component={() => <AccountPage limit={3} />}
-      />
+      <Route exact path={routes.ACCOUNT} component={() => <AccountPage />} />
       <Route
         exact
         path={routes.ASSIGNMENTS}

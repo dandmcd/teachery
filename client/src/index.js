@@ -110,6 +110,7 @@ const data = {
   toggleSuccess: false,
   toggleDeleteSuccess: false,
   toggleRoleChange: false,
+  toggleBookmarks: false,
   isCard: false,
   isDeck: false,
   isDocument: false,

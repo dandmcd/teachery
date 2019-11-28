@@ -53,7 +53,6 @@ const DeckEdit = () => {
     query Toggle {
       toggleSuccess @client
       toggleEditDeck @client
-      isDeck @client
       current @client
       editImg @client
       isSubmitting @client
@@ -62,7 +61,6 @@ const DeckEdit = () => {
   const {
     toggleSuccess,
     toggleEditDeck,
-    isDeck,
     isSubmitting,
     current,
     editImg
@@ -80,9 +78,6 @@ const DeckEdit = () => {
 
   useEffect(() => {
     if (toggleEditDeck) {
-      client.writeData({
-        data: { isDeck: !isDeck }
-      });
       const currentDeck = client.readFragment({
         id: current,
         fragment: gql`
@@ -96,7 +91,6 @@ const DeckEdit = () => {
           }
         `
       });
-      console.log(currentDeck);
       setState(currentDeck);
     }
   }, [client, current, toggleEditDeck]);
@@ -182,7 +176,16 @@ const DeckEdit = () => {
             deckImageName: drop.name,
             deckImageUrl: url
           }
+        }).then(async ({ data }) => {
+          setState({
+            id: id,
+            deckName: deckName,
+            description: description,
+            deckImageName: "",
+            deckImageUrl: ""
+          });
         });
+        console.log("It's a drop");
         client.writeData({ data: { isSubmitting: false } });
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
@@ -197,6 +200,7 @@ const DeckEdit = () => {
           deckImageName: null
         }
       });
+      console.log("It's an empty");
     } else {
       try {
         await updateDeck({
@@ -207,7 +211,16 @@ const DeckEdit = () => {
             deckImageUrl: deckImageUrl,
             deckImageName: deckImageName
           }
+        }).then(async ({ data }) => {
+          setState({
+            id: id,
+            deckName: deckName,
+            description: description,
+            deckImageName: "",
+            deckImageUrl: ""
+          });
         });
+        console.log("It's an else");
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
       }
@@ -218,8 +231,7 @@ const DeckEdit = () => {
     client.writeData({
       data: {
         toggleEditDeck: !toggleEditDeck,
-        editImg: false,
-        isDeck: !isDeck
+        editImg: false
       }
     });
   };
@@ -279,7 +291,7 @@ const DeckEdit = () => {
                     setDrop={setDrop}
                     setImage={setImage}
                     handleDrop={handleDrop}
-                    isDeck={isDeck}
+                    isDeck={"isDeck"}
                   />
                 )}
                 {!isSubmitting ? (

@@ -13,7 +13,11 @@ const fromCursorHash = string =>
 
 export default {
   Query: {
-    decks: async (parent, { cursor, limit = 100 }, { models }) => {
+    decks: async (
+      parent,
+      { cursor, limit = 100, showBookmarks },
+      { models, me }
+    ) => {
       const cursorOptions = cursor
         ? {
             where: {
@@ -23,23 +27,54 @@ export default {
             }
           }
         : {};
+      if (showBookmarks === true) {
+        const decks = await models.Deck.findAll({
+          order: [["createdAt", "DESC"]],
+          limit: limit + 1,
+          ...cursorOptions,
+          include: [
+            {
+              model: models.User,
+              as: "DeckBookmark",
+              where: {
+                id: me.id
+              }
+            }
+          ]
+        });
 
-      const decks = await models.Deck.findAll({
-        order: [["createdAt", "DESC"]],
-        limit: limit + 1,
-        ...cursorOptions
-      });
+        const hasNextPage = decks.length > limit;
+        const edges = hasNextPage ? decks.slice(0, -1) : decks;
 
-      const hasNextPage = decks.length > limit;
-      const edges = hasNextPage ? decks.slice(0, -1) : decks;
+        return {
+          edges,
+          pageInfo: {
+            hasNextPage,
+            endCursor: toCursorHash(
+              edges[edges.length - 1].createdAt.toString()
+            )
+          }
+        };
+      } else {
+        const decks = await models.Deck.findAll({
+          order: [["createdAt", "DESC"]],
+          limit: limit + 1,
+          ...cursorOptions
+        });
 
-      return {
-        edges,
-        pageInfo: {
-          hasNextPage,
-          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
-        }
-      };
+        const hasNextPage = decks.length > limit;
+        const edges = hasNextPage ? decks.slice(0, -1) : decks;
+
+        return {
+          edges,
+          pageInfo: {
+            hasNextPage,
+            endCursor: toCursorHash(
+              edges[edges.length - 1].createdAt.toString()
+            )
+          }
+        };
+      }
     },
 
     deck: async (parent, { id }, { models }) => {

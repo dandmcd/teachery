@@ -72,11 +72,10 @@ const DeckCreate = () => {
     query Toggle {
       toggleSuccess @client
       togglePopup @client
-      isDeck @client
       isSubmitting @client
     }
   `);
-  const { toggleSuccess, togglePopup, isDeck, isSubmitting } = data;
+  const { toggleSuccess, togglePopup, isSubmitting } = data;
 
   const [{ deckName, description }, setDeckState] = useState(INITIAL_STATE);
 
@@ -202,7 +201,7 @@ const DeckCreate = () => {
   // Onclick toggle popup for mutation form
   const togglePopupModal = () => {
     client.writeData({
-      data: { togglePopup: !togglePopup, isDeck: !isDeck }
+      data: { togglePopup: !togglePopup }
     });
   };
   const innerRef = useRef(null);
@@ -239,7 +238,7 @@ const DeckCreate = () => {
                   setDrop={setDrop}
                   setImage={setImage}
                   handleChange={handleChange}
-                  isDeck={isDeck}
+                  isDeck={"isDeck"}
                 />
                 {!isSubmitting ? (
                   <Button disabled={isInvalid} type="submit">

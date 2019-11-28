@@ -161,7 +161,7 @@ DropZone.propTypes = {
   setDrop: PropTypes.func.isRequired,
   setImage: PropTypes.func,
   isCard: PropTypes.bool,
-  isDeck: PropTypes.bool,
+  isDeck: PropTypes.string,
   isDocument: PropTypes.bool
 };
 
