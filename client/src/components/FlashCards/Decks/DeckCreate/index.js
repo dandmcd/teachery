@@ -8,7 +8,6 @@ import moment from "moment";
 import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
 import useOuterClickNotifier from "../../../Alerts";
-
 import DropZone from "../../../Uploader";
 import ErrorMessage from "../../../Alerts/Error";
 import SuccessMessage from "../../../Alerts/Success";
@@ -73,10 +72,10 @@ const DeckCreate = () => {
     query Toggle {
       toggleSuccess @client
       togglePopup @client
-      isDeck @client
+      isSubmitting @client
     }
   `);
-  const { toggleSuccess, togglePopup, isDeck } = data;
+  const { toggleSuccess, togglePopup, isSubmitting } = data;
 
   const [{ deckName, description }, setDeckState] = useState(INITIAL_STATE);
 
@@ -84,9 +83,7 @@ const DeckCreate = () => {
   const [drop, setDrop] = useState(null);
 
   // Mutation hooks
-  const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
-    S3SIGNMUTATION
-  );
+  const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
 
   const [createDeck, { loading, error }] = useMutation(CREATE_DECK, {
     onError: err => {
@@ -95,12 +92,7 @@ const DeckCreate = () => {
     onCompleted: data => {
       client.writeData({ data: { toggleSuccess: true } });
     },
-    update(
-      cache,
-      {
-        data: { createDeck }
-      }
-    ) {
+    update(cache, { data: { createDeck } }) {
       const data = cache.readQuery({
         query: GET_PAGINATED_DECKS_WITH_USERS
       });
@@ -157,29 +149,35 @@ const DeckCreate = () => {
   const onSubmit = async (e, createDeck) => {
     e.preventDefault();
     if (drop) {
-      console.log(drop);
-      console.log(new File([image], drop.name));
-      const response = await s3SignMutation({
-        variables: {
-          filename: formatFilename(drop.name),
-          filetype: drop.type
-        }
-      });
+      try {
+        client.writeData({ data: { isSubmitting: true } });
+        console.log(drop);
+        console.log(new File([image], drop.name));
+        const response = await s3SignMutation({
+          variables: {
+            filename: formatFilename(drop.name),
+            filetype: drop.type
+          }
+        });
 
-      const { signedRequest, url } = response.data.signS3;
+        const { signedRequest, url } = response.data.signS3;
 
-      await uploadToS3(image, signedRequest);
+        await uploadToS3(image, signedRequest);
 
-      await createDeck({
-        variables: {
-          deckName,
-          description,
-          deckImageName: drop.name,
-          deckImageUrl: url
-        }
-      }).then(async ({ data }) => {
-        setDeckState({ ...INITIAL_STATE });
-      });
+        await createDeck({
+          variables: {
+            deckName,
+            description,
+            deckImageName: drop.name,
+            deckImageUrl: url
+          }
+        }).then(async ({ data }) => {
+          setDeckState({ ...INITIAL_STATE });
+        });
+        client.writeData({ data: { isSubmitting: false } });
+      } catch (error) {
+        client.writeData({ data: { isSubmitting: false } });
+      }
     } else {
       try {
         await createDeck({
@@ -190,7 +188,9 @@ const DeckCreate = () => {
         }).then(async ({ data }) => {
           setDeckState({ ...INITIAL_STATE });
         });
-      } catch (error) {}
+      } catch (error) {
+        client.writeData({ data: { isSubmitting: false } });
+      }
     }
   };
 
@@ -201,7 +201,7 @@ const DeckCreate = () => {
   // Onclick toggle popup for mutation form
   const togglePopupModal = () => {
     client.writeData({
-      data: { togglePopup: !togglePopup, isDeck: !isDeck }
+      data: { togglePopup: !togglePopup }
     });
   };
   const innerRef = useRef(null);
@@ -232,18 +232,22 @@ const DeckCreate = () => {
                   value={description}
                   onChange={onChange}
                   type="text"
-                  placeholder="Add details and descriptions*"
+                  placeholder="Add details and description*"
                 />
                 <DropZone
                   setDrop={setDrop}
                   setImage={setImage}
                   handleChange={handleChange}
-                  isDeck={isDeck}
+                  isDeck={"isDeck"}
                 />
-                <Button disabled={isInvalid || loading} type="submit">
-                  Submit
-                </Button>
-                {(loading || s3Loading) && <Loading />}
+                {!isSubmitting ? (
+                  <Button disabled={isInvalid} type="submit">
+                    Submit
+                  </Button>
+                ) : (
+                  <Loading />
+                )}
+                {loading && <Loading />}
                 {toggleSuccess && <SuccessMessage message="Deck created!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>

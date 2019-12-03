@@ -1,23 +1,33 @@
 import gql from "graphql-tag";
 
 const GET_PAGINATED_ASSIGNMENTS_WITH_USERS = gql`
-  query($cursor: String, $limit: Int!) {
+  query getAssignedTasks($cursor: String, $limit: Int!) {
     assignedTasks(cursor: $cursor, limit: $limit)
       @connection(key: "AssignedTaskConnection") {
       edges {
         id
+        assignmentId
         status
         dueDate
         createdAt
         assignedTo
+        assignedToName
+        updatedDocumentName
+        updatedDocumentUrl
+        user {
+          id
+          username
+        }
         assignment {
+          id
           assignmentName
           note
           link
+          createdAt
           user {
+            id
             username
           }
-          createdAt
         }
       }
       pageInfo {

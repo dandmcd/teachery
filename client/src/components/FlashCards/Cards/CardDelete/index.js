@@ -3,10 +3,12 @@ import { useMutation, useApolloClient, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { cloneDeep } from "lodash";
 
 import Button from "../../../../theme/Button";
 import Loading from "../../../Loading";
 import ErrorMessage from "../../../Alerts/Error";
+import CARDS_QUERY from "../CardList/CardListSchema/CardListSchema";
 
 const DELETE_CARD = gql`
   mutation($id: ID!) {
@@ -14,7 +16,7 @@ const DELETE_CARD = gql`
   }
 `;
 
-const CardDelete = ({ card }) => {
+const CardDelete = ({ card, deckId }) => {
   const client = useApolloClient();
   const { data } = useQuery(gql`
     query Toggle {
@@ -24,6 +26,28 @@ const CardDelete = ({ card }) => {
   const { toggleDeleteSuccess } = data;
 
   const [deleteCard, { loading, error }] = useMutation(DELETE_CARD, {
+    update(cache, { data: { deleteCard } }) {
+      const localData = cloneDeep(
+        cache.readQuery({
+          query: CARDS_QUERY,
+          variables: { id: deckId }
+        })
+      );
+      console.log(localData);
+
+      localData.deck.cards = localData.deck.cards.filter(
+        item => item.id !== card.id
+      );
+
+      //      localData.deck.cards = [...localData.deck.cards, createCard];
+      console.log(localData.deck.id);
+      cache.writeQuery({
+        query: CARDS_QUERY,
+        variables: { id: deckId, __typeName: "Deck" },
+        data: { ...localData }
+      });
+      console.log(localData);
+    },
     onError: err => {
       client.writeData({ data: { toggleDeleteSuccess: false } });
     },
@@ -45,8 +69,7 @@ const CardDelete = ({ card }) => {
   const onSubmit = (e, deleteCard) => {
     e.preventDefault();
     deleteCard({
-      variables: { id: card.id },
-      refetchQueries: ["CardsQuery"]
+      variables: { id: card.id }
     });
   };
 

@@ -16,7 +16,9 @@ import Button from "../../../theme/Button";
 const Assignments = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
     GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS,
-    { variables: { limit } }
+    {
+      variables: { limit }
+    }
   );
   if (loading && !data) {
     return <Loading />;
@@ -114,10 +116,14 @@ const AssignmentItemBase = ({ assignment, session }) => {
     }
   `);
   const { toggleAssign } = data;
-  const togglePopupModal = () => {
-    client.writeData({
-      data: { toggleAssign: !toggleAssign, assignmentId: assignment.id }
-    });
+
+  const togglePopupModal = mutateType => {
+    if (mutateType === toggleAssign) {
+      client.writeData({
+        data: { toggleAssign: !toggleAssign, assignmentId: assignment.id }
+      });
+      console.log("Ok");
+    }
   };
 
   return (
@@ -132,13 +138,13 @@ const AssignmentItemBase = ({ assignment, session }) => {
         >
           View Link
         </Styled.ExternalLink>
-        <Styled.ExternalLink
+        <a
           href={assignment.documentUrl}
           rel="noopener noreferrer"
           target="_blank"
         >
-          View Link
-        </Styled.ExternalLink>
+          View File
+        </a>
         <Styled.CreatedInfo>
           <Styled.CreatedAt>
             Created on:{" "}
@@ -148,7 +154,10 @@ const AssignmentItemBase = ({ assignment, session }) => {
             Created by: {assignment.user.username}
           </Styled.CreatedBy>
         </Styled.CreatedInfo>
-        <AssignButton type="button" onClick={togglePopupModal}>
+        <AssignButton
+          type="button"
+          onClick={() => togglePopupModal(toggleAssign)}
+        >
           Assign Task
         </AssignButton>
         {session && session.me && assignment.user.id === session.me.id && (

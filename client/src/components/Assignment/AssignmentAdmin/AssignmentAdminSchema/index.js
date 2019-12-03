@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 const GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS = gql`
-  query($cursor: String, $limit: Int!) {
+  query getAssignments($cursor: String, $limit: Int!) {
     assignments(cursor: $cursor, limit: $limit)
       @connection(key: "AssignmentsConnection") {
       edges {

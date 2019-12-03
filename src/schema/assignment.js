@@ -26,6 +26,19 @@ export default gql`
     ): Assignment!
 
     """
+    Update an existing assignment -
+    Assignment name is required!
+    """
+    updateAssignment(
+      id: ID!
+      assignmentName: String!
+      note: String
+      link: String
+      documentName: String
+      documentUrl: String
+    ): Assignment!
+
+    """
     Delete an assignment
     """
     deleteAssignment(id: ID!): Boolean!

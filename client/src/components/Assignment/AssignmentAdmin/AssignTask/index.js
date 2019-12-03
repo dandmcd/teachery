@@ -10,6 +10,7 @@ import Loading from "../../../Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import * as Styled from "../../../../theme/Popup";
 import Button from "../../../../theme/Button";
+import GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS from "../AssignTaskUpdate/AssignTaskUpdateSchema";
 
 const STATUS_ENUM = gql`
   query {
@@ -36,9 +37,18 @@ const CREATE_ASSIGNED_TASK = gql`
       status: $status
     ) {
       id
-      assignedTo
-      dueDate
+      assignmentId
       status
+      dueDate
+      createdAt
+      assignedTo
+      assignedToName
+      updatedDocumentName
+      updatedDocumentUrl
+      user {
+        id
+        username
+      }
       assignment {
         id
         assignmentName
@@ -102,6 +112,23 @@ const AssignTask = ({ assignment }) => {
     },
     onCompleted: data => {
       client.writeData({ data: { toggleSuccess: true } });
+    },
+    update(cache, { data: { assignTask } }) {
+      const data = cache.readQuery({
+        query: GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS
+      });
+      console.log(data.assignedTasksTeacher);
+      cache.writeQuery({
+        query: GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS,
+        data: {
+          ...data,
+          assignedTasksTeacher: {
+            ...data.assignedTasksTeacher,
+            edges: [assignTask, ...data.assignedTasksTeacher.edges],
+            pageInfo: data.assignedTasksTeacher.pageInfo
+          }
+        }
+      });
     }
   });
 
@@ -156,8 +183,8 @@ const AssignTask = ({ assignment }) => {
                   name="assignedTo"
                   value={assignedTo}
                   onChange={onChange}
-                  type="email"
-                  placeholder="Enter email of student"
+                  type="text"
+                  placeholder="Enter email or username of student"
                 />
                 <Styled.Input
                   name="dueDate"

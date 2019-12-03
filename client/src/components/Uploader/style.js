@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import Button from "../../theme/Button";
+
 export const getColor = props => {
   if (props.isDragAccept) {
     return "#91d251";
@@ -105,4 +107,14 @@ export const Img = styled.img`
   display: block;
   width: auto;
   height: 100%;
+`;
+
+export const RemoveButton = styled(Button)`
+  display: ${props => {
+    if (props.files.length === 0) {
+      return "none";
+    } else {
+      return "inline-table";
+    }
+  }};
 `;

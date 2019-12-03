@@ -4,6 +4,11 @@ export default gql`
   extend type Query {
     assignedTasks(cursor: String, limit: Int): AssignedTaskConnection!
 
+    assignedTasksTeacher(
+      cursor: String
+      limit: Int
+    ): AssignedTaskTeacherConnection!
+
     assignedTask(id: ID!): AssignedTask!
   }
 
@@ -14,6 +19,25 @@ export default gql`
       dueDate: String!
       status: Status!
     ): AssignedTask!
+
+    updateAssignedTask(
+      id: ID!
+      assignmentId: Int
+      assignedTo: String
+      dueDate: String
+      status: Status
+      updatedDocumentName: String
+      updatedDocumentUrl: String
+    ): AssignedTask!
+
+    uploadUpdatedDocument(
+      id: ID!
+      status: Status!
+      updatedDocumentName: String
+      updatedDocumentUrl: String
+    ): AssignedTask!
+
+    deleteAssignedTask(id: ID!): Boolean!
   }
 
   enum Status {
@@ -29,6 +53,16 @@ export default gql`
   }
 
   type AssignedTaskPageInfo {
+    hasNextPage: Boolean!
+    endCursor: String!
+  }
+
+  type AssignedTaskTeacherConnection {
+    edges: [AssignedTask!]!
+    pageInfo: AssignedTaskTeacherPageInfo!
+  }
+
+  type AssignedTaskTeacherPageInfo {
     hasNextPage: Boolean!
     endCursor: String!
   }
@@ -50,7 +84,12 @@ export default gql`
     Can only use values INCOMPLETE, COMPLETE, REVIEWING, GRADED
     """
     status: Status!
+    assignmentId: Int!
+    assignedToName: String!
+    updatedDocumentName: String
+    updatedDocumentUrl: String
     createdAt: Date!
-    assignment: Assignment
+    user: User!
+    assignment: Assignment!
   }
 `;

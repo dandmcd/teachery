@@ -2,11 +2,20 @@ import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import Resizer from "react-image-file-resizer";
 import PropTypes from "prop-types";
+import gql from "graphql-tag";
+import { useQuery } from "@apollo/react-hooks";
 
 import * as Styled from "./style";
 import Button from "../../theme/Button";
 
 const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleSuccess @client
+    }
+  `);
+  const { toggleSuccess } = data;
+
   const [files, setFiles] = useState([]);
   const onDrop = useCallback(
     acceptedFiles => {
@@ -21,6 +30,7 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
           Object.assign(file, { preview: URL.createObjectURL(file) })
         )
       );
+
       if (isCard || isDocument) {
         console.log("Is Card");
         setDrop(acceptedFiles[0]);
@@ -49,7 +59,6 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
 
   const {
     rejectedFiles,
-    acceptedFiles,
     getRootProps,
     getInputProps,
     isDragActive,
@@ -65,7 +74,15 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
     accept: ["image/*", "application/pdf"]
   });
 
-  const acceptedFilesItems = acceptedFiles.map(file => (
+  const removeFile = (e, file) => {
+    e.preventDefault();
+    const newFiles = [...files];
+    newFiles.splice(newFiles.indexOf(file), 1);
+    setFiles(newFiles);
+    setDrop(e.target.value === null);
+  };
+
+  const acceptedFilesItems = files.map(file => (
     <Styled.AcceptedItem key={file.path}>
       {file.path} - {file.size} bytes
     </Styled.AcceptedItem>
@@ -95,6 +112,23 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
     [files]
   );
 
+  const removeOnSuccess = useCallback(file => {
+    const newFiles = [...files];
+    newFiles.splice(newFiles.indexOf(file), 1);
+    setFiles(newFiles);
+    setDrop(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(
+    file => {
+      if (toggleSuccess) {
+        removeOnSuccess();
+      }
+    },
+    [toggleSuccess, removeOnSuccess]
+  );
+
   return (
     <section>
       <Styled.Container
@@ -108,13 +142,16 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
         <em>(Only image or PDF files will be accepted)</em>
       </Styled.Container>
       <Styled.Aside>
-        {acceptedFilesItems.length > 0 && (
+        {files.length > 0 && (
           <Styled.UploadTitle>File to be uploaded:</Styled.UploadTitle>
         )}
         <Styled.ThumbContainer>{thumbs}</Styled.ThumbContainer>
         <Styled.AcceptedList>{acceptedFilesItems}</Styled.AcceptedList>
         <Styled.RejectedList>{rejectedFilesItems}</Styled.RejectedList>
       </Styled.Aside>
+      <Styled.RemoveButton files={files} onClick={e => removeFile(e)}>
+        Remove File
+      </Styled.RemoveButton>
     </section>
   );
 };
@@ -123,9 +160,9 @@ DropZone.propTypes = {
   props: PropTypes.object,
   setDrop: PropTypes.func.isRequired,
   setImage: PropTypes.func,
-  isCard: PropTypes.bool,
-  isDeck: PropTypes.bool,
-  isDocument: PropTypes.bool
+  isCard: PropTypes.string,
+  isDeck: PropTypes.string,
+  isDocument: PropTypes.string
 };
 
 export default DropZone;

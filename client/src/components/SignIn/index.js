@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
-import { useMutation, useApolloClient, useQuery } from "@apollo/react-hooks";
+import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import PropTypes from "prop-types";
 
@@ -9,7 +9,6 @@ import Loading from "../Loading";
 import * as routes from "../../routing/routes";
 import ErrorMessage from "../Alerts/Error";
 import * as Styled from "./style";
-import SuccessMessage from "../Alerts/Success";
 
 const SIGN_IN = gql`
   mutation($login: String!, $password: String!) {
@@ -37,12 +36,12 @@ const INITIAL_STATE = {
 
 const SignInForm = props => {
   const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-    }
-  `);
-  const { toggleSuccess } = data;
+  // const { data } = useQuery(gql`
+  //   query Toggle {
+  //     toggleSuccess @client
+  //   }
+  // `);
+  // const { toggleSuccess } = data;
 
   const [{ login, password }, setState] = useState(INITIAL_STATE);
 
@@ -55,13 +54,13 @@ const SignInForm = props => {
     }
   });
 
-  useEffect(() => {
-    if (toggleSuccess) {
-      setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
-      }, 5000);
-    }
-  }, [client, toggleSuccess]);
+  // useEffect(() => {
+  //   if (toggleSuccess) {
+  //     setTimeout(() => {
+  //       client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+  //     }, 5000);
+  //   }
+  // }, [client, toggleSuccess]);
 
   const onChange = e => {
     const { name, value } = e.target;
@@ -110,7 +109,7 @@ const SignInForm = props => {
         Sign In
       </Styled.SubmitButton>
       {loading && <Loading />}
-      {toggleSuccess && <SuccessMessage message="Successfully Logged In!" />}
+      {/* {toggleSuccess && <SuccessMessage message="Successfully Logged In!" />} */}
       {error && <ErrorMessage error={error} />}
       <SignUpLink />
     </Styled.Box>

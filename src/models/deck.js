@@ -39,6 +39,12 @@ const deck = (sequelize, DataTypes) => {
       through: models.DeckTag,
       onDelete: "CASCADE"
     });
+    Deck.belongsToMany(models.User, {
+      as: "DeckBookmark",
+      through: models.BookmarkedDeck,
+      foreignKey: "deckId",
+      onDelete: "CASCADE"
+    });
   };
   return Deck;
 };

@@ -13,7 +13,11 @@ const fromCursorHash = string =>
 
 export default {
   Query: {
-    decks: async (parent, { cursor, limit = 100 }, { models }) => {
+    decks: async (
+      parent,
+      { cursor, limit = 100, showBookmarks },
+      { models, me }
+    ) => {
       const cursorOptions = cursor
         ? {
             where: {
@@ -23,23 +27,54 @@ export default {
             }
           }
         : {};
+      if (showBookmarks === true) {
+        const decks = await models.Deck.findAll({
+          order: [["createdAt", "DESC"]],
+          limit: limit + 1,
+          ...cursorOptions,
+          include: [
+            {
+              model: models.User,
+              as: "DeckBookmark",
+              where: {
+                id: me.id
+              }
+            }
+          ]
+        });
 
-      const decks = await models.Deck.findAll({
-        order: [["createdAt", "DESC"]],
-        limit: limit + 1,
-        ...cursorOptions
-      });
+        const hasNextPage = decks.length > limit;
+        const edges = hasNextPage ? decks.slice(0, -1) : decks;
 
-      const hasNextPage = decks.length > limit;
-      const edges = hasNextPage ? decks.slice(0, -1) : decks;
+        return {
+          edges,
+          pageInfo: {
+            hasNextPage,
+            endCursor: toCursorHash(
+              edges[edges.length - 1].createdAt.toString()
+            )
+          }
+        };
+      } else {
+        const decks = await models.Deck.findAll({
+          order: [["createdAt", "DESC"]],
+          limit: limit + 1,
+          ...cursorOptions
+        });
 
-      return {
-        edges,
-        pageInfo: {
-          hasNextPage,
-          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
-        }
-      };
+        const hasNextPage = decks.length > limit;
+        const edges = hasNextPage ? decks.slice(0, -1) : decks;
+
+        return {
+          edges,
+          pageInfo: {
+            hasNextPage,
+            endCursor: toCursorHash(
+              edges[edges.length - 1].createdAt.toString()
+            )
+          }
+        };
+      }
     },
 
     deck: async (parent, { id }, { models }) => {
@@ -63,6 +98,56 @@ export default {
           deckImageUrl
         });
         return deck;
+      }
+    ),
+
+    updateDeck: combineResolvers(
+      isAdmin,
+      async (
+        parent,
+        { id, deckName, description, deckImageName, deckImageUrl },
+        { models, me }
+      ) => {
+        const deck = await models.Deck.update(
+          {
+            id: id,
+            deckName: deckName,
+            description: description,
+            deckImageName: deckImageName,
+            deckImageUrl: deckImageUrl
+          },
+          { returning: true, plain: true, validate: true, where: { id: id } }
+        )
+          .spread((affectedCount, affectedRows) => {
+            return affectedRows;
+          })
+          .catch(err => {
+            console.log(err);
+            throw new UserInputError(err);
+          });
+        return deck;
+      }
+    ),
+
+    bookmarkDeck: combineResolvers(
+      isAuthenticated,
+      async (parent, { id }, { models, me }) => {
+        const deck = await models.Deck.findByPk(id);
+        const bookmarkedDeck = await models.BookmarkedDeck.create({
+          deckId: deck.id,
+          userId: me.id
+        });
+        console.log(bookmarkedDeck);
+        return deck;
+      }
+    ),
+
+    removeBookmark: combineResolvers(
+      isAuthenticated,
+      async (parent, { id }, { models, me }) => {
+        return await models.BookmarkedDeck.destroy({
+          where: { deckId: id, userId: me.id }
+        });
       }
     ),
 
@@ -95,6 +180,15 @@ export default {
       }
     ),
 
+    removeTagFromDeck: combineResolvers(
+      isAdmin,
+      async (parent, { id, tagId }, { models }) => {
+        return await models.DeckTag.destroy({
+          where: { deckId: id, tagId: tagId }
+        });
+      }
+    ),
+
     deleteDeck: combineResolvers(
       isAdmin,
       async (parent, { id }, { models }) => {
@@ -102,6 +196,12 @@ export default {
           where: {
             deckId: id
           }
+        });
+        await models.BookmarkedDeck.destroy({
+          where: { deckId: id }
+        });
+        await models.DeckTag.destroy({
+          where: { deckId: id }
         });
         return await models.Deck.destroy({
           where: { id }
@@ -132,8 +232,22 @@ export default {
       });
     },
 
-    user: async (deck, args, { models }) => {
-      return await models.User.findByPk(deck.userId);
+    users: async (deck, args, { models }) => {
+      return await models.User.findAll({
+        include: [
+          {
+            model: models.Deck,
+            as: "DeckBookmark",
+            where: {
+              deckId: deck.id
+            }
+          }
+        ]
+      });
+    },
+
+    user: async (deck, args, { loaders }) => {
+      return await loaders.user.load(deck.userId);
     }
   }
 };

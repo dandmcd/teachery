@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Button from "../../../../theme/Button";
 
 export const DeckItemContainer = styled.div`
-  z-index: 15;
+  position: relative;
   width: 330px;
   background-color: #fff;
 

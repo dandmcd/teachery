@@ -30,33 +30,40 @@ MobileNavbar.propTypes = {
   session: PropTypes.object
 };
 
-const NavigationAuth = ({ toggleMobileNavbar, session }) => (
-  <Styled.NavLinks onClick={toggleMobileNavbar}>
-    <Styled.NavLink>
-      <Link to={routes.FLASHCARDS}>Flashcards</Link>
-    </Styled.NavLink>
-    <Styled.NavLink>
-      <Link to={routes.ASSIGNMENTS}>Assignments</Link>
-    </Styled.NavLink>
-    <Styled.NavLink>
-      <Link to={routes.ACCOUNT}>Account ({session.me.username})</Link>
-    </Styled.NavLink>
-    {(session && session.me && session.me.role === "TEACHER") ||
-      ("ADMIN" && (
+const NavigationAuth = ({ toggleMobileNavbar, session }) => {
+  let role;
+  if (session && session.me && session.me.role === "TEACHER") {
+    role = true;
+  } else if (session && session.me && session.me.role === "ADMIN") {
+    role = true;
+  }
+  return (
+    <Styled.NavLinks onClick={toggleMobileNavbar}>
+      <Styled.NavLink>
+        <Link to={routes.FLASHCARDS}>Flashcards</Link>
+      </Styled.NavLink>
+      <Styled.NavLink>
+        <Link to={routes.ASSIGNMENTS}>Assignments</Link>
+      </Styled.NavLink>
+      <Styled.NavLink>
+        <Link to={routes.ACCOUNT}>Account ({session.me.username})</Link>
+      </Styled.NavLink>
+      {role && (
         <Styled.NavLink>
           <Link to={routes.TEACHER}>Teachers</Link>
         </Styled.NavLink>
-      ))}
-    {session && session.me && session.me.role === "ADMIN" && (
+      )}
+      {session && session.me && session.me.role === "ADMIN" && (
+        <Styled.NavLink>
+          <Link to={routes.ADMIN}>Admin</Link>
+        </Styled.NavLink>
+      )}
       <Styled.NavLink>
-        <Link to={routes.ADMIN}>Admin</Link>
+        <SignOutButton />
       </Styled.NavLink>
-    )}
-    <Styled.NavLink>
-      <SignOutButton />
-    </Styled.NavLink>
-  </Styled.NavLinks>
-);
+    </Styled.NavLinks>
+  );
+};
 
 NavigationAuth.propTypes = {
   toggleMobileNavbar: PropTypes.func.isRequired,

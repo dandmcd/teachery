@@ -1,8 +1,9 @@
 import React from "react";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import Moment from "react-moment";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import gql from "graphql-tag";
 
 import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
@@ -14,8 +15,11 @@ import Button from "../../../theme/Button";
 const AssignedTasks = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
     GET_PAGINATED_ASSIGNMENTS_WITH_USERS,
-    { variables: { limit } }
+    {
+      variables: { limit }
+    }
   );
+  console.log(data);
   if (loading && !data) {
     return <Loading />;
   } else if (!data) {
@@ -114,6 +118,10 @@ const AssignmentItemBase = ({
     id,
     status,
     createdAt,
+    assignedTo,
+    assignedToName,
+    updatedDocumentName,
+    updatedDocumentUrl,
     assignment: {
       assignmentName,
       link,
@@ -122,31 +130,67 @@ const AssignmentItemBase = ({
     }
   },
   session
-}) => (
-  <Styled.AssignmentItemContainer>
-    <Styled.CardGrid>
-      <Styled.Title>{assignmentName}</Styled.Title>
-      <Styled.Status status={status}>{status}</Styled.Status>
-      <Styled.DueDate>Due: {dueDate}</Styled.DueDate>
+}) => {
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleAssignUpdate @client
+    }
+  `);
+  const { toggleAssignUpdate } = data;
 
-      <Styled.Note>{note}</Styled.Note>
+  // const isValidUrl = () => {
+  //   try {
+  //     new URL(updatedDocumentUrl);
+  //     return true;
+  //   } catch (_) {
+  //     return false;
+  //   }
+  // }
 
-      <Styled.ExternalLink
-        href={link}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        View Link
-      </Styled.ExternalLink>
-      <Styled.CreatedInfo>
-        <Styled.CreatedAt>
-          Created on: <Moment format="YYYY-MM-DD">{createdAt}</Moment>
-        </Styled.CreatedAt>
-        <Styled.CreatedBy>Created by: {username}</Styled.CreatedBy>
-      </Styled.CreatedInfo>
-    </Styled.CardGrid>
-  </Styled.AssignmentItemContainer>
-);
+  const togglePopupModal = () => {
+    client.writeData({
+      data: {
+        toggleAssignUpdate: !toggleAssignUpdate,
+        current: id
+      }
+    });
+    console.log(data);
+  };
+  return (
+    <Styled.AssignmentItemContainer>
+      <Styled.CardGrid>
+        <Styled.Title>{assignmentName}</Styled.Title>
+        <Styled.Status status={status}>{status}</Styled.Status>
+        <Styled.DueDate>Due: {dueDate}</Styled.DueDate>
+        <div>Assigned to: {assignedToName}</div>
+        <Styled.Note>{note}</Styled.Note>
+
+        <Styled.ExternalLink
+          href={link}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          View Link
+        </Styled.ExternalLink>
+        {updatedDocumentUrl === null ? (
+          <h5>File: Not yet uploaded</h5>
+        ) : (
+          <h5>File: Already Uploaded</h5>
+        )}
+        <Button type="button" onClick={togglePopupModal}>
+          Edit
+        </Button>
+        <Styled.CreatedInfo>
+          <Styled.CreatedAt>
+            Created on: <Moment format="YYYY-MM-DD">{createdAt}</Moment>
+          </Styled.CreatedAt>
+          <Styled.CreatedBy>Created by: {username}</Styled.CreatedBy>
+        </Styled.CreatedInfo>
+      </Styled.CardGrid>
+    </Styled.AssignmentItemContainer>
+  );
+};
 
 AssignmentItemBase.propTypes = {
   assignedTask: PropTypes.object.isRequired,

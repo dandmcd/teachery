@@ -41,8 +41,19 @@ const CREATE_ASSIGNMENT = gql`
         username
       }
       assignedTasks {
+        id
+        assignmentId
         status
         dueDate
+        createdAt
+        assignedTo
+        assignedToName
+        updatedDocumentName
+        updatedDocumentUrl
+        user {
+          id
+          username
+        }
       }
     }
   }
@@ -71,10 +82,10 @@ const AssignmentCreate = () => {
     query Toggle {
       toggleSuccess @client
       togglePopup @client
-      isDocument @client
+      isSubmitting @client
     }
   `);
-  const { toggleSuccess, togglePopup, isDocument } = data;
+  const { toggleSuccess, togglePopup, isSubmitting } = data;
 
   const [{ assignmentName, note, link }, setAssignmentState] = useState(
     INITIAL_STATE
@@ -82,9 +93,7 @@ const AssignmentCreate = () => {
   const [drop, setDrop] = useState(null);
 
   // Mutation Hooks
-  const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
-    S3SIGNMUTATION
-  );
+  const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [createAssignment, { loading, error }] = useMutation(
     CREATE_ASSIGNMENT,
     {
@@ -94,12 +103,7 @@ const AssignmentCreate = () => {
       onCompleted: data => {
         client.writeData({ data: { toggleSuccess: true } });
       },
-      update(
-        cache,
-        {
-          data: { createAssignment }
-        }
-      ) {
+      update(cache, { data: { createAssignment } }) {
         const data = cache.readQuery({
           query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS
         });
@@ -157,28 +161,34 @@ const AssignmentCreate = () => {
     e.preventDefault();
     console.log(drop);
     if (drop) {
-      const response = await s3SignMutation({
-        variables: {
-          filename: formatFilename(drop.name),
-          filetype: drop.type
-        }
-      });
+      try {
+        client.writeData({ data: { isSubmitting: true } });
+        const response = await s3SignMutation({
+          variables: {
+            filename: formatFilename(drop.name),
+            filetype: drop.type
+          }
+        });
 
-      const { signedRequest, url } = response.data.signS3;
+        const { signedRequest, url } = response.data.signS3;
 
-      await uploadToS3(drop, signedRequest);
+        await uploadToS3(drop, signedRequest);
 
-      await createAssignment({
-        variables: {
-          assignmentName: assignmentName,
-          note: note,
-          link: link,
-          documentName: drop.name,
-          documentUrl: url
-        }
-      }).then(async ({ data }) => {
-        setAssignmentState({ ...INITIAL_STATE });
-      });
+        await createAssignment({
+          variables: {
+            assignmentName: assignmentName,
+            note: note,
+            link: link,
+            documentName: drop.name,
+            documentUrl: url
+          }
+        }).then(async ({ data }) => {
+          setAssignmentState({ ...INITIAL_STATE });
+        });
+        client.writeData({ data: { isSubmitting: false } });
+      } catch (error) {
+        client.writeData({ data: { isSubmitting: false } });
+      }
     } else {
       try {
         await createAssignment({
@@ -190,7 +200,9 @@ const AssignmentCreate = () => {
         }).then(async ({ data }) => {
           setAssignmentState({ ...INITIAL_STATE });
         });
-      } catch (error) {}
+      } catch (error) {
+        client.writeData({ data: { isSubmitting: false } });
+      }
     }
   };
 
@@ -201,7 +213,7 @@ const AssignmentCreate = () => {
   // Onclick toggle popup for mutation form
   const togglePopupModal = () => {
     client.writeData({
-      data: { togglePopup: !togglePopup, isDocument: !isDocument }
+      data: { togglePopup: !togglePopup }
     });
   };
   const innerRef = useRef(null);
@@ -242,12 +254,16 @@ const AssignmentCreate = () => {
                 <DropZone
                   setDrop={setDrop}
                   handleChange={handleChange}
-                  isDocument={isDocument}
+                  isDocument={"isDocument"}
                 />
-                <Button disabled={isInvalid || loading} type="submit">
-                  Submit
-                </Button>
-                {(loading || s3Loading) && <Loading />}
+                {!isSubmitting ? (
+                  <Button disabled={isInvalid} type="submit">
+                    Submit
+                  </Button>
+                ) : (
+                  <Loading />
+                )}
+                {loading && <Loading />}
                 {toggleSuccess && (
                   <SuccessMessage message="Assignment Created!" />
                 )}

@@ -1,8 +1,9 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import gql from "graphql-tag";
 
 import CARDS_QUERY from "./CardListSchema/CardListSchema";
 import withAuthorization from "../../../Session/withAuthorization";
@@ -12,14 +13,25 @@ import ErrorMessage from "../../../Alerts/Error/index";
 import GoBack from "../../../Navigation/GoBack";
 import SuccessMessage from "../../../Alerts/Success";
 import CardCreate from "../CardCreate";
-import AddDeckTag from "../../Decks/DeckItem/DeckTags/AddDeckTag";
+import CardEdit from "../CardEdit";
+import Button from "../../../../theme/Button";
 
 export const CardList = props => {
   let { id } = props.match.params;
   id = parseInt(id);
 
-  const { data, error, loading } = useQuery(CARDS_QUERY, { variables: { id } });
-  if (loading && !data) {
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleAddCard @client
+    }
+  `);
+  const { toggleAddCard } = data;
+
+  const { data: cardData, error, loading } = useQuery(CARDS_QUERY, {
+    variables: { id }
+  });
+  if (loading && !cardData) {
     return <Loading />;
   } else if (error) {
     return <ErrorMessage error={error} />;
@@ -27,7 +39,13 @@ export const CardList = props => {
   const {
     toggleDeleteSuccess,
     deck: { cards, deckName }
-  } = data;
+  } = cardData;
+
+  const togglePopupModal = () => {
+    client.writeData({
+      data: { toggleAddCard: !toggleAddCard, current: id }
+    });
+  };
 
   return (
     <Container>
@@ -37,9 +55,11 @@ export const CardList = props => {
             <GoBack message="Go Back" />{" "}
           </h3>
           <Title>Card Listing for {deckName}</Title>
-
-          <CardCreate key={data.deck.id} deck={data.deck} />
-          <AddDeckTag deck={data.deck} />
+          <CardEdit />
+          <AddCardButton type="button" onClick={togglePopupModal}>
+            Add Card
+          </AddCardButton>
+          <CardCreate key={cardData.deck.id} deck={cardData.deck} />
         </Menu>
       </Header>
       {toggleDeleteSuccess && (
@@ -49,7 +69,12 @@ export const CardList = props => {
         <div>This deck does not have any cards yet ...</div>
       )}
       {cards.map(card => (
-        <CardItem key={card.id} card={card} deckUserId={data.deck.user.id} />
+        <CardItem
+          key={card.id}
+          card={card}
+          deckId={id}
+          deckUserId={cardData.deck.user.id}
+        />
       ))}
     </Container>
   );
@@ -79,6 +104,10 @@ const Menu = styled.div`
 
 const Title = styled.h3`
   flex-grow: 2;
+`;
+
+const AddCardButton = styled(Button)`
+  border: 2px solid #0d5d5d;
 `;
 
 export default withAuthorization(session => session && session.me)(

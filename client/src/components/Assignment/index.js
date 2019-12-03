@@ -3,10 +3,12 @@ import styled from "styled-components";
 
 import withSession from "../Session/withSession";
 import AssignedTasks from "./Assignments";
+import AssignTaskUpdate from "./AssignmentAdmin/AssignTaskUpdate";
 
 const AssignmentPage = () => (
   <Container>
     <AssignmentsHeader>Assignments</AssignmentsHeader>
+    <AssignTaskUpdate />
     <AssignedTasks limit={6} />
   </Container>
 );

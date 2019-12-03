@@ -11,6 +11,10 @@ export default gql`
     """
     user(id: ID!): User
     me: User
+    """
+    Get bookmarked decks
+    """
+    bookmarkedDecks(cursor: String, limit: Int): DeckConnection!
   }
 
   extend type Mutation {
@@ -37,6 +41,14 @@ export default gql`
     Requires ADMIN role
     """
     updateUserRole(id: ID, email: String, role: Role): Boolean!
+    """
+    Bookmark deck
+    """
+    bookmarkDeck(id: ID!): Deck!
+    """
+    Remove bookmark for a deck
+    """
+    removeBookmark(id: ID!): Boolean!
   }
 
   enum Role {
@@ -63,5 +75,6 @@ export default gql`
     assignments: [Assignment!]
     assignedTasks: [AssignedTask!]
     decks: [Deck!]
+    bookmarkedDecks: [Deck!]!
   }
 `;

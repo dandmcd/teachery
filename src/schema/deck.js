@@ -5,7 +5,7 @@ export default gql`
     """
     Get all decks
     """
-    decks(cursor: String, limit: Int): DeckConnection!
+    decks(cursor: String, limit: Int, showBookmarks: Boolean): DeckConnection!
     """
     Get deck by ID (deckName not yet enabled)
     """
@@ -23,6 +23,16 @@ export default gql`
       deckImageName: String
       deckImageUrl: String
     ): Deck!
+    """
+    Edit a deck
+    """
+    updateDeck(
+      id: ID!
+      deckName: String!
+      description: String!
+      deckImageName: String
+      deckImageUrl: String
+    ): Deck!
 
     """
     Deletes a deck
@@ -32,6 +42,10 @@ export default gql`
     Add tag to deck
     """
     addTagToDeck(id: ID!, tagName: String!): Deck!
+    """
+    Remove tag from deck
+    """
+    removeTagFromDeck(id: ID!, tagId: ID!): Boolean!
   }
 
   type DeckConnection {
@@ -62,5 +76,6 @@ export default gql`
     user: User!
     cards: [Card!]
     tags: [Tag!]!
+    users: [User!]!
   }
 `;

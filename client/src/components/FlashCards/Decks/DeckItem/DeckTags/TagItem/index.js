@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
@@ -8,6 +8,9 @@ import Loading from "../../../../../Loading";
 import DeckItemBase from "../../../DeckItem";
 import withSession from "../../../../../Session/withSession";
 import ErrorMessage from "../../../../../Alerts/Error";
+import AddDeckTag from "../AddDeckTag";
+import DeckEdit from "../../../DeckEdit";
+import withAuthorization from "../../../../../Session/withAuthorization";
 
 const TAGS_QUERY = gql`
   query TagsQuery($id: ID!) {
@@ -40,12 +43,10 @@ const TAGS_QUERY = gql`
   }
 `;
 
-const Tags = props => {
+const Tags = (props, { me }) => {
   console.log(props);
   let { id } = props.match.params;
   id = parseInt(id);
-
-  const [showPopup, setShowPopup] = useState(false);
 
   const { data, error, loading } = useQuery(TAGS_QUERY, { variables: { id } });
   if (loading && !data) {
@@ -58,13 +59,10 @@ const Tags = props => {
 
   return (
     <DeckContainer>
+      <AddDeckTag />
+      <DeckEdit />
       {taggedDecksToRender.map(deck => (
-        <DeckItem
-          key={deck.id}
-          deck={deck}
-          showPopup={showPopup}
-          setShowPopup={setShowPopup}
-        />
+        <DeckItem key={deck.id} deck={deck} me={me} />
       ))}
     </DeckContainer>
   );
@@ -87,4 +85,4 @@ const DeckContainer = styled.div`
 
 const DeckItem = withSession(DeckItemBase);
 
-export default Tags;
+export default withAuthorization(session => session && session.me)(Tags);

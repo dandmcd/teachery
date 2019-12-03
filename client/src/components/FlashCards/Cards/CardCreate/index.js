@@ -5,6 +5,7 @@ import axios from "axios";
 import moment from "moment";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { cloneDeep } from "lodash";
 
 import useOuterClickNotifier from "../../../Alerts";
 import * as Styled from "../../../../theme/Popup";
@@ -32,6 +33,11 @@ const CREATE_CARD = gql`
       pictureUrl: $pictureUrl
     ) {
       id
+      front
+      back
+      createdAt
+      pictureName
+      pictureUrl
     }
   }
 `;
@@ -59,19 +65,37 @@ const CardCreate = ({ deck }) => {
     query Toggle {
       toggleSuccess @client
       toggleAddCard @client
-      isCard @client
+      isSubmitting @client
+      current @client
     }
   `);
-  const { toggleSuccess, toggleAddCard, isCard } = data;
+  const { toggleSuccess, toggleAddCard, isSubmitting, current } = data;
 
-  const [{ front, back }, setState] = useState(INITIAL_STATE);
+  const [{ deckId, front, back }, setState] = useState(INITIAL_STATE);
   const [drop, setDrop] = useState(null);
 
   // Mutation Hooks
-  const [s3SignMutation, { loading: s3Loading, error: s3Error }] = useMutation(
-    S3SIGNMUTATION
-  );
+  const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [createCard, { loading, error }] = useMutation(CREATE_CARD, {
+    update(cache, { data: { createCard } }) {
+      const localData = cloneDeep(
+        cache.readQuery({
+          query: CARDS_QUERY,
+          variables: { id: current }
+        })
+      );
+      console.log(localData.deck.id);
+
+      localData.deck.cards = [...localData.deck.cards, createCard];
+      //      localData.deck.cards = [...localData.deck.cards, createCard];
+      console.log(localData.deck.id);
+      cache.writeQuery({
+        query: CARDS_QUERY,
+        variables: { id: localData.deck.id },
+        data: { ...localData }
+      });
+      console.log(localData);
+    },
     onError: err => {
       client.writeData({ data: { toggleSuccess: false } });
     },
@@ -90,20 +114,12 @@ const CardCreate = ({ deck }) => {
 
   // S3 Sign and format
   const uploadToS3 = async (file, signedRequest) => {
-    const config = {
-      onUploadProgress: progressEvent => {
-        const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        );
-        console.info(percentCompleted);
-      }
-    };
     const options = {
       headers: {
         "Content-Type": file.type
       }
     };
-    await axios.put(signedRequest, file, config, options);
+    await axios.put(signedRequest, file, options);
   };
   const formatFilename = filename => {
     const date = moment().format("YYYYMMDD");
@@ -127,56 +143,78 @@ const CardCreate = ({ deck }) => {
     e.preventDefault();
     console.log(drop);
     if (drop) {
-      const response = await s3SignMutation({
-        variables: {
-          filename: formatFilename(drop.name),
-          filetype: drop.type
-        }
-      });
-
-      const { signedRequest, url } = response.data.signS3;
-
-      await uploadToS3(drop, signedRequest);
-
-      await createCard({
-        variables: {
-          deckId: parseInt(deck.id, 10),
-          front,
-          back,
-          pictureName: drop.name,
-          pictureUrl: url
-        },
-        refetchQueries: [
-          {
-            query: CARDS_QUERY,
-            variables: {
-              id: deck.id
-            }
+      try {
+        client.writeData({ data: { isSubmitting: true } });
+        const response = await s3SignMutation({
+          variables: {
+            filename: formatFilename(drop.name),
+            filetype: drop.type
           }
-        ]
-      }).then(async ({ data }) => {
-        setState({ ...INITIAL_STATE });
-      });
+        });
+
+        const { signedRequest, url } = response.data.signS3;
+
+        await uploadToS3(drop, signedRequest);
+
+        await createCard({
+          variables: {
+            deckId: parseInt(current, 10),
+            front,
+            back,
+            pictureName: drop.name,
+            pictureUrl: url
+          }
+          //,
+          // refetchQueries: [
+          //   {
+          //     query: CARDS_QUERY,
+          //     variables: {
+          //       id: deck.id
+          //     }
+          //   }
+          // ]
+        }).then(async ({ data }) => {
+          setState({
+            deckId: deckId,
+            front: "",
+            back: "",
+            pictureName: "",
+            pictureUrl: ""
+          });
+        });
+        client.writeData({ data: { isSubmitting: false } });
+      } catch (error) {
+        client.writeData({ data: { isSubmitting: false } });
+      }
     } else {
       try {
         await createCard({
           variables: {
-            deckId: parseInt(deck.id, 10),
+            deckId: parseInt(current, 10),
             front: front,
             back: back
-          },
-          refetchQueries: [
-            {
-              query: CARDS_QUERY,
-              variables: {
-                id: deck.id
-              }
-            }
-          ]
+          }
+          // ,
+          // refetchQueries: [
+          //   {
+          //     query: CARDS_QUERY,
+          //     variables: {
+          //       id: deck.id
+          //     }
+          //   }
+          // ]
         }).then(async ({ data }) => {
-          setState({ ...INITIAL_STATE });
+          setState({
+            deckId: deckId,
+            front: "",
+            back: "",
+            pictureName: "",
+            pictureUrl: ""
+          });
         });
-      } catch (error) {}
+      } catch (error) {
+        client.writeData({ data: { isSubmitting: false } });
+      }
     }
   };
 
@@ -185,20 +223,20 @@ const CardCreate = ({ deck }) => {
   };
 
   useEffect(() => {
-    if (deck && deck.id) {
+    if (toggleAddCard && current) {
       setState({
-        deckId: parseInt(deck.id, 10),
+        deckId: parseInt(current, 10),
         front: "",
         back: "",
         pictureName: "",
         pictureUrl: ""
       });
     }
-  }, [deck, setState]);
+  }, [toggleAddCard, current]);
 
   const togglePopupModal = () => {
     client.writeData({
-      data: { toggleAddCard: !toggleAddCard, isCard: !isCard }
+      data: { toggleAddCard: !toggleAddCard }
     });
   };
   const innerRef = useRef(null);
@@ -206,9 +244,6 @@ const CardCreate = ({ deck }) => {
 
   return (
     <Container>
-      <AddCardButton type="button" onClick={togglePopupModal}>
-        Add Card
-      </AddCardButton>
       {toggleAddCard ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
@@ -234,12 +269,16 @@ const CardCreate = ({ deck }) => {
                 <DropZone
                   setDrop={setDrop}
                   handleChange={handleChange}
-                  isCard={isCard}
+                  isCard={"isCard"}
                 />
-                <Button disabled={isInvalid || loading} type="submit">
-                  Submit
-                </Button>
-                {(loading || s3Loading) && <Loading />}
+                {!isSubmitting ? (
+                  <Button disabled={isInvalid} type="submit">
+                    Submit
+                  </Button>
+                ) : (
+                  <Loading />
+                )}
+                {loading && <Loading />}
                 {toggleSuccess && <SuccessMessage message="Card Created!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>
@@ -259,9 +298,5 @@ CardCreate.propTyoes = {
 };
 
 const Container = styled.div``;
-
-const AddCardButton = styled(Button)`
-  border: 2px solid #0d5d5d;
-`;
 
 export default CardCreate;
