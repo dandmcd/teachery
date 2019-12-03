@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -75,7 +75,9 @@ Decks.propTypes = {
   me: PropTypes.object
 };
 
-const ViewBookmarkDecks = styled(Button)``;
+const ViewBookmarkDecks = styled(Button)`
+  padding: 0.25em 0.5em;
+`;
 
 const DeckButton = styled(Button)`
   margin: auto;

@@ -9,7 +9,7 @@ import { ApolloServer, AuthenticationError } from "apollo-server-express";
 
 import schema from "./schema";
 import resolvers from "./resolvers";
-import models, { sequelize } from "./models";
+import models from "./models";
 import loaders from "./loaders";
 import path from "path";
 
@@ -54,7 +54,10 @@ const server = new ApolloServer({
           user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
           deck: new DataLoader(keys => loaders.deck.batchDecks(keys, models)),
           assignment: new DataLoader(keys =>
-            loaders.assignment.Assignments(keys, models)
+            loaders.assignment.batchAssignments(keys, models)
+          ),
+          assignedTask: new DataLoader(keys =>
+            loaders.assignedTask.batchAssignedTasks(keys, models)
           )
         }
       };
@@ -72,6 +75,9 @@ const server = new ApolloServer({
           deck: new DataLoader(keys => loaders.deck.batchDecks(keys, models)),
           assignment: new DataLoader(keys =>
             loaders.assignment.batchAssignments(keys, models)
+          ),
+          assignedTask: new DataLoader(keys =>
+            loaders.assignedTask.batchAssignedTasks(keys, models)
           )
         }
       };

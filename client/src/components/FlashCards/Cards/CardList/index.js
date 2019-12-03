@@ -13,7 +13,6 @@ import ErrorMessage from "../../../Alerts/Error/index";
 import GoBack from "../../../Navigation/GoBack";
 import SuccessMessage from "../../../Alerts/Success";
 import CardCreate from "../CardCreate";
-import AddDeckTag from "../../Decks/DeckItem/DeckTags/AddDeckTag";
 import CardEdit from "../CardEdit";
 import Button from "../../../../theme/Button";
 
@@ -25,10 +24,9 @@ export const CardList = props => {
   const { data } = useQuery(gql`
     query Toggle {
       toggleAddCard @client
-      current @client
     }
   `);
-  const { toggleAddCard, current } = data;
+  const { toggleAddCard } = data;
 
   const { data: cardData, error, loading } = useQuery(CARDS_QUERY, {
     variables: { id }
@@ -106,13 +104,6 @@ const Menu = styled.div`
 
 const Title = styled.h3`
   flex-grow: 2;
-`;
-
-const AddTagButton = styled(Button)`
-  border: 2px solid #138181;
-  :hover {
-    background: #179c9c;
-  }
 `;
 
 const AddCardButton = styled(Button)`

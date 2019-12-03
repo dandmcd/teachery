@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
-import { useMutation, useApolloClient, useQuery } from "@apollo/react-hooks";
+import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import PropTypes from "prop-types";
 
@@ -9,7 +9,6 @@ import Loading from "../Loading";
 import * as routes from "../../routing/routes";
 import ErrorMessage from "../Alerts/Error";
 import * as Styled from "./style";
-import SuccessMessage from "../Alerts/Success";
 
 const SIGN_IN = gql`
   mutation($login: String!, $password: String!) {

@@ -3,23 +3,10 @@ import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import PropTypes from "prop-types";
 import { cloneDeep } from "apollo-utilities";
-import GET_PAGINATED_DECKS_WITH_USERS from "../../../DeckSchema";
 
 const REMOVE_TAG = gql`
   mutation($id: ID!, $tagId: ID!) {
     removeTagFromDeck(id: $id, tagId: $tagId)
-  }
-`;
-
-const DECK_TAG_QUERY = gql`
-  query getDeckTags($id: ID!) {
-    deck(id: $id) {
-      id
-      tags {
-        id
-        tagName
-      }
-    }
   }
 `;
 

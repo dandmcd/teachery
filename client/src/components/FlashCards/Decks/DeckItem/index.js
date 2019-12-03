@@ -56,7 +56,7 @@ const DeckItemBase = ({ deck, session }) => {
   };
   console.log(session.me.bookmarkedDecks.find(isBookmarked));
 
-  const [bookmarkDeck, { error }] = useMutation(BOOKMARK_DECK, {
+  const [bookmarkDeck] = useMutation(BOOKMARK_DECK, {
     update(cache, { data: { bookmarkDeck } }) {
       const localData = cloneDeep(
         cache.readQuery({
@@ -76,28 +76,25 @@ const DeckItemBase = ({ deck, session }) => {
       console.log(localData);
     }
   });
-  const [removeBookmark, { error: removeError }] = useMutation(
-    REMOVE_BOOKMARK,
-    {
-      update(cache, { data: { removeBookmark } }) {
-        const localData = cloneDeep(
-          cache.readQuery({
-            query: GET_ME
-          })
-        );
-        console.log(localData);
+  const [removeBookmark] = useMutation(REMOVE_BOOKMARK, {
+    update(cache, { data: { removeBookmark } }) {
+      const localData = cloneDeep(
+        cache.readQuery({
+          query: GET_ME
+        })
+      );
+      console.log(localData);
 
-        localData.me.bookmarkedDecks = localData.me.bookmarkedDecks.filter(
-          item => item.id !== deck.id
-        );
-        cache.writeQuery({
-          query: GET_ME,
-          data: { ...localData }
-        });
-        console.log(localData);
-      }
+      localData.me.bookmarkedDecks = localData.me.bookmarkedDecks.filter(
+        item => item.id !== deck.id
+      );
+      cache.writeQuery({
+        query: GET_ME,
+        data: { ...localData }
+      });
+      console.log(localData);
     }
-  );
+  });
 
   const onSubmit = e => {
     e.preventDefault();

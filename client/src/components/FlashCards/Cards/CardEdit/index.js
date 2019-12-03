@@ -53,7 +53,6 @@ const CardEdit = () => {
     query Toggle {
       toggleSuccess @client
       toggleEditCard @client
-      isCard @client
       current @client
       editImg @client
       isSubmitting @client
@@ -62,7 +61,6 @@ const CardEdit = () => {
   const {
     toggleSuccess,
     toggleEditCard,
-    isCard,
     isSubmitting,
     current,
     editImg
@@ -80,9 +78,6 @@ const CardEdit = () => {
 
   useEffect(() => {
     if (toggleEditCard) {
-      client.writeData({
-        data: { isCard: !isCard }
-      });
       const currentCard = client.readFragment({
         id: current,
         fragment: gql`
@@ -126,10 +121,6 @@ const CardEdit = () => {
 
   const handleClick = () => {
     client.writeData({ data: { editImg: !editImg } });
-  };
-
-  const handleDrop = e => {
-    setDrop(e.target.value);
   };
 
   const isInvalid = front === "";
@@ -214,8 +205,7 @@ const CardEdit = () => {
     client.writeData({
       data: {
         toggleEditCard: !toggleEditCard,
-        editImg: false,
-        isCard: !isCard
+        editImg: false
       }
     });
   };
@@ -255,7 +245,8 @@ const CardEdit = () => {
                     : "Keep Original"}
                 </button>
                 {pictureUrl !== null && (
-                  <button
+                  <DeleteButton
+                    pictureUrl={pictureUrl}
                     type="button"
                     onClick={() =>
                       setState({
@@ -268,15 +259,9 @@ const CardEdit = () => {
                     }
                   >
                     Delete Image
-                  </button>
+                  </DeleteButton>
                 )}
-                {editImg && (
-                  <DropZone
-                    setDrop={setDrop}
-                    handleDrop={handleDrop}
-                    isCard={isCard}
-                  />
-                )}
+                {editImg && <DropZone setDrop={setDrop} isCard={"isCard"} />}
                 {!isSubmitting ? (
                   <Button disabled={isInvalid} type="submit">
                     Submit
@@ -300,5 +285,9 @@ const CardEdit = () => {
 };
 
 const Container = styled.div``;
+
+const DeleteButton = styled(Button)`
+  display: ${props => props.pictureUrl === "" && "none"};
+`;
 
 export default CardEdit;

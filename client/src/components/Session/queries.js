@@ -7,6 +7,19 @@ export const GET_ME = gql`
       username
       email
       role
+      assignments {
+        id
+        assignmentName
+        note
+        link
+        documentUrl
+        documentName
+        createdAt
+        user {
+          id
+          username
+        }
+      }
       bookmarkedDecks {
         id
         deckName

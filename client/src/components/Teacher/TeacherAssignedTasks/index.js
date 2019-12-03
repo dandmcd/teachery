@@ -6,15 +6,15 @@ import PropTypes from "prop-types";
 import gql from "graphql-tag";
 
 import withSession from "../../Session/withSession";
-import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
 import Loading from "../../Loading";
 import * as Styled from "./style";
 import ErrorMessage from "../../Alerts/Error";
 import Button from "../../../theme/Button";
+import GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS from "../../Assignment/AssignmentAdmin/AssignTaskUpdate/AssignTaskUpdateSchema";
 
-const AssignedTasks = ({ limit, me }) => {
+const TeacherAssignedTasks = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
-    GET_PAGINATED_ASSIGNMENTS_WITH_USERS,
+    GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS,
     {
       variables: { limit }
     }
@@ -28,11 +28,11 @@ const AssignedTasks = ({ limit, me }) => {
     return <ErrorMessage error={error} />;
   }
 
-  const { edges, pageInfo } = data.assignedTasks;
+  const { edges, pageInfo } = data.assignedTasksTeacher;
 
   return (
     <Styled.AssignmentContainer>
-      <AssignedTaskList assignedTasks={edges} me={me} />
+      <AssignedTaskList assignedTasksTeacher={edges} me={me} />
 
       {pageInfo.hasNextPage && (
         <MoreAssignedTasksButton
@@ -47,7 +47,7 @@ const AssignedTasks = ({ limit, me }) => {
   );
 };
 
-AssignedTasks.propTypes = {
+TeacherAssignedTasks.propTypes = {
   limit: PropTypes.number.isRequired,
   me: PropTypes.object
 };
@@ -67,11 +67,11 @@ const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
           }
 
           return {
-            assignedTasks: {
-              ...fetchMoreResult.assignedTasks,
+            assignedTasksTeacher: {
+              ...fetchMoreResult.assignedTasksTeacher,
               edges: [
-                ...previousResult.assignedTasks.edges,
-                ...fetchMoreResult.assignedTasks.edges
+                ...previousResult.assignedTasksTeacher.edges,
+                ...fetchMoreResult.assignedTasksTeacher.edges
               ]
             }
           };
@@ -97,8 +97,8 @@ MoreAssignedTasksButton.propTypes = {
   children: PropTypes.string.isRequired
 };
 
-const AssignedTaskList = ({ assignedTasks, me }) => {
-  return assignedTasks.map(assignedTask => (
+const AssignedTaskList = ({ assignedTasksTeacher, me }) => {
+  return assignedTasksTeacher.map(assignedTask => (
     <AssignedTaskItem
       key={assignedTask.id}
       assignedTask={assignedTask}
@@ -108,7 +108,7 @@ const AssignedTaskList = ({ assignedTasks, me }) => {
 };
 
 AssignedTaskList.propTypes = {
-  assignedTasks: PropTypes.array.isRequired,
+  assignedTasksTeacher: PropTypes.array.isRequired,
   me: PropTypes.object
 };
 
@@ -199,4 +199,4 @@ AssignmentItemBase.propTypes = {
 
 const AssignedTaskItem = withSession(AssignmentItemBase);
 
-export default AssignedTasks;
+export default TeacherAssignedTasks;

@@ -15,7 +15,6 @@ import Loading from "../../../Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import CARDS_QUERY from "../CardList/CardListSchema/CardListSchema";
-import { MenuToggle } from "../../../Navigation/DesktopNavbar/style";
 
 //Mutations
 const CREATE_CARD = gql`
@@ -66,12 +65,11 @@ const CardCreate = ({ deck }) => {
     query Toggle {
       toggleSuccess @client
       toggleAddCard @client
-      isCard @client
       isSubmitting @client
       current @client
     }
   `);
-  const { toggleSuccess, toggleAddCard, isCard, isSubmitting, current } = data;
+  const { toggleSuccess, toggleAddCard, isSubmitting, current } = data;
 
   const [{ deckId, front, back }, setState] = useState(INITIAL_STATE);
   const [drop, setDrop] = useState(null);
@@ -238,7 +236,7 @@ const CardCreate = ({ deck }) => {
 
   const togglePopupModal = () => {
     client.writeData({
-      data: { toggleAddCard: !toggleAddCard, isCard: !isCard }
+      data: { toggleAddCard: !toggleAddCard }
     });
   };
   const innerRef = useRef(null);
@@ -271,7 +269,7 @@ const CardCreate = ({ deck }) => {
                 <DropZone
                   setDrop={setDrop}
                   handleChange={handleChange}
-                  isCard={isCard}
+                  isCard={"isCard"}
                 />
                 {!isSubmitting ? (
                   <Button disabled={isInvalid} type="submit">
@@ -300,9 +298,5 @@ CardCreate.propTyoes = {
 };
 
 const Container = styled.div``;
-
-const AddCardButton = styled(Button)`
-  border: 2px solid #0d5d5d;
-`;
 
 export default CardCreate;

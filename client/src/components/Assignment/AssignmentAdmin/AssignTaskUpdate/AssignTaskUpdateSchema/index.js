@@ -1,9 +1,9 @@
 import gql from "graphql-tag";
 
-const GET_PAGINATED_ASSIGNMENTS_WITH_USERS = gql`
-  query getAssignedTasks($cursor: String, $limit: Int!) {
-    assignedTasks(cursor: $cursor, limit: $limit)
-      @connection(key: "AssignedTaskConnection") {
+const GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS = gql`
+  query getAssignedTasksTeacher($cursor: String, $limit: Int!) {
+    assignedTasksTeacher(cursor: $cursor, limit: $limit)
+      @connection(key: "AssignedTaskTeacherConnection") {
       edges {
         id
         assignmentId
@@ -37,4 +37,5 @@ const GET_PAGINATED_ASSIGNMENTS_WITH_USERS = gql`
     }
   }
 `;
-export default GET_PAGINATED_ASSIGNMENTS_WITH_USERS;
+
+export default GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS;

@@ -124,10 +124,6 @@ const DeckEdit = () => {
     client.writeData({ data: { editImg: !editImg } });
   };
 
-  const handleDrop = e => {
-    setDrop(e.target.value);
-  };
-
   const isInvalid = deckName === "";
 
   // S3 Sign and format
@@ -271,7 +267,8 @@ const DeckEdit = () => {
                     : "Keep Original"}
                 </button>
                 {deckImageUrl !== null && (
-                  <button
+                  <DeleteButton
+                    deckImageUrl={deckImageUrl}
                     type="button"
                     onClick={() =>
                       setState({
@@ -284,13 +281,12 @@ const DeckEdit = () => {
                     }
                   >
                     Delete Image
-                  </button>
+                  </DeleteButton>
                 )}
                 {editImg && (
                   <DropZone
                     setDrop={setDrop}
                     setImage={setImage}
-                    handleDrop={handleDrop}
                     isDeck={"isDeck"}
                   />
                 )}
@@ -317,5 +313,9 @@ const DeckEdit = () => {
 };
 
 const Container = styled.div``;
+
+const DeleteButton = styled(Button)`
+  display: ${props => props.deckImageUrl === "" && "none"};
+`;
 
 export default DeckEdit;

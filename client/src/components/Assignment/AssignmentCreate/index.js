@@ -41,8 +41,19 @@ const CREATE_ASSIGNMENT = gql`
         username
       }
       assignedTasks {
+        id
+        assignmentId
         status
         dueDate
+        createdAt
+        assignedTo
+        assignedToName
+        updatedDocumentName
+        updatedDocumentUrl
+        user {
+          id
+          username
+        }
       }
     }
   }
@@ -71,11 +82,10 @@ const AssignmentCreate = () => {
     query Toggle {
       toggleSuccess @client
       togglePopup @client
-      isDocument @client
       isSubmitting @client
     }
   `);
-  const { toggleSuccess, togglePopup, isDocument, isSubmitting } = data;
+  const { toggleSuccess, togglePopup, isSubmitting } = data;
 
   const [{ assignmentName, note, link }, setAssignmentState] = useState(
     INITIAL_STATE
@@ -93,12 +103,7 @@ const AssignmentCreate = () => {
       onCompleted: data => {
         client.writeData({ data: { toggleSuccess: true } });
       },
-      update(
-        cache,
-        {
-          data: { createAssignment }
-        }
-      ) {
+      update(cache, { data: { createAssignment } }) {
         const data = cache.readQuery({
           query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS
         });
@@ -208,7 +213,7 @@ const AssignmentCreate = () => {
   // Onclick toggle popup for mutation form
   const togglePopupModal = () => {
     client.writeData({
-      data: { togglePopup: !togglePopup, isDocument: !isDocument }
+      data: { togglePopup: !togglePopup }
     });
   };
   const innerRef = useRef(null);
@@ -249,7 +254,7 @@ const AssignmentCreate = () => {
                 <DropZone
                   setDrop={setDrop}
                   handleChange={handleChange}
-                  isDocument={isDocument}
+                  isDocument={"isDocument"}
                 />
                 {!isSubmitting ? (
                   <Button disabled={isInvalid} type="submit">

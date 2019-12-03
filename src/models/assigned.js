@@ -38,9 +38,22 @@ const assignedTask = (sequelize, DataTypes) => {
           msg: "User was already assigned this task."
         }
       },
+      assignedToName: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      updatedDocumentName: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      updatedDocumentUrl: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
       dueDate: {
         type: DataTypes.STRING,
         validate: {
+          isDate: true,
           notEmpty: {
             args: true,
             msg: "A deck must have a due date."
@@ -63,6 +76,7 @@ const assignedTask = (sequelize, DataTypes) => {
     }
   );
   AssignedTask.associate = models => {
+    AssignedTask.belongsTo(models.User);
     AssignedTask.belongsToMany(models.Assignment, {
       through: models.UserAssignment,
       onDelete: "CASCADE"

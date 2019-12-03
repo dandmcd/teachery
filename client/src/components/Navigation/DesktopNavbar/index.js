@@ -41,32 +41,42 @@ DesktopNavbar.propTypes = {
   session: PropTypes.object
 };
 
-const NavigationAuth = ({ session }) => (
-  <Styled.NavLinks>
-    <Styled.NavLink>
-      <Link to={routes.FLASHCARDS}>FlashCards</Link>
-    </Styled.NavLink>
-    <Styled.NavLink>
-      <Link to={routes.ASSIGNMENTS}>Assignments</Link>
-    </Styled.NavLink>
-    <Styled.NavLink>
-      <Link to={routes.ACCOUNT}>Account ({session.me.username})</Link>
-    </Styled.NavLink>
-    {session && session.me && session.me.role === ("TEACHER" || "ADMIN") && (
+const NavigationAuth = ({ session }) => {
+  let role;
+  if (session && session.me && session.me.role === "TEACHER") {
+    role = true;
+  } else if (session && session.me && session.me.role === "ADMIN") {
+    role = true;
+  }
+  console.log(session);
+  console.log("Role is: " + role);
+  return (
+    <Styled.NavLinks>
       <Styled.NavLink>
-        <Link to={routes.TEACHER}>Teachers</Link>
+        <Link to={routes.FLASHCARDS}>FlashCards</Link>
       </Styled.NavLink>
-    )}
-    {session && session.me && session.me.role === "ADMIN" && (
       <Styled.NavLink>
-        <Link to={routes.ADMIN}>Admin</Link>
+        <Link to={routes.ASSIGNMENTS}>Assignments</Link>
       </Styled.NavLink>
-    )}
-    <Styled.NavLink>
-      <SignOutButton />
-    </Styled.NavLink>
-  </Styled.NavLinks>
-);
+      <Styled.NavLink>
+        <Link to={routes.ACCOUNT}>Account ({session.me.username})</Link>
+      </Styled.NavLink>
+      {role && (
+        <Styled.NavLink>
+          <Link to={routes.TEACHER}>Teachers</Link>
+        </Styled.NavLink>
+      )}
+      {session && session.me && session.me.role === "ADMIN" && (
+        <Styled.NavLink>
+          <Link to={routes.ADMIN}>Admin</Link>
+        </Styled.NavLink>
+      )}
+      <Styled.NavLink>
+        <SignOutButton />
+      </Styled.NavLink>
+    </Styled.NavLinks>
+  );
+};
 
 NavigationAuth.propTypes = {
   session: PropTypes.object.isRequired

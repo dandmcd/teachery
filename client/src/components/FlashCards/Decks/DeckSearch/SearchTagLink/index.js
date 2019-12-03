@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import withSession from "../../../../Session/withSession";
-import TagDelete from "../../DeckItem/DeckTags/TagDelete";
 
 function SearchTagLink({ tag, deckId, session }) {
   return (

@@ -160,9 +160,9 @@ DropZone.propTypes = {
   props: PropTypes.object,
   setDrop: PropTypes.func.isRequired,
   setImage: PropTypes.func,
-  isCard: PropTypes.bool,
+  isCard: PropTypes.string,
   isDeck: PropTypes.string,
-  isDocument: PropTypes.bool
+  isDocument: PropTypes.string
 };
 
 export default DropZone;

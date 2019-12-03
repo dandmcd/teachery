@@ -17,13 +17,13 @@ export default {
         const cursorOptions = cursor
           ? {
               where: {
+                assignedTo: me.id,
                 createdAt: {
                   [Sequelize.Op.lt]: fromCursorHash(cursor)
                 }
               }
             }
           : {};
-
         const assignedTasks = await models.AssignedTask.findAll({
           where: {
             assignedTo: me.id
@@ -32,10 +32,47 @@ export default {
           limit: limit + 1,
           ...cursorOptions
         });
-
+        console.log("IS Student");
         const hasNextPage = assignedTasks.length > limit;
         const edges = hasNextPage ? assignedTasks.slice(0, -1) : assignedTasks;
 
+        return {
+          edges,
+          pageInfo: {
+            hasNextPage,
+            endCursor: toCursorHash(
+              edges[edges.length - 1].createdAt.toString()
+            )
+          }
+        };
+      }
+    ),
+
+    assignedTasksTeacher: combineResolvers(
+      isAuthenticated,
+      async (parent, { cursor, limit = 100, isTeacher }, { models, me }) => {
+        const cursorOptions = cursor
+          ? {
+              where: {
+                userId: me.id,
+                createdAt: {
+                  [Sequelize.Op.lt]: fromCursorHash(cursor)
+                }
+              }
+            }
+          : {};
+        const assignedTasks = await models.AssignedTask.findAll({
+          where: {
+            userId: me.id
+          },
+          order: [["createdAt", "DESC"]],
+          limit: limit + 1,
+          ...cursorOptions
+        });
+
+        const hasNextPage = assignedTasks.length > limit;
+        const edges = hasNextPage ? assignedTasks.slice(0, -1) : assignedTasks;
+        console.log("IS Teacher");
         return {
           edges,
           pageInfo: {
@@ -59,14 +96,17 @@ export default {
       async (
         parent,
         { assignmentId, assignedTo, dueDate, status },
-        { models }
+        { models, me }
       ) => {
         const assignment = await models.Assignment.findByPk(assignmentId);
         const user = await models.User.findOne({
-          where: { email: assignedTo },
+          where: {
+            [Sequelize.Op.or]: [{ email: assignedTo }, { username: assignedTo }]
+          },
           raw: true,
           returning: true
         });
+        console.log(user);
         if (assignment == null) {
           throw new UserInputError(
             "No assignment found with this assignment id"
@@ -77,23 +117,106 @@ export default {
         const assignedTask = await models.AssignedTask.create({
           assignmentId: assignment.id,
           assignedTo: user.id,
+          assignedToName: user.username,
+          userId: me.id,
           dueDate,
           status
         });
         const userAssignment = await models.UserAssignment.create({
           assignmentId: assignment.id,
           assignedTaskId: assignedTask.id,
-          assignedTo
+          assignedToName: user.username,
+          assignedTo //Do we need this?
         });
         return assignedTask;
+      }
+    ),
+
+    updateAssignedTask: combineResolvers(
+      isTeacher,
+      async (
+        parent,
+        {
+          id,
+          assignmentId,
+          assignedTo,
+          dueDate,
+          status,
+          updatedDocumentName,
+          updatedDocumentUrl
+        },
+        { models }
+      ) => {
+        const assignedTask = await models.AssignedTask.update(
+          {
+            id: id,
+            assignmentId: assignmentId,
+            assignedTo: assignedTo,
+            dueDate: dueDate,
+            status: status,
+            updatedDocumentName: updatedDocumentName,
+            updatedDocumentUrl: updatedDocumentUrl
+          },
+          { returning: true, plain: true, validate: true, where: { id: id } }
+        )
+          .spread((affectedCount, affectedRows) => {
+            return affectedRows;
+          })
+          .catch(err => {
+            console.log(err);
+            throw new UserInputError(err);
+          });
+        return assignedTask;
+      }
+    ),
+
+    uploadUpdatedDocument: combineResolvers(
+      isAuthenticated,
+      async (
+        parent,
+        { id, status, updatedDocumentName, updatedDocumentUrl },
+        { models }
+      ) => {
+        const assignedTask = await models.AssignedTask.update(
+          {
+            id: id,
+            status: status,
+            updatedDocumentName: updatedDocumentName,
+            updatedDocumentUrl: updatedDocumentUrl
+          },
+          { returning: true, plain: true, validate: true, where: { id: id } }
+        )
+          .spread((affectedCount, affectedRows) => {
+            return affectedRows;
+          })
+          .catch(err => {
+            console.log(err);
+            throw new UserInputError(err);
+          });
+        return assignedTask;
+      }
+    ),
+    deleteAssignedTask: combineResolvers(
+      isTeacher,
+      async (parent, { id }, { models }) => {
+        await models.UserAssignment.destroy({
+          where: { assignedTaskId: id }
+        });
+        return await models.AssignedTask.destroy({
+          where: {
+            id: id
+          }
+        });
       }
     )
   },
 
   AssignedTask: {
     assignment: async (assignedTask, args, { loaders }) => {
-      console.log(assignedTask.assignmentId);
       return await loaders.assignment.load(assignedTask.assignmentId);
+    },
+    user: async (assignedTask, args, { loaders }) => {
+      return await loaders.user.load(assignedTask.userId);
     }
   }
 };

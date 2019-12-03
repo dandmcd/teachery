@@ -138,13 +138,13 @@ const AssignmentItemBase = ({ assignment, session }) => {
         >
           View Link
         </Styled.ExternalLink>
-        <Styled.ExternalLink
+        <a
           href={assignment.documentUrl}
           rel="noopener noreferrer"
           target="_blank"
         >
-          View Link
-        </Styled.ExternalLink>
+          View File
+        </a>
         <Styled.CreatedInfo>
           <Styled.CreatedAt>
             Created on:{" "}

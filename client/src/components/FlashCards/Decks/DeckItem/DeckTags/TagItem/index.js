@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
@@ -9,7 +9,6 @@ import DeckItemBase from "../../../DeckItem";
 import withSession from "../../../../../Session/withSession";
 import ErrorMessage from "../../../../../Alerts/Error";
 import AddDeckTag from "../AddDeckTag";
-import CardCreate from "../../../../Cards/CardCreate";
 import DeckEdit from "../../../DeckEdit";
 import withAuthorization from "../../../../../Session/withAuthorization";
 

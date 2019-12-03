@@ -10,9 +10,6 @@ export const typeDefs = gql`
     toggleSuccess: Boolean!
     toggleDeleteSuccess: Boolean!
     toggleRoleChange: Boolean!
-    isCard: Boolean!
-    isDeck: Boolean!
-    isDocument: Boolean!
     assignmentId: Int
   }
   extend type Search {

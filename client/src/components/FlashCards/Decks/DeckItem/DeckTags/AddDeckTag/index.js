@@ -131,11 +131,4 @@ const AddDeckTag = () => {
 
 const Container = styled.div``;
 
-const AddTagButton = styled(Button)`
-  border: 2px solid #138181;
-  :hover {
-    background: #179c9c;
-  }
-`;
-
 export default AddDeckTag;

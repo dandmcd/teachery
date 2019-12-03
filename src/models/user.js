@@ -46,7 +46,7 @@ const user = (sequelize, DataTypes) => {
 
   User.associate = models => {
     User.hasMany(models.Message, { onDelete: "CASCADE" });
-
+    User.hasMany(models.AssignedTask);
     User.hasMany(models.Assignment, { as: "userId", onDelete: "CASCADE" });
     User.hasMany(models.Deck);
     User.belongsToMany(models.Deck, {

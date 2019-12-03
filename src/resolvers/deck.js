@@ -246,8 +246,8 @@ export default {
       });
     },
 
-    user: async (deck, args, { models }) => {
-      return await models.User.findByPk(deck.userId);
+    user: async (deck, args, { loaders }) => {
+      return await loaders.user.load(deck.userId);
     }
   }
 };
