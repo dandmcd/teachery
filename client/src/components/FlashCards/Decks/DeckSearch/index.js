@@ -96,11 +96,14 @@ const Search = () => {
         }
       });
     } else {
+      let filteredData = data.getTagsByName.filter(
+        item => item.decks.length >= 1
+      );
       client.writeData({
         data: {
           search: {
             showPopup: true,
-            tags: data.getTagsByName,
+            tags: filteredData,
             tagName: tagName,
             __typename: "Search"
           }

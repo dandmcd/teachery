@@ -11,6 +11,7 @@ import * as Styled from "./style";
 import ErrorMessage from "../../Alerts/Error";
 import Button from "../../../theme/Button";
 import GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS from "../../Assignment/AssignmentAdmin/AssignTaskUpdate/AssignTaskUpdateSchema";
+import AssignedTaskDelete from "../../Assignment/AssignmentAdmin/AssignedTaskDelete";
 
 const TeacherAssignedTasks = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
@@ -112,8 +113,15 @@ AssignedTaskList.propTypes = {
   me: PropTypes.object
 };
 
-const AssignmentItemBase = ({
-  assignedTask: {
+const AssignmentItemBase = ({ assignedTask, session }) => {
+  const client = useApolloClient();
+  const { data } = useQuery(gql`
+    query Toggle {
+      toggleAssignUpdate @client
+    }
+  `);
+  const { toggleAssignUpdate } = data;
+  const {
     dueDate,
     id,
     status,
@@ -128,16 +136,7 @@ const AssignmentItemBase = ({
       note,
       user: { username }
     }
-  },
-  session
-}) => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleAssignUpdate @client
-    }
-  `);
-  const { toggleAssignUpdate } = data;
+  } = assignedTask;
 
   // const isValidUrl = () => {
   //   try {
@@ -181,6 +180,7 @@ const AssignmentItemBase = ({
         <Button type="button" onClick={togglePopupModal}>
           Edit
         </Button>
+        <AssignedTaskDelete assignedTask={assignedTask} />
         <Styled.CreatedInfo>
           <Styled.CreatedAt>
             Created on: <Moment format="YYYY-MM-DD">{createdAt}</Moment>

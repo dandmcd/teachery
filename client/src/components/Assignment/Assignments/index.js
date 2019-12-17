@@ -181,6 +181,7 @@ const AssignmentItemBase = ({
         <Button type="button" onClick={togglePopupModal}>
           Edit
         </Button>
+
         <Styled.CreatedInfo>
           <Styled.CreatedAt>
             Created on: <Moment format="YYYY-MM-DD">{createdAt}</Moment>
