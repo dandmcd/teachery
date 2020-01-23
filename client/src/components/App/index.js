@@ -20,6 +20,7 @@ import CardList from "../FlashCards/Cards/CardList";
 import Search from "../FlashCards/Decks/DeckSearch";
 import Tags from "../FlashCards/Decks/DeckItem/DeckTags/TagItem";
 import TeacherPage from "../Teacher";
+import Dashboard from "../Dashboard";
 
 import GlobalStyle from "../../theme/globalStyle";
 
@@ -29,6 +30,7 @@ const App = ({ session, refetch }) => (
     <Navigation session={session} />
     <Container>
       <Route exact path={routes.LANDING} component={() => <LandingPage />} />
+      <Route exact path={routes.DASHBOARD} component={() => <Dashboard />} />
       <Route
         exact
         path={routes.SIGN_UP}

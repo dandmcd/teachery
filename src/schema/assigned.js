@@ -43,7 +43,7 @@ export default gql`
   enum Status {
     INCOMPLETE
     COMPLETE
-    REVIEWING
+    SUBMITTED
     GRADED
   }
 

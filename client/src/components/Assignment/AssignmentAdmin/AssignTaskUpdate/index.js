@@ -207,7 +207,7 @@ const AssignTaskUpdate = ({ session }) => {
             id: id,
             assignedTo,
             dueDate,
-            status,
+            status: !superRole ? "SUBMITTED" : status,
             updatedDocumentName: drop.name,
             updatedDocumentUrl: url
           }

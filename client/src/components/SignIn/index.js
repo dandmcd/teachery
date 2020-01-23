@@ -81,7 +81,7 @@ const SignInForm = props => {
 
         localStorage.setItem("token", data.signIn.token);
         await props.refetch();
-        props.history.push(routes.LANDING);
+        props.history.push(routes.DASHBOARD);
       });
     } catch {}
   };

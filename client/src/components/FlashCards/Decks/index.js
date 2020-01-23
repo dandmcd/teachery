@@ -9,6 +9,7 @@ import Loading from "../../Loading";
 import ErrorMessage from "../../Alerts/Error";
 import withSession from "../../Session/withSession";
 import DeckItemBase from "./DeckItem";
+import DeckList from "./DeckList";
 import Button from "../../../theme/Button";
 import liked from "../../../assets/liked.png";
 
@@ -128,33 +129,5 @@ MoreDecksButton.propTypes = {
   fetchMore: PropTypes.func.isRequired,
   children: PropTypes.string.isRequired
 };
-
-const DeckContainer = styled.div`
-  position: relative;
-  z-index: 10;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-  row-gap: 20px;
-  column-gap: 5px;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-const DeckList = ({ decks, me }) => {
-  return (
-    <DeckContainer>
-      {decks.map(deck => (
-        <DeckItem key={deck.id} deck={deck} me={me} />
-      ))}
-    </DeckContainer>
-  );
-};
-
-DeckList.propTypes = {
-  decks: PropTypes.array.isRequired,
-  me: PropTypes.object
-};
-
-const DeckItem = withSession(DeckItemBase);
 
 export default Decks;

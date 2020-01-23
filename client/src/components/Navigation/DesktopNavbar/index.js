@@ -11,7 +11,7 @@ const DesktopNavbar = ({ isChecked, toggleMobileNavbar, session }) => {
   return (
     <Styled.Navbar>
       <Styled.NavLeft>
-        <Link to={routes.LANDING}>Teachery</Link>
+        <Link to={session ? routes.DASHBOARD : routes.LANDING}>Teachery</Link>
       </Styled.NavLeft>
       <Styled.NavRight>
         {session && session.me ? (

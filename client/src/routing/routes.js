@@ -10,3 +10,4 @@ export const CARDLIST = "/deck/:id/list";
 export const SEARCH = "/search";
 export const TAGS = "/tag/:id";
 export const TEACHER = "/teacher";
+export const DASHBOARD = "/dashboard";

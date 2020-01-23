@@ -17,7 +17,7 @@ const assignedTask = (sequelize, DataTypes) => {
       },
       status: {
         type: DataTypes.ENUM,
-        values: ["INCOMPLETE", "COMPLETE", "REVIEWING", "GRADED"],
+        values: ["INCOMPLETE", "COMPLETE", "SUBMITTED", "GRADED"],
         validate: {
           notEmpty: {
             args: true,
