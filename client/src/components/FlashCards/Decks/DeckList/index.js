@@ -28,6 +28,7 @@ const DeckContainer = styled.div`
   row-gap: 20px;
   column-gap: 5px;
   align-items: center;
+  justify-items: center;
   margin-bottom: 20px;
 `;
 

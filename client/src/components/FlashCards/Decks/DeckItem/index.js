@@ -259,7 +259,7 @@ DeckItemBase.propTypes = {
 
 const EditDropDown = styled.div`
   position: relative;
-  display: inline-block;
+  display: flex;
   z-index: 30;
 `;
 
@@ -275,6 +275,11 @@ const EditDropDownContent = styled.div`
 const LinkButton = styled(Button)`
   a {
     color: ${props => props.theme.text};
+  }
+  :hover {
+    a {
+      color: white;
+    }
   }
 `;
 

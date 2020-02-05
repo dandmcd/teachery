@@ -112,6 +112,7 @@ const data = {
   toggleDeleteSuccess: false,
   toggleRoleChange: false,
   toggleBookmarks: false,
+  linkedToPage: false,
   isSubmitting: false,
   assignmentId: null,
   current: null,

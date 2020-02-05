@@ -76,11 +76,10 @@ App.propTypes = {
 };
 
 const Container = styled.div`
-  max-width: 1100px;
   display: block;
   margin: auto;
-  padding-left: 15px;
-  padding-right: 15px;
+  /* padding-left: 15px;
+  padding-right: 15px; */
   overflow: hidden;
   vertical-align: top;
   position: relative;

@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 const Button = styled.button`
-  height: 35px;
-  width: 105px;
+  height: auto;
+  width: 104px;
   background: none;
   border-radius: 4px;
   border: 2px solid ${props => props.theme.secondary};
@@ -13,7 +13,9 @@ const Button = styled.button`
   font-family: inherit;
   transition: all 0.15s ease-in-out;
   transform: scale(1) translateZ(0);
-  display: inline-table;
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
   cursor: pointer;
   :hover {
     color: white;

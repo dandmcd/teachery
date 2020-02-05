@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -18,9 +18,10 @@ const Decks = ({ limit, me }) => {
   const { data: toggleData } = useQuery(gql`
     query Toggle {
       toggleBookmarks @client
+      linkedToPage @client
     }
   `);
-  const { toggleBookmarks } = toggleData;
+  const { toggleBookmarks, linkedToPage } = toggleData;
 
   const { data, loading, error, fetchMore, refetch } = useQuery(
     GET_PAGINATED_DECKS_WITH_USERS,
@@ -33,6 +34,23 @@ const Decks = ({ limit, me }) => {
     await client.writeData({ data: { toggleBookmarks: !toggleBookmarks } });
     await refetch();
   };
+
+  useEffect(() => {
+    if (toggleBookmarks && linkedToPage) {
+      refetch();
+      client.writeData({ data: { linkedToPage: !linkedToPage } });
+    } else if (!toggleBookmarks && linkedToPage) {
+      refetch();
+      client.writeData({ data: { linkedToPage: !linkedToPage } });
+    }
+  }, [client, linkedToPage, refetch, toggleBookmarks]);
+
+  useEffect(() => {
+    if (linkedToPage) {
+      window.scrollTo(0, 0);
+      client.writeData({ data: { linkedToPage: !linkedToPage } });
+    }
+  }, []);
 
   if (loading && !data) {
     return <Loading />;
