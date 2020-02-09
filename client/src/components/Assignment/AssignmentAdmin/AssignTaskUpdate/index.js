@@ -293,7 +293,12 @@ const AssignTaskUpdate = ({ session }) => {
       {toggleAssignUpdate ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupTitle>Update assigned task ...</Styled.PopupTitle>
+            <Styled.PopupHeader>
+              <Styled.PopupTitle>Update assigned task ...</Styled.PopupTitle>
+              <Styled.PopupFooterButton onClick={togglePopupModal}>
+                <Styled.CloseSpan />
+              </Styled.PopupFooterButton>
+            </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, updateAssignedTask)}>
                 {superRole && (
@@ -371,9 +376,6 @@ const AssignTaskUpdate = ({ session }) => {
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>
-            <Styled.PopupFooterButton onClick={togglePopupModal}>
-              Close
-            </Styled.PopupFooterButton>
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}

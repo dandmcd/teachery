@@ -6,6 +6,10 @@ const deck = (sequelize, DataTypes) => {
         notEmpty: {
           args: true,
           msg: "A deck must have a name."
+        },
+        len: {
+          args: [0, 46],
+          msg: "A deck name must be under 46 characters."
         }
       }
     },

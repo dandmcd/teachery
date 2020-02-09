@@ -17,6 +17,7 @@ const Button = styled.button`
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
+  outline: none;
   :hover {
     color: white;
     background: #1ab2b2;

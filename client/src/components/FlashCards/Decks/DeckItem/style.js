@@ -51,7 +51,7 @@ export const DeckInfo = styled.div`
 
 export const Title = styled.h3`
   letter-spacing: 0.05em;
-  line-height: 1.4;
+  line-height: 1.2;
   text-decoration: underline;
   text-decoration-color: ${props => props.theme.primary};
   grid-row: 1 / 2;
@@ -66,6 +66,7 @@ export const Title = styled.h3`
 `;
 
 export const Description = styled.p`
+  font-size: 14px;
   grid-row: 2 / 3;
   grid-column: 1 / 2;
   margin: 0px 0px 0px 5px;
@@ -174,7 +175,7 @@ export const PracticeInput = styled.input`
   cursor: pointer;
   border-style: none;
   color: white;
-  background-color: #55d3d3;
+  background-color: ${props => props.theme.secondary};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -182,7 +183,7 @@ export const PracticeInput = styled.input`
   transform: scale(1) translateZ(0);
   :hover {
     filter: brightness(105%);
-    background: #1dc5c5;
+    background-color: ${props => props.theme.secondaryDark};
     transform: scale(1.1);
   }
   ::placeholder {
@@ -214,7 +215,7 @@ export const PracticeAll = styled.button`
   cursor: pointer;
   border-style: none;
   color: white;
-  background-color: #55d3d3;
+  background-color: ${props => props.theme.secondary};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -222,7 +223,7 @@ export const PracticeAll = styled.button`
   transform: scale(1) translateZ(0);
   :hover {
     filter: brightness(105%);
-    background: #1dc5c5;
+    background-color: ${props => props.theme.secondaryDark};
     transform: scale(1.1);
   }
 `;
@@ -271,6 +272,26 @@ export const DeckButtons = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   border-radius: 0% 0% 10px 10px;
   cursor: pointer;
+`;
+
+export const ManageButton = styled(Button)`
+  border: 2px solid ${props => props.theme.secondaryDark};
+`;
+
+export const BrowseButton = styled(Button)`
+  border: 2px solid ${props => props.theme.secondaryDark};
+  a {
+    color: ${props => props.theme.text};
+  }
+  :hover {
+    a {
+      color: white;
+    }
+  }
+`;
+
+export const LikeButton = styled(Button)`
+  border: 2px solid ${props => props.theme.secondaryDark};
 `;
 
 export const AddCardButton = styled(Button)`

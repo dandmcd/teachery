@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import styled from "styled-components";
 import axios from "axios";
 import moment from "moment";
 
@@ -208,16 +207,21 @@ const DeckCreate = () => {
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Container>
-      <Button type="button" onClick={togglePopupModal}>
-        Create Deck
-      </Button>
+    <Fragment>
+      <Styled.CreateButton type="button" onClick={togglePopupModal}>
+        Create A New Deck
+      </Styled.CreateButton>
       {togglePopup ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupTitle>
-              Create a name and description for your deck...
-            </Styled.PopupTitle>
+            <Styled.PopupHeader>
+              <Styled.PopupTitle>
+                Create a name and description for your deck ...
+              </Styled.PopupTitle>
+              <Styled.PopupFooterButton onClick={togglePopupModal}>
+                <Styled.CloseSpan />
+              </Styled.PopupFooterButton>
+            </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, createDeck)}>
                 <Styled.Input
@@ -252,16 +256,11 @@ const DeckCreate = () => {
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>
-            <Styled.PopupFooterButton onClick={togglePopupModal}>
-              Close
-            </Styled.PopupFooterButton>
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Container>
+    </Fragment>
   );
 };
-
-const Container = styled.div``;
 
 export default DeckCreate;

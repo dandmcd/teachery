@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, Fragment } from "react";
 import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
@@ -124,45 +124,47 @@ const Search = () => {
   );
 
   return (
-    <SearchContainer>
-      <SearchInput
-        name="tagName"
-        type="text"
-        defaultValue={tagName}
-        onChange={onChange}
-        placeholder="Search by language or tag"
-      />
-      <SearchImg src={search} alt="Search" onClick={onClick} />
-      <div>
-        {console.log(tags)}
-        {noResult && <p>Sorry, your search did not find any results...</p>}
-        {showPopup ? (
-          <Styled.PopupContainer>
-            <Styled.PopupInner ref={innerRef}>
-              <Styled.PopupTitle>
-                Tags that match {tagName} ...
-              </Styled.PopupTitle>
-              <Styled.PopupBody>
-                {tags.map(tag => (
-                  <SearchTagLink key={tag.id} tag={tag} />
-                ))}
-              </Styled.PopupBody>
-              <Styled.PopupFooterButton onClick={togglePopup}>
-                Close
-              </Styled.PopupFooterButton>
-            </Styled.PopupInner>
-          </Styled.PopupContainer>
-        ) : null}
-      </div>
-    </SearchContainer>
+    <Fragment>
+      <SearchContainer>
+        <SearchInput
+          name="tagName"
+          type="text"
+          defaultValue={tagName}
+          onChange={onChange}
+          placeholder="Search by language or tag"
+        />
+        <SearchImg src={search} alt="Search" onClick={onClick} />
+      </SearchContainer>
+      {noResult && (
+        <div>
+          <NoResult> Sorry, your search did not find any results...</NoResult>
+        </div>
+      )}
+      {showPopup ? (
+        <Styled.PopupContainer>
+          <Styled.PopupInner ref={innerRef}>
+            <Styled.PopupTitle>Tags that match {tagName} ...</Styled.PopupTitle>
+            <Styled.PopupBody>
+              {tags.map(tag => (
+                <SearchTagLink key={tag.id} tag={tag} />
+              ))}
+            </Styled.PopupBody>
+            <Styled.PopupFooterButton onClick={togglePopup}>
+              Close
+            </Styled.PopupFooterButton>
+          </Styled.PopupInner>
+        </Styled.PopupContainer>
+      ) : null}
+    </Fragment>
   );
 };
 
 const SearchContainer = styled.div`
   display: flex;
+  padding: 0px 0px 5px 12px;
   align-items: center;
+  background-color: ${props => props.theme.neutralLight};
 `;
-
 const SearchImg = styled.img`
   height: 15px;
   width: 15px;
@@ -173,6 +175,15 @@ const SearchInput = styled.input`
   border: 0;
   outline: 0;
   border-bottom: 2px solid ${props => props.theme.primary};
+  background-color: ${props => props.theme.neutralLight};
+  @media only screen and (max-device-width: 330px) {
+  }
+`;
+
+const NoResult = styled.p`
+  flex-wrap: wrap;
+  text-indent: 0.5em;
+  margin: 0 auto;
 `;
 
 export default Search;

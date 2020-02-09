@@ -208,14 +208,14 @@ const DeckItemBase = ({ deck, session }) => {
         </Styled.Practice>
         <Styled.DeckButtons>
           <EditDropDown>
-            <Button
+            <Styled.ManageButton
               type="checkbox"
               checked={isChecked}
               onClick={toggleEditMenu}
               onChange={toggleEditMenu}
             >
               Manage
-            </Button>
+            </Styled.ManageButton>
             <EditDropDownContent isChecked={isChecked}>
               {session && session.me && deck.user.id === session.me.id && (
                 <DeckDelete deck={deck} />
@@ -228,23 +228,23 @@ const DeckItemBase = ({ deck, session }) => {
               </Button>
             </EditDropDownContent>
           </EditDropDown>
-          <LinkButton type="button">
+          <Styled.BrowseButton type="button">
             <Link to={cardListLink}>Browse</Link>
-          </LinkButton>
+          </Styled.BrowseButton>
           {session.me.bookmarkedDecks.find(isBookmarked) ? (
-            <Button
+            <Styled.LikeButton
               type="button"
               onClick={() => removeBookmark({ variables: { id: deck.id } })}
             >
               <LikeIcon src={liked} />
-            </Button>
+            </Styled.LikeButton>
           ) : (
-            <Button
+            <Styled.LikeButton
               type="button"
               onClick={() => bookmarkDeck({ variables: { id: deck.id } })}
             >
               <LikeIcon src={like} />
-            </Button>
+            </Styled.LikeButton>
           )}
         </Styled.DeckButtons>
       </Styled.CardGrid>
@@ -270,17 +270,6 @@ const EditDropDownContent = styled.div`
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 30;
   bottom: 100%;
-`;
-
-const LinkButton = styled(Button)`
-  a {
-    color: ${props => props.theme.text};
-  }
-  :hover {
-    a {
-      color: white;
-    }
-  }
 `;
 
 const LikeIcon = styled.img`

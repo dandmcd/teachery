@@ -7,8 +7,10 @@ import AssignTaskUpdate from "./AssignmentAdmin/AssignTaskUpdate";
 
 const AssignmentPage = () => (
   <Container>
-    <AssignmentsHeader>Assignments</AssignmentsHeader>
-    <AssignTaskUpdate />
+    <AssignmentHeader>
+      <AssignTaskUpdate />
+      <Title>Assignments</Title>
+    </AssignmentHeader>
     <AssignedTasks limit={6} />
   </Container>
 );
@@ -19,9 +21,22 @@ const Container = styled.div`
   margin: auto;
 `;
 
-const AssignmentsHeader = styled.h3`
+const AssignmentHeader = styled.div`
+  background-color: ${props => props.theme.neutralLight};
+  background-clip: border-box;
   width: 100%;
-  margin-bottom: 10px;
+  margin: auto;
+  display: inline-block;
+`;
+
+const Title = styled.h2`
+  max-width: 1100px;
+  margin: auto;
+  padding: 0.5em;
+  @media only screen and (max-width: 770px) {
+    text-align: center;
+  }
+  }
 `;
 
 export default withSession(AssignmentPage);

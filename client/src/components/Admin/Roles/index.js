@@ -117,7 +117,12 @@ role: ""
       {toggleRoleChange ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupTitle>Change user role ...</Styled.PopupTitle>
+            <Styled.PopupHeader>
+              <Styled.PopupTitle>Change user role ...</Styled.PopupTitle>
+              <Styled.PopupFooterButton onClick={togglePopupModal}>
+                <Styled.CloseSpan />
+              </Styled.PopupFooterButton>
+            </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, updateUserRole)}>
                 <Styled.Input
@@ -151,9 +156,6 @@ role: ""
                 {error && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>
-            <Styled.PopupFooterButton onClick={togglePopupModal}>
-              Close
-            </Styled.PopupFooterButton>
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}

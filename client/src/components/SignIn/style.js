@@ -41,12 +41,12 @@ export const InputUserName = styled.input`
   text-align: center;
   border: 2px solid ${props => props.theme.secondary};
   padding: 14px 10px;
-  width: 200px;
+  width: 88%;
   outline: none;
   border-radius: 24px;
   transition: 0.25s;
   :focus {
-    width: 280px;
+    width: 90%;
     border-color: ${props => props.theme.secondaryLight};
   }
 `;
@@ -59,12 +59,12 @@ export const InputPassword = styled.input`
   text-align: center;
   border: 2px solid ${props => props.theme.secondary};
   padding: 14px 10px;
-  width: 200px;
+  width: 88%;
   outline: none;
   border-radius: 24px;
   transition: 0.25s;
   :focus {
-    width: 280px;
+    width: 90%;
     border-color: ${props => props.theme.secondaryLight};
   }
 `;

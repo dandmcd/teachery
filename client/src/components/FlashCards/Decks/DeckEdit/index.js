@@ -239,7 +239,12 @@ const DeckEdit = () => {
       {toggleEditDeck ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupTitle>Edit Deck ...</Styled.PopupTitle>
+            <Styled.PopupHeader>
+              <Styled.PopupTitle>Edit Deck ...</Styled.PopupTitle>
+              <Styled.PopupFooterButton onClick={togglePopupModal}>
+                <Styled.CloseSpan />
+              </Styled.PopupFooterButton>
+            </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, updateDeck)}>
                 <Styled.InputTextArea
@@ -302,9 +307,6 @@ const DeckEdit = () => {
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>
-            <Styled.PopupFooterButton onClick={togglePopupModal}>
-              Close
-            </Styled.PopupFooterButton>
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}

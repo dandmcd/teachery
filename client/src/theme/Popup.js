@@ -43,6 +43,10 @@ export const PopupInner = styled.div`
     left: 10%;
     right: 10%;
   }
+  @media only screen and (min-width: 1100px) {
+    left: 30%;
+    right: 30%;
+  }
 `;
 
 export const PopupInnerExtended = styled(PopupInner)`
@@ -52,7 +56,16 @@ export const PopupInnerExtended = styled(PopupInner)`
   right: 10%;
 `;
 
+export const PopupHeader = styled.div`
+  display: grid;
+  background-color: white;
+  grid-template-columns: 1fr auto 1fr;
+  justify-items: center;
+  grid-column-gap: 5px;
+`;
+
 export const PopupTitle = styled.h3`
+  grid-column-start: 2;
   text-align: center;
 `;
 
@@ -66,7 +79,7 @@ export const Input = styled.input`
   text-align: center;
   border: 2px solid ${props => props.theme.secondary};
   padding: 14px 10px;
-  width: 200px;
+  width: 88%;
   outline: none;
   border-radius: 24px;
   transition: 0.25s;
@@ -77,8 +90,15 @@ export const Input = styled.input`
     color: ${props => props.theme.text};
   }
   :focus {
-    width: 280px;
+    width: 90%;
     border-color: ${props => props.theme.secondaryLight};
+  }
+  @media only screen and (min-width: 770px) {
+    width: 300px;
+    :focus {
+      width: 305px;
+      border-color: ${props => props.theme.secondaryLight};
+    }
   }
 `;
 
@@ -90,7 +110,7 @@ export const InputTextArea = styled.textarea`
   text-align: center;
   border: 2px solid ${props => props.theme.secondary};
   padding: 14px 10px;
-  width: 200px;
+  width: 88%;
   outline: none;
   border-radius: 24px;
   transition: 0.25s;
@@ -101,19 +121,61 @@ export const InputTextArea = styled.textarea`
     color: ${props => props.theme.text};
   }
   :focus {
-    width: 280px;
+    width: 90%;
     border-color: ${props => props.theme.secondaryLight};
+  }
+  @media only screen and (min-width: 770px) {
+    width: 300px;
+    :focus {
+      width: 305px;
+      border-color: ${props => props.theme.secondaryLight};
+    }
   }
 `;
 
-export const PopupFooterButton = styled(Button)`
-  border-color: ${props => props.theme.secondaryDark};
+export const CloseSpan = styled.span`
+  grid-column-start: 3;
+  justify-self: end;
+  display: block;
+  width: 36px;
+  height: 6px;
+  margin: 0 auto;
+  z-index: 20;
+  background: ${props => props.theme.error};
+  border-radius: 3px;
+  transform-origin: 4px 0px;
+  transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1),
+    background 0.5s cubic-bezier(0.77, 0.2, 0.05, 1), opacity 0.55s ease;
+  :hover {
+    background: ${props => props.theme.disabled};
+  }
+`;
+
+export const PopupFooterButton = styled.button`
+  grid-column-start: 3;
+  justify-self: end;
+  height: auto;
+  width: 80px;
+  background: none;
+  border-radius: 4px;
+  margin: 0.2em;
+  padding: 0.4em 0.6em;
+  border: 2px solid white;
   align-self: center;
-  justify-self: center;
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  outline: none;
 `;
 
 export const CardImg = styled.img`
   object-fit: cover;
   width: 200px;
   height: 150px;
+`;
+
+export const CreateButton = styled(Button)`
+  border: 2px solid ${props => props.theme.secondary};
+  width: 175px;
 `;

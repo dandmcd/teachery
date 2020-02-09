@@ -87,7 +87,7 @@ export const OverdueButton = styled.button`
   transform: scale(1) translateZ(0);
   :hover {
     filter: brightness(105%);
-    background: #1ab2b2;
+    background: ${props => props.theme.primaryDark};
     transform: scale(1.1);
   }
 `;
@@ -107,7 +107,7 @@ export const DueButton = styled.button`
   cursor: pointer;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.success};
+  background-color: ${props => props.theme.secondary};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -115,7 +115,7 @@ export const DueButton = styled.button`
   transform: scale(1) translateZ(0);
   :hover {
     filter: brightness(105%);
-    background: #1ab2b2;
+    background: ${props => props.theme.secondaryDark};
     transform: scale(1.1);
   }
 `;

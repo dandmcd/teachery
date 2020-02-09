@@ -1,11 +1,12 @@
 import React from "react";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
-import { useQuery, useApolloClient, useMutation } from "@apollo/react-hooks";
+import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
-import Button from "../../../../theme/Button";
+
 import * as Styled from "../style";
+import download from "../../../../assets/download.png";
 
 const AssignedTaskItemBase = ({
   assignedTask: {
@@ -34,14 +35,18 @@ const AssignedTaskItemBase = ({
   `);
   const { toggleAssignUpdate } = data;
 
-  // const isValidUrl = () => {
-  //   try {
-  //     new URL(updatedDocumentUrl);
-  //     return true;
-  //   } catch (_) {
-  //     return false;
-  //   }
-  // }
+  let fileStatus;
+  if (updatedDocumentUrl !== null) {
+    if (status === "SUBMITTED" || "COMPLETE") {
+      fileStatus = "uploadedFile";
+    }
+    if (status === "GRADED") {
+      fileStatus = "gradedFile";
+    }
+  } else {
+    fileStatus = "noFile";
+  }
+  console.log(fileStatus);
 
   const togglePopupModal = () => {
     client.writeData({
@@ -58,31 +63,54 @@ const AssignedTaskItemBase = ({
         <Styled.Title>{assignmentName}</Styled.Title>
         <Styled.Status status={status}>{status}</Styled.Status>
         <Styled.DueDate>Due: {dueDate}</Styled.DueDate>
-        <div>Assigned to: {assignedToName}</div>
         <Styled.Note>{note}</Styled.Note>
-
-        <Styled.ExternalLink
-          href={link}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          View Link
-        </Styled.ExternalLink>
-        {updatedDocumentUrl === null ? (
-          <h5>File: Not yet uploaded</h5>
-        ) : (
-          <h5>File: Already Uploaded</h5>
-        )}
-        <Button type="button" onClick={togglePopupModal}>
-          Edit
-        </Button>
-
+        {link !== null ? (
+          <Styled.ExternalLink
+            href={link}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            View Link
+          </Styled.ExternalLink>
+        ) : null}
         <Styled.CreatedInfo>
           <Styled.CreatedAt>
             Created on: <Moment format="YYYY-MM-DD">{createdAt}</Moment>
           </Styled.CreatedAt>
           <Styled.CreatedBy>Created by: {username}</Styled.CreatedBy>
+
+          <Styled.AssignedTo>Assigned to: {assignedToName}</Styled.AssignedTo>
         </Styled.CreatedInfo>
+        <Styled.EditButton type="button" onClick={togglePopupModal}>
+          Edit
+        </Styled.EditButton>
+        {fileStatus === "noFile" ? (
+          <Styled.FileUploadStatus>
+            <DownloadIcon src={download} /> Not yet uploaded
+          </Styled.FileUploadStatus>
+        ) : null}
+        {fileStatus === "uploadedFile" ? (
+          <Styled.FileUploadStatus>
+            <a
+              href={updatedDocumentUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <DownloadIcon src={download} /> View uploaded file
+            </a>
+          </Styled.FileUploadStatus>
+        ) : null}
+        {fileStatus === "gradedFile" ? (
+          <Styled.FileUploadStatus>
+            <a
+              href={updatedDocumentUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <DownloadIcon src={download} /> View graded file
+            </a>
+          </Styled.FileUploadStatus>
+        ) : null}
       </Styled.CardGrid>
     </Styled.AssignmentItemContainer>
   );
@@ -92,5 +120,10 @@ AssignedTaskItemBase.propTypes = {
   assignedTask: PropTypes.object.isRequired,
   me: PropTypes.object
 };
+
+const DownloadIcon = styled.img`
+  width: 20px;
+  height: 20px;
+`;
 
 export default AssignedTaskItemBase;

@@ -5,7 +5,6 @@ import withSession from "../../../Session/withSession";
 import DeckItemBase from "../DeckItem";
 
 const DeckList = ({ decks, me }) => {
-  console.log(decks);
   return (
     <DeckContainer>
       {decks.map(deck => (
@@ -29,7 +28,8 @@ const DeckContainer = styled.div`
   column-gap: 5px;
   align-items: center;
   justify-items: center;
-  margin-bottom: 20px;
+  max-width: 1100px;
+  margin: 0 auto 20px auto;
 `;
 
 const DeckItem = withSession(DeckItemBase);

@@ -7,11 +7,8 @@ import gql from "graphql-tag";
 import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
 import Loading from "../../Loading";
 import ErrorMessage from "../../Alerts/Error";
-import withSession from "../../Session/withSession";
-import DeckItemBase from "./DeckItem";
 import DeckList from "./DeckList";
 import Button from "../../../theme/Button";
-import liked from "../../../assets/liked.png";
 
 const Decks = ({ limit, me }) => {
   const client = useApolloClient();
@@ -29,11 +26,6 @@ const Decks = ({ limit, me }) => {
       variables: { limit, showBookmarks: toggleBookmarks }
     }
   );
-
-  const toggleBookmarkDecks = async () => {
-    await client.writeData({ data: { toggleBookmarks: !toggleBookmarks } });
-    await refetch();
-  };
 
   useEffect(() => {
     if (toggleBookmarks && linkedToPage) {
@@ -64,17 +56,7 @@ const Decks = ({ limit, me }) => {
 
   return (
     <Fragment>
-      <ViewBookmarkDecks type="button" onClick={e => toggleBookmarkDecks(e)}>
-        {toggleBookmarks ? (
-          "View All"
-        ) : (
-          <Fragment>
-            <LikeIcon src={liked} /> View Saved
-          </Fragment>
-        )}
-      </ViewBookmarkDecks>
       <DeckList decks={edges} me={me} />
-
       {pageInfo.hasNextPage && (
         <MoreDecksButton
           limit={limit}
@@ -94,20 +76,11 @@ Decks.propTypes = {
   me: PropTypes.object
 };
 
-const ViewBookmarkDecks = styled(Button)`
-  padding: 0.25em 0.5em;
-`;
-
 const DeckButton = styled(Button)`
   margin: auto;
   display: block;
   width: 205px;
   border: 2px solid ${props => props.theme.primaryDark};
-`;
-
-const LikeIcon = styled.img`
-  width: 14px;
-  height: 14px;
 `;
 
 const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (

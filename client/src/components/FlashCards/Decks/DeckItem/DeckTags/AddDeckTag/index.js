@@ -101,7 +101,14 @@ const AddDeckTag = () => {
       {toggleAddTag ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupTitle>Create a tag for this deck...</Styled.PopupTitle>
+            <Styled.PopupHeader>
+              <Styled.PopupTitle>
+                Create a tag for this deck...
+              </Styled.PopupTitle>
+              <Styled.PopupFooterButton onClick={togglePopupModal}>
+                <Styled.CloseSpan />
+              </Styled.PopupFooterButton>
+            </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, addTagToDeck)}>
                 <Styled.Input
@@ -119,9 +126,6 @@ const AddDeckTag = () => {
                 {error && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>
-            <Styled.PopupFooterButton onClick={togglePopupModal}>
-              Close
-            </Styled.PopupFooterButton>
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}

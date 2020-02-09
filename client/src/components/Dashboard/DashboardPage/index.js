@@ -1,5 +1,4 @@
 import React, { Fragment } from "react";
-import styled from "styled-components";
 import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import moment from "moment";
 import { Link } from "react-router-dom";
@@ -7,25 +6,15 @@ import { Link } from "react-router-dom";
 import withSession from "../../Session/withSession";
 import Loading from "../../Loading";
 import ErrorMessage from "../../Alerts/Error";
-import DeckItemBase from "../../FlashCards/Decks/DeckItem";
 import DeckList from "../../FlashCards/Decks/DeckList";
-import Button from "../../../theme/Button";
 import AssignedTaskList from "../../Assignment/Assignments/AssignedTaskList";
 import GET_DASHBOARD from "../DashboardQuery";
 import liked from "../../../assets/liked.png";
-import gql from "graphql-tag";
 import * as routes from "../../../routing/routes";
 import * as Styled from "./style";
 
 const DashboardPage = ({ session, me }) => {
   const client = useApolloClient();
-  const { data: toggleData } = useQuery(gql`
-    query Toggle {
-      toggleBookmarks @client
-      linkedToPage @client
-    }
-  `);
-  const { toggleBookmarks, linkedToPage } = toggleData;
 
   console.log(session);
 

@@ -3,31 +3,24 @@ import styled from "styled-components";
 
 import DesktopNavbar from "./DesktopNavbar";
 import MobileNavbar from "./MobileNavbar";
+import useWindowDimensions from "../../utilities/useWindowDimensions";
 
 const Navigation = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [displayMobileNavbar, setDisplayMobileNavbar] = useState(false);
 
-  useEffect(() => {
-    window.addEventListener("resize", AutoHideMobileNavbar);
-    return () => {
-      window.removeEventListener("resize", AutoHideMobileNavbar);
-    };
-  });
+  const { width } = useWindowDimensions();
 
   const toggleMobileNavbar = () => {
     setDisplayMobileNavbar(displayMobileNavbar === false ? true : false);
     setIsChecked(isChecked === false ? true : false);
-    console.log(displayMobileNavbar);
   };
 
-  const AutoHideMobileNavbar = () => {
-    const screenWidth = window.innerWidth;
-
-    if (displayMobileNavbar && screenWidth > 768) {
+  useEffect(() => {
+    if (displayMobileNavbar && width > 768) {
       setDisplayMobileNavbar(false);
     }
-  };
+  }, [displayMobileNavbar, width]);
 
   return (
     <Navbar>
