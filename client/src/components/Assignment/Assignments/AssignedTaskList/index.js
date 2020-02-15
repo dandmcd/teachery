@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
 import withSession from "../../../Session/withSession";
 import AssignedTaskItemBase from "../AssignedTaskItem";
 import * as Styled from "../style";

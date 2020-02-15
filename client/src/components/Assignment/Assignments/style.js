@@ -1,5 +1,8 @@
 import styled from "styled-components";
 import Button from "../../../theme/Button";
+import moment from "moment";
+
+const date = moment().format("YYYYMMDD");
 
 export const AssignmentContainer = styled.div`
   z-index: 10;
@@ -68,6 +71,16 @@ export const DueDate = styled.h4`
   grid-row: 2 / 3;
   grid-column: 2 / 3;
   margin: 0;
+  color: ${props =>
+    moment(date).isSameOrAfter(props.dueDate)
+      ? props.theme.error
+      : props.theme.text};
+`;
+
+export const LinkCell = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-evenly;
 `;
 
 export const Note = styled.p`
@@ -78,10 +91,9 @@ export const Note = styled.p`
 `;
 
 export const ExternalLink = styled.a`
+  font-size: 12px;
   grid-row: 4 / 5;
   grid-column: 1 / 2;
-  margin: 0px 0px 0px 5px;
-  place-self: center start;
 `;
 
 export const CreatedInfo = styled.div`
@@ -113,6 +125,12 @@ export const AssignedTo = styled.h6`
   color: ${props => props.theme.textLight};
 `;
 
+export const FileStatus = styled.h5`
+  grid-row: 5 / 6;
+  grid-column: 2 / 3;
+  margin: 0;
+`;
+
 export const FileUploadStatus = styled.h5`
   grid-row: 5 / 6;
   grid-column: 2 / 3;
@@ -123,4 +141,9 @@ export const FileUploadStatus = styled.h5`
 export const EditButton = styled(Button)`
   grid-row: 5 / 6;
   grid-column: 1 / 2;
+`;
+
+export const DownloadIcon = styled.img`
+  width: 20px;
+  height: 20px;
 `;

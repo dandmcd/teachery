@@ -1,28 +1,28 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
-import styled from "styled-components";
 
-import useOuterClickNotifier from "../../Alerts";
-import ErrorMessage from "../../Alerts/Error";
-import GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS from "../AssignmentAdmin/AssignmentAdminSchema";
-import Loading from "../../Loading";
-import SuccessMessage from "../../Alerts/Success";
-import * as Styled from "../../../theme/Popup";
-import Button from "../../../theme/Button";
-import DropZone from "../../Uploader";
+import useOuterClickNotifier from "../../../Alerts";
+import * as Styled from "../../../../theme/Popup";
+import DropZone from "../../../Uploader";
+import Loading from "../../../Loading";
+import SuccessMessage from "../../../Alerts/Success";
+import ErrorMessage from "../../../Alerts/Error";
+import withSession from "../../../Session/withSession";
 
-const CREATE_ASSIGNMENT = gql`
+const UPDATE_ASSIGNMENT = gql`
   mutation(
+    $id: ID!
     $assignmentName: String!
     $note: String
     $link: String
     $documentName: String
     $documentUrl: String
   ) {
-    createAssignment(
+    updateAssignment(
+      id: $id
       assignmentName: $assignmentName
       note: $note
       link: $link
@@ -68,60 +68,71 @@ const S3SIGNMUTATION = gql`
   }
 `;
 
-const INITIAL_STATE = {
-  assignmentName: "",
-  note: "",
-  link: "",
-  documentName: "",
-  documentUrl: ""
-};
-
-const AssignmentCreate = () => {
+const AssignmentEdit = ({ session }) => {
   const client = useApolloClient();
   const { data } = useQuery(gql`
     query Toggle {
       toggleSuccess @client
-      togglePopup @client
+      toggleAssignmentEdit @client
+      current @client
       isSubmitting @client
+      editImg @client
     }
   `);
-  const { toggleSuccess, togglePopup, isSubmitting } = data;
+  const {
+    toggleSuccess,
+    toggleAssignmentEdit,
+    current,
+    isSubmitting,
+    editImg
+  } = data;
 
-  const [{ assignmentName, note, link }, setAssignmentState] = useState(
-    INITIAL_STATE
-  );
-  const [drop, setDrop] = useState(null);
-
-  // Mutation Hooks
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
-  const [createAssignment, { loading, error }] = useMutation(
-    CREATE_ASSIGNMENT,
+  const [updateAssignment, { loading, error }] = useMutation(
+    UPDATE_ASSIGNMENT,
     {
       onError: err => {
         client.writeData({ data: { toggleSuccess: false } });
       },
       onCompleted: data => {
         client.writeData({ data: { toggleSuccess: true } });
-      },
-      update(cache, { data: { createAssignment } }) {
-        const data = cache.readQuery({
-          query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS
-        });
-
-        cache.writeQuery({
-          query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS,
-          data: {
-            ...data,
-            assignments: {
-              ...data.assignments,
-              edges: [createAssignment, ...data.assignments.edges],
-              pageInfo: data.assignments.pageInfo
-            }
-          }
-        });
       }
     }
   );
+
+  useEffect(() => {
+    if (toggleAssignmentEdit) {
+      const currentAssignment = client.readFragment({
+        id: current,
+        fragment: gql`
+          fragment assignment on Assignment {
+            id
+            assignmentName
+            note
+            link
+            documentName
+            documentUrl
+            createdAt
+          }
+        `
+      });
+      console.log(currentAssignment);
+
+      setState(currentAssignment);
+    }
+  }, [client, current, toggleAssignmentEdit]);
+
+  const [state, setState] = useState({
+    id: null,
+    assignmentName: "",
+    note: "",
+    link: "",
+    documentName: "",
+    documentUrl: ""
+  });
+  const { id, assignmentName, note, link, documentName, documentUrl } = state;
+
+  const [drop, setDrop] = useState(null);
 
   useEffect(() => {
     if (toggleSuccess) {
@@ -131,7 +142,15 @@ const AssignmentCreate = () => {
     }
   }, [client, toggleSuccess]);
 
-  // S3 Sign and format
+  const onChange = e => {
+    const { name, value } = e.target;
+    setState(prevState => ({ ...prevState, [name]: value }));
+  };
+
+  const handleClick = () => {
+    client.writeData({ data: { editImg: !editImg } });
+  };
+
   const uploadToS3 = async (file, signedRequest) => {
     const options = {
       headers: {
@@ -150,14 +169,9 @@ const AssignmentCreate = () => {
     return newFilename.substring(0, 60);
   };
 
-  const onChange = e => {
-    const { name, value } = e.target;
-    setAssignmentState(prevState => ({ ...prevState, [name]: value }));
-  };
-
   const isInvalid = assignmentName === "";
 
-  const onSubmit = async (e, createAssignment) => {
+  const onSubmit = async (e, updateAssignment) => {
     e.preventDefault();
     console.log(drop);
     if (drop) {
@@ -173,32 +187,63 @@ const AssignmentCreate = () => {
         const { signedRequest, url } = response.data.signS3;
 
         await uploadToS3(drop, signedRequest);
-
-        await createAssignment({
+        console.log("It's a drop");
+        await updateAssignment({
           variables: {
-            assignmentName: assignmentName,
-            note: note,
-            link: link,
+            id: id,
+            assignmentName,
+            note,
+            link,
             documentName: drop.name,
             documentUrl: url
           }
         }).then(async ({ data }) => {
-          setAssignmentState({ ...INITIAL_STATE });
+          setState({
+            id: id,
+            assignmentName: assignmentName,
+            note: note,
+            link: link,
+            documentName: "",
+            documentUrl: ""
+          });
         });
         client.writeData({ data: { isSubmitting: false } });
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
       }
+    } else if (documentUrl === "") {
+      console.log("It's an else if");
+      await updateAssignment({
+        variables: {
+          id: id,
+          assignmentName: assignmentName,
+          note: note,
+          link: link,
+          documentName: null,
+          documentUrl: null
+        }
+      });
     } else {
       try {
-        await createAssignment({
+        console.log("It's else");
+        await updateAssignment({
           variables: {
+            id: id,
             assignmentName: assignmentName,
             note: note,
-            link: link
+            link: link,
+            documentName: documentName,
+            documentUrl: documentUrl
           }
         }).then(async ({ data }) => {
-          setAssignmentState({ ...INITIAL_STATE });
+          setState({
+            id: id,
+            assignmentName: assignmentName,
+            note: note,
+            link: link,
+            documentName: "",
+            documentUrl: ""
+          });
         });
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
@@ -206,35 +251,30 @@ const AssignmentCreate = () => {
     }
   };
 
-  const handleChange = e => {
-    setDrop(e.target.value);
-  };
-
-  // Onclick toggle popup for mutation form
   const togglePopupModal = () => {
     client.writeData({
-      data: { togglePopup: !togglePopup }
+      data: {
+        toggleAssignmentEdit: !toggleAssignmentEdit,
+        editImg: false
+      }
     });
   };
   const innerRef = useRef(null);
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Container>
-      <AssignButton type="button" onClick={togglePopupModal}>
-        New Assignment
-      </AssignButton>
-      {togglePopup ? (
+    <Fragment>
+      {toggleAssignmentEdit ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
             <Styled.PopupHeader>
-              <Styled.PopupTitle>Create An Assignment ...</Styled.PopupTitle>
+              <Styled.PopupTitle>Edit Assignment ...</Styled.PopupTitle>
               <Styled.PopupFooterButton onClick={togglePopupModal}>
                 <Styled.CloseSpan />
               </Styled.PopupFooterButton>
             </Styled.PopupHeader>
             <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, createAssignment)}>
+              <form onSubmit={e => onSubmit(e, updateAssignment)}>
                 <Styled.Label>
                   <Styled.Span>
                     <Styled.LabelName>Assignment Name</Styled.LabelName>
@@ -263,17 +303,44 @@ const AssignmentCreate = () => {
                   </Styled.Span>
                   <Styled.Input
                     name="link"
-                    value={link}
+                    value={link || ""}
                     onChange={onChange}
                     type="text"
                   />
                 </Styled.Label>
-
-                <DropZone
-                  setDrop={setDrop}
-                  handleChange={handleChange}
-                  isDocument={"isDocument"}
-                />
+                {documentUrl !== null ? (
+                  <div>
+                    <Styled.CardImg src={documentUrl} alt={documentUrl} />
+                  </div>
+                ) : null}
+                <Styled.AddButton type="button" onClick={handleClick}>
+                  {!editImg && documentUrl === null
+                    ? "Add File"
+                    : !editImg
+                    ? "Change"
+                    : "Keep Original"}
+                </Styled.AddButton>
+                {documentUrl !== null && (
+                  <Styled.DeleteButton
+                    documentUrl={documentUrl}
+                    type="button"
+                    onClick={() =>
+                      setState({
+                        id: id,
+                        assignmentName: assignmentName,
+                        note: note,
+                        link: link,
+                        documentName: "",
+                        documentUrl: ""
+                      })
+                    }
+                  >
+                    Remove File
+                  </Styled.DeleteButton>
+                )}
+                {editImg && (
+                  <DropZone setDrop={setDrop} isDocument={"isDocument"} />
+                )}
                 {loading && <Loading />}
                 <Styled.Submission>
                   {!isSubmitting ? (
@@ -285,7 +352,7 @@ const AssignmentCreate = () => {
                   )}
                 </Styled.Submission>
                 {toggleSuccess && (
-                  <SuccessMessage message="Assignment Created!" />
+                  <SuccessMessage message="Assignment Updated!" />
                 )}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>
@@ -293,14 +360,8 @@ const AssignmentCreate = () => {
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Container>
+    </Fragment>
   );
 };
 
-const Container = styled.div``;
-
-const AssignButton = styled(Button)`
-  width: 175px;
-`;
-
-export default AssignmentCreate;
+export default withSession(AssignmentEdit);

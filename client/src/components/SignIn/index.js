@@ -89,22 +89,30 @@ const SignInForm = props => {
   return (
     <Styled.Box onSubmit={e => onSubmit(e, signIn)}>
       <Styled.Title>Login</Styled.Title>
-      <Styled.InputUserName
-        name="login"
-        value={login}
-        onChange={onChange}
-        type="text"
-        placeholder="Email or Username"
-        autoComplete="username"
-      />
-      <Styled.InputPassword
-        name="password"
-        value={password}
-        onChange={onChange}
-        type="password"
-        placeholder="Password"
-        autoComplete="current-password"
-      />
+      <Styled.Label>
+        <Styled.Span>
+          <Styled.LabelName>Email or Username</Styled.LabelName>
+        </Styled.Span>
+        <Styled.InputUserName
+          name="login"
+          value={login}
+          onChange={onChange}
+          type="text"
+          autoComplete="username"
+        />
+      </Styled.Label>
+      <Styled.Label>
+        <Styled.Span>
+          <Styled.LabelName>Password</Styled.LabelName>
+        </Styled.Span>
+        <Styled.InputPassword
+          name="password"
+          value={password}
+          onChange={onChange}
+          type="password"
+          autoComplete="current-password"
+        />
+      </Styled.Label>
       <Styled.SubmitButton className="button" disabled={loading} type="submit">
         Sign In
       </Styled.SubmitButton>

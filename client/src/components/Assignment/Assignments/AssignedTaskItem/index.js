@@ -7,6 +7,7 @@ import styled from "styled-components";
 
 import * as Styled from "../style";
 import download from "../../../../assets/download.png";
+import downloadblue from "../../../../assets/downloadblue.png";
 
 const AssignedTaskItemBase = ({
   assignedTask: {
@@ -22,6 +23,8 @@ const AssignedTaskItemBase = ({
       assignmentName,
       link,
       note,
+      documentName,
+      documentUrl,
       user: { username }
     }
   },
@@ -47,7 +50,6 @@ const AssignedTaskItemBase = ({
     fileStatus = "noFile";
   }
   console.log(fileStatus);
-
   const togglePopupModal = () => {
     client.writeData({
       data: {
@@ -55,24 +57,37 @@ const AssignedTaskItemBase = ({
         current: id
       }
     });
-    console.log(data);
   };
+  console.log(documentUrl);
   return (
     <Styled.AssignmentItemContainer>
       <Styled.CardGrid>
         <Styled.Title>{assignmentName}</Styled.Title>
         <Styled.Status status={status}>{status}</Styled.Status>
-        <Styled.DueDate>Due: {dueDate}</Styled.DueDate>
+        <Styled.DueDate dueDate={dueDate}>Due: {dueDate}</Styled.DueDate>
         <Styled.Note>{note}</Styled.Note>
-        {link !== null ? (
-          <Styled.ExternalLink
-            href={link}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            View Link
-          </Styled.ExternalLink>
-        ) : null}
+        <Styled.LinkCell>
+          {documentUrl !== null ? (
+            <Styled.FileStatus>
+              <DownloadLink
+                href={documentUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <Styled.DownloadIcon src={downloadblue} /> View
+              </DownloadLink>
+            </Styled.FileStatus>
+          ) : null}
+          {link !== null ? (
+            <Styled.ExternalLink
+              href={link}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              View Link
+            </Styled.ExternalLink>
+          ) : null}
+        </Styled.LinkCell>
         <Styled.CreatedInfo>
           <Styled.CreatedAt>
             Created on: <Moment format="YYYY-MM-DD">{createdAt}</Moment>
@@ -81,12 +96,15 @@ const AssignedTaskItemBase = ({
 
           <Styled.AssignedTo>Assigned to: {assignedToName}</Styled.AssignedTo>
         </Styled.CreatedInfo>
-        <Styled.EditButton type="button" onClick={togglePopupModal}>
-          Edit
-        </Styled.EditButton>
+
+        {status === "INCOMPLETE" && (
+          <Styled.EditButton type="button" onClick={togglePopupModal}>
+            Update
+          </Styled.EditButton>
+        )}
         {fileStatus === "noFile" ? (
           <Styled.FileUploadStatus>
-            <DownloadIcon src={download} /> Not yet uploaded
+            <Styled.DownloadIcon src={download} /> No file uploaded
           </Styled.FileUploadStatus>
         ) : null}
         {fileStatus === "uploadedFile" ? (
@@ -96,7 +114,7 @@ const AssignedTaskItemBase = ({
               rel="noopener noreferrer"
               target="_blank"
             >
-              <DownloadIcon src={download} /> View uploaded file
+              <Styled.DownloadIcon src={download} /> View uploaded file
             </a>
           </Styled.FileUploadStatus>
         ) : null}
@@ -107,7 +125,7 @@ const AssignedTaskItemBase = ({
               rel="noopener noreferrer"
               target="_blank"
             >
-              <DownloadIcon src={download} /> View graded file
+              <Styled.DownloadIcon src={download} /> View graded file
             </a>
           </Styled.FileUploadStatus>
         ) : null}
@@ -121,9 +139,9 @@ AssignedTaskItemBase.propTypes = {
   me: PropTypes.object
 };
 
-const DownloadIcon = styled.img`
-  width: 20px;
-  height: 20px;
+const DownloadLink = styled.a`
+  font-weight: 400;
+  color: ${props => props.theme.secondary};
 `;
 
 export default AssignedTaskItemBase;

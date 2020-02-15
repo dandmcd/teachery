@@ -1,14 +1,10 @@
 import React, { Fragment } from "react";
-import { useQuery, useApolloClient } from "@apollo/react-hooks";
-import Moment from "react-moment";
+import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import gql from "graphql-tag";
 
-import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_USERS from "../AssignmentSchema";
 import Loading from "../../Loading";
-import * as Styled from "./style";
 import ErrorMessage from "../../Alerts/Error";
 import Button from "../../../theme/Button";
 import AssignedTaskList from "./AssignedTaskList";
@@ -20,7 +16,7 @@ const AssignedTasks = ({ limit, me }) => {
       variables: { limit }
     }
   );
-  console.log(data);
+
   if (loading && !data) {
     return <Loading />;
   } else if (!data) {

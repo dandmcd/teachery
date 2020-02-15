@@ -31,9 +31,9 @@
   },
   "dependencies": {
     "@playlyfe/gql": "^2.6.2",
-    "apollo-server": "^2.10.0",
-    "apollo-server-express": "^2.10.0",
-    "aws-sdk": "^2.614.0",
+    "apollo-server": "^2.10.1",
+    "apollo-server-express": "^2.10.1",
+    "aws-sdk": "^2.619.0",
     "bcrypt": "^3.0.8",
     "cors": "^2.8.5",
     "dataloader": "^2.0.0",

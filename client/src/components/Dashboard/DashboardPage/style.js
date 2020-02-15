@@ -76,7 +76,6 @@ export const OverdueButton = styled.button`
   font-weight: bold;
   text-decoration: none;
   outline: none;
-  cursor: pointer;
   border-style: none;
   color: white;
   background-color: ${props => props.theme.error};
@@ -104,7 +103,6 @@ export const DueButton = styled.button`
   font-weight: bold;
   text-decoration: none;
   outline: none;
-  cursor: pointer;
   border-style: none;
   color: white;
   background-color: ${props => props.theme.secondary};
@@ -203,7 +201,7 @@ export const MoreAssignmentsButton = styled(Button)`
 `;
 
 export const MoreButton = styled(Button)`
-  margin: auto;
+  margin: auto auto 5px auto;
   display: block;
   width: 205px;
   border: 2px solid ${props => props.theme.primaryDark};

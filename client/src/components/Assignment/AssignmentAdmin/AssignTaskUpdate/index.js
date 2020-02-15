@@ -3,11 +3,9 @@ import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
-import styled from "styled-components";
 
 import useOuterClickNotifier from "../../../Alerts";
 import * as Styled from "../../../../theme/Popup";
-import Button from "../../../../theme/Button";
 import DropZone from "../../../Uploader";
 import Loading from "../../../Loading";
 import SuccessMessage from "../../../Alerts/Success";
@@ -103,6 +101,23 @@ const AssignTaskUpdate = ({ session }) => {
     }
   );
 
+  const [state, setState] = useState({
+    id: null,
+    assignedTo: "",
+    dueDate: "",
+    status: "",
+    updatedDocumentName: "",
+    updatedDocumentUrl: ""
+  });
+  const {
+    id,
+    assignedTo,
+    dueDate,
+    status,
+    updatedDocumentName,
+    updatedDocumentUrl
+  } = state;
+
   useEffect(() => {
     if (toggleAssignUpdate) {
       const currentAssignedTask = client.readFragment({
@@ -123,22 +138,7 @@ const AssignTaskUpdate = ({ session }) => {
     }
   }, [client, current, toggleAssignUpdate]);
 
-  const [state, setState] = useState({
-    id: null,
-    assignedTo: "",
-    dueDate: "",
-    status: "",
-    updatedDocumentName: "",
-    updatedDocumentUrl: ""
-  });
-  const {
-    id,
-    assignedTo,
-    dueDate,
-    status,
-    updatedDocumentName,
-    updatedDocumentUrl
-  } = state;
+  console.log(state);
 
   const [drop, setDrop] = useState(null);
 
@@ -289,7 +289,7 @@ const AssignTaskUpdate = ({ session }) => {
   console.log(session);
 
   return (
-    <Container>
+    <Fragment>
       {toggleAssignUpdate ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
@@ -303,46 +303,54 @@ const AssignTaskUpdate = ({ session }) => {
               <form onSubmit={e => onSubmit(e, updateAssignedTask)}>
                 {superRole && (
                   <Fragment>
-                    <Styled.Input
-                      name="dueDate"
-                      value={dueDate}
-                      onChange={onChange}
-                      type="date"
-                      placeholder="Set date due"
-                    />
-                    <select
-                      name="status"
-                      value={status}
-                      onChange={onChange}
-                      type="text"
-                      placeholder="Set status of the task"
-                    >
-                      <option value="" disabled>
-                        Select status
-                      </option>
-                      {menuItems.map((item, index) => (
-                        <option key={index} value={item.name}>
-                          {item.name}
+                    <Styled.Label>
+                      <Styled.Span>
+                        <Styled.LabelName>Due Date</Styled.LabelName>
+                      </Styled.Span>
+                      <Styled.Input
+                        name="dueDate"
+                        value={dueDate}
+                        onChange={onChange}
+                        type="date"
+                      />
+                    </Styled.Label>
+                    <Styled.Select>
+                      <Styled.SelectBox
+                        name="status"
+                        value={status}
+                        onChange={onChange}
+                        type="text"
+                        placeholder="Set Task Status"
+                      >
+                        <option value="" disabled>
+                          Select status
                         </option>
-                      ))}
-                    </select>
+                        {menuItems.map((item, index) => (
+                          <option key={index} value={item.name}>
+                            {item.name}
+                          </option>
+                        ))}
+                      </Styled.SelectBox>
+                    </Styled.Select>
                   </Fragment>
                 )}
                 {updatedDocumentUrl !== null ? (
-                  <Styled.CardImg
-                    src={updatedDocumentUrl}
-                    alt={updatedDocumentUrl}
-                  />
+                  <div>
+                    <Styled.CardImg
+                      src={updatedDocumentUrl}
+                      alt={updatedDocumentUrl}
+                    />
+                  </div>
                 ) : null}
-                <button type="button" onClick={handleClick}>
+                <Styled.AddButton type="button" onClick={handleClick}>
                   {!editImg && updatedDocumentUrl === null
                     ? "Add File"
                     : !editImg
                     ? "Change"
                     : "Keep Original"}
-                </button>
+                </Styled.AddButton>
                 {updatedDocumentUrl !== null && (
-                  <DeleteButton
+                  <Styled.DeleteButton
                     updatedDocumentUrl={updatedDocumentUrl}
                     type="button"
                     onClick={() =>
@@ -356,20 +364,22 @@ const AssignTaskUpdate = ({ session }) => {
                       })
                     }
                   >
-                    Delete File
-                  </DeleteButton>
+                    Remove File
+                  </Styled.DeleteButton>
                 )}
                 {editImg && (
                   <DropZone setDrop={setDrop} isDocument={"isDocument"} />
                 )}
-                {!isSubmitting ? (
-                  <Button disabled={isInvalid} type="submit">
-                    Submit
-                  </Button>
-                ) : (
-                  <Loading />
-                )}
                 {loading && <Loading />}
+                <Styled.Submission>
+                  {!isSubmitting ? (
+                    <Styled.SubmitButton disabled={isInvalid} type="submit">
+                      Submit
+                    </Styled.SubmitButton>
+                  ) : (
+                    <Loading />
+                  )}
+                </Styled.Submission>
                 {toggleSuccess && (
                   <SuccessMessage message="Assigned Task Updated!" />
                 )}
@@ -379,14 +389,8 @@ const AssignTaskUpdate = ({ session }) => {
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Container>
+    </Fragment>
   );
 };
-
-const Container = styled.div``;
-
-const DeleteButton = styled(Button)`
-  display: ${props => props.updatedDocumentUrl === "" && "none"};
-`;
 
 export default withSession(AssignTaskUpdate);

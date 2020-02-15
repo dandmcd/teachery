@@ -33,11 +33,25 @@ export const Title = styled.h1`
   font-weight: 600;
 `;
 
+export const Label = styled.label`
+  display: block;
+  text-align: left;
+  margin: 0 auto;
+  width: 88%;
+`;
+
+export const LabelName = styled.h4`
+  margin: auto auto auto 1.5em;
+`;
+
+export const Span = styled.span``;
+
 export const InputUserName = styled.input`
+  font-family: "Open Sans", sans-serif;
   border: 0;
   background-color: #fff;
   display: block;
-  margin: 20px auto;
+  margin: 3px auto 17px auto;
   text-align: center;
   border: 2px solid ${props => props.theme.secondary};
   padding: 14px 10px;
@@ -52,10 +66,11 @@ export const InputUserName = styled.input`
 `;
 
 export const InputPassword = styled.input`
+  font-family: "Open Sans", sans-serif;
   border: 0;
   background-color: #fff;
   display: block;
-  margin: 20px auto;
+  margin: 3px auto 17px auto;
   text-align: center;
   border: 2px solid ${props => props.theme.secondary};
   padding: 14px 10px;

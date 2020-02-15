@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import styled from "styled-components";
 
 import useOuterClickNotifier from "../../Alerts";
 import ErrorMessage from "../../Alerts/Error";
@@ -110,10 +109,10 @@ role: ""
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Container>
-      <RoleButton type="button" onClick={togglePopupModal}>
+    <Fragment>
+      <Button type="button" onClick={togglePopupModal}>
         Change Role
-      </RoleButton>
+      </Button>
       {toggleRoleChange ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
@@ -125,31 +124,42 @@ role: ""
             </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, updateUserRole)}>
-                <Styled.Input
-                  name="email"
-                  value={email}
-                  onChange={onChange}
-                  type="email"
-                  placeholder="Enter email of user"
-                />
-                <select
-                  name="role"
-                  value={role}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Set role for user"
-                >
-                  <option value="" disabled>
-                    Select status
-                  </option>
-                  {menuItems.map((item, index) => (
-                    <option key={index} value={item.name}>
-                      {item.name}
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>
+                      Enter an Email or Username
+                    </Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.Input
+                    name="email"
+                    value={email}
+                    onChange={onChange}
+                    type="email"
+                  />
+                </Styled.Label>
+                <Styled.Select>
+                  <Styled.SelectBox
+                    name="role"
+                    value={role}
+                    onChange={onChange}
+                    type="text"
+                  >
+                    <option value="" disabled>
+                      Select Role
                     </option>
-                  ))}
-                </select>
-                <Button type="submit">Submit</Button>
+                    {menuItems.map((item, index) => (
+                      <option key={index} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Styled.SelectBox>
+                </Styled.Select>
                 {loading && <Loading />}
+                <Styled.Submission>
+                  <Styled.SubmitButton type="submit">
+                    Submit
+                  </Styled.SubmitButton>
+                </Styled.Submission>
                 {toggleSuccess && (
                   <SuccessMessage message="User role updated!" />
                 )}
@@ -159,14 +169,8 @@ role: ""
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Container>
+    </Fragment>
   );
 };
-
-const Container = styled.div``;
-
-const RoleButton = styled(Button)`
-  font-size: 10px;
-`;
 
 export default RoleChange;

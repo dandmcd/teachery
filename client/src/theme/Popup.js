@@ -72,10 +72,11 @@ export const PopupTitle = styled.h3`
 export const PopupBody = styled.div``;
 
 export const Input = styled.input`
+  font-family: "Open Sans", sans-serif;
   border: 0;
   background-color: #fff;
   display: block;
-  margin: 20px auto;
+  margin: 3px auto 17px auto;
   text-align: center;
   border: 2px solid ${props => props.theme.secondary};
   padding: 14px 10px;
@@ -102,11 +103,25 @@ export const Input = styled.input`
   }
 `;
 
+export const Label = styled.label`
+  display: block;
+  text-align: left;
+  width: 320px;
+  margin: 0 auto;
+`;
+
+export const LabelName = styled.h4`
+  margin: 0.5em auto auto 1.5em;
+`;
+
+export const Span = styled.span``;
+
 export const InputTextArea = styled.textarea`
+  font-family: "Open Sans", sans-serif;
   border: 0;
   background-color: #fff;
   display: block;
-  margin: 20px auto;
+  margin: 3px auto 17px auto;
   text-align: center;
   border: 2px solid ${props => props.theme.secondary};
   padding: 14px 10px;
@@ -141,7 +156,7 @@ export const CloseSpan = styled.span`
   height: 6px;
   margin: 0 auto;
   z-index: 20;
-  background: ${props => props.theme.error};
+  background: ${props => props.theme.primaryMed};
   border-radius: 3px;
   transform-origin: 4px 0px;
   transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1),
@@ -178,4 +193,30 @@ export const CardImg = styled.img`
 export const CreateButton = styled(Button)`
   border: 2px solid ${props => props.theme.secondary};
   width: 175px;
+`;
+
+export const AddButton = styled(Button)`
+  border: 2px solid ${props => props.theme.secondaryDark};
+`;
+
+export const Select = styled.div`
+  margin: 20px auto;
+`;
+
+export const SelectBox = styled.select`
+  outline: 0;
+  border: 2px solid ${props => props.theme.secondary};
+`;
+
+export const Submission = styled.div`
+  margin: 20px auto;
+`;
+
+export const SubmitButton = styled(Button)`
+  width: 124px;
+`;
+
+export const DeleteButton = styled(Button)`
+  border: 2px solid ${props => props.theme.error};
+  display: ${props => props.updatedDocumentUrl === "" && "none"};
 `;

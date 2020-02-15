@@ -54,7 +54,7 @@ const MessageCreate = () => {
         value={text}
         onChange={onChange}
         type="text"
-        placeholder="Your message ..."
+        placeholder="Message other teachers ..."
       />
       <SendButton type="submit">Send</SendButton>
 

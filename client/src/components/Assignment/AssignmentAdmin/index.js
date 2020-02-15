@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment, useState } from "react";
 import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import Moment from "react-moment";
 import styled from "styled-components";
@@ -12,6 +12,7 @@ import Loading from "../../Loading";
 import * as Styled from "./style";
 import ErrorMessage from "../../Alerts/Error";
 import Button from "../../../theme/Button";
+import download from "../../../assets/download.png";
 
 const Assignments = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
@@ -31,7 +32,7 @@ const Assignments = ({ limit, me }) => {
   const { edges, pageInfo } = data.assignments;
 
   return (
-    <Styled.AssignmentContainer>
+    <Fragment>
       <AssignmentList assignments={edges} me={me} />
 
       {pageInfo.hasNextPage && (
@@ -43,7 +44,7 @@ const Assignments = ({ limit, me }) => {
           More
         </MoreAssignmentsButton>
       )}
-    </Styled.AssignmentContainer>
+    </Fragment>
   );
 };
 
@@ -98,9 +99,13 @@ const AssignmentButton = styled(Button)`
 `;
 
 const AssignmentList = ({ assignments, me }) => {
-  return assignments.map(assignment => (
-    <AssignmentItem key={assignment.id} assignment={assignment} me={me} />
-  ));
+  return (
+    <Styled.AssignmentContainer>
+      {assignments.map(assignment => (
+        <AssignmentItem key={assignment.id} assignment={assignment} me={me} />
+      ))}
+    </Styled.AssignmentContainer>
+  );
 };
 
 AssignmentList.propTypes = {
@@ -113,16 +118,38 @@ const AssignmentItemBase = ({ assignment, session }) => {
   const { data } = useQuery(gql`
     query Toggle {
       toggleAssign @client
+      toggleAssignmentEdit @client
     }
   `);
-  const { toggleAssign } = data;
+  const { toggleAssign, toggleAssignmentEdit } = data;
+
+  const [isChecked, setIsChecked] = useState(false);
+
+  const toggleEditMenu = () => {
+    setIsChecked(isChecked === false ? true : false);
+  };
+
+  let fileStatus;
+  if (assignment.documentUrl !== null) {
+    fileStatus = "uploadedFile";
+  } else {
+    fileStatus = "noFile";
+  }
+  console.log(fileStatus);
 
   const togglePopupModal = mutateType => {
-    if (mutateType === toggleAssign) {
+    if (mutateType === "toggleAssign") {
       client.writeData({
         data: { toggleAssign: !toggleAssign, assignmentId: assignment.id }
       });
       console.log("Ok");
+    } else if (mutateType === "toggleAssignmentEdit") {
+      client.writeData({
+        data: {
+          toggleAssignmentEdit: !toggleAssignmentEdit,
+          current: assignment.id
+        }
+      });
     }
   };
 
@@ -131,20 +158,15 @@ const AssignmentItemBase = ({ assignment, session }) => {
       <Styled.CardGrid>
         <Styled.Title>{assignment.assignmentName}</Styled.Title>
         <Styled.Note>{assignment.note}</Styled.Note>
-        <Styled.ExternalLink
-          href={assignment.link}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          View Link
-        </Styled.ExternalLink>
-        <a
-          href={assignment.documentUrl}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          View File
-        </a>
+        {assignment.link !== null ? (
+          <Styled.ExternalLink
+            href={assignment.link}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            View Link
+          </Styled.ExternalLink>
+        ) : null}
         <Styled.CreatedInfo>
           <Styled.CreatedAt>
             Created on:{" "}
@@ -154,15 +176,49 @@ const AssignmentItemBase = ({ assignment, session }) => {
             Created by: {assignment.user.username}
           </Styled.CreatedBy>
         </Styled.CreatedInfo>
-        <AssignButton
-          type="button"
-          onClick={() => togglePopupModal(toggleAssign)}
-        >
-          Assign Task
-        </AssignButton>
-        {session && session.me && assignment.user.id === session.me.id && (
-          <AssignmentDelete assignment={assignment} />
-        )}
+        <Styled.EditDropDown>
+          <Styled.ManageButton
+            type="checkbox"
+            checked={isChecked}
+            onClick={toggleEditMenu}
+            onChange={toggleEditMenu}
+          >
+            Manage
+          </Styled.ManageButton>
+          <Styled.EditDropDownContent isChecked={isChecked}>
+            {session && session.me && assignment.user.id === session.me.id && (
+              <AssignmentDelete assignment={assignment} />
+            )}
+            <Styled.EditButton
+              type="button"
+              onClick={() => togglePopupModal("toggleAssignmentEdit")}
+            >
+              Edit
+            </Styled.EditButton>
+            <Styled.AssignButton
+              type="button"
+              onClick={() => togglePopupModal("toggleAssign")}
+            >
+              Assign Task
+            </Styled.AssignButton>
+          </Styled.EditDropDownContent>
+        </Styled.EditDropDown>
+        {fileStatus === "noFile" ? (
+          <Styled.FileUploadStatus>
+            <Styled.DownloadIcon src={download} /> Not yet uploaded
+          </Styled.FileUploadStatus>
+        ) : null}
+        {fileStatus === "uploadedFile" ? (
+          <Styled.FileUploadStatus>
+            <a
+              href={assignment.documentUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Styled.DownloadIcon src={download} /> View file
+            </a>
+          </Styled.FileUploadStatus>
+        ) : null}
       </Styled.CardGrid>
     </Styled.AssignmentItemContainer>
   );
@@ -173,9 +229,6 @@ AssignmentItemBase.propTypes = {
   me: PropTypes.object
 };
 
-const AssignButton = styled(Button)`
-  font-size: 10px;
-`;
-
 const AssignmentItem = withSession(AssignmentItemBase);
+
 export default Assignments;

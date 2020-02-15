@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment, useState } from "react";
 import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import Moment from "react-moment";
 import styled from "styled-components";
@@ -12,6 +12,8 @@ import ErrorMessage from "../../Alerts/Error";
 import Button from "../../../theme/Button";
 import GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS from "../../Assignment/AssignmentAdmin/AssignTaskUpdate/AssignTaskUpdateSchema";
 import AssignedTaskDelete from "../../Assignment/AssignmentAdmin/AssignedTaskDelete";
+import download from "../../../assets/download.png";
+import downloadblue from "../../../assets/downloadblue.png";
 
 const TeacherAssignedTasks = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
@@ -20,7 +22,7 @@ const TeacherAssignedTasks = ({ limit, me }) => {
       variables: { limit }
     }
   );
-  console.log(data);
+
   if (loading && !data) {
     return <Loading />;
   } else if (!data) {
@@ -32,7 +34,7 @@ const TeacherAssignedTasks = ({ limit, me }) => {
   const { edges, pageInfo } = data.assignedTasksTeacher;
 
   return (
-    <Styled.AssignmentContainer>
+    <Fragment>
       <AssignedTaskList assignedTasksTeacher={edges} me={me} />
 
       {pageInfo.hasNextPage && (
@@ -44,7 +46,7 @@ const TeacherAssignedTasks = ({ limit, me }) => {
           More
         </MoreAssignedTasksButton>
       )}
-    </Styled.AssignmentContainer>
+    </Fragment>
   );
 };
 
@@ -85,7 +87,7 @@ const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
 );
 
 const AssignmentButton = styled(Button)`
-  margin: auto;
+  margin: auto auto 5px auto;
   display: block;
   width: 205px;
   border: 2px solid ${props => props.theme.primaryDark};
@@ -99,13 +101,17 @@ MoreAssignedTasksButton.propTypes = {
 };
 
 const AssignedTaskList = ({ assignedTasksTeacher, me }) => {
-  return assignedTasksTeacher.map(assignedTask => (
-    <AssignedTaskItem
-      key={assignedTask.id}
-      assignedTask={assignedTask}
-      me={me}
-    />
-  ));
+  return (
+    <Styled.AssignmentContainer>
+      {assignedTasksTeacher.map(assignedTask => (
+        <AssignedTaskItem
+          key={assignedTask.id}
+          assignedTask={assignedTask}
+          me={me}
+        />
+      ))}
+    </Styled.AssignmentContainer>
+  );
 };
 
 AssignedTaskList.propTypes = {
@@ -134,18 +140,30 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
       assignmentName,
       link,
       note,
+      documentName,
+      documentUrl,
       user: { username }
     }
   } = assignedTask;
 
-  // const isValidUrl = () => {
-  //   try {
-  //     new URL(updatedDocumentUrl);
-  //     return true;
-  //   } catch (_) {
-  //     return false;
-  //   }
-  // }
+  const [isChecked, setIsChecked] = useState(false);
+
+  let fileStatus;
+  if (updatedDocumentUrl !== null) {
+    if (status === "SUBMITTED" || "COMPLETE") {
+      fileStatus = "uploadedFile";
+    }
+    if (status === "GRADED") {
+      fileStatus = "gradedFile";
+    }
+  } else {
+    fileStatus = "noFile";
+  }
+  console.log(fileStatus);
+
+  const toggleEditMenu = () => {
+    setIsChecked(isChecked === false ? true : false);
+  };
 
   const togglePopupModal = () => {
     client.writeData({
@@ -154,39 +172,90 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
         current: id
       }
     });
-    console.log(data);
   };
+
+  console.log(documentUrl);
+
   return (
     <Styled.AssignmentItemContainer>
       <Styled.CardGrid>
         <Styled.Title>{assignmentName}</Styled.Title>
         <Styled.Status status={status}>{status}</Styled.Status>
-        <Styled.DueDate>Due: {dueDate}</Styled.DueDate>
-        <div>Assigned to: {assignedToName}</div>
+        <Styled.DueDate dueDate={dueDate}>Due: {dueDate}</Styled.DueDate>
         <Styled.Note>{note}</Styled.Note>
-
-        <Styled.ExternalLink
-          href={link}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          View Link
-        </Styled.ExternalLink>
-        {updatedDocumentUrl === null ? (
-          <h5>File: Not yet uploaded</h5>
-        ) : (
-          <h5>File: Already Uploaded</h5>
-        )}
-        <Button type="button" onClick={togglePopupModal}>
-          Edit
-        </Button>
-        <AssignedTaskDelete assignedTask={assignedTask} />
+        <Styled.LinkCell>
+          {documentUrl !== null ? (
+            <Styled.FileStatus>
+              <DownloadLink
+                href={documentUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <Styled.DownloadIcon src={downloadblue} /> View
+              </DownloadLink>
+            </Styled.FileStatus>
+          ) : null}
+          {link !== null ? (
+            <Styled.ExternalLink
+              href={link}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              View Link
+            </Styled.ExternalLink>
+          ) : null}
+        </Styled.LinkCell>
         <Styled.CreatedInfo>
           <Styled.CreatedAt>
             Created on: <Moment format="YYYY-MM-DD">{createdAt}</Moment>
           </Styled.CreatedAt>
           <Styled.CreatedBy>Created by: {username}</Styled.CreatedBy>
+
+          <Styled.AssignedTo>Assigned to: {assignedToName}</Styled.AssignedTo>
         </Styled.CreatedInfo>
+        <Styled.EditDropDown>
+          <Styled.ManageButton
+            type="checkbox"
+            checked={isChecked}
+            onClick={toggleEditMenu}
+            onChange={toggleEditMenu}
+          >
+            Manage
+          </Styled.ManageButton>
+          <Styled.EditDropDownContent isChecked={isChecked}>
+            <AssignedTaskDelete assignedTask={assignedTask} />
+            <Styled.EditButton type="button" onClick={togglePopupModal}>
+              Edit
+            </Styled.EditButton>
+          </Styled.EditDropDownContent>
+        </Styled.EditDropDown>
+        {fileStatus === "noFile" ? (
+          <Styled.FileUploadStatus>
+            <Styled.DownloadIcon src={download} /> Not yet uploaded
+          </Styled.FileUploadStatus>
+        ) : null}
+        {fileStatus === "uploadedFile" ? (
+          <Styled.FileUploadStatus>
+            <a
+              href={updatedDocumentUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Styled.DownloadIcon src={download} /> View uploaded file
+            </a>
+          </Styled.FileUploadStatus>
+        ) : null}
+        {fileStatus === "gradedFile" ? (
+          <Styled.FileUploadStatus>
+            <a
+              href={updatedDocumentUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Styled.DownloadIcon src={download} /> View graded file
+            </a>
+          </Styled.FileUploadStatus>
+        ) : null}
       </Styled.CardGrid>
     </Styled.AssignmentItemContainer>
   );
@@ -196,6 +265,11 @@ AssignmentItemBase.propTypes = {
   assignedTask: PropTypes.object.isRequired,
   me: PropTypes.object
 };
+
+const DownloadLink = styled.a`
+  font-weight: 400;
+  color: ${props => props.theme.secondary};
+`;
 
 const AssignedTaskItem = withSession(AssignmentItemBase);
 

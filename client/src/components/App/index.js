@@ -19,9 +19,8 @@ import Cards from "../FlashCards/Cards";
 import CardList from "../FlashCards/Cards/CardList";
 import Search from "../FlashCards/Decks/DeckSearch";
 import Tags from "../FlashCards/Decks/DeckItem/DeckTags/TagItem";
-import TeacherPage from "../Teacher";
 import Dashboard from "../Dashboard";
-
+import TeacherPage from "../Teacher/";
 import GlobalStyle from "../../theme/globalStyle";
 
 const App = ({ session, refetch }) => (

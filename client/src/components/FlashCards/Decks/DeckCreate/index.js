@@ -5,7 +5,6 @@ import axios from "axios";
 import moment from "moment";
 
 import * as Styled from "../../../../theme/Popup";
-import Button from "../../../../theme/Button";
 import useOuterClickNotifier from "../../../Alerts";
 import DropZone from "../../../Uploader";
 import ErrorMessage from "../../../Alerts/Error";
@@ -215,43 +214,53 @@ const DeckCreate = () => {
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
             <Styled.PopupHeader>
-              <Styled.PopupTitle>
-                Create a name and description for your deck ...
-              </Styled.PopupTitle>
+              <Styled.PopupTitle>Create a Deck ...</Styled.PopupTitle>
               <Styled.PopupFooterButton onClick={togglePopupModal}>
                 <Styled.CloseSpan />
               </Styled.PopupFooterButton>
             </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, createDeck)}>
-                <Styled.Input
-                  name="deckName"
-                  value={deckName}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Enter a deck name*"
-                />
-                <Styled.InputTextArea
-                  name="description"
-                  value={description}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Add details and description*"
-                />
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>Enter a Deck Name</Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.Input
+                    name="deckName"
+                    value={deckName}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>
+                      Add Details or a Description
+                    </Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.InputTextArea
+                    name="description"
+                    value={description}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
                 <DropZone
                   setDrop={setDrop}
                   setImage={setImage}
                   handleChange={handleChange}
                   isDeck={"isDeck"}
                 />
-                {!isSubmitting ? (
-                  <Button disabled={isInvalid} type="submit">
-                    Submit
-                  </Button>
-                ) : (
-                  <Loading />
-                )}
                 {loading && <Loading />}
+                <Styled.Submission>
+                  {!isSubmitting ? (
+                    <Styled.SubmitButton disabled={isInvalid} type="submit">
+                      Submit
+                    </Styled.SubmitButton>
+                  ) : (
+                    <Loading />
+                  )}
+                </Styled.Submission>
                 {toggleSuccess && <SuccessMessage message="Deck created!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>

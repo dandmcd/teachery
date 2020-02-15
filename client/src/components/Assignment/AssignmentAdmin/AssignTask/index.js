@@ -9,7 +9,6 @@ import ErrorMessage from "../../../Alerts/Error";
 import Loading from "../../../Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import * as Styled from "../../../../theme/Popup";
-import Button from "../../../../theme/Button";
 import GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS from "../AssignTaskUpdate/AssignTaskUpdateSchema";
 
 const STATUS_ENUM = gql`
@@ -184,38 +183,54 @@ const AssignTask = ({ assignment }) => {
             </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, assignTask)}>
-                <Styled.Input
-                  name="assignedTo"
-                  value={assignedTo}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Enter email or username of student"
-                />
-                <Styled.Input
-                  name="dueDate"
-                  value={dueDate}
-                  onChange={onChange}
-                  type="date"
-                  placeholder="Set date due"
-                />
-                <select
-                  name="status"
-                  value={status}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Set status of the task"
-                >
-                  <option value="" disabled>
-                    Select status
-                  </option>
-                  {menuItems.map((item, index) => (
-                    <option key={index} value={item.name}>
-                      {item.name}
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>
+                      Student's Email or Username
+                    </Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.Input
+                    name="assignedTo"
+                    value={assignedTo}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>Due Date</Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.Input
+                    name="dueDate"
+                    value={dueDate}
+                    onChange={onChange}
+                    type="date"
+                  />
+                </Styled.Label>
+                <Styled.Select>
+                  <Styled.SelectBox
+                    name="status"
+                    value={status}
+                    onChange={onChange}
+                    type="text"
+                    placeholder="Set Task Status"
+                  >
+                    <option value="" disabled>
+                      Select Status
                     </option>
-                  ))}
-                </select>
-                <Button type="submit">Submit</Button>
+                    {menuItems.map((item, index) => (
+                      <option key={index} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Styled.SelectBox>
+                </Styled.Select>
                 {loading && <Loading />}
+                <Styled.Submission>
+                  <Styled.SubmitButton type="submit">
+                    Submit
+                  </Styled.SubmitButton>
+                </Styled.Submission>
                 {toggleSuccess && (
                   <SuccessMessage message="Assigned Task Created!" />
                 )}

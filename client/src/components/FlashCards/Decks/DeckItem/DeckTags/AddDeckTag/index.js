@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Fragment } from "react";
 import { useMutation, useApolloClient, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import styled from "styled-components";
 
 import useOuterClickNotifier from "../../../../../Alerts";
 import ErrorMessage from "../../../../../Alerts/Error";
 import * as Styled from "../../../../../../theme/Popup";
-import Button from "../../../../../../theme/Button";
 import SuccessMessage from "../../../../../Alerts/Success";
 import Loading from "../../../../../Loading";
 
@@ -97,7 +95,7 @@ const AddDeckTag = () => {
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Container>
+    <Fragment>
       {toggleAddTag ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
@@ -105,22 +103,32 @@ const AddDeckTag = () => {
               <Styled.PopupTitle>
                 Create a tag for this deck...
               </Styled.PopupTitle>
-              <Styled.PopupFooterButton onClick={togglePopupModal}>
+              <Styled.PopupFooterButton
+                title="Close"
+                onClick={togglePopupModal}
+              >
                 <Styled.CloseSpan />
               </Styled.PopupFooterButton>
             </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, addTagToDeck)}>
-                <Styled.Input
-                  name="tagName"
-                  value={tagName}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Enter a Tag Name"
-                />
-                <Button disabled={isInvalid || loading} type="submit">
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>Tag Name</Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.Input
+                    name="tagName"
+                    value={tagName}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
+                <Styled.SubmitButton
+                  disabled={isInvalid || loading}
+                  type="submit"
+                >
                   Submit
-                </Button>
+                </Styled.SubmitButton>
                 {loading && <Loading />}
                 {toggleSuccess && <SuccessMessage message="Tag Created!" />}
                 {error && <ErrorMessage error={error} />}
@@ -129,10 +137,8 @@ const AddDeckTag = () => {
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Container>
+    </Fragment>
   );
 };
-
-const Container = styled.div``;
 
 export default AddDeckTag;

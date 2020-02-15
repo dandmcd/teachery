@@ -108,6 +108,7 @@ const data = {
   toggleAddTag: false,
   toggleAssign: false,
   toggleAssignUpdate: false,
+  toggleAssignmentEdit: false,
   toggleSuccess: false,
   toggleDeleteSuccess: false,
   toggleRoleChange: false,
