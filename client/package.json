@@ -19,7 +19,7 @@
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
     "history": "^4.10.1",
-    "http-proxy-middleware": "^0.20.0",
+    "http-proxy-middleware": "^1.0.0",
     "moment": "^2.24.0",
     "react": "^16.12.0",
     "react-app-polyfill": "^1.0.6",

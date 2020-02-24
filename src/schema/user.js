@@ -24,6 +24,16 @@ export default gql`
     """
     signUp(username: String!, email: String!, password: String!): Token!
 
+    confirmUser(token: String): Boolean!
+
+    changePassword(token: String!, password: String!): Token!
+
+    changePasswordLoggedIn(id: ID!, password: String!): Boolean!
+
+    forgotPassword(email: String!): Boolean!
+
+    resetPassword(token: String!): Boolean!
+
     """
     Sign in to account
     Token and password are required!

@@ -11,7 +11,9 @@ const AssignmentPage = () => (
       <AssignTaskUpdate />
       <Title>Assignments</Title>
     </AssignmentHeader>
-    <AssignedTasks limit={6} />
+    <AssignmentsWrapper>
+      <AssignedTasks limit={6} />
+    </AssignmentsWrapper>
   </Container>
 );
 
@@ -27,6 +29,10 @@ const AssignmentHeader = styled.div`
   width: 100%;
   margin: auto;
   display: inline-block;
+`;
+
+const AssignmentsWrapper = styled.div`
+  margin-top: 0.5em;
 `;
 
 const Title = styled.h2`

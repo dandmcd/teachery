@@ -32,19 +32,24 @@ export default {
           limit: limit + 1,
           ...cursorOptions
         });
-        console.log("IS Student");
-        const hasNextPage = assignedTasks.length > limit;
-        const edges = hasNextPage ? assignedTasks.slice(0, -1) : assignedTasks;
+        if (assignedTasks.length === 0) {
+          return null;
+        } else {
+          const hasNextPage = assignedTasks.length > limit;
+          const edges = hasNextPage
+            ? assignedTasks.slice(0, -1)
+            : assignedTasks;
 
-        return {
-          edges,
-          pageInfo: {
-            hasNextPage,
-            endCursor: toCursorHash(
-              edges[edges.length - 1].createdAt.toString()
-            )
-          }
-        };
+          return {
+            edges,
+            pageInfo: {
+              hasNextPage,
+              endCursor: toCursorHash(
+                edges[edges.length - 1].createdAt.toString()
+              )
+            }
+          };
+        }
       }
     ),
 

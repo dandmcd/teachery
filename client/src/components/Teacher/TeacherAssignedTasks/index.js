@@ -14,6 +14,7 @@ import GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS from "../../Assignment/Assignment
 import AssignedTaskDelete from "../../Assignment/AssignmentAdmin/AssignedTaskDelete";
 import download from "../../../assets/download.png";
 import downloadblue from "../../../assets/downloadblue.png";
+import NoData from "../../Alerts/NoData";
 
 const TeacherAssignedTasks = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
@@ -26,7 +27,12 @@ const TeacherAssignedTasks = ({ limit, me }) => {
   if (loading && !data) {
     return <Loading />;
   } else if (!data) {
-    return <div>There are no assignments right now ...</div>;
+    return (
+      <NoData
+        title="No Assigned Tasks"
+        message="There are no assigned tasks right now."
+      />
+    );
   } else if (error) {
     return <ErrorMessage error={error} />;
   }

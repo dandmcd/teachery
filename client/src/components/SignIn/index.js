@@ -36,12 +36,6 @@ const INITIAL_STATE = {
 
 const SignInForm = props => {
   const client = useApolloClient();
-  // const { data } = useQuery(gql`
-  //   query Toggle {
-  //     toggleSuccess @client
-  //   }
-  // `);
-  // const { toggleSuccess } = data;
 
   const [{ login, password }, setState] = useState(INITIAL_STATE);
 
@@ -71,6 +65,8 @@ const SignInForm = props => {
     e.preventDefault();
 
     try {
+      localStorage.removeItem("token");
+      client.resetStore();
       await signIn({
         variables: {
           login: login,

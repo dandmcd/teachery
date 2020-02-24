@@ -9,6 +9,7 @@ import Loading from "../../Loading";
 import ErrorMessage from "../../Alerts/Error";
 import DeckList from "./DeckList";
 import Button from "../../../theme/Button";
+import NoData from "../../Alerts/NoData";
 
 const Decks = ({ limit, me }) => {
   const client = useApolloClient();
@@ -47,7 +48,19 @@ const Decks = ({ limit, me }) => {
   if (loading && !data) {
     return <Loading />;
   } else if (!data) {
-    return <div>There are no decks yet ...</div>;
+    return (
+      <NoData
+        title="No Decks"
+        message="There are no decks right now, or there was an error and we cannot connect right now.  Try refreshing your browser!"
+      />
+    );
+  } else if (data.decks === null) {
+    return (
+      <NoData
+        title="No Saved Decks"
+        message="There are no saved decks right now."
+      />
+    );
   } else if (error) {
     return <ErrorMessage error={error} />;
   }

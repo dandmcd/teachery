@@ -66,10 +66,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       if (message === "UNAUTHENTICATED") {
         signOut(client);
       } else {
-        if (
-          message ===
-          "Context creation failed: Your session expired. Sign in again."
-        ) {
+        if (message === "Your session expired. Please ign in again.") {
           signOut(client);
         }
       }
@@ -109,14 +106,18 @@ const data = {
   toggleAssign: false,
   toggleAssignUpdate: false,
   toggleAssignmentEdit: false,
+  toggleForgotPassword: false,
   toggleSuccess: false,
   toggleDeleteSuccess: false,
   toggleRoleChange: false,
   toggleBookmarks: false,
   linkedToPage: false,
   isSubmitting: false,
+  isSuccessfulChange: false,
+  paramT: "",
   assignmentId: null,
   current: null,
+  customError: null,
   editImg: false,
   search: {
     __typename: "Search",

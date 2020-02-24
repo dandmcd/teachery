@@ -8,6 +8,7 @@ import Loading from "../../Loading";
 import ErrorMessage from "../../Alerts/Error";
 import Button from "../../../theme/Button";
 import AssignedTaskList from "./AssignedTaskList";
+import NoData from "../../Alerts/NoData";
 
 const AssignedTasks = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
@@ -20,7 +21,19 @@ const AssignedTasks = ({ limit, me }) => {
   if (loading && !data) {
     return <Loading />;
   } else if (!data) {
-    return <div>There are no assignments right now ...</div>;
+    return (
+      <NoData
+        title="No Assigned Tasks"
+        message="There are no assignments to complete right now.  Please check back later!"
+      />
+    );
+  } else if (data.assignedTasks === null) {
+    return (
+      <NoData
+        title="No Assigned Tasks"
+        message="There are no assignments to complete right now.  Please check back later!"
+      />
+    );
   } else if (error) {
     return <ErrorMessage error={error} />;
   }

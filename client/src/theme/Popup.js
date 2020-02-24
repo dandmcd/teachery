@@ -65,6 +65,7 @@ export const PopupHeader = styled.div`
 `;
 
 export const PopupTitle = styled.h3`
+  font-weight: 700;
   grid-column-start: 2;
   text-align: center;
 `;
@@ -111,6 +112,7 @@ export const Label = styled.label`
 `;
 
 export const LabelName = styled.h4`
+  font-weight: 600;
   margin: 0.5em auto auto 1.5em;
 `;
 

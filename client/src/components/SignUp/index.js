@@ -40,10 +40,11 @@ const SignUpForm = props => {
   const client = useApolloClient();
   const { data } = useQuery(gql`
     query Toggle {
+      customError @client
       toggleSuccess @client
     }
   `);
-  const { toggleSuccess } = data;
+  const { customError, toggleSuccess } = data;
 
   const [
     { username, email, password, passwordConfirmation },
@@ -76,19 +77,28 @@ const SignUpForm = props => {
     e.preventDefault();
 
     try {
-      await signUp({
-        variables: {
-          username: username,
-          email: email,
-          password: password
-        }
-      }).then(async ({ data }) => {
-        setState({ ...INITIAL_STATE });
+      if (password !== passwordConfirmation) {
+        client.writeData({ data: { customError: "Password doesn't match" } });
+      } else {
+        localStorage.removeItem("token");
+        client.resetStore();
 
-        localStorage.setItem("token", data.signUp.token);
-        await props.refetch();
-        props.history.push(routes.LANDING);
-      });
+        client.writeData({ data: { customError: null } });
+        await signUp({
+          variables: {
+            username: username,
+            email: email,
+            password: password
+          }
+        }).then(async ({ data }) => {
+          setState({ ...INITIAL_STATE });
+          setTimeout(() => {
+            localStorage.setItem("token", data.signUp.token);
+            props.refetch();
+            props.history.push(routes.DASHBOARD);
+          }, 5000);
+        });
+      }
     } catch {}
   };
 
@@ -151,12 +161,13 @@ const SignUpForm = props => {
           required
         />
       </Styled.Label>
-      <Styled.SubmitButton disabled={isInvalid || loading} type="submit">
-        Sign Up
-      </Styled.SubmitButton>
+      <Styled.SubmitButton type="submit">Sign Up</Styled.SubmitButton>
       {loading && <Loading />}
-      {toggleSuccess && <SuccessMessage message="Successfully Logged In!" />}
+      {toggleSuccess && (
+        <SuccessMessage message="Successfully Signed Up!  You will receive an email to confirm your account!" />
+      )}
       {error && <ErrorMessage error={error} />}
+      {customError && <ErrorMessage customError={customError} />}
     </Styled.Box>
   );
 };
@@ -166,9 +177,12 @@ SignUpForm.propTypes = {
 };
 
 const SignUpLink = () => (
-  <p>
+  <div>
+    <h5>
+      <Link to={routes.FORGOT_PASSWORD}>Forgot Password?</Link>
+    </h5>
     Don't have an account? <Link to={routes.SIGN_UP}>Sign Up</Link>
-  </p>
+  </div>
 );
 
 export default withRouter(SignUpPage);

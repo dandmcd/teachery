@@ -7,11 +7,11 @@ export const Navbar = styled.nav`
   top: 0;
   z-index: 20;
   display: flex;
-  height: 60px;
+  height: auto;
   justify-content: space-between;
   align-items: center;
   background-color: #fff;
-  box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.1);
+  /* box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.1); */
 `;
 
 export const NavLeft = styled.div`
@@ -126,7 +126,7 @@ export const NavLink = styled.li`
   position: relative;
   z-index: 20;
   text-decoration: none;
-  margin: 0 7px;
+  margin: 0 0.7em;
   a {
     color: ${props => props.theme.primary};
     :hover {

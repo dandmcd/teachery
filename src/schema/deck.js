@@ -5,7 +5,7 @@ export default gql`
     """
     Get all decks
     """
-    decks(cursor: String, limit: Int, showBookmarks: Boolean): DeckConnection!
+    decks(cursor: String, limit: Int, showBookmarks: Boolean): DeckConnection
     """
     Get deck by ID (deckName not yet enabled)
     """

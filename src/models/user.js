@@ -34,10 +34,14 @@ const user = (sequelize, DataTypes) => {
       validate: {
         notEmpty: true,
         len: {
-          args: [7, 42],
+          args: [7, 142],
           msg: "Password must be at least 7 characters"
         }
       }
+    },
+    confirmed: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     },
     role: {
       type: DataTypes.STRING
@@ -67,7 +71,6 @@ const user = (sequelize, DataTypes) => {
         where: { email: login }
       });
     }
-
     return user;
   };
 

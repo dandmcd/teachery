@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Button from "../../../theme/Button";
+import malcolmx from "../../../assets/malcolmx.jpg";
 
 export const DashboardGrid = styled.div`
   z-index: 15;
@@ -118,6 +119,67 @@ export const DueButton = styled.button`
   }
 `;
 
+export const EmptyAssignmentItemContainer = styled.div`
+  z-index: 15;
+  width: 330px;
+  background-image: url(${malcolmx});
+  background-size: 330px auto;
+  background-repeat: no-repeat;
+  background-position-y: -20px;
+  /* background-position: center; */
+  position: relative;
+  background-color: hsla(0, 0%, 100%, 0.7);
+  background-blend-mode: overlay;
+
+  -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
+    0 6px 6px rgba(0, 0, 0, 0.23);
+  -moz-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
+    0 6px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  :hover {
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15),
+      0 8px 10px rgba(19, 129, 129, 0.125);
+  }
+`;
+
+export const EmptyCardGrid = styled.div`
+  display: grid;
+  z-index: 15;
+  grid-template-rows: auto auto;
+  grid-template-columns: 1fr;
+  justify-content: start start;
+  align-content: flex-start;
+  border-image: linear-gradient(to top, #c51d1d, #faf9f9) 1 100%;
+`;
+
+export const EmptyTitle = styled.h3`
+  grid-row: 2 / 3;
+  grid-column: 1 / 2;
+  letter-spacing: 0.07em;
+  text-decoration: underline;
+  text-align: end;
+  text-decoration-color: ${props => props.theme.primary};
+  margin: 0px 5px 0px 0px;
+  a {
+    color: ${props => props.theme.text};
+    text-decoration-color: ${props => props.theme.primary};
+  }
+`;
+
+export const EmptyTitleSpan = styled.span`
+  text-decoration: none;
+  display: inline-block;
+`;
+
+export const EmptyNote = styled.p`
+  grid-row: 1 / 2;
+  grid-column: 1 / 2;
+  font-style: italic;
+  margin: 0px 0px 0px 5px;
+  padding: 0.2em;
+`;
+
 export const DeckGrid = styled.div`
   z-index: 15;
   display: grid;
@@ -125,7 +187,7 @@ export const DeckGrid = styled.div`
   grid-template-columns: 720px 1fr;
   grid-template-rows: 560px;
   grid-gap: 5px;
-  margin: auto;
+  margin: 0.5em auto auto auto;
   @media only screen and (max-width: 770px) {
     grid-template-rows: 560px 560px 560px;
   }
@@ -168,6 +230,15 @@ export const DividerBack = styled.div`
 `;
 
 export const Headers = styled.h2`
+  max-width: 1100px;
+  margin: auto;
+  padding: 0.5em;
+  @media only screen and (max-width: 770px) {
+    text-align: center;
+  }
+`;
+
+export const EmptyText = styled.h4`
   max-width: 1100px;
   margin: auto;
   padding: 0.5em;

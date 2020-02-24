@@ -12,13 +12,13 @@ import GET_DASHBOARD from "../DashboardQuery";
 import liked from "../../../assets/liked.png";
 import * as routes from "../../../routing/routes";
 import * as Styled from "./style";
+import malcolmx from "../../../assets/malcolmx.jpg";
 
 const DashboardPage = ({ session, me }) => {
   const client = useApolloClient();
 
-  console.log(session);
-
   const { data, error, loading } = useQuery(GET_DASHBOARD, {});
+  console.log(data);
   if (loading && !data) {
     return <Loading />;
   } else if (error) {
@@ -26,12 +26,23 @@ const DashboardPage = ({ session, me }) => {
   }
 
   const date = moment().format("YYYYMMDD");
-  const incomplete = data.dueAssignedTasks.edges.filter(
-    item => item.status === "INCOMPLETE"
-  );
-  const overdue = incomplete.filter(item =>
-    moment(date).isSameOrAfter(item.dueDate)
-  );
+  let incomplete;
+  let overdue;
+
+  if (data.dueAssignedTasks === null) {
+    console.log("No data");
+    incomplete = 0;
+    overdue = 0;
+  } else {
+    incomplete = data.dueAssignedTasks.edges.filter(
+      item => item.status === "INCOMPLETE"
+    );
+    overdue = incomplete.filter(item =>
+      moment(date).isSameOrAfter(item.dueDate)
+    );
+    incomplete = incomplete.length;
+    overdue = overdue.length;
+  }
 
   const toggleBookmarksLink = () => {
     client.writeData({
@@ -56,7 +67,7 @@ const DashboardPage = ({ session, me }) => {
           <Styled.Title>You have ...</Styled.Title>
           <Styled.AssignmentDiv>
             <Styled.Overdue>
-              <Styled.OverdueButton>{overdue.length}</Styled.OverdueButton>{" "}
+              <Styled.OverdueButton>{overdue}</Styled.OverdueButton>{" "}
               {overdue.length === 0
                 ? "assignments"
                 : overdue.length === 1
@@ -65,7 +76,7 @@ const DashboardPage = ({ session, me }) => {
               overdue
             </Styled.Overdue>
             <h4>
-              <Styled.DueButton>{incomplete.length}</Styled.DueButton>{" "}
+              <Styled.DueButton>{incomplete}</Styled.DueButton>{" "}
               {incomplete.length === 0
                 ? "assignments"
                 : incomplete.length === 1
@@ -80,28 +91,35 @@ const DashboardPage = ({ session, me }) => {
             </Styled.MoreAssignmentsButton>
           </Link>
         </Styled.AssignmentItemContainer>
-        <AssignedTaskList assignedTasks={data.assignedTasks.edges} me={me} />
+        {data.assignedTasks !== null ? (
+          <AssignedTaskList assignedTasks={data.assignedTasks.edges} me={me} />
+        ) : (
+          <EmptyAssignedContainer />
+        )}{" "}
       </Styled.DashboardGrid>
-      <Styled.Hr />
-      <Styled.DividerBack>
-        <Styled.Headers>Recently Saved Flashcard Decks</Styled.Headers>
-      </Styled.DividerBack>
-      <Styled.DeckGrid>
-        <Styled.GridCol>
-          <DeckList decks={data.bookmarkedDecks.edges} me={me} />
-        </Styled.GridCol>
-        <Styled.GridButtonCol>
-          <Link to={routes.FLASHCARDS} onClick={toggleBookmarksLink}>
-            <Styled.MoreButton>View All Bookmarked Decks</Styled.MoreButton>
-          </Link>
-          <Link to={routes.FLASHCARDS} onClick={toggleBookmarksLink}>
-            <Styled.LargeMoreButton>
-              View All <Styled.LikedIcon src={liked} /> Bookmarked Decks
-            </Styled.LargeMoreButton>
-          </Link>
-        </Styled.GridButtonCol>
-      </Styled.DeckGrid>
-      <Styled.Hr />
+      {data.bookmarkedDecks !== null && (
+        <Fragment>
+          <Styled.DividerBack>
+            <Styled.Headers>Recently Saved Flashcard Decks</Styled.Headers>
+          </Styled.DividerBack>
+          <Styled.DeckGrid>
+            <Styled.GridCol>
+              <DeckList decks={data.bookmarkedDecks.edges} me={me} />
+            </Styled.GridCol>
+            <Styled.GridButtonCol>
+              <Link to={routes.FLASHCARDS} onClick={toggleBookmarksLink}>
+                <Styled.MoreButton>View All Bookmarked Decks</Styled.MoreButton>
+              </Link>
+              <Link to={routes.FLASHCARDS} onClick={toggleBookmarksLink}>
+                <Styled.LargeMoreButton>
+                  View All <Styled.LikedIcon src={liked} /> Bookmarked Decks
+                </Styled.LargeMoreButton>
+              </Link>
+            </Styled.GridButtonCol>
+          </Styled.DeckGrid>
+        </Fragment>
+      )}
+
       <Styled.DividerBack>
         <Styled.Headers>Latest Decks Added</Styled.Headers>
       </Styled.DividerBack>
@@ -118,7 +136,36 @@ const DashboardPage = ({ session, me }) => {
           </Link>
         </Styled.GridButtonCol>
       </Styled.DeckGrid>
+      {data.bookmarkedDecks === null && (
+        <Fragment>
+          <Styled.DividerBack>
+            <Styled.Headers>Recently Saved Flashcard Decks</Styled.Headers>
+          </Styled.DividerBack>
+
+          <Styled.EmptyText>
+            You don't currenly have any saved decks, but if you did, they would
+            appear right here!
+          </Styled.EmptyText>
+        </Fragment>
+      )}
     </Fragment>
+  );
+};
+
+const EmptyAssignedContainer = () => {
+  return (
+    <Styled.EmptyAssignmentItemContainer>
+      <Styled.EmptyCardGrid>
+        <Styled.EmptyNote>
+          "Education is the passport to the future, for tomorrow belongs to
+          those who prepare for it today.
+        </Styled.EmptyNote>
+        <Styled.EmptyTitle>
+          <Styled.EmptyTitleSpan>~</Styled.EmptyTitleSpan>
+          Malcolm X
+        </Styled.EmptyTitle>
+      </Styled.EmptyCardGrid>
+    </Styled.EmptyAssignmentItemContainer>
   );
 };
 

@@ -42,19 +42,22 @@ export default {
             }
           ]
         });
+        if (decks.length === 0) {
+          console.log("No decks");
+        } else {
+          const hasNextPage = decks.length > limit;
+          const edges = hasNextPage ? decks.slice(0, -1) : decks;
 
-        const hasNextPage = decks.length > limit;
-        const edges = hasNextPage ? decks.slice(0, -1) : decks;
-
-        return {
-          edges,
-          pageInfo: {
-            hasNextPage,
-            endCursor: toCursorHash(
-              edges[edges.length - 1].createdAt.toString()
-            )
-          }
-        };
+          return {
+            edges,
+            pageInfo: {
+              hasNextPage,
+              endCursor: toCursorHash(
+                edges[edges.length - 1].createdAt.toString()
+              )
+            }
+          };
+        }
       } else {
         const decks = await models.Deck.findAll({
           order: [["createdAt", "DESC"]],

@@ -41,7 +41,7 @@ const Teacher = ({ session, me }) => {
   } else if (error) {
     return <ErrorMessage error={error} />;
   }
-  console.log(data);
+
   const date = moment().format("YYYYMMDD");
   const notComplete = data.assignedTasksTeacher.edges.filter(
     item => item.status === "INCOMPLETE"
@@ -56,10 +56,6 @@ const Teacher = ({ session, me }) => {
   const complete = data.assignedTasksTeacher.edges.filter(
     item => item.status === "COMPLETE"
   ).length;
-  console.log(incomplete);
-  console.log(overdue);
-  console.log(submitted);
-  console.log(complete);
 
   const ref = createRef();
 
@@ -123,7 +119,6 @@ const Teacher = ({ session, me }) => {
           </Styled.AssignmentDiv>
         </Styled.AssignmentItemContainer>
       </Styled.Grid>
-      <Styled.Hr />
       <Styled.TeacherHeader>
         <Styled.SubMenu>
           <Styled.PopupFooterButton

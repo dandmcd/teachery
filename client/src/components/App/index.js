@@ -22,6 +22,11 @@ import Tags from "../FlashCards/Decks/DeckItem/DeckTags/TagItem";
 import Dashboard from "../Dashboard";
 import TeacherPage from "../Teacher/";
 import GlobalStyle from "../../theme/globalStyle";
+import ForgotPassword from "../Account/AccountSettings/ForgotPassword";
+import ResetPassword from "../Account/AccountSettings/ResetPassword";
+import ChangePassword from "../Account/AccountSettings/ChangePassword";
+import ConfirmAccount from "../Account/AccountSettings/ConfirmAccount/ConfirmAccount";
+import ChangePasswordLoggedIn from "../Account/AccountSettings/ChangePasswordLoggedIn";
 
 const App = ({ session, refetch }) => (
   <Router history={history}>
@@ -34,6 +39,11 @@ const App = ({ session, refetch }) => (
         exact
         path={routes.SIGN_UP}
         component={() => <SignUpPage refetch={refetch} />}
+      />
+      <Route
+        exact
+        path={routes.FORGOT_PASSWORD}
+        component={() => <ForgotPassword refetch={refetch} />}
       />
       <Route
         exact
@@ -65,6 +75,26 @@ const App = ({ session, refetch }) => (
       />
       <Route exact path={routes.SEARCH} component={() => <Search />} />
       <Route exact path={routes.TAGS} component={Tags} />
+      <Route
+        exact
+        path={routes.RESET_PASSWORD}
+        component={() => <ResetPassword refetch={refetch} />}
+      />
+      <Route
+        exact
+        path={routes.CONFIRM_ACCOUNT}
+        component={() => <ConfirmAccount refetch={refetch} />}
+      />
+      <Route
+        exact
+        path={routes.CHANGE_PASSWORD}
+        component={() => <ChangePassword refetch={refetch} />}
+      />
+      <Route
+        exact
+        path={routes.CHANGE_PASSWORD_LOGGED_IN}
+        component={() => <ChangePasswordLoggedIn refetch={refetch} />}
+      />
     </Container>
   </Router>
 );

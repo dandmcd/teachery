@@ -13,6 +13,7 @@ import * as Styled from "./style";
 import ErrorMessage from "../../Alerts/Error";
 import Button from "../../../theme/Button";
 import download from "../../../assets/download.png";
+import NoData from "../../Alerts/NoData";
 
 const Assignments = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
@@ -24,7 +25,12 @@ const Assignments = ({ limit, me }) => {
   if (loading && !data) {
     return <Loading />;
   } else if (!data) {
-    return <div>There are no assignments yet ...</div>;
+    return (
+      <NoData
+        title="No Assigned Tasks"
+        message="There are no assigned tasks right now."
+      />
+    );
   } else if (error) {
     return <ErrorMessage error={error} />;
   }
