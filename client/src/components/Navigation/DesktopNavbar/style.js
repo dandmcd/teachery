@@ -10,7 +10,7 @@ export const Navbar = styled.nav`
   height: auto;
   justify-content: space-between;
   align-items: center;
-  background-color: #fff;
+  background-color: ${props => props.theme.appBody};
   /* box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.1); */
 `;
 
@@ -73,7 +73,7 @@ export const MenuButton = styled.input`
   :checked ~ span:nth-last-child(2) {
     opacity: 1;
     transform: rotate(0deg) scale(1.2, 1.2) translate(0px, 0px);
-    background: #232323;
+    background: ${props => props.theme.text};
   }
   :checked ~ span:nth-last-child(1) {
     opacity: 0;
@@ -128,11 +128,11 @@ export const NavLink = styled.li`
   text-decoration: none;
   margin: 0 0.7em;
   a {
-    color: ${props => props.theme.primary};
+    color: ${props => props.theme.link};
     :hover {
       bottom: -5px;
       border-radius: 6px;
-      background: #f9f9f9;
+      background: ${props => props.theme.neutralLight};
       height: 4px;
       transition-property: width;
       transition-duration: 0.3s;

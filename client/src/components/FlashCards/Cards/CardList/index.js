@@ -107,7 +107,7 @@ const Title = styled.h3`
 `;
 
 const AddCardButton = styled(Button)`
-  border: 2px solid #0d5d5d;
+  border: 2px solid ${props => props.theme.secondary};
 `;
 
 export default withAuthorization(session => session && session.me)(

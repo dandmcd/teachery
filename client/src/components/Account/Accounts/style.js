@@ -58,7 +58,7 @@ export const CloseSpan = styled.span`
 `;
 
 export const Span = styled.span`
-  color: ${props => props.theme.primary};
+  color: ${props => props.theme.textOverlay};
   font-weight: lighter;
 `;
 
@@ -83,5 +83,50 @@ export const PopupFooterButton = styled.button`
 export const ChangePasswordButton = styled(Button)`
   width: 120px;
   font-size: 10px;
-  border: 2px solid ${props => props.theme.primary};
+  border: 2px solid ${props => props.theme.error};
+`;
+
+export const ThemeGrid = styled.div`
+  display: grid;
+  grid-template-columns: auto 50px 50px 50px;
+  grid-column-gap: 0.5em;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+export const ThemeButton = styled.button`
+  display: table-cell;
+  margin: 0 auto;
+  z-index: 50;
+  vertical-align: middle;
+  height: 40px;
+  width: 40px;
+  max-width: 40px;
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: none;
+  outline: none;
+  border-style: none;
+  color: ${props => props.theme.text};
+  background-color: #faf9f9;
+  border-radius: 100%;
+  text-align: center;
+  padding: 0;
+  transition: all 0.25s ease-in-out;
+  transform: scale(1) translateZ(0);
+  :hover {
+    filter: brightness(125%);
+    background: ${props => props.theme.primaryDark};
+    transform: scale(1.1);
+  }
+`;
+
+export const DarkThemeButton = styled(ThemeButton)`
+  color: #b09b9b;
+  background-color: #1e1e1e;
+`;
+
+export const IceThemeButton = styled(ThemeButton)`
+  color: #b09b9b;
+  background-color: #194169;
 `;

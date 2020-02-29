@@ -100,13 +100,13 @@ const Teacher = ({ session, me }) => {
             <Link to={routes.ACCOUNT}>{session.me.username}</Link>, you have ...
           </Styled.Welcome>
           <Styled.AssignmentDiv>
+            <Styled.Overdue>
+              <Styled.OverdueButton>{overdue}</Styled.OverdueButton> overdue
+            </Styled.Overdue>
             <Styled.Submitted>
               <Styled.SubmittedButton>{submitted}</Styled.SubmittedButton> tasks
               submitted
             </Styled.Submitted>
-            <Styled.Overdue>
-              <Styled.OverdueButton>{overdue}</Styled.OverdueButton> overdue
-            </Styled.Overdue>
             <Styled.Incomplete>
               <Styled.IncompleteButton>{incomplete}</Styled.IncompleteButton>{" "}
               tasks not completed

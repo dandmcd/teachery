@@ -70,23 +70,23 @@ body {
   margin: 0;
   font-size: 16px;
   line-height: 1.5;
-  background-color: #fff;
-  color: #4b3b3b;
+  background-color: ${props => props.theme.appBody};
+  color: ${props => props.theme.text};
   outline: none;
+  transition: all 1s linear;
 }
 #root {
-
   position: relative;
   z-index: 1;
 
 }
 a {
-  color: ${props => props.theme.primary};
+  color: ${props => props.theme.link};
   text-decoration: none;
 }
 
 a:hover {
-  color: ${props => props.theme.primaryMed};
+  color: ${props => props.theme.hoverLink};
 }
 
 h1 {

@@ -12,12 +12,10 @@ import { onError } from "apollo-link-error";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import axios from "axios";
 import { buildAxiosFetch } from "@lifeomic/axios-fetch";
-import { ThemeProvider } from "styled-components";
 
 import { resolvers, typeDefs } from "./state/resolvers";
 import App from "./components/App";
 import { signOut } from "./components/SignOut";
-import theme from "./theme/theme";
 
 const httpLink = new HttpLink({
   fetch: buildAxiosFetch(axios, (config, input, init) => ({
@@ -137,9 +135,7 @@ client.onClearStore(async () => {
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
+    <App />
   </ApolloProvider>,
   document.getElementById("root")
 );

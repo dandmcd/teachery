@@ -44,7 +44,11 @@ export const Hr = styled.hr`
   padding: 0;
   border: none;
   height: 2px;
-  background-image: -webkit-linear-gradient(left, #c51d1d, #faf9f9);
+  background-image: -webkit-linear-gradient(
+    left,
+    ${props => props.theme.primary},
+    ${props => props.theme.neutralLight}
+  );
   animation: fadeInAnimation ease 1.5s;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
@@ -186,7 +190,7 @@ export const ShowAnswer = styled.button`
   cursor: pointer;
   border-style: none;
   color: white;
-  background-color: #55d3d3;
+  background-color: ${props => props.theme.secondary};
   border-radius: 100%;
   box-shadow: 0 0 10px 5px ${props => props.theme.success};
   text-align: center;

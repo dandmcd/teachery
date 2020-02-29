@@ -9,6 +9,7 @@ import useOuterClickNotifier from "../../../Alerts";
 import Loading from "../../../Loading";
 import ErrorMessage from "../../../Alerts/Error";
 import SearchTagLink from "./SearchTagLink";
+import { useDarkMode } from "../../../../theme/ToggleTheme/useDarkMode";
 
 const TAG_SEARCH_QUERY = gql`
   query tag($tagName: String!) {

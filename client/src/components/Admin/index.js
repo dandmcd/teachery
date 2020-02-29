@@ -58,7 +58,11 @@ export const Hr = styled.hr`
   border: none;
   height: 2px;
   width: 100%;
-  background-image: -webkit-linear-gradient(left, #c51d1d, #faf9f9);
+  background-image: -webkit-linear-gradient(
+    left,
+    ${props => props.theme.primary},
+    ${props => props.theme.neutralLight}
+  );
 `;
 
 export default withAuthorization(

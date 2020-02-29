@@ -27,7 +27,7 @@ export const AssignmentItemContainer = styled.div`
   margin: auto;
   justify-self: stretch;
   align-self: center;
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${props => props.theme.container};
   border-radius: 24px;
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
     0 6px 6px rgba(0, 0, 0, 0.23);
@@ -150,7 +150,12 @@ export const EmptyCardGrid = styled.div`
   grid-template-columns: 1fr;
   justify-content: start start;
   align-content: flex-start;
-  border-image: linear-gradient(to top, #c51d1d, #faf9f9) 1 100%;
+  border-image: linear-gradient(
+      to top,
+      ${props => props.theme.primary},
+      ${props => props.theme.neutralLight}
+    )
+    1 100%;
 `;
 
 export const EmptyTitle = styled.h3`
@@ -233,6 +238,7 @@ export const Headers = styled.h2`
   max-width: 1100px;
   margin: auto;
   padding: 0.5em;
+  background-color: ${props => props.theme.neutralLight};
   @media only screen and (max-width: 770px) {
     text-align: center;
   }
@@ -253,7 +259,11 @@ export const Hr = styled.hr`
   border: none;
   height: 2px;
   width: 100%;
-  background-image: -webkit-linear-gradient(left, #c51d1d, #faf9f9);
+  background-image: -webkit-linear-gradient(
+    left,
+    ${props => props.theme.primary},
+    ${props => props.theme.neutralLight}
+  );
 `;
 
 export const MoreAssignmentsButton = styled(Button)`
@@ -304,7 +314,7 @@ export const LargeMoreButton = styled(Button)`
   cursor: pointer;
   border-style: none;
   color: ${props => props.theme.text};
-  background-color: ${props => props.theme.secondaryLight};
+  background-color: ${props => props.theme.neutralLight};
   border-radius: 100%;
   border: 2px solid ${props => props.theme.secondary};
   text-align: center;

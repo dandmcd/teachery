@@ -9,7 +9,7 @@ export const Navbar = styled.nav`
   width: 100%;
   background: white;
   align-self: flex-end;
-  z-index: ${props => (props.displayMobileNavbar ? 20 : 1)};
+  z-index: ${props => (props.displayMobileNavbar ? 20 : 15)};
   transition: transform 1s;
   transform: translateX(
     ${props => (props.displayMobileNavbar ? "0%" : "calc(100% + 15px)")}
@@ -46,7 +46,7 @@ export const NavLink = styled.li`
     :hover {
       bottom: -5px;
       border-radius: 6px;
-      background: #f9f9f9;
+      background: ${props => props.theme.neutralLight};
       height: 4px;
       transition-property: width;
       transition-duration: 0.3s;

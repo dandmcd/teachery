@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Router, Route } from "react-router-dom";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import PropTypes from "prop-types";
 
 import * as routes from "../../routing/routes";
@@ -27,77 +27,116 @@ import ResetPassword from "../Account/AccountSettings/ResetPassword";
 import ChangePassword from "../Account/AccountSettings/ChangePassword";
 import ConfirmAccount from "../Account/AccountSettings/ConfirmAccount/ConfirmAccount";
 import ChangePasswordLoggedIn from "../Account/AccountSettings/ChangePasswordLoggedIn";
+import { lightTheme, darkTheme, iceTheme } from "../../theme/theme";
+import ToggleTheme from "../../theme/ToggleTheme";
+import { useDarkMode } from "../../theme/ToggleTheme/useDarkMode";
 
-const App = ({ session, refetch }) => (
-  <Router history={history}>
-    <GlobalStyle />
-    <Navigation session={session} />
-    <Container>
-      <Route exact path={routes.LANDING} component={() => <LandingPage />} />
-      <Route exact path={routes.DASHBOARD} component={() => <Dashboard />} />
-      <Route
-        exact
-        path={routes.SIGN_UP}
-        component={() => <SignUpPage refetch={refetch} />}
-      />
-      <Route
-        exact
-        path={routes.FORGOT_PASSWORD}
-        component={() => <ForgotPassword refetch={refetch} />}
-      />
-      <Route
-        exact
-        path={routes.SIGN_IN}
-        component={() => <SignInPage refetch={refetch} />}
-      />
-      <Route exact path={routes.ACCOUNT} component={() => <AccountPage />} />
-      <Route
-        exact
-        path={routes.ASSIGNMENTS}
-        component={() => <AssignmentPage />}
-      />
-      <Route exact path={routes.ADMIN} component={() => <AdminPage />} />
-      <Route exact path={routes.TEACHER} component={() => <TeacherPage />} />
-      <Route
-        exact
-        path={routes.FLASHCARDS}
-        component={() => <FlashCardPage />}
-      />
-      <Route
-        exact
-        path={routes.CARDS}
-        component={props => <Cards {...props} />}
-      />
-      <Route
-        exact
-        path={routes.CARDLIST}
-        component={props => <CardList {...props} />}
-      />
-      <Route exact path={routes.SEARCH} component={() => <Search />} />
-      <Route exact path={routes.TAGS} component={Tags} />
-      <Route
-        exact
-        path={routes.RESET_PASSWORD}
-        component={() => <ResetPassword refetch={refetch} />}
-      />
-      <Route
-        exact
-        path={routes.CONFIRM_ACCOUNT}
-        component={() => <ConfirmAccount refetch={refetch} />}
-      />
-      <Route
-        exact
-        path={routes.CHANGE_PASSWORD}
-        component={() => <ChangePassword refetch={refetch} />}
-      />
-      <Route
-        exact
-        path={routes.CHANGE_PASSWORD_LOGGED_IN}
-        component={() => <ChangePasswordLoggedIn refetch={refetch} />}
-      />
-    </Container>
-  </Router>
-);
+const App = ({ session, refetch }) => {
+  const [theme, toggleTheme, componentMounted] = useDarkMode();
+
+  const themeMode = () => {
+    if (theme === "light") {
+      return lightTheme;
+    } else if (theme === "dark") {
+      return darkTheme;
+    } else {
+      return iceTheme;
+    }
+  };
+
+  if (!componentMounted) {
+    return <div />;
+  }
+  return (
+    <Router history={history}>
+      <ThemeProvider theme={themeMode}>
+        <GlobalStyle />
+        <Navigation session={session} />
+        <Container>
+          <ToggleTheme theme={theme} toggleTheme={toggleTheme} />
+          <Route
+            exact
+            path={routes.LANDING}
+            component={() => <LandingPage />}
+          />
+          <Route
+            exact
+            path={routes.DASHBOARD}
+            component={() => <Dashboard />}
+          />
+          <Route
+            exact
+            path={routes.SIGN_UP}
+            component={() => <SignUpPage refetch={refetch} />}
+          />
+          <Route
+            exact
+            path={routes.FORGOT_PASSWORD}
+            component={() => <ForgotPassword refetch={refetch} />}
+          />
+          <Route
+            exact
+            path={routes.SIGN_IN}
+            component={() => <SignInPage refetch={refetch} />}
+          />
+          <Route
+            exact
+            path={routes.ACCOUNT}
+            component={() => <AccountPage />}
+          />
+          <Route
+            exact
+            path={routes.ASSIGNMENTS}
+            component={() => <AssignmentPage />}
+          />
+          <Route exact path={routes.ADMIN} component={() => <AdminPage />} />
+          <Route
+            exact
+            path={routes.TEACHER}
+            component={() => <TeacherPage />}
+          />
+          <Route
+            exact
+            path={routes.FLASHCARDS}
+            component={() => <FlashCardPage />}
+          />
+          <Route
+            exact
+            path={routes.CARDS}
+            component={props => <Cards {...props} />}
+          />
+          <Route
+            exact
+            path={routes.CARDLIST}
+            component={props => <CardList {...props} />}
+          />
+          <Route exact path={routes.SEARCH} component={() => <Search />} />
+          <Route exact path={routes.TAGS} component={Tags} />
+          <Route
+            exact
+            path={routes.RESET_PASSWORD}
+            component={() => <ResetPassword refetch={refetch} />}
+          />
+          <Route
+            exact
+            path={routes.CONFIRM_ACCOUNT}
+            component={() => <ConfirmAccount refetch={refetch} />}
+          />
+          <Route
+            exact
+            path={routes.CHANGE_PASSWORD}
+            component={() => <ChangePassword refetch={refetch} />}
+          />
+          <Route
+            exact
+            path={routes.CHANGE_PASSWORD_LOGGED_IN}
+            component={() => <ChangePasswordLoggedIn refetch={refetch} />}
+          />
+        </Container>
+      </ThemeProvider>
+    </Router>
+  );
+};
 
 App.propTypes = {
   session: PropTypes.object,

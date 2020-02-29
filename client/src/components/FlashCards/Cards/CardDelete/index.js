@@ -96,10 +96,9 @@ CardDelete.propTypes = {
 
 const DeleteButton = styled(Button)`
   border: 2px solid ${props => props.theme.error};
-  color: #233841;
   :hover {
     color: white;
-    background: #b11a1a;
+    background: ${props => props.theme.primaryDark}
   }
 `;
 

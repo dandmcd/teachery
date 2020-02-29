@@ -49,9 +49,9 @@ const CardItem = ({ card, deckId, deckUserId, session }) => {
       <Created>
         Created on: <Moment format="YYYY-MM-DD HH:mm">{card.createdAt}</Moment>
       </Created>
-      <Button type="button" onClick={togglePopupModal}>
+      <EditButton type="button" onClick={togglePopupModal}>
         Edit
-      </Button>
+      </EditButton>
       {session && session.me && deckUserId === session.me.id && (
         <CardDelete card={card} deckId={deckId} />
       )}
@@ -88,11 +88,19 @@ const Hr = styled.hr`
   padding: 0;
   border: none;
   height: 2px;
-  background-image: -webkit-linear-gradient(left, #c51d1d, #faf9f9);
+  background-image: -webkit-linear-gradient(
+    left,
+    ${props => props.theme.primary},
+    ${props => props.theme.neutralLight}
+  );
 `;
 
 const ALink = styled.a`
   color: ${props => props.theme.primaryMed};
+`;
+
+const EditButton = styled(Button)`
+  border: 2px solid ${props => props.theme.secondaryDark};
 `;
 
 export default withSession(CardItem);

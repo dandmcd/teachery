@@ -20,7 +20,7 @@ const Button = styled.button`
   outline: none;
   :hover {
     color: white;
-    background: #1ab2b2;
+    background: ${props => props.theme.secondary};
     transform: scale(1.05);
   }
   :disabled {

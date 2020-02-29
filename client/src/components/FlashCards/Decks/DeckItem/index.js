@@ -267,7 +267,7 @@ const EditDropDownContent = styled.div`
   display: ${props => (props.isChecked ? "block" : "none")};
   position: absolute;
   width: min-content;
-  background-color: #fff;
+  background-color: ${props => props.theme.container};
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 30;
   bottom: 100%;

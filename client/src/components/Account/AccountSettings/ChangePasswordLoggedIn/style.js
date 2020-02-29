@@ -50,7 +50,7 @@ export const Span = styled.span``;
 export const InputUserName = styled.input`
   font-family: "Open Sans", sans-serif;
   border: 0;
-  background-color: #fff;
+  background-color: ${props => props.theme.container};
   display: block;
   margin: 3px auto 17px auto;
   text-align: center;
@@ -69,7 +69,7 @@ export const InputUserName = styled.input`
 export const InputPassword = styled.input`
   font-family: "Open Sans", sans-serif;
   border: 0;
-  background-color: #fff;
+  background-color: ${props => props.theme.container};
   display: block;
   margin: 3px auto 17px auto;
   text-align: center;
@@ -88,7 +88,7 @@ export const InputPassword = styled.input`
 export const InputConfirmPassword = styled.input`
   font-family: "Open Sans", sans-serif;
   border: 0;
-  background-color: #fff;
+  background-color: ${props => props.theme.container};
   display: block;
   margin: 3px auto 17px auto;
   text-align: center;

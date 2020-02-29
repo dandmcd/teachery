@@ -29,7 +29,7 @@ export const PopupInner = styled.div`
   margin-top: 10%;
   overflow-y: scroll;
   border-radius: 20px;
-  background: ${props => props.theme.neutralLight};
+  background: ${props => props.theme.container};
   text-align: center;
   display: grid;
   grid-template-rows: auto 1fr auto;
@@ -58,7 +58,7 @@ export const PopupInnerExtended = styled(PopupInner)`
 
 export const PopupHeader = styled.div`
   display: grid;
-  background-color: white;
+  background-color: ${props => props.theme.neutralLight};
   grid-template-columns: 1fr auto 1fr;
   justify-items: center;
   grid-column-gap: 5px;
@@ -75,7 +75,8 @@ export const PopupBody = styled.div``;
 export const Input = styled.input`
   font-family: "Open Sans", sans-serif;
   border: 0;
-  background-color: #fff;
+  color: ${props => props.theme.textOverlay};
+  background-color: ${props => props.theme.container};
   display: block;
   margin: 3px auto 17px auto;
   text-align: center;
@@ -89,7 +90,7 @@ export const Input = styled.input`
     font-family: "Open Sans", sans-serif;
     font-weight: 400px;
     font-size: 12px;
-    color: ${props => props.theme.text};
+    color: ${props => props.theme.textOverlay};
   }
   :focus {
     width: 90%;
@@ -121,7 +122,8 @@ export const Span = styled.span``;
 export const InputTextArea = styled.textarea`
   font-family: "Open Sans", sans-serif;
   border: 0;
-  background-color: #fff;
+  color: ${props => props.theme.textOverlay};
+  background-color: ${props => props.theme.container};
   display: block;
   margin: 3px auto 17px auto;
   text-align: center;
@@ -177,7 +179,7 @@ export const PopupFooterButton = styled.button`
   border-radius: 4px;
   margin: 0.2em;
   padding: 0.4em 0.6em;
-  border: 2px solid white;
+  border: 2px solid ${props => props.theme.neutralLight};
   align-self: center;
   display: table-cell;
   text-align: center;
@@ -207,6 +209,8 @@ export const Select = styled.div`
 
 export const SelectBox = styled.select`
   outline: 0;
+  color: ${props => props.theme.text};
+  background-color: ${props => props.theme.container};
   border: 2px solid ${props => props.theme.secondary};
 `;
 

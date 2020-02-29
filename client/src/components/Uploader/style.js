@@ -7,10 +7,10 @@ export const getColor = props => {
     return "#91d251";
   }
   if (props.isDragReject) {
-    return "#d96e6e";
+    return "#d96e63";
   }
   if (props.isDragActive) {
-    return "#e49999";
+    return "#1dc5c5";
   }
   return "#bdafaf";
 };
@@ -27,7 +27,7 @@ export const Container = styled.div`
   border-radius: 2px;
   border-color: ${props => getColor(props)};
   border-style: dashed;
-  background-color: #faf9f9;
+  background-color: ${props => props.theme.container};
   color: ${props => props.theme.textLight};
   outline: none;
   transition: border 0.24s ease-in-out;

@@ -19,7 +19,7 @@ export const AssignmentContainer = styled.div`
 export const AssignmentItemContainer = styled.div`
   z-index: 15;
   width: 330px;
-  background-color: #fff;
+  background-color: ${props => props.theme.container};
 
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
     0 6px 6px rgba(0, 0, 0, 0.23);
@@ -40,7 +40,12 @@ export const CardGrid = styled.div`
   grid-template-columns: 1fr 1fr;
   justify-content: start start;
   align-content: flex-start;
-  border-image: linear-gradient(to top, #c51d1d, #faf9f9) 1 100%;
+  border-image: linear-gradient(
+      to top,
+      ${props => props.theme.primary},
+      ${props => props.theme.neutralLight}
+    )
+    1 100%;
 `;
 
 export const Title = styled.h3`

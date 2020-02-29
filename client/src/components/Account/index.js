@@ -14,10 +14,6 @@ const AccountPage = () => (
     <Header>
       <Menu>
         <Title>Account Settings</Title>
-        <DevMessage>
-          This page is currently under development, please go back{" "}
-          <GoBack message="Return" />
-        </DevMessage>
       </Menu>
     </Header>
     <Account />
@@ -64,13 +60,18 @@ const DevMessage = styled.h4`
   }
 `;
 
-export const Hr = styled.hr`
+const Hr = styled.hr`
   padding: 0;
   margin: 0;
   border: none;
   height: 2px;
   width: 100%;
-  background-image: -webkit-linear-gradient(left, #c51d1d, #faf9f9);
+  // Continue below changing all non-themed colors
+  background-image: -webkit-linear-gradient(
+    left,
+    ${props => props.theme.primary},
+    ${props => props.theme.neutralLight}
+  );
 `;
 
 export default withAuthorization(session => session && session.me)(AccountPage);

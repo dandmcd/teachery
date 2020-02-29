@@ -4,7 +4,7 @@ import Button from "../../../../theme/Button";
 export const DeckItemContainer = styled.div`
   position: relative;
   width: 330px;
-  background-color: #fff;
+  background-color: ${props => props.theme.container};
 
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
     0 6px 6px rgba(0, 0, 0, 0.23);
@@ -33,7 +33,7 @@ export const DeckImg = styled.img`
   grid-column: 1 / 3;
   width: 330px;
   height: 200px;
-  background-color: #faf9f9;
+  background-color: ${props => props.theme.container};
 `;
 
 export const DeckInfo = styled.div`
@@ -42,11 +42,16 @@ export const DeckInfo = styled.div`
   display: grid;
   grid-template-rows: 60px 1fr;
   grid-template-columns: 1fr;
-  background-color: white;
+  background-color: ${props => props.theme.container};
 
   border-style: inset;
   border-width: 0px 2px 0px 0px;
-  border-image: linear-gradient(to top, #c51d1d, #faf9f9) 1 100%;
+  border-image: linear-gradient(
+      to top,
+      ${props => props.theme.neutralLight},
+      ${props => props.theme.container}
+    )
+    1 100%;
 `;
 
 export const Title = styled.h3`
@@ -79,7 +84,7 @@ export const CreatedItem = styled.div`
   grid-template-rows: 20px 20px 1fr;
   grid-template-columns: 1fr 1fr;
   padding: 3px;
-  background-color: white;
+  background-color: ${props => props.theme.container};
 `;
 
 export const CreatedBy = styled.h6`
@@ -120,7 +125,7 @@ export const Practice = styled.div`
   display: grid;
   grid-template-rows: 45px 20px 75px;
   grid-template-columns: 1fr 1fr 1fr;
-  border-top: 2px outset #c51d1d;
+  border-top: 2px outset ${props => props.theme.neutralLight};
 `;
 
 export const PracticeText = styled.h3`
@@ -146,7 +151,7 @@ export const PracticeCardCount = styled.h4`
   justify-self: center;
   align-self: center;
   a {
-    color: #0d5d5d;
+    color: ${props => props.theme.secondaryDark};
   }
 `;
 
@@ -237,14 +242,14 @@ export const PracticeStart = styled.button`
   height: auto;
   width: 60px;
   max-width: 60px;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
   text-decoration: none;
   outline: none;
   cursor: pointer;
   border-style: none;
   color: white;
-  background-color: #55d3d3;
+  background-color: ${props => props.theme.secondary};
   border-radius: 100%;
   box-shadow: 0 0 10px 5px ${props => props.theme.success};
   text-align: center;
@@ -253,14 +258,14 @@ export const PracticeStart = styled.button`
   transform: scale(1) translateZ(0);
   :hover {
     filter: brightness(105%);
-    background: #1dc5c5;
-    transform: scale(1.25);
+    background: ${props => props.theme.secondaryDark};
+    transform: scale(1.1);
   }
   :disabled {
-    background-color: #faf9f9;
-    border: 2px dotted ${props => props.theme.disabled};
+    background-color: ${props => props.theme.neutralLight};
+    border: 2px solid ${props => props.theme.disabled};
     color: ${props => props.theme.disabled};
-    box-shadow: 0 0 10px 5px ${props => props.theme.disabled};
+    box-shadow: 0 0 10px 5px ${props => props.theme.neutralLight};
   }
 `;
 
@@ -295,12 +300,12 @@ export const LikeButton = styled(Button)`
 `;
 
 export const AddCardButton = styled(Button)`
-  border: 2px solid #0d5d5d;
+  border: 2px solid ${props => props.theme.secondaryDark};
 `;
 
 export const AddTagButton = styled(Button)`
-  border: 2px solid #138181;
+  border: 2px solid ${props => props.theme.secondary};
   :hover {
-    background: #179c9c;
+    background: ${props => props.theme.secondaryDark};
   }
 `;
