@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { Router, Route } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import PropTypes from "prop-types";
@@ -28,32 +28,39 @@ import ChangePassword from "../Account/AccountSettings/ChangePassword";
 import ConfirmAccount from "../Account/AccountSettings/ConfirmAccount/ConfirmAccount";
 import ChangePasswordLoggedIn from "../Account/AccountSettings/ChangePasswordLoggedIn";
 import { lightTheme, darkTheme, iceTheme } from "../../theme/theme";
-import ToggleTheme from "../../theme/ToggleTheme";
-import { useDarkMode } from "../../theme/ToggleTheme/useDarkMode";
 
 const App = ({ session, refetch }) => {
-  const [theme, toggleTheme, componentMounted] = useDarkMode();
+  const [theme, setTheme] = useState(lightTheme);
+  const [componentMounted, setComponentMounted] = useState(false);
 
-  const themeMode = () => {
-    if (theme === "light") {
-      return lightTheme;
-    } else if (theme === "dark") {
-      return darkTheme;
+  useLayoutEffect(() => {
+    const localTheme = window.localStorage.getItem("theme");
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches &&
+      !localTheme
+    ) {
+      setTheme(darkTheme);
+    } else if (localTheme === "dark") {
+      setTheme(darkTheme);
+    } else if (localTheme === "ice") {
+      setTheme(iceTheme);
     } else {
-      return iceTheme;
+      setTheme(lightTheme);
     }
-  };
+    setComponentMounted(true);
+  }, []);
 
   if (!componentMounted) {
     return <div />;
   }
+
   return (
     <Router history={history}>
-      <ThemeProvider theme={themeMode}>
+      <ThemeProvider theme={theme}>
         <GlobalStyle />
         <Navigation session={session} />
         <Container>
-          <ToggleTheme theme={theme} toggleTheme={toggleTheme} />
           <Route
             exact
             path={routes.LANDING}
@@ -82,7 +89,7 @@ const App = ({ session, refetch }) => {
           <Route
             exact
             path={routes.ACCOUNT}
-            component={() => <AccountPage />}
+            render={props => <AccountPage {...props} setTheme={setTheme} />}
           />
           <Route
             exact

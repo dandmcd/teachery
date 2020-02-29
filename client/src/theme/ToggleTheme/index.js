@@ -1,21 +1,36 @@
-import React from "react";
-import { func, string } from "prop-types";
-import { ReactComponent as LightIcon } from "../../assets/light.svg";
-import { ReactComponent as DarkIcon } from "../../assets/dark.svg";
-import * as Styled from "./style";
+import React, { Fragment } from "react";
+import { lightTheme, darkTheme, iceTheme } from "../../theme/theme";
+import * as Styled from "../../components/Account/Accounts/style";
 
-const ToggleTheme = ({ theme, toggleTheme }) => {
-  const isLight = theme === "light";
+const ToggleTheme = ({ props: { setTheme } }) => {
+  console.log(typeof setTheme);
+
+  const setLightTheme = () => {
+    setTheme(lightTheme);
+    window.localStorage.setItem("theme", "light");
+  };
+
+  const setDarkTheme = () => {
+    setTheme(darkTheme);
+    window.localStorage.setItem("theme", "dark");
+  };
+
+  const setIceTheme = () => {
+    setTheme(iceTheme);
+    window.localStorage.setItem("theme", "ice");
+  };
   return (
-    <Styled.ToggleContainer lightTheme={isLight} onClick={toggleTheme}>
-      {isLight ? <LightIcon /> : <DarkIcon />}
-    </Styled.ToggleContainer>
+    <Styled.Container>
+      <Styled.ThemeGrid>
+        <Styled.Field>Choose a color theme:</Styled.Field>
+        <Styled.ThemeButton onClick={setLightTheme}>Light</Styled.ThemeButton>
+        <Styled.DarkThemeButton onClick={setDarkTheme}>
+          Dark
+        </Styled.DarkThemeButton>
+        <Styled.IceThemeButton onClick={setIceTheme}>Ice</Styled.IceThemeButton>
+      </Styled.ThemeGrid>
+    </Styled.Container>
   );
-};
-
-ToggleTheme.propTypes = {
-  theme: string.isRequired,
-  toggleTheme: func.isRequired
 };
 
 export default ToggleTheme;

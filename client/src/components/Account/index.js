@@ -9,14 +9,14 @@ import { Link } from "react-router-dom";
 import * as routes from "../../routing/routes";
 import Account from "./Accounts";
 
-const AccountPage = () => (
+const AccountPage = props => (
   <Fragment>
     <Header>
       <Menu>
         <Title>Account Settings</Title>
       </Menu>
     </Header>
-    <Account />
+    <Account props={props} />
   </Fragment>
 );
 

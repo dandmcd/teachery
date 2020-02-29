@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import * as routes from "../../../routing/routes";
 import * as Styled from "./style";
 import withSession from "../../Session/withSession";
-import { useDarkMode } from "../../../theme/ToggleTheme/useDarkMode";
+import ToggleTheme from "../../../theme/ToggleTheme";
 
-const Account = ({ session }) => {
+const Account = ({ session, props }) => {
   const [accountChecked, setAccountChecked] = useState(false);
   const [personalizeChecked, setPersonalizeChecked] = useState(false);
   const toggleAccountSection = () => {
@@ -16,11 +16,7 @@ const Account = ({ session }) => {
     setPersonalizeChecked(personalizeChecked === false ? true : false);
   };
 
-  const [theme, toggleTheme, setTheme] = useDarkMode();
-
-  const handleClick = e => {
-    setTheme(e.currentTarget.value);
-  };
+  const handleClick = () => {};
 
   return (
     <Fragment>
@@ -75,22 +71,7 @@ const Account = ({ session }) => {
           <Styled.SubTitle>Personalize</Styled.SubTitle>
         </Styled.SubMenu>
       </Styled.Header>
-      {!personalizeChecked ? (
-        <Styled.Container>
-          <Styled.ThemeGrid>
-            <Styled.Field>Choose a color theme:</Styled.Field>
-            <Styled.ThemeButton value="light" onClick={handleClick}>
-              Light
-            </Styled.ThemeButton>
-            <Styled.DarkThemeButton value="dark" onClick={handleClick}>
-              Dark
-            </Styled.DarkThemeButton>
-            <Styled.IceThemeButton value="ice" onClick={handleClick}>
-              Ice
-            </Styled.IceThemeButton>
-          </Styled.ThemeGrid>
-        </Styled.Container>
-      ) : null}
+      {!personalizeChecked ? <ToggleTheme props={props} /> : null}
     </Fragment>
   );
 };
