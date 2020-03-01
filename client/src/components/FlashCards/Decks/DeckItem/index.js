@@ -228,9 +228,9 @@ const DeckItemBase = ({ deck, session }) => {
               </Button>
             </EditDropDownContent>
           </EditDropDown>
-          <Styled.BrowseButton type="button">
-            <Link to={cardListLink}>Browse</Link>
-          </Styled.BrowseButton>
+          <BrowseLink to={cardListLink}>
+            <Styled.BrowseButton type="button">Browse</Styled.BrowseButton>
+          </BrowseLink>
           {session.me.bookmarkedDecks.find(isBookmarked) ? (
             <Styled.LikeButton
               type="button"
@@ -276,6 +276,10 @@ const EditDropDownContent = styled.div`
 const LikeIcon = styled.img`
   width: 24px;
   height: 24px;
+`;
+
+const BrowseLink = styled(Link)`
+  display: inherit;
 `;
 
 export default DeckItemBase;

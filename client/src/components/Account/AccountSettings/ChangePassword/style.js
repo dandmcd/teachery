@@ -69,6 +69,7 @@ export const InputUserName = styled.input`
 export const InputPassword = styled.input`
   font-family: "Open Sans", sans-serif;
   border: 0;
+  color: ${props => props.theme.textOverlay};
   background-color: ${props => props.theme.container};
   display: block;
   margin: 3px auto 17px auto;
@@ -88,11 +89,12 @@ export const InputPassword = styled.input`
 export const InputConfirmPassword = styled.input`
   font-family: "Open Sans", sans-serif;
   border: 0;
+  color: ${props => props.theme.textOverlay};
   background-color: ${props => props.theme.container};
   display: block;
   margin: 3px auto 17px auto;
   text-align: center;
-  border: 2px solid ${props => props.theme.secondaryDark};
+  border: 2px solid ${props => props.theme.secondary};
   padding: 14px 10px;
   width: 88%;
   outline: none;

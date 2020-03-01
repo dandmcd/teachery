@@ -142,17 +142,19 @@ const Search = () => {
       )}
       {showPopup ? (
         <Styled.PopupContainer>
-          <Styled.PopupInner ref={innerRef}>
-            <Styled.PopupTitle>Tags that match {tagName} ...</Styled.PopupTitle>
+          <Styled.PopupInnerExtended ref={innerRef}>
+            <Styled.PopupHeader>
+              <Styled.PopupTitle>Search Results ...</Styled.PopupTitle>
+              <Styled.PopupFooterButton onClick={togglePopup}>
+                <Styled.CloseSpan />
+              </Styled.PopupFooterButton>
+            </Styled.PopupHeader>
             <Styled.PopupBody>
               {tags.map(tag => (
                 <SearchTagLink key={tag.id} tag={tag} />
               ))}
             </Styled.PopupBody>
-            <Styled.PopupFooterButton onClick={togglePopup}>
-              Close
-            </Styled.PopupFooterButton>
-          </Styled.PopupInner>
+          </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
     </Fragment>

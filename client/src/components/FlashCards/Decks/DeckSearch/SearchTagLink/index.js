@@ -31,6 +31,8 @@ SearchTagLink.propTypes = {
 
 const Row = styled.div`
   display: flex;
+  width: 80%;
+  margin: 0 auto;
   flex-direction: row;
   flex-wrap: wrap;
 `;
@@ -41,7 +43,7 @@ const Column = styled.div`
   flex: 1;
 `;
 
-const TagItem = styled.h5`
+const TagItem = styled.h4`
   margin: 0px;
 `;
 

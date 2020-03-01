@@ -73,7 +73,7 @@ body {
   background-color: ${props => props.theme.appBody};
   color: ${props => props.theme.text};
   outline: none;
-  transition: all 1s linear;
+  /* transition: all 1s linear; */
 }
 #root {
   position: relative;
