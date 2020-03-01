@@ -7,7 +7,7 @@ export const Navbar = styled.nav`
   top: 60px;
   margin-top: 0px;
   width: 100%;
-  background: white;
+  background-color: ${props => props.theme.appBody};
   align-self: flex-end;
   z-index: ${props => (props.displayMobileNavbar ? 20 : 15)};
   transition: transform 1s;
@@ -18,7 +18,6 @@ export const Navbar = styled.nav`
 
 export const NavRight = styled.div`
   position: relative;
-
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -42,7 +41,7 @@ export const NavLink = styled.li`
   position: relative;
   text-decoration: none;
   a {
-    color: ${props => props.theme.primary};
+    color: ${props => props.theme.link};
     :hover {
       bottom: -5px;
       border-radius: 6px;

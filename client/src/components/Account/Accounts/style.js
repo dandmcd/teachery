@@ -95,17 +95,17 @@ export const ThemeGrid = styled.div`
 `;
 
 export const ThemeButton = styled.button`
-  display: table-cell;
   margin: 0 auto;
   z-index: 50;
   vertical-align: middle;
   height: 40px;
   width: 40px;
   max-width: 40px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
   text-decoration: none;
   outline: none;
+  cursor: pointer;
   border-style: none;
   color: ${props => props.theme.text};
   background-color: #faf9f9;
@@ -114,10 +114,16 @@ export const ThemeButton = styled.button`
   padding: 0;
   transition: all 0.25s ease-in-out;
   transform: scale(1) translateZ(0);
+  ::-moz-focus-inner {
+    border: 0;
+  }
   :hover {
-    filter: brightness(125%);
+    transform: scale(1.15);
+    filter: brightness(105%);
     background: ${props => props.theme.primaryDark};
-    transform: scale(1.1);
+  }
+  :active {
+    filter: brightness(115%);
   }
 `;
 

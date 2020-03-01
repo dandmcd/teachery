@@ -174,6 +174,7 @@ const SearchImg = styled.img`
 
 const SearchInput = styled.input`
   height: 35px;
+  width: 180px;
   border: 0;
   outline: 0;
   border-bottom: 2px solid ${props => props.theme.primary};

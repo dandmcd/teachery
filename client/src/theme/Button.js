@@ -18,6 +18,9 @@ const Button = styled.button`
   vertical-align: middle;
   cursor: pointer;
   outline: none;
+  ::-moz-focus-inner {
+    border: 0;
+  }
   :hover {
     color: white;
     background: ${props => props.theme.secondary};

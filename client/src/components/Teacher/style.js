@@ -93,6 +93,10 @@ export const AssignmentItemContainer = styled.div`
   -moz-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
     0 6px 6px rgba(0, 0, 0, 0.23);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  :hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15),
+      0 6px 6px rgba(19, 129, 129, 0.125);
+  }
   @media only screen and (max-device-width: 375px) {
     width: 330px;
   }
@@ -123,7 +127,6 @@ export const Submitted = styled.h3`
 `;
 
 export const SubmittedButton = styled.button`
-  display: table-cell;
   margin: 0 auto;
   z-index: 50;
   vertical-align: middle;
@@ -143,9 +146,9 @@ export const SubmittedButton = styled.button`
   transition: all 0.25s ease-in-out;
   transform: scale(1) translateZ(0);
   :hover {
-    filter: brightness(125%);
+    transform: scale(1.15);
+    filter: brightness(105%);
     background: ${props => props.theme.primaryDark};
-    transform: scale(1.1);
   }
 `;
 
@@ -156,7 +159,6 @@ export const Overdue = styled.h3`
 `;
 
 export const OverdueButton = styled.button`
-  display: table-cell;
   margin: 0 auto;
   z-index: 50;
   vertical-align: middle;
@@ -176,9 +178,12 @@ export const OverdueButton = styled.button`
   transition: all 0.25s ease-in-out;
   transform: scale(1) translateZ(0);
   :hover {
-    filter: brightness(125%);
+    transform: scale(1.15);
+    filter: brightness(105%);
     background: ${props => props.theme.primaryDark};
-    transform: scale(1.1);
+  }
+  :active {
+    filter: brightness(115%);
   }
 `;
 
@@ -189,7 +194,6 @@ export const Incomplete = styled.h3`
 `;
 
 export const IncompleteButton = styled.button`
-  display: table-cell;
   margin: 0 auto;
   z-index: 50;
   vertical-align: middle;
@@ -209,9 +213,12 @@ export const IncompleteButton = styled.button`
   transition: all 0.25s ease-in-out;
   transform: scale(1) translateZ(0);
   :hover {
+    transform: scale(1.15);
     filter: brightness(105%);
     background: ${props => props.theme.primaryDark};
-    transform: scale(1.1);
+  }
+  :active {
+    filter: brightness(115%);
   }
 `;
 
@@ -222,7 +229,6 @@ export const NotGraded = styled.h3`
 `;
 
 export const NotGradedButton = styled.button`
-  display: table-cell;
   margin: 0 auto;
   z-index: 50;
   vertical-align: middle;
@@ -242,9 +248,12 @@ export const NotGradedButton = styled.button`
   transition: all 0.25s ease-in-out;
   transform: scale(1) translateZ(0);
   :hover {
+    transform: scale(1.15);
     filter: brightness(105%);
     background: ${props => props.theme.secondaryDark};
-    transform: scale(1.1);
+  }
+  :active {
+    filter: brightness(115%);
   }
 `;
 

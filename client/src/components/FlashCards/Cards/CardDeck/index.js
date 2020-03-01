@@ -1,8 +1,9 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-
 import * as Styled from "./style";
+
+import * as routes from "../../../../routing/routes";
 
 const CardDeck = ({ cards }) => {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -55,7 +56,7 @@ const CardDeck = ({ cards }) => {
           <Styled.FinishCorrect>{countRight}</Styled.FinishCorrect> Right and{" "}
           <Styled.FinishWrong>{countWrong}</Styled.FinishWrong> Wrong
         </h2>
-        <Link to="/deck">Go back to Flashcards page</Link>
+        <Link to={routes.FLASHCARDS}>Go back to Flashcards page</Link>
       </Styled.Container>
     );
   } else {

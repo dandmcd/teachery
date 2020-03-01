@@ -26,6 +26,10 @@ export const Box = styled.form`
   -moz-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
     0 6px 6px rgba(0, 0, 0, 0.23);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  :hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15),
+      0 6px 6px rgba(19, 129, 129, 0.125);
+  }
 `;
 
 export const Title = styled.h1`

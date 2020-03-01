@@ -16,8 +16,6 @@ const Account = ({ session, props }) => {
     setPersonalizeChecked(personalizeChecked === false ? true : false);
   };
 
-  const handleClick = () => {};
-
   return (
     <Fragment>
       <Styled.Header>

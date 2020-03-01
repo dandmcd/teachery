@@ -94,18 +94,14 @@ export const MenuSpan = styled.span`
     margin-bottom: 5px;
     position: relative;
     z-index: 20;
-    background: red;
+    background: ${props => props.theme.link};
     border-radius: 3px;
-
     transform-origin: 4px 0px;
-
     transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1),
       background 0.5s cubic-bezier(0.77, 0.2, 0.05, 1), opacity 0.55s ease;
-
     :first-child {
       transform-origin: 0% 0%;
     }
-
     :nth-last-child(2) {
       transform-origin: 0% 100%;
     }

@@ -56,9 +56,13 @@ export const CardList = props => {
           </h3>
           <Title>Card Listing for {deckName}</Title>
           <CardEdit />
-          <AddCardButton type="button" onClick={togglePopupModal}>
-            Add Card
-          </AddCardButton>
+          <div>
+            <CardCountButton>{cards.length}</CardCountButton> Cards
+            <AddCardButton type="button" onClick={togglePopupModal}>
+              Add Card
+            </AddCardButton>
+          </div>
+
           <CardCreate key={cardData.deck.id} deck={cardData.deck} />
         </Menu>
       </Header>
@@ -107,7 +111,35 @@ const Title = styled.h3`
 `;
 
 const AddCardButton = styled(Button)`
+  margin-left: 0.7em;
   border: 2px solid ${props => props.theme.secondary};
+`;
+
+const CardCountButton = styled.button`
+  display: table-cell;
+  margin: 0 auto;
+  z-index: 50;
+  vertical-align: middle;
+  height: 40px;
+  width: 40px;
+  max-width: 40px;
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+  outline: none;
+  border-style: none;
+  color: white;
+  background-color: ${props => props.theme.secondary};
+  border-radius: 100%;
+  text-align: center;
+  padding: 0;
+  transition: all 0.25s ease-in-out;
+  transform: scale(1) translateZ(0);
+  :hover {
+    filter: brightness(105%);
+    background: ${props => props.theme.secondaryDark};
+    transform: scale(1.1);
+  }
 `;
 
 export default withAuthorization(session => session && session.me)(

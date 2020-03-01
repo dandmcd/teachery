@@ -26,6 +26,10 @@ export const Box = styled.form`
   -moz-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
     0 6px 6px rgba(0, 0, 0, 0.23);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  :hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15),
+      0 6px 6px rgba(19, 129, 129, 0.125);
+  }
 `;
 
 export const Title = styled.h1`
@@ -50,6 +54,7 @@ export const Span = styled.span``;
 export const InputUserName = styled.input`
   font-family: "Open Sans", sans-serif;
   border: 0;
+  color: ${props => props.theme.textOverlay};
   background-color: ${props => props.theme.container};
   display: block;
   margin: 3px auto 17px auto;

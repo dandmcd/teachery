@@ -15,7 +15,7 @@ export const CardImg = styled.img`
   left: 25%;
   right: 25%;
   border-radius: 10px;
-  border: 2px solid blue;
+  border: 2px solid ${props => props.theme.primaryDark};
   max-height: 50vh;
   max-width: 50vh;
   height: auto;
@@ -46,8 +46,8 @@ export const Hr = styled.hr`
   height: 2px;
   background-image: -webkit-linear-gradient(
     left,
-    ${props => props.theme.primary},
-    ${props => props.theme.neutralLight}
+    ${props => props.theme.neutralLight},
+    ${props => props.theme.container}
   );
   animation: fadeInAnimation ease 1.5s;
   animation-iteration-count: 1;
@@ -140,7 +140,6 @@ export const CorrectButton = styled.button`
 `;
 
 export const WrongButton = styled.button`
-  display: table-cell;
   z-index: 50;
   margin: 0 auto;
   vertical-align: middle;
@@ -206,7 +205,6 @@ export const ShowAnswer = styled.button`
 `;
 
 export const FinishCorrect = styled.button`
-  display: table-cell;
   margin: 0 auto;
   z-index: 50;
   vertical-align: middle;
@@ -217,13 +215,21 @@ export const FinishCorrect = styled.button`
   font-weight: bold;
   text-decoration: none;
   outline: none;
-  cursor: pointer;
   border-style: none;
   color: white;
   background-color: ${props => props.theme.success};
   border-radius: 100%;
   text-align: center;
   padding: 0;
+  transition: all 0.25s ease-in-out;
+  transform: scale(1) translateZ(0);
+  :hover {
+    transform: scale(1.15);
+    filter: brightness(105%);
+  }
+  :active {
+    filter: brightness(115%);
+  }
 `;
 
 export const FinishWrong = styled.button`
@@ -238,11 +244,19 @@ export const FinishWrong = styled.button`
   font-weight: bold;
   text-decoration: none;
   outline: none;
-  cursor: pointer;
   border-style: none;
   color: white;
   background-color: ${props => props.theme.error};
   border-radius: 100%;
   text-align: center;
   padding: 0;
+  transition: all 0.25s ease-in-out;
+  transform: scale(1) translateZ(0);
+  :hover {
+    transform: scale(1.15);
+    filter: brightness(105%);
+  }
+  :active {
+    filter: brightness(115%);
+  }
 `;

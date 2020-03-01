@@ -168,7 +168,6 @@ export const PracticeInput = styled.input`
   grid-row: 1 / 2;
   grid-column: 1 / 2;
   margin: 0 auto;
-  display: table-cell;
   vertical-align: middle;
   height: auto;
   width: 60px;
@@ -184,10 +183,11 @@ export const PracticeInput = styled.input`
   border-radius: 100%;
   text-align: center;
   padding: 0;
+  -moz-appearance: textfield;
   transition: all 0.25s ease-in-out;
   transform: scale(1) translateZ(0);
   :hover {
-    filter: brightness(105%);
+    filter: brightness(102%);
     background-color: ${props => props.theme.secondaryDark};
     transform: scale(1.1);
   }
@@ -208,7 +208,6 @@ export const PracticeAll = styled.button`
   grid-row: 1 / 2;
   grid-column: 2 / 3;
   margin: 0 auto;
-  display: table-cell;
   vertical-align: middle;
   height: auto;
   width: 60px;
@@ -227,7 +226,7 @@ export const PracticeAll = styled.button`
   transition: all 0.25s ease-in-out;
   transform: scale(1) translateZ(0);
   :hover {
-    filter: brightness(105%);
+    filter: brightness(102%);
     background-color: ${props => props.theme.secondaryDark};
     transform: scale(1.1);
   }
@@ -237,7 +236,6 @@ export const PracticeStart = styled.button`
   grid-row: 1 / 2;
   grid-column: 3 / 4;
   margin: 0 auto;
-  display: table-cell;
   vertical-align: middle;
   height: auto;
   width: 60px;
@@ -257,7 +255,7 @@ export const PracticeStart = styled.button`
   transition: all 0.25s ease-in-out;
   transform: scale(1) translateZ(0);
   :hover {
-    filter: brightness(105%);
+    filter: brightness(102%);
     background: ${props => props.theme.secondaryDark};
     transform: scale(1.1);
   }
@@ -266,6 +264,7 @@ export const PracticeStart = styled.button`
     border: 2px solid ${props => props.theme.disabled};
     color: ${props => props.theme.disabled};
     box-shadow: 0 0 10px 5px ${props => props.theme.neutralLight};
+    cursor: auto;
   }
 `;
 
