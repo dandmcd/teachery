@@ -35,8 +35,14 @@ export const Footer = styled.div`
   left: 0;
   background-color: ${props => props.theme.neutralLight};
   text-align: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
 `;
 
@@ -49,8 +55,11 @@ export const Hr = styled.hr`
     ${props => props.theme.neutralLight},
     ${props => props.theme.container}
   );
+  -webkit-animation: fadeInAnimation ease 1.5s;
   animation: fadeInAnimation ease 1.5s;
+  -webkit-animation-iteration-count: 1;
   animation-iteration-count: 1;
+  -webkit-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
   @keyframes fadeInAnimation {
     0% {
@@ -63,8 +72,11 @@ export const Hr = styled.hr`
 `;
 
 export const CardFront = styled.h2`
+  -webkit-animation: fadeInAnimation ease 1.5s;
   animation: fadeInAnimation ease 1.5s;
+  -webkit-animation-iteration-count: 1;
   animation-iteration-count: 1;
+  -webkit-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
   @keyframes fadeInAnimation {
     0% {
@@ -77,8 +89,11 @@ export const CardFront = styled.h2`
 `;
 
 export const CardBack = styled.h2`
+  -webkit-animation: fadeInAnimation ease 1.5s;
   animation: fadeInAnimation ease 1.5s;
+  -webkit-animation-iteration-count: 1;
   animation-iteration-count: 1;
+  -webkit-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
   @keyframes fadeInAnimation {
     0% {
@@ -92,9 +107,18 @@ export const CardBack = styled.h2`
 
 export const FooterLeft = styled.div`
   position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-flow: row nowrap;
   flex-flow: row nowrap;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
   justify-content: flex-start;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   text-align: left;
   margin-left: 15px;
@@ -102,9 +126,18 @@ export const FooterLeft = styled.div`
 
 export const FooterRight = styled.div`
   position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-flow: row nowrap;
   flex-flow: row nowrap;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
   justify-content: flex-end;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   text-align: right;
   margin-right: 15px;
@@ -128,13 +161,18 @@ export const CorrectButton = styled.button`
   border-radius: 100%;
   text-align: center;
   padding: 0;
+  -webkit-transition: all 0.25s ease-in-out;
   transition: all 0.25s ease-in-out;
+  -webkit-transform: scale(1) translateZ(0);
   transform: scale(1) translateZ(0);
   :hover {
+    -webkit-transform: scale(1.15);
     transform: scale(1.15);
+    -webkit-filter: brightness(105%);
     filter: brightness(105%);
   }
   :active {
+    -webkit-filter: brightness(115%);
     filter: brightness(115%);
   }
 `;
@@ -157,13 +195,18 @@ export const WrongButton = styled.button`
   border-radius: 100%;
   text-align: center;
   padding: 0;
+  -webkit-transition: all 0.25s ease-in-out;
   transition: all 0.25s ease-in-out;
+  -webkit-transform: scale(1) translateZ(0);
   transform: scale(1) translateZ(0);
   :hover {
+    -webkit-transform: scale(1.15);
     transform: scale(1.15);
+    -webkit-filter: brightness(105%);
     filter: brightness(105%);
   }
   :active {
+    -webkit-filter: brightness(115%);
     filter: brightness(115%);
   }
 `;
@@ -191,16 +234,23 @@ export const ShowAnswer = styled.button`
   color: white;
   background-color: ${props => props.theme.secondary};
   border-radius: 100%;
-  box-shadow: 0 0 10px 5px ${props => props.theme.success};
   text-align: center;
   padding: 0;
+  -webkit-transition: all 0.25s ease-in-out;
   transition: all 0.25s ease-in-out;
+  -webkit-transform: scale(1) translateZ(0);
   transform: scale(1) translateZ(0);
   :hover {
+    -webkit-transform: scale(1.25);
     transform: scale(1.25);
+    -webkit-box-shadow: 0 0 10px 5px ${props => props.theme.success};
+    box-shadow: 0 0 10px 5px ${props => props.theme.success};
   }
   :active {
+    -webkit-filter: brightness(105%);
     filter: brightness(105%);
+    -webkit-box-shadow: 0 0 10px 5px ${props => props.theme.success};
+    box-shadow: 0 0 10px 5px ${props => props.theme.success};
   }
 `;
 
@@ -221,19 +271,23 @@ export const FinishCorrect = styled.button`
   border-radius: 100%;
   text-align: center;
   padding: 0;
+  -webkit-transition: all 0.25s ease-in-out;
   transition: all 0.25s ease-in-out;
+  -webkit-transform: scale(1) translateZ(0);
   transform: scale(1) translateZ(0);
   :hover {
+    -webkit-transform: scale(1.15);
     transform: scale(1.15);
+    -webkit-filter: brightness(105%);
     filter: brightness(105%);
   }
   :active {
+    -webkit-filter: brightness(115%);
     filter: brightness(115%);
   }
 `;
 
 export const FinishWrong = styled.button`
-  display: table-cell;
   z-index: 50;
   margin: 0 auto;
   vertical-align: middle;
@@ -250,13 +304,18 @@ export const FinishWrong = styled.button`
   border-radius: 100%;
   text-align: center;
   padding: 0;
+  -webkit-transition: all 0.25s ease-in-out;
   transition: all 0.25s ease-in-out;
+  -webkit-transform: scale(1) translateZ(0);
   transform: scale(1) translateZ(0);
   :hover {
+    -webkit-transform: scale(1.15);
     transform: scale(1.15);
+    -webkit-filter: brightness(105%);
     filter: brightness(105%);
   }
   :active {
+    -webkit-filter: brightness(115%);
     filter: brightness(115%);
   }
 `;

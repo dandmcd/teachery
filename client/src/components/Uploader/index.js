@@ -24,7 +24,7 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
       reader.onabort = () => console.log("file reading was aborted");
       reader.onerror = () => console.log("file reading has failed");
       reader.onload = () => {};
-      acceptedFiles.forEach(file => reader.readAsBinaryString(file));
+      acceptedFiles.forEach(file => reader.readAsArrayBuffer(file));
       setFiles(
         acceptedFiles.map(file =>
           Object.assign(file, { preview: URL.createObjectURL(file) })

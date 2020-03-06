@@ -164,15 +164,17 @@ const AssignmentItemBase = ({ assignment, session }) => {
       <Styled.CardGrid>
         <Styled.Title>{assignment.assignmentName}</Styled.Title>
         <Styled.Note>{assignment.note}</Styled.Note>
-        {assignment.link !== null ? (
-          <Styled.ExternalLink
-            href={assignment.link}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            View Link
-          </Styled.ExternalLink>
-        ) : null}
+        <Styled.LinkCell>
+          {assignment.link !== null ? (
+            <Styled.ExternalLink
+              href={assignment.link}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              View Link
+            </Styled.ExternalLink>
+          ) : null}
+        </Styled.LinkCell>
         <Styled.CreatedInfo>
           <Styled.CreatedAt>
             Created on:{" "}

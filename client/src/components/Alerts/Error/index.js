@@ -26,6 +26,7 @@ ErrorMessage.propTypes = {
 const ErrorContainer = styled.div`
   margin-left: 8px;
   margin-right: 8px;
+  -webkit-box-shadow: 0 0 5px 1px rgba(217, 109, 110, 0.47);
   box-shadow: 0 0 5px 1px rgba(217, 109, 110, 0.47);
 `;
 

@@ -91,10 +91,10 @@ const Teacher = ({ session, me }) => {
       </Styled.TeacherHeader>
 
       <Styled.Grid>
-        <div>
+        <Styled.MessageColumn>
           <Messages limit={3} />
           <MessageCreate />
-        </div>
+        </Styled.MessageColumn>
         <Styled.AssignmentItemContainer>
           <Styled.Welcome>
             <Link to={routes.ACCOUNT}>{session.me.username}</Link>, you have ...

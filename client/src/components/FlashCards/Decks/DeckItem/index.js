@@ -153,9 +153,9 @@ const DeckItemBase = ({ deck, session }) => {
     <Styled.DeckItemContainer>
       <Styled.CardGrid>
         {deck.deckImageUrl === null ? (
-          <Styled.DeckImg src={teststudent} alt="Deck Logo" />
+          <Styled.DeckImg deckImg={teststudent} alt="Deck Logo" />
         ) : (
-          <Styled.DeckImg src={deck.deckImageUrl} alt="Deck Logo" />
+          <Styled.DeckImg deckImg={deck.deckImageUrl} />
         )}
         <Styled.DeckInfo>
           <Styled.Title>
@@ -220,31 +220,38 @@ const DeckItemBase = ({ deck, session }) => {
               {session && session.me && deck.user.id === session.me.id && (
                 <DeckDelete deck={deck} />
               )}
-              <Button type="button" onClick={togglePopupModal}>
+              <Styled.EditButton type="button" onClick={togglePopupModal}>
                 Edit Details
-              </Button>
-              <Button type="button" onClick={() => togglePopupModal("addTag")}>
+              </Styled.EditButton>
+              <Styled.TagButton
+                type="button"
+                onClick={() => togglePopupModal("addTag")}
+              >
                 Add Tag
-              </Button>
+              </Styled.TagButton>
             </EditDropDownContent>
           </EditDropDown>
           <BrowseLink to={cardListLink}>
             <Styled.BrowseButton type="button">Browse</Styled.BrowseButton>
           </BrowseLink>
           {session.me.bookmarkedDecks.find(isBookmarked) ? (
-            <Styled.LikeButton
-              type="button"
-              onClick={() => removeBookmark({ variables: { id: deck.id } })}
-            >
-              <LikeIcon src={liked} />
-            </Styled.LikeButton>
+            <Styled.Like>
+              <Styled.LikeButton
+                type="button"
+                onClick={() => removeBookmark({ variables: { id: deck.id } })}
+              >
+                <LikeIcon src={liked} />
+              </Styled.LikeButton>
+            </Styled.Like>
           ) : (
-            <Styled.LikeButton
-              type="button"
-              onClick={() => bookmarkDeck({ variables: { id: deck.id } })}
-            >
-              <LikeIcon src={like} />
-            </Styled.LikeButton>
+            <Styled.Like>
+              <Styled.LikeButton
+                type="button"
+                onClick={() => bookmarkDeck({ variables: { id: deck.id } })}
+              >
+                <LikeIcon src={like} />
+              </Styled.LikeButton>
+            </Styled.Like>
           )}
         </Styled.DeckButtons>
       </Styled.CardGrid>
@@ -259,17 +266,21 @@ DeckItemBase.propTypes = {
 
 const EditDropDown = styled.div`
   position: relative;
-  display: flex;
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
   z-index: 30;
 `;
 
 const EditDropDownContent = styled.div`
   display: ${props => (props.isChecked ? "block" : "none")};
   position: absolute;
+  width: -webkit-min-content;
+  width: -moz-min-content;
   width: min-content;
   background-color: ${props => props.theme.container};
+  -webkit-box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 30;
+  z-index: 16;
   bottom: 100%;
 `;
 
@@ -279,6 +290,8 @@ const LikeIcon = styled.img`
 `;
 
 const BrowseLink = styled(Link)`
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
   display: inherit;
 `;
 

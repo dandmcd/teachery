@@ -22,7 +22,7 @@ const ToggleTheme = ({ props: { setTheme } }) => {
   return (
     <Styled.Container>
       <Styled.ThemeGrid>
-        <Styled.Field>Choose a color theme:</Styled.Field>
+        <Styled.ThemeField>Choose a color theme:</Styled.ThemeField>
         <Styled.ThemeButton onClick={setLightTheme}>Light</Styled.ThemeButton>
         <Styled.DarkThemeButton onClick={setDarkTheme}>
           Dark

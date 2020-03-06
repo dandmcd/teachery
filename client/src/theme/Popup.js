@@ -31,9 +31,6 @@ export const PopupInner = styled.div`
   border-radius: 20px;
   background: ${props => props.theme.container};
   text-align: center;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  grid-template-columns: 100%;
   -ms-overflow-style: none;
   scrollbar-width: none;
   ::-webkit-scrollbar {
@@ -57,8 +54,10 @@ export const PopupInnerExtended = styled(PopupInner)`
 `;
 
 export const PopupHeader = styled.div`
+  display: -ms-grid;
   display: grid;
   background-color: ${props => props.theme.neutralLight};
+  -ms-grid-columns: 1fr 5px auto 5px 1fr;
   grid-template-columns: 1fr auto 1fr;
   justify-items: center;
   grid-column-gap: 5px;
@@ -66,6 +65,7 @@ export const PopupHeader = styled.div`
 
 export const PopupTitle = styled.h3`
   font-weight: 700;
+  -ms-grid-column: 3;
   grid-column-start: 2;
   text-align: center;
 `;
@@ -85,6 +85,7 @@ export const Input = styled.input`
   width: 88%;
   outline: none;
   border-radius: 24px;
+  -webkit-transition: 0.25s;
   transition: 0.25s;
   ::placeholder {
     font-family: "Open Sans", sans-serif;
@@ -132,6 +133,7 @@ export const InputTextArea = styled.textarea`
   width: 88%;
   outline: none;
   border-radius: 24px;
+  -webkit-transition: 0.25s;
   transition: 0.25s;
   ::placeholder {
     font-family: "Open Sans", sans-serif;
@@ -153,7 +155,9 @@ export const InputTextArea = styled.textarea`
 `;
 
 export const CloseSpan = styled.span`
+  -ms-grid-column: 5;
   grid-column-start: 3;
+  -ms-grid-column-align: end;
   justify-self: end;
   display: block;
   width: 36px;
@@ -162,16 +166,26 @@ export const CloseSpan = styled.span`
   z-index: 20;
   background: ${props => props.theme.primaryMed};
   border-radius: 3px;
+  -webkit-transform-origin: 4px 0px;
   transform-origin: 4px 0px;
+  -webkit-transition: background 0.5s cubic-bezier(0.77, 0.2, 0.05, 1),
+    opacity 0.55s ease, -webkit-transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
+  transition: background 0.5s cubic-bezier(0.77, 0.2, 0.05, 1),
+    opacity 0.55s ease, -webkit-transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
   transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1),
     background 0.5s cubic-bezier(0.77, 0.2, 0.05, 1), opacity 0.55s ease;
+  transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1),
+    background 0.5s cubic-bezier(0.77, 0.2, 0.05, 1), opacity 0.55s ease,
+    -webkit-transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
   :hover {
     background: ${props => props.theme.disabled};
   }
 `;
 
 export const PopupFooterButton = styled.button`
+  -ms-grid-column: 5;
   grid-column-start: 3;
+  -ms-grid-column-align: end;
   justify-self: end;
   height: auto;
   width: 80px;
@@ -180,8 +194,8 @@ export const PopupFooterButton = styled.button`
   margin: 0.2em;
   padding: 0.4em 0.6em;
   border: 2px solid ${props => props.theme.neutralLight};
+  -ms-grid-row-align: center;
   align-self: center;
-  display: table-cell;
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
@@ -189,6 +203,7 @@ export const PopupFooterButton = styled.button`
 `;
 
 export const CardImg = styled.img`
+  -o-object-fit: cover;
   object-fit: cover;
   width: 200px;
   height: 150px;

@@ -124,7 +124,14 @@ const DeckCreate = () => {
         "Content-Type": file.type
       }
     };
-    await axios.put(signedRequest, file, options);
+    await axios
+      .put(signedRequest, file, options)
+      .then(function(response) {
+        console.log(response);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   };
 
   const formatFilename = filename => {
@@ -150,7 +157,11 @@ const DeckCreate = () => {
       try {
         client.writeData({ data: { isSubmitting: true } });
         console.log(drop);
-        console.log(new File([image], drop.name));
+        try {
+          new File([image], drop.name);
+        } catch (err) {
+          new Blob([image], drop.name);
+        }
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),

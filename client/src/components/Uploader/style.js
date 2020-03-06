@@ -16,9 +16,18 @@ export const getColor = props => {
 };
 
 export const Container = styled.div`
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   padding: 20px;
   margin-left: 5px;
@@ -30,7 +39,8 @@ export const Container = styled.div`
   background-color: ${props => props.theme.container};
   color: ${props => props.theme.textLight};
   outline: none;
-  transition: border 0.24s ease-in-out;
+  -webkit-transition: border 0.25s ease-in-out;
+  transition: border 0.25s ease-in-out;
 `;
 
 export const UploadTitle = styled.h4`
@@ -78,14 +88,24 @@ export const RejectedItem = styled.li`
 `;
 
 export const ThumbContainer = styled.aside`
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
+  -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   margin-top: 10px;
 `;
 
 export const Thumb = styled.div`
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
   display: inline-flex;
   border-radius: 2px;
   border: 1px solid #eaeaea;
@@ -94,10 +114,13 @@ export const Thumb = styled.div`
   width: 100px;
   height: 100px;
   padding: 4px;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 `;
 
 export const ThumbInner = styled.div`
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   min-width: 0px;
   overflow: hidden;

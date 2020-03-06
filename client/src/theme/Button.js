@@ -11,9 +11,10 @@ const Button = styled.button`
   padding: 0.25em 1em;
   font-size: 12px;
   font-family: inherit;
+  -webkit-transition: all 0.15s ease-in-out;
   transition: all 0.15s ease-in-out;
+  -webkit-transform: scale(1) translateZ(0);
   transform: scale(1) translateZ(0);
-  display: table-cell;
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
@@ -24,6 +25,7 @@ const Button = styled.button`
   :hover {
     color: white;
     background: ${props => props.theme.secondary};
+    -webkit-transform: scale(1.05);
     transform: scale(1.05);
   }
   :disabled {

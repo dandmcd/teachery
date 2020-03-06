@@ -91,8 +91,6 @@ CardItem.propTypes = {
   session: PropTypes.object.isRequired
 };
 
-const CardListContainer = styled.div``;
-
 const CardField = styled.h4`
   margin-left: 10px;
   margin-top: 0.5em;
@@ -110,17 +108,6 @@ const Created = styled.h6`
   margin-top: 0.5em;
   margin-bottom: 0.5em;
   color: ${props => props.theme.textLight};
-`;
-
-const Hr = styled.hr`
-  padding: 0;
-  border: none;
-  height: 2px;
-  background-image: -webkit-linear-gradient(
-    left,
-    ${props => props.theme.primary},
-    ${props => props.theme.neutralLight}
-  );
 `;
 
 const EditButton = styled(Button)`

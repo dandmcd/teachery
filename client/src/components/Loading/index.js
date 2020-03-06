@@ -1,8 +1,6 @@
-import React, { Fragment } from "react";
+import React from "react";
 import styled from "styled-components";
 import { ReactComponent as Spinner } from "../../assets/spinner.svg";
-
-import bluespinner from "../../assets/bluespinner.gif";
 
 const Loading = () => (
   <Container>

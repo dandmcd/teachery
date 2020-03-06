@@ -20,16 +20,36 @@ DeckList.propTypes = {
 };
 
 const DeckContainer = styled.div`
+  @supports (display: grid) {
+    display: -ms-grid;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    row-gap: 20px;
+    -webkit-column-gap: 5px;
+    -moz-column-gap: 5px;
+    column-gap: 5px;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    justify-items: center;
+  }
+
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-line-pack: distribute;
+  align-content: space-around;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
   position: relative;
   z-index: 10;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-  row-gap: 20px;
-  column-gap: 5px;
-  align-items: center;
-  justify-items: center;
   max-width: 1100px;
-  margin: 0 auto 20px auto;
+  margin: 1em auto 1em auto;
 `;
 
 const DeckItem = withSession(DeckItemBase);

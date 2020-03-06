@@ -48,13 +48,20 @@ const Title = styled.h2`
   padding: 0.2em 0px 0.2em 12px;
   @media only screen and (max-width: 675px) {
     text-align: center;
+    -ms-flex-item-align: end;
     align-self: flex-end;
   }
 `;
 
 const Menu = styled.div`
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   max-width: 1100px;
   margin: 0 auto;

@@ -100,13 +100,22 @@ const Header = styled.div`
 `;
 
 const Menu = styled.div`
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -ms-flex-wrap: wrap;
   flex-wrap: wrap;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
 `;
 
 const Title = styled.h3`
+  -webkit-box-flex: 2;
+  -ms-flex-positive: 2;
   flex-grow: 2;
 `;
 
@@ -116,14 +125,13 @@ const AddCardButton = styled(Button)`
 `;
 
 const CardCountButton = styled.button`
-  display: table-cell;
   margin: 0 auto;
   z-index: 50;
   vertical-align: middle;
   height: 40px;
   width: 40px;
   max-width: 40px;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   text-decoration: none;
   outline: none;
@@ -133,12 +141,16 @@ const CardCountButton = styled.button`
   border-radius: 100%;
   text-align: center;
   padding: 0;
+  -webkit-transition: all 0.25s ease-in-out;
   transition: all 0.25s ease-in-out;
+  -webkit-transform: scale(1) translateZ(0);
   transform: scale(1) translateZ(0);
   :hover {
+    -webkit-filter: brightness(105%);
     filter: brightness(105%);
-    background: ${props => props.theme.secondaryDark};
+    -webkit-transform: scale(1.1);
     transform: scale(1.1);
+    background: ${props => props.theme.secondaryDark};
   }
 `;
 

@@ -54,7 +54,9 @@ const CardDeck = ({ cards }) => {
         <h2>Here are the results ...</h2>
         <h2>
           <Styled.FinishCorrect>{countRight}</Styled.FinishCorrect> Right and{" "}
-          <Styled.FinishWrong>{countWrong}</Styled.FinishWrong> Wrong
+          <span>
+            <Styled.FinishWrong>{countWrong}</Styled.FinishWrong> Wrong
+          </span>
         </h2>
         <Link to={routes.FLASHCARDS}>Go back to Flashcards page</Link>
       </Styled.Container>
