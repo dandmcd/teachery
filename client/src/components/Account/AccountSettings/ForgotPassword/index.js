@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect, Fragment } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
-import useOuterClickNotifier from "../../../Alerts";
+import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
 import ErrorMessage from "../../../Alerts/Error";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import * as Styled from "./style";
 

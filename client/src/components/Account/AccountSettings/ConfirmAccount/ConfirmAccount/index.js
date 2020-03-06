@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useEffect, Fragment } from "react";
 import gql from "graphql-tag";
 import { useApolloClient, useQuery, useMutation } from "@apollo/react-hooks";
 
@@ -23,26 +23,20 @@ const ConfirmAccount = props => {
     }
   `);
 
-  console.log(props);
-
   const { toggleSuccess } = data;
 
-  const [resetStatus, setResetStatus] = useState(false);
-
-  const [confirmUser, { loading, error }] = useMutation(CONFIRM_ACCOUNT, {
+  const [confirmUser, { error }] = useMutation(CONFIRM_ACCOUNT, {
     onError: err => {
       client.writeData({ data: { toggleSuccess: false } });
-      setResetStatus(true);
     },
     onCompleted: data => {
       client.writeData({ data: { toggleSuccess: true } });
     }
   });
 
-  console.log(resetStatus);
   useEffect(() => {
     confirmUser({ variables: { token: props.match.params.token } });
-  }, []);
+  });
 
   return (
     <Fragment>

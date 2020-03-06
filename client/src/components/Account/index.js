@@ -2,11 +2,6 @@ import React, { Fragment } from "react";
 import styled from "styled-components";
 
 import withAuthorization from "../Session/withAuthorization";
-import GoBack from "../Navigation/GoBack";
-import ChangePassword from "./AccountSettings/ChangePassword";
-import Button from "../../theme/Button";
-import { Link } from "react-router-dom";
-import * as routes from "../../routing/routes";
 import Account from "./Accounts";
 
 const AccountPage = props => (

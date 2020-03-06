@@ -4,10 +4,10 @@ import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
 
-import useOuterClickNotifier from "../../../Alerts";
+import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
 import * as Styled from "../../../../theme/Popup";
 import DropZone from "../../../Uploader";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 
@@ -89,7 +89,7 @@ const CardEdit = () => {
           }
         `
       });
-      console.log(currentCard);
+
       setState(currentCard);
     }
   }, [client, current, toggleEditCard]);
@@ -144,7 +144,6 @@ const CardEdit = () => {
 
   const onSubmit = async (e, updateCard) => {
     e.preventDefault();
-    console.log(drop);
     if (drop) {
       try {
         client.writeData({ data: { isSubmitting: true } });

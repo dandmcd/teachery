@@ -94,7 +94,6 @@ export default {
       const userId = user.id;
 
       const token = jwt.sign({ userId, email }, secret, { expiresIn: 3600 });
-      console.log(token);
       await sendNewUserEmail(
         email,
         `http://localhost:3000/account/confirm/${token}`
@@ -113,7 +112,6 @@ export default {
         }
         decode = decoded;
       });
-      console.log(decode);
       if (!decode.userId) {
         return false;
       }
@@ -143,7 +141,6 @@ export default {
       const userId = user.id;
 
       const token = jwt.sign({ userId, email }, secret, { expiresIn: 3600 });
-      console.log(token);
       await sendChangeEmail(
         email,
         `http://localhost:3000/account/reset/${token}`
@@ -164,7 +161,6 @@ export default {
         }
         decode = decoded;
       });
-      console.log(decode);
       const user = await models.User.findByPk(decode.userId);
 
       if (!decode) {
@@ -202,7 +198,6 @@ export default {
       isAuthenticated,
       async (parent, { id, password }, { models, secret }) => {
         const newPassword = await bcrypt.hash(password, 10);
-        console.log("New  password" + " " + newPassword);
 
         const user = await models.User.update(
           {
@@ -232,7 +227,6 @@ export default {
         const email = user.email;
 
         const token = jwt.sign({ userId, email }, secret, { expiresIn: 3600 });
-        console.log(token);
         await sendNewUserEmail(
           email,
           `http://localhost:3000/account/confirm/${token}`

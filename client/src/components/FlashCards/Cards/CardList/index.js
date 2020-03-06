@@ -7,7 +7,7 @@ import gql from "graphql-tag";
 
 import CARDS_QUERY from "./CardListSchema/CardListSchema";
 import withAuthorization from "../../../Session/withAuthorization";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import CardItem from "../CardItem";
 import ErrorMessage from "../../../Alerts/Error/index";
 import GoBack from "../../../Navigation/GoBack";

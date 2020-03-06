@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import gql from "graphql-tag";
 
 import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
-import Loading from "../../Loading";
+import Loading from "../../Alerts/Loading";
 import ErrorMessage from "../../Alerts/Error";
 import DeckList from "./DeckList";
 import Button from "../../../theme/Button";
@@ -43,7 +43,7 @@ const Decks = ({ limit, me }) => {
       window.scrollTo(0, 0);
       client.writeData({ data: { linkedToPage: !linkedToPage } });
     }
-  }, []);
+  });
 
   if (loading && !data) {
     return <Loading />;

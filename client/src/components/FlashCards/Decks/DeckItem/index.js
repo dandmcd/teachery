@@ -4,18 +4,16 @@ import PropTypes from "prop-types";
 import { useQuery, useApolloClient, useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import { cloneDeep } from "lodash";
 
-import TagLink from "./DeckTags/TagLink";
+import TagLink from "../DeckTags/DeckTagItem";
 import { Link } from "react-router-dom";
 import history from "../../../../routing/history";
 import DeckDelete from "./../DeckDelete";
 import * as Styled from "./style";
-import Button from "../../../../theme/Button";
-
 import teststudent from "../../../../assets/teststudent.jpg";
 import like from "../../../../assets/like.png";
 import liked from "../../../../assets/liked.png";
-import { cloneDeep } from "lodash";
 import { GET_ME } from "../../../Session/queries";
 
 const BOOKMARK_DECK = gql`
@@ -49,12 +47,9 @@ const DeckItemBase = ({ deck, session }) => {
   });
   const { count } = sessionCount;
 
-  console.log(session);
-
   const isBookmarked = deckId => {
     return deckId.id === deck.id;
   };
-  console.log(session.me.bookmarkedDecks.find(isBookmarked));
 
   const [bookmarkDeck] = useMutation(BOOKMARK_DECK, {
     update(cache, { data: { bookmarkDeck } }) {
@@ -63,7 +58,6 @@ const DeckItemBase = ({ deck, session }) => {
           query: GET_ME
         })
       );
-      console.log(localData);
 
       localData.me.bookmarkedDecks = [
         ...localData.me.bookmarkedDecks,
@@ -73,7 +67,6 @@ const DeckItemBase = ({ deck, session }) => {
         query: GET_ME,
         data: { ...localData }
       });
-      console.log(localData);
     }
   });
   const [removeBookmark] = useMutation(REMOVE_BOOKMARK, {
@@ -83,7 +76,6 @@ const DeckItemBase = ({ deck, session }) => {
           query: GET_ME
         })
       );
-      console.log(localData);
 
       localData.me.bookmarkedDecks = localData.me.bookmarkedDecks.filter(
         item => item.id !== deck.id
@@ -92,7 +84,6 @@ const DeckItemBase = ({ deck, session }) => {
         query: GET_ME,
         data: { ...localData }
       });
-      console.log(localData);
     }
   });
 
@@ -128,7 +119,6 @@ const DeckItemBase = ({ deck, session }) => {
           current: deck.id
         }
       });
-      console.log("Add Tag");
     } else if (mutateType === "addCard") {
       client.writeData({
         data: {
@@ -136,7 +126,6 @@ const DeckItemBase = ({ deck, session }) => {
           current: deck.id
         }
       });
-      console.log("Add Card");
     } else {
       client.writeData({
         data: {
@@ -144,7 +133,6 @@ const DeckItemBase = ({ deck, session }) => {
           current: deck.id
         }
       });
-      console.log("Else");
     }
   };
   const isInvalid = count === "" || count <= "0";

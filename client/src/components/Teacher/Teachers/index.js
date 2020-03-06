@@ -1,22 +1,22 @@
 import React, { Fragment, createRef, useState } from "react";
 
 import { MessageCreate, Messages } from "../../Message";
-import AssignmentCreate from "../../Assignment/AssignmentCreate";
-import Assignments from "../../Assignment/AssignmentAdmin";
-import AssignTask from "../../Assignment/AssignmentAdmin/AssignTask";
-import AssignTaskUpdate from "../../Assignment/AssignmentAdmin/AssignTaskUpdate";
-import TeacherAssignedTasks from "../TeacherAssignedTasks";
+import AssignmentCreate from "../../Assignment/Assignments/AssignmentCreate";
+import Assignments from "../../Assignment/Assignments";
+import AssignTask from "../../AssignedTask/AssignedTasks/AssignedTaskCreate";
+import AssignTaskUpdate from "../../AssignedTask/AssignedTasks/AssignedTaskEdit";
+import TeacherAssignedTasks from "../../AssignedTask/AssignedTasks/AssignedTaskTeacher";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
-import * as Styled from "../style";
+import * as Styled from "./style";
 import * as routes from "../../../routing/routes";
 import withSession from "../../Session/withSession";
-import AssignmentEdit from "../../Assignment/AssignmentAdmin/AssignmentEdit";
+import AssignmentEdit from "../../Assignment/Assignments/AssignmentEdit";
 import styled from "styled-components";
-import Loading from "../../Loading";
+import Loading from "../../Alerts/Loading";
 import ErrorMessage from "../../Alerts/Error";
 
 const GET_ASSIGNED_STATUS = gql`

@@ -5,12 +5,12 @@ import axios from "axios";
 import moment from "moment";
 
 import * as Styled from "../../../../theme/Popup";
-import useOuterClickNotifier from "../../../Alerts";
+import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
 import DropZone from "../../../Uploader";
 import ErrorMessage from "../../../Alerts/Error";
 import SuccessMessage from "../../../Alerts/Success";
 import GET_PAGINATED_DECKS_WITH_USERS from "../DeckSchema";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 
 const CREATE_DECK = gql`
   mutation(
@@ -126,9 +126,7 @@ const DeckCreate = () => {
     };
     await axios
       .put(signedRequest, file, options)
-      .then(function(response) {
-        console.log(response);
-      })
+      .then(function(response) {})
       .catch(function(error) {
         console.log(error);
       });
@@ -156,7 +154,6 @@ const DeckCreate = () => {
     if (drop) {
       try {
         client.writeData({ data: { isSubmitting: true } });
-        console.log(drop);
         try {
           new File([image], drop.name);
         } catch (err) {

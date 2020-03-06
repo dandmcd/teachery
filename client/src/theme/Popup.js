@@ -132,6 +132,7 @@ export const InputTextArea = styled.textarea`
   padding: 14px 10px;
   width: 88%;
   outline: none;
+  overflow: auto;
   border-radius: 24px;
   -webkit-transition: 0.25s;
   transition: 0.25s;

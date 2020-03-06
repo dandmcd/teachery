@@ -17,7 +17,6 @@ export default {
           signatureVersion: "v4",
           region: "us-east-2"
         });
-        console.log(process.env.AWS_ACCESS_KEY_ID);
         const s3Params = {
           Bucket: s3Bucket,
           Key: filename,

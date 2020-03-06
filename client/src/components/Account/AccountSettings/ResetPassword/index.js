@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import gql from "graphql-tag";
 import { useApolloClient, useMutation, useQuery } from "@apollo/react-hooks";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import ChangePassword from "../ChangePassword";
@@ -39,10 +39,10 @@ const ResetPassword = props => {
       client.writeData({ data: { toggleSuccess: true } });
     }
   });
-  console.log(resetStatus);
+
   useEffect(() => {
     resetPassword({ variables: { token: props.match.params.token } });
-  }, []);
+  });
 
   return (
     <div>

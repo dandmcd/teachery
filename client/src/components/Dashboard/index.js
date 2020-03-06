@@ -2,9 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import withAuthorization from "../Session/withAuthorization";
 import DashboardPage from "./DashboardPage";
-import AddDeckTag from "../FlashCards/Decks/DeckItem/DeckTags/AddDeckTag";
+import AddDeckTag from "../FlashCards/Decks/DeckTags/DeckTagCreate";
 import DeckEdit from "../FlashCards/Decks/DeckEdit";
-import AssignTaskUpdate from "../Assignment/AssignmentAdmin/AssignTaskUpdate";
+import AssignTaskUpdate from "../AssignedTask/AssignedTasks/AssignedTaskEdit";
 
 const Dashboard = () => (
   <Container>

@@ -4,10 +4,10 @@ import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
 
-import useOuterClickNotifier from "../../../Alerts";
+import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
 import * as Styled from "../../../../theme/Popup";
 import DropZone from "../../../Uploader";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 
@@ -145,12 +145,14 @@ const DeckEdit = () => {
 
   const onSubmit = async (e, updateDeck) => {
     e.preventDefault();
-    console.log(drop);
     if (drop) {
       try {
         client.writeData({ data: { isSubmitting: true } });
-        console.log(drop);
-        console.log(new File([image], drop.name));
+        try {
+          new File([image], drop.name);
+        } catch (err) {
+          new Blob([image], drop.name);
+        }
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
@@ -179,7 +181,6 @@ const DeckEdit = () => {
             deckImageUrl: ""
           });
         });
-        console.log("It's a drop");
         client.writeData({ data: { isSubmitting: false } });
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
@@ -194,7 +195,6 @@ const DeckEdit = () => {
           deckImageName: null
         }
       });
-      console.log("It's an empty");
     } else {
       try {
         await updateDeck({
@@ -214,7 +214,6 @@ const DeckEdit = () => {
             deckImageUrl: ""
           });
         });
-        console.log("It's an else");
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
       }

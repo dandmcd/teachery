@@ -6,9 +6,9 @@ import Decks from "./Decks";
 import Search from "./Decks/DeckSearch";
 import DeckCreate from "./Decks/DeckCreate";
 import DeckEdit from "./Decks/DeckEdit";
-import AddDeckTag from "./Decks/DeckItem/DeckTags/AddDeckTag";
+import AddDeckTag from "./Decks/DeckTags/DeckTagCreate";
 import CardCreate from "./Cards/CardCreate";
-import ToggleBookmarkedDecks from "./Decks/DeckBookmarks";
+import DeckBookmarks from "./Decks/DeckBookmarks";
 
 const FlashCardPage = () => (
   <Container>
@@ -22,7 +22,7 @@ const FlashCardPage = () => (
       <DeckEdit />
       <Menu>
         <Search />
-        <ToggleBookmarkedDecks />
+        <DeckBookmarks />
       </Menu>
     </FlashCardHeader>
     <Decks limit={6} />

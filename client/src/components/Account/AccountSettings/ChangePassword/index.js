@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 import { useMutation, useQuery, useApolloClient } from "@apollo/react-hooks";
 
 import * as Styled from "./style";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import * as routes from "../../../../routing/routes";
@@ -33,8 +33,6 @@ const ChangePassword = props => {
     }
   `);
   const { toggleSuccess, customError, paramT, isSuccessfulChange } = data;
-
-  console.log(paramT);
 
   const [{ password, passwordConfirmation }, setState] = useState(
     INITIAL_STATE

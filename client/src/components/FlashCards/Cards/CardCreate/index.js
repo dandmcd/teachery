@@ -6,11 +6,10 @@ import moment from "moment";
 import PropTypes from "prop-types";
 import { cloneDeep } from "lodash";
 
-import useOuterClickNotifier from "../../../Alerts";
+import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
 import * as Styled from "../../../../theme/Popup";
-import Button from "../../../../theme/Button";
 import DropZone from "../../../Uploader";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import CARDS_QUERY from "../CardList/CardListSchema/CardListSchema";
@@ -138,7 +137,6 @@ const CardCreate = ({ deck }) => {
   // Mutation Submit
   const onSubmit = async (e, createCard) => {
     e.preventDefault();
-    console.log(drop);
     if (drop) {
       try {
         client.writeData({ data: { isSubmitting: true } });

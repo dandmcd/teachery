@@ -6,7 +6,7 @@ import styled from "styled-components";
 import * as Styled from "../../../theme/Popup";
 import Button from "../../../theme/Button";
 import ErrorMessage from "../../Alerts/Error";
-import Loading from "../../Loading";
+import Loading from "../../Alerts/Loading";
 
 const CREATE_MESSAGE = gql`
   mutation($text: String!) {

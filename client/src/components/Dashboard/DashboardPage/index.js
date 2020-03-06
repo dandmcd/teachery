@@ -4,21 +4,19 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 
 import withSession from "../../Session/withSession";
-import Loading from "../../Loading";
+import Loading from "../../Alerts/Loading";
 import ErrorMessage from "../../Alerts/Error";
 import DeckList from "../../FlashCards/Decks/DeckList";
-import AssignedTaskList from "../../Assignment/Assignments/AssignedTaskList";
-import GET_DASHBOARD from "../DashboardQuery";
+import AssignedTaskList from "../../AssignedTask/AssignedTasks/AssignedTaskList";
+import GET_DASHBOARD from "../DashboardSchema";
 import liked from "../../../assets/liked.png";
 import * as routes from "../../../routing/routes";
 import * as Styled from "./style";
-import malcolmx from "../../../assets/malcolmx.jpg";
 
 const DashboardPage = ({ session, me }) => {
   const client = useApolloClient();
 
   const { data, error, loading } = useQuery(GET_DASHBOARD, {});
-  console.log(data);
   if (loading && !data) {
     return <Loading />;
   } else if (error) {
@@ -30,7 +28,6 @@ const DashboardPage = ({ session, me }) => {
   let overdue;
 
   if (data.dueAssignedTasks === null) {
-    console.log("No data");
     incomplete = 0;
     overdue = 0;
   } else {

@@ -43,7 +43,6 @@ export default {
           ]
         });
         if (decks.length === 0) {
-          console.log("No decks");
         } else {
           const hasNextPage = decks.length > limit;
           const edges = hasNextPage ? decks.slice(0, -1) : decks;
@@ -140,7 +139,6 @@ export default {
           deckId: deck.id,
           userId: me.id
         });
-        console.log(bookmarkedDeck);
         return deck;
       }
     ),
@@ -165,12 +163,9 @@ export default {
             tagName: tagName
           }
         }).then(([tag, created]) => {
-          console.log(
-            tag.get({
-              plain: true
-            })
-          );
-          console.log(created);
+          tag.get({
+            plain: true
+          });
           return tag;
         });
 
@@ -178,7 +173,6 @@ export default {
           tagId: tag.id,
           deckId: deck.id
         });
-        console.log(deckTag);
         return deck;
       }
     ),

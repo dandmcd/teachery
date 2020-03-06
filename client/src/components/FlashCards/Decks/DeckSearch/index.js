@@ -5,8 +5,8 @@ import styled from "styled-components";
 
 import * as Styled from "../../../../theme/Popup";
 import search from "../../../../assets/search.png";
-import useOuterClickNotifier from "../../../Alerts";
-import Loading from "../../../Loading";
+import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
+import Loading from "../../../Alerts/Loading";
 import ErrorMessage from "../../../Alerts/Error";
 import SearchTagLink from "./SearchTagLink";
 

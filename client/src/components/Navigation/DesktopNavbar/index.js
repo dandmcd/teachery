@@ -48,8 +48,7 @@ const NavigationAuth = ({ session }) => {
   } else if (session && session.me && session.me.role === "ADMIN") {
     role = true;
   }
-  console.log(session);
-  console.log("Role is: " + role);
+
   return (
     <Styled.NavLinks>
       <Styled.NavLink>

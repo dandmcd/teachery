@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 import { useMutation, useQuery, useApolloClient } from "@apollo/react-hooks";
 
 import * as Styled from "./style";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import * as routes from "../../../../routing/routes";
@@ -17,7 +17,6 @@ const CHANGE_PASSWORD_LOGGED_IN = gql`
 `;
 
 const INITIAL_STATE = {
-  id: null,
   password: "",
   passwordConfirmation: ""
 };
@@ -33,7 +32,7 @@ const ChangePasswordLoggedIn = ({ session }) => {
   `);
   const { toggleSuccess, customError, isSuccessfulChange } = data;
 
-  const [{ id, password, passwordConfirmation }, setState] = useState(
+  const [{ password, passwordConfirmation }, setState] = useState(
     INITIAL_STATE
   );
 

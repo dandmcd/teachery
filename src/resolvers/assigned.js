@@ -77,7 +77,6 @@ export default {
 
         const hasNextPage = assignedTasks.length > limit;
         const edges = hasNextPage ? assignedTasks.slice(0, -1) : assignedTasks;
-        console.log("IS Teacher");
         return {
           edges,
           pageInfo: {
@@ -111,7 +110,6 @@ export default {
           raw: true,
           returning: true
         });
-        console.log(user);
         if (assignment == null) {
           throw new UserInputError(
             "No assignment found with this assignment id"

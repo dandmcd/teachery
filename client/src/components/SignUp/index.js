@@ -4,7 +4,7 @@ import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import PropTypes from "prop-types";
 
-import Loading from "../Loading";
+import Loading from "../Alerts/Loading";
 import * as routes from "../../routing/routes";
 import ErrorMessage from "../Alerts/Error";
 import * as Styled from "./style";
@@ -102,11 +102,11 @@ const SignUpForm = props => {
     } catch {}
   };
 
-  const isInvalid =
-    password !== passwordConfirmation ||
-    password === "" ||
-    email === "" ||
-    username === "";
+  // const isInvalid =
+  //   password !== passwordConfirmation ||
+  //   password === "" ||
+  //   email === "" ||
+  //   username === "";
 
   return (
     <Styled.Box onSubmit={e => onSubmit(e, signUp)}>

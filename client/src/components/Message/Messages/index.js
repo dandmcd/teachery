@@ -5,7 +5,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 
 import MessageDelete from "../MessageDelete";
-import Loading from "../../Loading";
+import Loading from "../../Alerts/Loading";
 import withSession from "../../Session/withSession";
 import Button from "../../../theme/Button";
 import ErrorMessage from "../../Alerts/Error";

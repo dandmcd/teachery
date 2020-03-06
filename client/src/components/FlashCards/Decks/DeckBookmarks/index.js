@@ -8,7 +8,7 @@ import Button from "../../../../theme/Button";
 import liked from "../../../../assets/liked.png";
 import like from "../../../../assets/like.png";
 
-export const DeckBookmarks = () => {
+const DeckBookmarks = () => {
   const client = useApolloClient();
   const { data: toggleData } = useQuery(gql`
     query Toggle {

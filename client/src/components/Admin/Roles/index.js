@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
-import useOuterClickNotifier from "../../Alerts";
+import useOuterClickNotifier from "../../Alerts/OuterClickNotifier";
 import ErrorMessage from "../../Alerts/Error";
-import Loading from "../../Loading";
+import Loading from "../../Alerts/Loading";
 import SuccessMessage from "../../Alerts/Success";
 import * as Styled from "../../../theme/Popup";
 import Button from "../../../theme/Button";
@@ -89,7 +89,6 @@ role: ""
 
   const onSubmit = async (e, updateUserRole) => {
     e.preventDefault();
-    console.log(data);
     try {
       await updateUserRole({
         variables: {

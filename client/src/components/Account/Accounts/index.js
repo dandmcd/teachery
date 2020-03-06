@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import * as routes from "../../../routing/routes";
 import * as Styled from "./style";
 import withSession from "../../Session/withSession";
-import ToggleTheme from "../../../theme/ToggleTheme";
+import ToggleTheme from "../AccountSettings/ToggleTheme";
 
 const Account = ({ session, props }) => {
   const [accountChecked, setAccountChecked] = useState(false);

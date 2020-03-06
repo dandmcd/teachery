@@ -32,10 +32,8 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
       );
 
       if (isCard || isDocument) {
-        console.log("Is Card");
         setDrop(acceptedFiles[0]);
       } else if (isDeck) {
-        console.log("Is Deck");
         setDrop(acceptedFiles[0]);
 
         acceptedFiles.forEach(file => {
