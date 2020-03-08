@@ -24,7 +24,7 @@ const user = (sequelize, DataTypes) => {
         },
         isEmail: {
           args: true,
-          msg: "Not a valid email."
+          msg: "Not a valid email"
         }
       }
     },
@@ -44,7 +44,13 @@ const user = (sequelize, DataTypes) => {
       defaultValue: false
     },
     role: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "A user must have a role"
+        }
+      }
     }
   });
 

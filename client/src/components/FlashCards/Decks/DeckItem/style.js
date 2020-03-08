@@ -433,6 +433,14 @@ export const ManageButton = styled(Button)`
   border: 2px solid ${props => props.theme.secondaryDark};
   min-height: 40px;
   margin: 0.1em;
+  :disabled {
+    border: 2px solid ${props => props.theme.disabled};
+    color: ${props => props.theme.disabled};
+    cursor: auto;
+    :hover {
+      background-color: ${props => props.theme.neutralLight};
+    }
+  }
 `;
 
 export const EditButton = styled(Button)``;

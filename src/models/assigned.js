@@ -62,7 +62,7 @@ const assignedTask = (sequelize, DataTypes) => {
         validate: {
           isDate: {
             args: true,
-            msg: "Enter a date in the correct format."
+            msg: "Please enter a date in this format - YYYY-MM-DD"
           }
         }
       }

@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import { Router, Route } from "react-router-dom";
+import { Router, Route, Switch } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import PropTypes from "prop-types";
 
@@ -28,6 +28,7 @@ import ChangePassword from "../Account/AccountSettings/ChangePassword";
 import ConfirmAccount from "../Account/AccountSettings/ConfirmAccount/ConfirmAccount";
 import ChangePasswordLoggedIn from "../Account/AccountSettings/ChangePasswordLoggedIn";
 import { lightTheme, darkTheme, iceTheme } from "../../theme/theme";
+import PageNotFound from "../Navigation/PageNotFound";
 
 const App = ({ session, refetch }) => {
   const [theme, setTheme] = useState(lightTheme);
@@ -61,84 +62,87 @@ const App = ({ session, refetch }) => {
         <GlobalStyle />
         <Navigation session={session} />
         <Container>
-          <Route
-            exact
-            path={routes.LANDING}
-            component={() => <LandingPage />}
-          />
-          <Route
-            exact
-            path={routes.DASHBOARD}
-            component={() => <Dashboard />}
-          />
-          <Route
-            exact
-            path={routes.SIGN_UP}
-            component={() => <SignUpPage refetch={refetch} />}
-          />
-          <Route
-            exact
-            path={routes.FORGOT_PASSWORD}
-            component={() => <ForgotPassword refetch={refetch} />}
-          />
-          <Route
-            exact
-            path={routes.SIGN_IN}
-            component={() => <SignInPage refetch={refetch} />}
-          />
-          <Route
-            exact
-            path={routes.ACCOUNT}
-            render={props => <AccountPage {...props} setTheme={setTheme} />}
-          />
-          <Route
-            exact
-            path={routes.ASSIGNMENTS}
-            component={() => <AssignmentPage />}
-          />
-          <Route exact path={routes.ADMIN} component={() => <AdminPage />} />
-          <Route
-            exact
-            path={routes.TEACHER}
-            component={() => <TeacherPage />}
-          />
-          <Route
-            exact
-            path={routes.FLASHCARDS}
-            component={() => <FlashCardPage />}
-          />
-          <Route
-            exact
-            path={routes.CARDS}
-            component={props => <Cards {...props} />}
-          />
-          <Route
-            exact
-            path={routes.CARDLIST}
-            component={props => <CardList {...props} />}
-          />
-          <Route exact path={routes.SEARCH} component={() => <Search />} />
-          <Route exact path={routes.TAGS} component={Tags} />
-          <Route
-            exact
-            path={routes.RESET_PASSWORD}
-            component={() => <ResetPassword refetch={refetch} />}
-          />
-          <Route
-            exact
-            path={routes.CONFIRM_ACCOUNT}
-            component={() => <ConfirmAccount refetch={refetch} />}
-          />
-          <Route
-            exact
-            path={routes.CHANGE_PASSWORD}
-            component={() => <ChangePassword refetch={refetch} />}
-          />
-          <Route
-            exact
-            path={routes.CHANGE_PASSWORD_LOGGED_IN}
-            component={() => <ChangePasswordLoggedIn refetch={refetch} />}
-          />
+          <Switch>
+            <Route
+              exact
+              path={routes.LANDING}
+              component={() => <LandingPage />}
+            />
+            <Route
+              exact
+              path={routes.DASHBOARD}
+              component={() => <Dashboard />}
+            />
+            <Route
+              exact
+              path={routes.SIGN_UP}
+              component={() => <SignUpPage refetch={refetch} />}
+            />
+            <Route
+              exact
+              path={routes.FORGOT_PASSWORD}
+              component={() => <ForgotPassword refetch={refetch} />}
+            />
+            <Route
+              exact
+              path={routes.SIGN_IN}
+              component={() => <SignInPage refetch={refetch} />}
+            />
+            <Route
+              exact
+              path={routes.ACCOUNT}
+              render={props => <AccountPage {...props} setTheme={setTheme} />}
+            />
+            <Route
+              exact
+              path={routes.ASSIGNMENTS}
+              component={() => <AssignmentPage />}
+            />
+            <Route exact path={routes.ADMIN} component={() => <AdminPage />} />
+            <Route
+              exact
+              path={routes.TEACHER}
+              component={() => <TeacherPage />}
+            />
+            <Route
+              exact
+              path={routes.FLASHCARDS}
+              component={() => <FlashCardPage />}
+            />
+            <Route
+              exact
+              path={routes.CARDS}
+              component={props => <Cards {...props} />}
+            />
+            <Route
+              exact
+              path={routes.CARDLIST}
+              component={props => <CardList {...props} />}
+            />
+            <Route exact path={routes.SEARCH} component={() => <Search />} />
+            <Route exact path={routes.TAGS} component={Tags} />
+            <Route
+              exact
+              path={routes.RESET_PASSWORD}
+              component={() => <ResetPassword refetch={refetch} />}
+            />
+            <Route
+              exact
+              path={routes.CONFIRM_ACCOUNT}
+              component={() => <ConfirmAccount refetch={refetch} />}
+            />
+            <Route
+              exact
+              path={routes.CHANGE_PASSWORD}
+              component={() => <ChangePassword refetch={refetch} />}
+            />
+            <Route
+              exact
+              path={routes.CHANGE_PASSWORD_LOGGED_IN}
+              component={() => <ChangePasswordLoggedIn refetch={refetch} />}
+            />
+            <Route path="*" component={() => <PageNotFound />} />
+          </Switch>
         </Container>
       </ThemeProvider>
     </Router>

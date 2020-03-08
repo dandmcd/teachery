@@ -14,7 +14,6 @@ import GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS from "../AssignedTaskTeacherSchem
 import AssignedTaskDelete from "../AssignedTaskDelete";
 import download from "../../../../assets/download.png";
 import downloadblue from "../../../../assets/downloadblue.png";
-import NoData from "../../../Alerts/NoData";
 
 const TeacherAssignedTasks = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
@@ -28,10 +27,9 @@ const TeacherAssignedTasks = ({ limit, me }) => {
     return <Loading />;
   } else if (!data) {
     return (
-      <NoData
-        title="No Assigned Tasks"
-        message="There are no assigned tasks right now."
-      />
+      <Container>
+        <ErrorMessage customError="You haven't assigned any tasks.  You can assign a task to a student by clicking Manage on any assignment below, and choosing 'Assign Task'" />
+      </Container>
     );
   } else if (error) {
     return <ErrorMessage error={error} />;
@@ -265,6 +263,12 @@ AssignmentItemBase.propTypes = {
   assignedTask: PropTypes.object.isRequired,
   me: PropTypes.object
 };
+
+export const Container = styled.div`
+  z-index: 10;
+  max-width: 1100px;
+  margin: 0 auto;
+`;
 
 const DownloadLink = styled.a`
   font-weight: 400;

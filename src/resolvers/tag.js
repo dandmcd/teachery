@@ -1,8 +1,7 @@
 import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 
-import { isAdmin, isAuthenticated } from "./authorization";
-import { sequelize } from "../models/index";
+import { isAdmin } from "./authorization";
 
 const toCursorHash = string => Buffer.from(string).toString("base64");
 
@@ -57,7 +56,7 @@ export default {
   Mutation: {
     createTag: combineResolvers(
       isAdmin,
-      async (parent, { tagName }, { models }) => {
+      async (parent, { tagName }, { models, me }) => {
         const tag = await models.Tag.create({
           tagName
         });

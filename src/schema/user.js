@@ -50,7 +50,7 @@ export default gql`
     Update a user
     Requires ADMIN role
     """
-    updateUserRole(id: ID, email: String, role: Role): Boolean!
+    updateUserRole(login: String!, role: Role!): Boolean!
     """
     Bookmark deck
     """

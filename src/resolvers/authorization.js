@@ -37,3 +37,16 @@ export const isAssignmentOwner = async (parent, { id }, { models, me }) => {
 
   return skip;
 };
+
+export const isDeckOwner = async (parent, { id }, { models, me }) => {
+  const deck = await models.Deck.findByPk(id, { raw: true });
+
+  if (me.role === "ADMIN") {
+    return skip;
+  }
+  if (deck.userId !== me.id) {
+    throw new ForbiddenError("Not authenticated as deck owner.");
+  }
+
+  return skip;
+};

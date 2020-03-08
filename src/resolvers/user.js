@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import Sequelize from "sequelize";
+import Sequelize, { Op } from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 import { UserInputError, AuthenticationError } from "apollo-server-core";
 
@@ -254,14 +254,21 @@ export default {
 
     updateUserRole: combineResolvers(
       isAdmin,
-      async (parent, { id, username, password, email, role }, { models }) => {
-        const user = await models.User.update(
+      async (parent, { login, role }, { models }) => {
+        const user = await models.User.findByLogin(login);
+        if (!user) {
+          throw new UserInputError("No user found with this username.");
+        }
+
+        await models.User.update(
           {
-            id: id,
-            role: role,
-            email: email
+            role: role
           },
-          { returning: true, validate: true, where: { email: email } }
+          {
+            returning: true,
+            validate: true,
+            where: { id: user.id }
+          }
         )
           .then(result => {
             console.log(result);

@@ -254,3 +254,18 @@ export const DownloadIcon = styled.img`
   width: 20px;
   height: 20px;
 `;
+
+export const Container = styled.div`
+  z-index: 10;
+  max-width: 1100px;
+  margin: 0 auto;
+`;
+
+export const EmptyText = styled.h4`
+  max-width: 1100px;
+  margin: auto;
+  padding: 0.5em;
+  @media only screen and (max-width: 770px) {
+    text-align: center;
+  }
+`;

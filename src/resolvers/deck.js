@@ -2,7 +2,7 @@ import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 import { UserInputError } from "apollo-server-core";
 
-import { isAdmin, isAuthenticated } from "./authorization";
+import { isAdmin, isAuthenticated, isDeckOwner } from "./authorization";
 
 const s3Bucket = process.env.S3_BUCKET;
 
@@ -104,7 +104,8 @@ export default {
     ),
 
     updateDeck: combineResolvers(
-      isAdmin,
+      isAuthenticated,
+      isDeckOwner,
       async (
         parent,
         { id, deckName, description, deckImageName, deckImageUrl },
@@ -153,7 +154,7 @@ export default {
     ),
 
     addTagToDeck: combineResolvers(
-      isAdmin,
+      isAuthenticated,
       async (parent, { id, tagName }, { models }) => {
         const deck = await models.Deck.findOne({
           where: { id }
@@ -187,7 +188,7 @@ export default {
     ),
 
     deleteDeck: combineResolvers(
-      isAdmin,
+      isDeckOwner,
       async (parent, { id }, { models }) => {
         await models.Card.destroy({
           where: {

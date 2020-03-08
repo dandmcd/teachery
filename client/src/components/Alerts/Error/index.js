@@ -31,6 +31,7 @@ const ErrorContainer = styled.div`
 `;
 
 const Error = styled.h5`
+  text-align: center;
   color: ${props => props.theme.error};
 `;
 

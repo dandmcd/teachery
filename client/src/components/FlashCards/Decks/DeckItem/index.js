@@ -205,12 +205,16 @@ const DeckItemBase = ({ deck, session }) => {
               Manage
             </Styled.ManageButton>
             <EditDropDownContent isChecked={isChecked}>
-              {session && session.me && deck.user.id === session.me.id && (
-                <DeckDelete deck={deck} />
-              )}
-              <Styled.EditButton type="button" onClick={togglePopupModal}>
-                Edit Details
-              </Styled.EditButton>
+              {session.me.role === "ADMIN" ||
+                (session && session.me && deck.user.id === session.me.id && (
+                  <DeckDelete deck={deck} />
+                ))}
+              {session.me.role === "ADMIN" ||
+                (session && session.me && deck.user.id === session.me.id && (
+                  <Styled.EditButton type="button" onClick={togglePopupModal}>
+                    Edit Details
+                  </Styled.EditButton>
+                ))}
               <Styled.TagButton
                 type="button"
                 onClick={() => togglePopupModal("addTag")}
@@ -219,6 +223,7 @@ const DeckItemBase = ({ deck, session }) => {
               </Styled.TagButton>
             </EditDropDownContent>
           </EditDropDown>
+
           <BrowseLink to={cardListLink}>
             <Styled.BrowseButton type="button">Browse</Styled.BrowseButton>
           </BrowseLink>

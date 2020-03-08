@@ -21,14 +21,14 @@ const ROLE_ENUM = gql`
 `;
 
 const ROLE_CHANGE = gql`
-  mutation($email: String!, $role: Role) {
-    updateUserRole(email: $email, role: $role)
+  mutation($login: String!, $role: Role!) {
+    updateUserRole(login: $login, role: $role)
   }
 `;
 
 const INITIAL_STATE = {
-  email: "",
-  role: ""
+  login: "",
+  role: "STUDENT"
 };
 
 const RoleChange = () => {
@@ -51,7 +51,7 @@ const RoleChange = () => {
     menuItems = enumData.__type.enumValues;
   }
 
-  const [{ email, role }, setState] = useState(INITIAL_STATE);
+  const [{ login, role }, setState] = useState(INITIAL_STATE);
 
   // useEffect for future use
   /*
@@ -92,7 +92,7 @@ role: ""
     try {
       await updateUserRole({
         variables: {
-          email: email,
+          login: login,
           role: role
         }
       }).then(async ({ data }) => {
@@ -130,10 +130,10 @@ role: ""
                     </Styled.LabelName>
                   </Styled.Span>
                   <Styled.Input
-                    name="email"
-                    value={email}
+                    name="login"
+                    value={login}
                     onChange={onChange}
-                    type="email"
+                    type="text"
                   />
                 </Styled.Label>
                 <Styled.Select>
