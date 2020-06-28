@@ -67,7 +67,7 @@ const INITIAL_STATE = {
   id: 0,
   assignedTo: "",
   dueDate: "",
-  status: ""
+  status: "",
 };
 
 const AssignTask = ({ assignment }) => {
@@ -100,21 +100,21 @@ const AssignTask = ({ assignment }) => {
         tagName: "",
         assignedTo: "",
         dueDate: "",
-        status: ""
+        status: "",
       });
     }
   }, [assignment, assignmentId]);
 
   const [assignTask, { loading, error }] = useMutation(CREATE_ASSIGNED_TASK, {
-    onError: err => {
+    onError: (err) => {
       client.writeData({ data: { toggleSuccess: false } });
     },
-    onCompleted: data => {
+    onCompleted: (data) => {
       client.writeData({ data: { toggleSuccess: true } });
     },
     update(cache, { data: { assignTask } }) {
       const data = cache.readQuery({
-        query: GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS
+        query: GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS,
       });
       cache.writeQuery({
         query: GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS,
@@ -123,11 +123,11 @@ const AssignTask = ({ assignment }) => {
           assignedTasksTeacher: {
             ...data.assignedTasksTeacher,
             edges: [assignTask, ...data.assignedTasksTeacher.edges],
-            pageInfo: data.assignedTasksTeacher.pageInfo
-          }
-        }
+            pageInfo: data.assignedTasksTeacher.pageInfo,
+          },
+        },
       });
-    }
+    },
   });
 
   useEffect(() => {
@@ -138,9 +138,9 @@ const AssignTask = ({ assignment }) => {
     }
   }, [client, toggleSuccess]);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const onSubmit = async (e, assignTask) => {
@@ -151,8 +151,8 @@ const AssignTask = ({ assignment }) => {
           assignmentId: parseInt(assignmentId),
           assignedTo: assignedTo,
           dueDate: dueDate,
-          status: status
-        }
+          status: status,
+        },
       }).then(async ({ data }) => {
         setState({ ...INITIAL_STATE });
       });
@@ -173,14 +173,14 @@ const AssignTask = ({ assignment }) => {
           <Styled.PopupInnerExtended ref={innerRef}>
             <Styled.PopupHeader>
               <Styled.PopupTitle>
-                Create a task for a student ...
+                Assign a task for a student ...
               </Styled.PopupTitle>
               <Styled.PopupFooterButton onClick={togglePopupModal}>
                 <Styled.CloseSpan />
               </Styled.PopupFooterButton>
             </Styled.PopupHeader>
             <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, assignTask)}>
+              <form onSubmit={(e) => onSubmit(e, assignTask)}>
                 <Styled.Label>
                   <Styled.Span>
                     <Styled.LabelName>
@@ -243,7 +243,7 @@ const AssignTask = ({ assignment }) => {
 };
 
 AssignTask.propTypes = {
-  assignment: PropTypes.object
+  assignment: PropTypes.object,
 };
 
 const Container = styled.div``;

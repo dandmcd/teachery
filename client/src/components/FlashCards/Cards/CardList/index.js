@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { withRouter } from "react-router-dom";
 import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import styled from "styled-components";
@@ -15,9 +15,10 @@ import SuccessMessage from "../../../Alerts/Success";
 import CardCreate from "../CardCreate";
 import CardEdit from "../CardEdit";
 import Button from "../../../../theme/Button";
+import withSession from "../../../Session/withSession";
 
-export const CardList = props => {
-  let { id } = props.match.params;
+export const CardList = ({ match, session }) => {
+  let { id } = match.params;
   id = parseInt(id);
 
   const client = useApolloClient();
@@ -29,7 +30,7 @@ export const CardList = props => {
   const { toggleAddCard } = data;
 
   const { data: cardData, error, loading } = useQuery(CARDS_QUERY, {
-    variables: { id }
+    variables: { id },
   });
   if (loading && !cardData) {
     return <Loading />;
@@ -38,17 +39,33 @@ export const CardList = props => {
   }
   const {
     toggleDeleteSuccess,
-    deck: { cards, deckName }
+    deck: { cards, deckName },
   } = cardData;
 
   const togglePopupModal = () => {
     client.writeData({
-      data: { toggleAddCard: !toggleAddCard, current: id }
+      data: { toggleAddCard: !toggleAddCard, current: id },
     });
   };
 
+  // 3-10 nEED TO SOLVE PROPS PROBLEM
+  console.log(cardData.deck.user.id);
+  console.log(session);
+  console.log(session.me);
+  console.log(session.me.role);
+  console.log(session.me.id);
+
+  let authorizedRole;
+
+  if (session && session.me && session.me.role === "ADMIN") {
+    authorizedRole = true;
+  } else if (session && session.me && session.me.id === cardData.deck.user.id) {
+    authorizedRole = true;
+  }
+
+  console.log(authorizedRole);
   return (
-    <Container>
+    <Fragment>
       <Header>
         <Menu>
           <h3>
@@ -58,9 +75,11 @@ export const CardList = props => {
           <CardEdit />
           <div>
             <CardCountButton>{cards.length}</CardCountButton> Cards
-            <AddCardButton type="button" onClick={togglePopupModal}>
-              Add Card
-            </AddCardButton>
+            {authorizedRole && (
+              <AddCardButton type="button" onClick={togglePopupModal}>
+                Add Card
+              </AddCardButton>
+            )}
           </div>
 
           <CardCreate key={cardData.deck.id} deck={cardData.deck} />
@@ -72,31 +91,28 @@ export const CardList = props => {
       {cards.length === 0 && (
         <div>This deck does not have any cards yet ...</div>
       )}
-      {cards.map(card => (
+      {cards.map((card) => (
         <CardItem
           key={card.id}
           card={card}
           deckId={id}
-          deckUserId={cardData.deck.user.id}
+          authorizedRole={authorizedRole}
         />
       ))}
-    </Container>
+    </Fragment>
   );
 };
 
 CardList.propTypes = {
-  props: PropTypes.object
+  props: PropTypes.object,
 };
 
-const Container = styled.div`
-  z-index: 15;
-  max-width: 100%;
-  margin: auto;
-`;
-
 const Header = styled.div`
+  background-color: ${(props) => props.theme.neutralLight};
+  background-clip: border-box;
   width: 100%;
-  margin-bottom: 5px;
+  margin: auto auto 5px auto;
+  display: inline-block;
 `;
 
 const Menu = styled.div`
@@ -111,9 +127,12 @@ const Menu = styled.div`
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
 `;
 
-const Title = styled.h3`
+const Title = styled.h2`
+  margin-left: 0.2em;
   -webkit-box-flex: 2;
   -ms-flex-positive: 2;
   flex-grow: 2;
@@ -121,7 +140,7 @@ const Title = styled.h3`
 
 const AddCardButton = styled(Button)`
   margin-left: 0.7em;
-  border: 2px solid ${props => props.theme.secondary};
+  border: 2px solid ${(props) => props.theme.secondary};
 `;
 
 const CardCountButton = styled.button`
@@ -137,7 +156,7 @@ const CardCountButton = styled.button`
   outline: none;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.secondary};
+  background-color: ${(props) => props.theme.secondary};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -150,10 +169,10 @@ const CardCountButton = styled.button`
     filter: brightness(105%);
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
-    background: ${props => props.theme.secondaryDark};
+    background: ${(props) => props.theme.secondaryDark};
   }
 `;
 
-export default withAuthorization(session => session && session.me)(
-  withRouter(CardList)
+export default withSession(
+  withAuthorization((session) => session && session.me)(withRouter(CardList))
 );

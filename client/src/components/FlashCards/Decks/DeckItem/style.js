@@ -5,7 +5,7 @@ export const DeckItemContainer = styled.div`
   position: relative;
   width: 330px;
   margin: 0.5em;
-  background-color: ${props => props.theme.container};
+  background-color: ${(props) => props.theme.container};
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
     0 6px 6px rgba(0, 0, 0, 0.23);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
@@ -35,9 +35,9 @@ export const CardGrid = styled.div`
 `;
 
 export const DeckImg = styled.div`
-  background-image: url(${props => props.deckImg});
+  background-image: url(${(props) => props.deckImg});
   background-size: cover;
-  background-repeat: no-reapeat;
+  background-repeat: no-repeat;
   background-position: 50% 50%;
   border: none;
   -ms-grid-row: 1;
@@ -48,7 +48,7 @@ export const DeckImg = styled.div`
   grid-column: 1 / 3;
   width: 330px;
   height: 200px;
-  background-color: ${props => props.theme.container};
+  background-color: ${(props) => props.theme.container};
 `;
 
 export const DeckInfo = styled.div`
@@ -64,27 +64,27 @@ export const DeckInfo = styled.div`
   grid-template-rows: 60px 1fr;
   -ms-grid-columns: 1fr;
   grid-template-columns: 1fr;
-  background-color: ${props => props.theme.container};
+  background-color: ${(props) => props.theme.container};
   border-style: inset;
   border-width: 0px 2px 0px 0px;
   -o-border-image: linear-gradient(
       to top,
-      ${props => props.theme.neutralLight},
-      ${props => props.theme.container}
+      ${(props) => props.theme.neutralLight},
+      ${(props) => props.theme.container}
     )
     1 100%;
   border-image: -webkit-gradient(
       linear,
       left bottom,
       left top,
-      color-stop(${props => props.theme.neutralLight}),
-      ${props => props.theme.container}
+      color-stop(${(props) => props.theme.neutralLight}),
+      ${(props) => props.theme.container}
     )
     1 100%;
   border-image: linear-gradient(
       to top,
-      ${props => props.theme.neutralLight},
-      ${props => props.theme.container}
+      ${(props) => props.theme.neutralLight},
+      ${(props) => props.theme.container}
     )
     1 100%;
 `;
@@ -93,8 +93,8 @@ export const Title = styled.h3`
   letter-spacing: 0.05em;
   line-height: 1.2;
   text-decoration: underline;
-  -webkit-text-decoration-color: ${props => props.theme.primary};
-  text-decoration-color: ${props => props.theme.primary};
+  -webkit-text-decoration-color: ${(props) => props.theme.primary};
+  text-decoration-color: ${(props) => props.theme.primary};
   -ms-grid-row: 1;
   -ms-grid-row-span: 1;
   grid-row: 1 / 2;
@@ -107,9 +107,9 @@ export const Title = styled.h3`
   -ms-grid-row-align: stretch;
   align-self: stretch;
   a {
-    color: ${props => props.theme.text};
-    -webkit-text-decoration-color: ${props => props.theme.primary};
-    text-decoration-color: ${props => props.theme.primary};
+    color: ${(props) => props.theme.text};
+    -webkit-text-decoration-color: ${(props) => props.theme.primary};
+    text-decoration-color: ${(props) => props.theme.primary};
   }
 `;
 
@@ -138,7 +138,7 @@ export const CreatedItem = styled.div`
   -ms-grid-columns: 1fr 1fr;
   grid-template-columns: 1fr 1fr;
   padding: 3px;
-  background-color: ${props => props.theme.container};
+  background-color: ${(props) => props.theme.container};
 `;
 
 export const CreatedBy = styled.h6`
@@ -149,7 +149,7 @@ export const CreatedBy = styled.h6`
   -ms-grid-column-span: 2;
   grid-column: 1 / 3;
   margin: 0;
-  color: ${props => props.theme.text};
+  color: ${(props) => props.theme.text};
 `;
 
 export const CreatedOn = styled.h6`
@@ -160,7 +160,7 @@ export const CreatedOn = styled.h6`
   -ms-grid-column-span: 2;
   grid-column: 1 / 3;
   margin: 0;
-  color: ${props => props.theme.text};
+  color: ${(props) => props.theme.text};
 `;
 
 export const Tags = styled.div`
@@ -193,9 +193,9 @@ export const Tags = styled.div`
   align-items: flex-start;
   a {
     font-size: 0.7em;
-    color: ${props => props.theme.primaryMed};
+    color: ${(props) => props.theme.primaryMed};
     :hover {
-      color: ${props => props.theme.primary};
+      color: ${(props) => props.theme.primary};
     }
   }
 `;
@@ -213,7 +213,7 @@ export const Practice = styled.div`
   grid-template-rows: 45px 20px 75px;
   -ms-grid-columns: 1fr 1fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
-  border-top: 2px outset ${props => props.theme.neutralLight};
+  border-top: 2px outset ${(props) => props.theme.neutralLight};
 `;
 
 export const PracticeText = styled.h3`
@@ -255,7 +255,7 @@ export const PracticeCardCount = styled.h4`
   -ms-grid-row-align: center;
   align-self: center;
   a {
-    color: ${props => props.theme.secondaryDark};
+    color: ${(props) => props.theme.secondaryDark};
   }
 `;
 
@@ -294,7 +294,7 @@ export const PracticeInput = styled.input`
   cursor: pointer;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.secondary};
+  background-color: ${(props) => props.theme.secondary};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -306,7 +306,7 @@ export const PracticeInput = styled.input`
   :hover {
     -webkit-filter: brightness(102%);
     filter: brightness(102%);
-    background-color: ${props => props.theme.secondaryDark};
+    background-color: ${(props) => props.theme.secondaryDark};
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
   }
@@ -342,7 +342,7 @@ export const PracticeAll = styled.button`
   cursor: pointer;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.secondary};
+  background-color: ${(props) => props.theme.secondary};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -353,7 +353,7 @@ export const PracticeAll = styled.button`
   :hover {
     -webkit-filter: brightness(102%);
     filter: brightness(102%);
-    background-color: ${props => props.theme.secondaryDark};
+    background-color: ${(props) => props.theme.secondaryDark};
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
   }
@@ -378,10 +378,10 @@ export const PracticeStart = styled.button`
   cursor: pointer;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.secondary};
+  background-color: ${(props) => props.theme.secondary};
   border-radius: 100%;
-  -webkit-box-shadow: 0 0 10px 5px ${props => props.theme.success};
-  box-shadow: 0 0 10px 5px ${props => props.theme.success};
+  -webkit-box-shadow: 0 0 10px 5px ${(props) => props.theme.success};
+  box-shadow: 0 0 10px 5px ${(props) => props.theme.success};
   text-align: center;
   padding: 0;
   -webkit-transition: all 0.25s ease-in-out;
@@ -391,16 +391,16 @@ export const PracticeStart = styled.button`
   :hover {
     -webkit-filter: brightness(102%);
     filter: brightness(102%);
-    background-color: ${props => props.theme.secondaryDark};
+    background-color: ${(props) => props.theme.secondaryDark};
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
   }
   :disabled {
-    background-color: ${props => props.theme.neutralLight};
-    border: 2px solid ${props => props.theme.disabled};
-    color: ${props => props.theme.disabled};
-    -webkit-box-shadow: 0 0 10px 5px ${props => props.theme.neutralLight};
-    box-shadow: 0 0 10px 5px ${props => props.theme.neutralLight};
+    background-color: ${(props) => props.theme.neutralLight};
+    border: 2px solid ${(props) => props.theme.disabled};
+    color: ${(props) => props.theme.disabled};
+    -webkit-box-shadow: 0 0 10px 5px ${(props) => props.theme.neutralLight};
+    box-shadow: 0 0 10px 5px ${(props) => props.theme.neutralLight};
     cursor: auto;
   }
 `;
@@ -423,22 +423,22 @@ export const DeckButtons = styled.div`
   align-items: end;
   justify-items: center;
   cursor: pointer;
-  border-top: 2px outset ${props => props.theme.neutralLight};
+  border-top: 2px outset ${(props) => props.theme.neutralLight};
 `;
 
 export const ManageButton = styled(Button)`
   -ms-grid-row: 1;
   -ms-grid-column: 1;
   display: inherit;
-  border: 2px solid ${props => props.theme.secondaryDark};
+  border: 2px solid ${(props) => props.theme.secondaryDark};
   min-height: 40px;
   margin: 0.1em;
   :disabled {
-    border: 2px solid ${props => props.theme.disabled};
-    color: ${props => props.theme.disabled};
+    border: 2px solid ${(props) => props.theme.disabled};
+    color: ${(props) => props.theme.disabled};
     cursor: auto;
     :hover {
-      background-color: ${props => props.theme.neutralLight};
+      background-color: ${(props) => props.theme.neutralLight};
     }
   }
 `;
@@ -452,9 +452,9 @@ export const BrowseButton = styled(Button)`
   -ms-grid-column: 2;
   min-height: 40px;
   margin: 0.1em;
-  border: 2px solid ${props => props.theme.secondaryDark};
+  border: 2px solid ${(props) => props.theme.secondaryDark};
   a {
-    color: ${props => props.theme.text};
+    color: ${(props) => props.theme.text};
   }
   :hover {
     a {
@@ -472,16 +472,16 @@ export const Like = styled.div`
 export const LikeButton = styled(Button)`
   margin: 0.1em;
   min-height: 40px;
-  border: 2px solid ${props => props.theme.secondaryDark};
+  border: 2px solid ${(props) => props.theme.secondaryDark};
 `;
 
 export const AddCardButton = styled(Button)`
-  border: 2px solid ${props => props.theme.secondaryDark};
+  border: 2px solid ${(props) => props.theme.secondaryDark};
 `;
 
 export const AddTagButton = styled(Button)`
-  border: 2px solid ${props => props.theme.secondary};
+  border: 2px solid ${(props) => props.theme.secondary};
   :hover {
-    background: ${props => props.theme.secondaryDark};
+    background: ${(props) => props.theme.secondaryDark};
   }
 `;

@@ -29,7 +29,7 @@ export const PopupInner = styled.div`
   margin-top: 10%;
   overflow-y: scroll;
   border-radius: 20px;
-  background: ${props => props.theme.container};
+  background: ${(props) => props.theme.container};
   text-align: center;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -47,8 +47,8 @@ export const PopupInner = styled.div`
 `;
 
 export const PopupInnerExtended = styled(PopupInner)`
-  top: 10%;
-  bottom: 10%;
+  top: 5%;
+  bottom: 5%;
   left: 10%;
   right: 10%;
 `;
@@ -56,7 +56,7 @@ export const PopupInnerExtended = styled(PopupInner)`
 export const PopupHeader = styled.div`
   display: -ms-grid;
   display: grid;
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${(props) => props.theme.neutralLight};
   -ms-grid-columns: 1fr 5px auto 5px 1fr;
   grid-template-columns: 1fr auto 1fr;
   justify-items: center;
@@ -75,12 +75,12 @@ export const PopupBody = styled.div``;
 export const Input = styled.input`
   font-family: "Open Sans", sans-serif;
   border: 0;
-  color: ${props => props.theme.textOverlay};
-  background-color: ${props => props.theme.container};
+  color: ${(props) => props.theme.textOverlay};
+  background-color: ${(props) => props.theme.container};
   display: block;
   margin: 3px auto 17px auto;
   text-align: center;
-  border: 2px solid ${props => props.theme.secondary};
+  border: 2px solid ${(props) => props.theme.secondary};
   padding: 14px 10px;
   width: 88%;
   outline: none;
@@ -91,17 +91,17 @@ export const Input = styled.input`
     font-family: "Open Sans", sans-serif;
     font-weight: 400px;
     font-size: 12px;
-    color: ${props => props.theme.textOverlay};
+    color: ${(props) => props.theme.textOverlay};
   }
   :focus {
     width: 90%;
-    border-color: ${props => props.theme.secondaryLight};
+    border-color: ${(props) => props.theme.secondaryLight};
   }
   @media only screen and (min-width: 770px) {
     width: 300px;
     :focus {
       width: 305px;
-      border-color: ${props => props.theme.secondaryLight};
+      border-color: ${(props) => props.theme.secondaryLight};
     }
   }
 `;
@@ -123,12 +123,12 @@ export const Span = styled.span``;
 export const InputTextArea = styled.textarea`
   font-family: "Open Sans", sans-serif;
   border: 0;
-  color: ${props => props.theme.textOverlay};
-  background-color: ${props => props.theme.container};
+  color: ${(props) => props.theme.textOverlay};
+  background-color: ${(props) => props.theme.container};
   display: block;
   margin: 3px auto 17px auto;
   text-align: center;
-  border: 2px solid ${props => props.theme.secondary};
+  border: 2px solid ${(props) => props.theme.secondary};
   padding: 14px 10px;
   width: 88%;
   outline: none;
@@ -140,17 +140,17 @@ export const InputTextArea = styled.textarea`
     font-family: "Open Sans", sans-serif;
     font-weight: 400px;
     font-size: 12px;
-    color: ${props => props.theme.text};
+    color: ${(props) => props.theme.text};
   }
   :focus {
     width: 90%;
-    border-color: ${props => props.theme.secondaryLight};
+    border-color: ${(props) => props.theme.secondaryLight};
   }
   @media only screen and (min-width: 770px) {
     width: 300px;
     :focus {
       width: 305px;
-      border-color: ${props => props.theme.secondaryLight};
+      border-color: ${(props) => props.theme.secondaryLight};
     }
   }
 `;
@@ -165,7 +165,7 @@ export const CloseSpan = styled.span`
   height: 6px;
   margin: 0 auto;
   z-index: 20;
-  background: ${props => props.theme.primaryMed};
+  background: ${(props) => props.theme.primaryMed};
   border-radius: 3px;
   -webkit-transform-origin: 4px 0px;
   transform-origin: 4px 0px;
@@ -179,7 +179,7 @@ export const CloseSpan = styled.span`
     background 0.5s cubic-bezier(0.77, 0.2, 0.05, 1), opacity 0.55s ease,
     -webkit-transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
   :hover {
-    background: ${props => props.theme.disabled};
+    background: ${(props) => props.theme.disabled};
   }
 `;
 
@@ -194,7 +194,7 @@ export const PopupFooterButton = styled.button`
   border-radius: 4px;
   margin: 0.2em;
   padding: 0.4em 0.6em;
-  border: 2px solid ${props => props.theme.neutralLight};
+  border: 2px solid ${(props) => props.theme.neutralLight};
   -ms-grid-row-align: center;
   align-self: center;
   text-align: center;
@@ -211,12 +211,12 @@ export const CardImg = styled.img`
 `;
 
 export const CreateButton = styled(Button)`
-  border: 2px solid ${props => props.theme.secondary};
+  border: 2px solid ${(props) => props.theme.secondary};
   width: 175px;
 `;
 
 export const AddButton = styled(Button)`
-  border: 2px solid ${props => props.theme.secondaryDark};
+  border: 2px solid ${(props) => props.theme.secondaryDark};
 `;
 
 export const Select = styled.div`
@@ -225,9 +225,9 @@ export const Select = styled.div`
 
 export const SelectBox = styled.select`
   outline: 0;
-  color: ${props => props.theme.text};
-  background-color: ${props => props.theme.container};
-  border: 2px solid ${props => props.theme.secondary};
+  color: ${(props) => props.theme.text};
+  background-color: ${(props) => props.theme.container};
+  border: 2px solid ${(props) => props.theme.secondary};
 `;
 
 export const Submission = styled.div`
@@ -239,6 +239,6 @@ export const SubmitButton = styled(Button)`
 `;
 
 export const DeleteButton = styled(Button)`
-  border: 2px solid ${props => props.theme.error};
-  display: ${props => props.updatedDocumentUrl === "" && "none"};
+  border: 2px solid ${(props) => props.theme.error};
+  display: ${(props) => props.updatedDocumentUrl === "" && "none"};
 `;

@@ -15,6 +15,7 @@ import ErrorMessage from "../../../Alerts/Error";
 const UPDATE_CARD = gql`
   mutation(
     $id: ID!
+    $deckId: Int!
     $front: String!
     $back: String
     $pictureName: String
@@ -22,6 +23,7 @@ const UPDATE_CARD = gql`
   ) {
     updateCard(
       id: $id
+      deckId: $deckId
       front: $front
       back: $back
       pictureName: $pictureName
@@ -52,6 +54,7 @@ const CardEdit = () => {
       toggleSuccess @client
       toggleEditCard @client
       current @client
+      currentDeckId @client
       editImg @client
       isSubmitting @client
     }
@@ -61,17 +64,18 @@ const CardEdit = () => {
     toggleEditCard,
     isSubmitting,
     current,
-    editImg
+    currentDeckId,
+    editImg,
   } = data;
 
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [updateCard, { loading, error }] = useMutation(UPDATE_CARD, {
-    onError: err => {
+    onError: (err) => {
       client.writeData({ data: { toggleSuccess: false } });
     },
-    onCompleted: data => {
+    onCompleted: (data) => {
       client.writeData({ data: { toggleSuccess: true } });
-    }
+    },
   });
 
   useEffect(() => {
@@ -87,7 +91,7 @@ const CardEdit = () => {
             pictureUrl
             createdAt
           }
-        `
+        `,
       });
 
       setState(currentCard);
@@ -99,10 +103,12 @@ const CardEdit = () => {
     front: "",
     back: "",
     pictureName: "",
-    pictureUrl: ""
+    pictureUrl: "",
   });
   const { id, front, back, pictureUrl, pictureName } = state;
   const [drop, setDrop] = useState(null);
+
+  console.log(currentDeckId);
 
   useEffect(() => {
     if (toggleSuccess) {
@@ -112,9 +118,9 @@ const CardEdit = () => {
     }
   }, [client, toggleSuccess]);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleClick = () => {
@@ -127,16 +133,14 @@ const CardEdit = () => {
   const uploadToS3 = async (file, signedRequest) => {
     const options = {
       headers: {
-        "Content-Type": file.type
-      }
+        "Content-Type": file.type,
+      },
     };
     await axios.put(signedRequest, file, options);
   };
-  const formatFilename = filename => {
+  const formatFilename = (filename) => {
     const date = moment().format("YYYYMMDD");
-    const randomString = Math.random()
-      .toString(36)
-      .substring(2, 7);
+    const randomString = Math.random().toString(36).substring(2, 7);
     const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-");
     const newFilename = `images/${date}-${randomString}-${cleanFileName}`;
     return newFilename.substring(0, 60);
@@ -150,8 +154,8 @@ const CardEdit = () => {
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
-            filetype: drop.type
-          }
+            filetype: drop.type,
+          },
         });
 
         const { signedRequest, url } = response.data.signS3;
@@ -161,11 +165,12 @@ const CardEdit = () => {
         await updateCard({
           variables: {
             id: id,
+            deckId: currentDeckId,
             front,
             back,
             pictureName: drop.name,
-            pictureUrl: url
-          }
+            pictureUrl: url,
+          },
         });
         client.writeData({ data: { isSubmitting: false } });
       } catch (error) {
@@ -175,22 +180,24 @@ const CardEdit = () => {
       await updateCard({
         variables: {
           id: id,
+          deckId: currentDeckId,
           front: front,
           back: back,
           pictureUrl: null,
-          pictureName: null
-        }
+          pictureName: null,
+        },
       });
     } else {
       try {
         await updateCard({
           variables: {
             id: id,
+            deckId: currentDeckId,
             front: front,
             back: back,
             pictureUrl: pictureUrl,
-            pictureName: pictureName
-          }
+            pictureName: pictureName,
+          },
         });
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
@@ -202,8 +209,8 @@ const CardEdit = () => {
     client.writeData({
       data: {
         toggleEditCard: !toggleEditCard,
-        editImg: false
-      }
+        editImg: false,
+      },
     });
   };
   const innerRef = useRef(null);
@@ -224,7 +231,7 @@ const CardEdit = () => {
               </Styled.PopupFooterButton>
             </Styled.PopupHeader>
             <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, updateCard)}>
+              <form onSubmit={(e) => onSubmit(e, updateCard)}>
                 <Styled.Label>
                   <Styled.Span>
                     <Styled.LabelName>Front of the Flashcard</Styled.LabelName>
@@ -269,7 +276,7 @@ const CardEdit = () => {
                         front: front,
                         back: back,
                         pictureUrl: "",
-                        pictureName: ""
+                        pictureName: "",
                       })
                     }
                   >

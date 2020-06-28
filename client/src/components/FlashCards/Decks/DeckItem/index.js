@@ -43,11 +43,11 @@ const DeckItemBase = ({ deck, session }) => {
 
   const [isChecked, setIsChecked] = useState(false);
   const [sessionCount, setSessionCount] = useState({
-    count: ""
+    count: "",
   });
   const { count } = sessionCount;
 
-  const isBookmarked = deckId => {
+  const isBookmarked = (deckId) => {
     return deckId.id === deck.id;
   };
 
@@ -55,39 +55,39 @@ const DeckItemBase = ({ deck, session }) => {
     update(cache, { data: { bookmarkDeck } }) {
       const localData = cloneDeep(
         cache.readQuery({
-          query: GET_ME
+          query: GET_ME,
         })
       );
 
       localData.me.bookmarkedDecks = [
         ...localData.me.bookmarkedDecks,
-        bookmarkDeck
+        bookmarkDeck,
       ];
       cache.writeQuery({
         query: GET_ME,
-        data: { ...localData }
+        data: { ...localData },
       });
-    }
+    },
   });
   const [removeBookmark] = useMutation(REMOVE_BOOKMARK, {
     update(cache, { data: { removeBookmark } }) {
       const localData = cloneDeep(
         cache.readQuery({
-          query: GET_ME
+          query: GET_ME,
         })
       );
 
       localData.me.bookmarkedDecks = localData.me.bookmarkedDecks.filter(
-        item => item.id !== deck.id
+        (item) => item.id !== deck.id
       );
       cache.writeQuery({
         query: GET_ME,
-        data: { ...localData }
+        data: { ...localData },
       });
-    }
+    },
   });
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault();
     if (!count) {
       return;
@@ -96,10 +96,10 @@ const DeckItemBase = ({ deck, session }) => {
   };
 
   const cardListLink = {
-    pathname: `/deck/${deck.id}/list`
+    pathname: `/deck/${deck.id}/list`,
   };
 
-  const onChange = e => {
+  const onChange = (e) => {
     setSessionCount({ ...sessionCount, [e.target.name]: e.target.value });
   };
 
@@ -111,31 +111,38 @@ const DeckItemBase = ({ deck, session }) => {
     setIsChecked(isChecked === false ? true : false);
   };
 
-  const togglePopupModal = mutateType => {
+  const togglePopupModal = (mutateType) => {
     if (mutateType === "addTag") {
       client.writeData({
         data: {
           toggleAddTag: !toggleAddTag,
-          current: deck.id
-        }
+          current: deck.id,
+        },
       });
     } else if (mutateType === "addCard") {
       client.writeData({
         data: {
           toggleAddCard: !toggleAddCard,
-          current: deck.id
-        }
+          current: deck.id,
+        },
       });
     } else {
       client.writeData({
         data: {
           toggleEditDeck: !toggleEditDeck,
-          current: deck.id
-        }
+          current: deck.id,
+        },
       });
     }
   };
   const isInvalid = count === "" || count <= "0";
+
+  let authorizedRole;
+  if (session && session.me && session.me.role === "ADMIN") {
+    authorizedRole = true;
+  } else if (session && session.me && deck.user.id === session.me.id) {
+    authorizedRole = true;
+  }
 
   return (
     <Styled.DeckItemContainer>
@@ -159,7 +166,7 @@ const DeckItemBase = ({ deck, session }) => {
             On: <Moment format="YYYY-MM-DD">{deck.createdAt}</Moment>
           </Styled.CreatedOn>
           <Styled.Tags>
-            {deck.tags.map(tag => (
+            {deck.tags.map((tag) => (
               <TagLink key={tag.id} tag={tag} deckId={deck.id} />
             ))}
           </Styled.Tags>
@@ -175,7 +182,7 @@ const DeckItemBase = ({ deck, session }) => {
             </Link>
           </Styled.PracticeCardCount>
 
-          <Styled.PracticeForm onSubmit={e => onSubmit(e)}>
+          <Styled.PracticeForm onSubmit={(e) => onSubmit(e)}>
             <Styled.PracticeInput
               name="count"
               value={count}
@@ -205,16 +212,12 @@ const DeckItemBase = ({ deck, session }) => {
               Manage
             </Styled.ManageButton>
             <EditDropDownContent isChecked={isChecked}>
-              {session.me.role === "ADMIN" ||
-                (session && session.me && deck.user.id === session.me.id && (
-                  <DeckDelete deck={deck} />
-                ))}
-              {session.me.role === "ADMIN" ||
-                (session && session.me && deck.user.id === session.me.id && (
-                  <Styled.EditButton type="button" onClick={togglePopupModal}>
-                    Edit Details
-                  </Styled.EditButton>
-                ))}
+              {authorizedRole && <DeckDelete deck={deck} />}
+              {authorizedRole && (
+                <Styled.EditButton type="button" onClick={togglePopupModal}>
+                  Edit Details
+                </Styled.EditButton>
+              )}
               <Styled.TagButton
                 type="button"
                 onClick={() => togglePopupModal("addTag")}
@@ -254,7 +257,7 @@ const DeckItemBase = ({ deck, session }) => {
 
 DeckItemBase.propTypes = {
   deck: PropTypes.object.isRequired,
-  session: PropTypes.object.isRequired
+  session: PropTypes.object.isRequired,
 };
 
 const EditDropDown = styled.div`
@@ -265,12 +268,12 @@ const EditDropDown = styled.div`
 `;
 
 const EditDropDownContent = styled.div`
-  display: ${props => (props.isChecked ? "block" : "none")};
+  display: ${(props) => (props.isChecked ? "block" : "none")};
   position: absolute;
   width: -webkit-min-content;
   width: -moz-min-content;
   width: min-content;
-  background-color: ${props => props.theme.container};
+  background-color: ${(props) => props.theme.container};
   -webkit-box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 16;

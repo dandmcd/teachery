@@ -10,7 +10,7 @@ import withSession from "../../../Session/withSession";
 import CardDelete from "../CardDelete";
 import * as Styled from "./style";
 
-const CardItem = ({ card, deckId, deckUserId, session }) => {
+const CardItem = ({ card, deckId, authorizedRole }) => {
   const client = useApolloClient();
   const { data } = useQuery(gql`
     query Toggle {
@@ -29,14 +29,15 @@ const CardItem = ({ card, deckId, deckUserId, session }) => {
     client.writeData({
       data: {
         toggleEditCard: !toggleEditCard,
-        current: card.id
-      }
+        current: card.id,
+        currentDeckId: deckId,
+      },
     });
   };
 
   return (
     <Fragment>
-      <Styled.Header>
+      <Styled.SubHeader>
         <Styled.SubMenu>
           <Styled.PopupFooterButton
             type="checkbox"
@@ -48,7 +49,7 @@ const CardItem = ({ card, deckId, deckUserId, session }) => {
           </Styled.PopupFooterButton>
           <Styled.SubTitle>{card.front}</Styled.SubTitle>
         </Styled.SubMenu>
-      </Styled.Header>
+      </Styled.SubHeader>
       {cardChecked ? (
         <Styled.Container>
           <CardField>
@@ -73,12 +74,12 @@ const CardItem = ({ card, deckId, deckUserId, session }) => {
             Created on:{" "}
             <Moment format="YYYY-MM-DD HH:mm">{card.createdAt}</Moment>
           </Created>
-          <EditButton type="button" onClick={togglePopupModal}>
-            Edit
-          </EditButton>
-          {session && session.me && deckUserId === session.me.id && (
-            <CardDelete card={card} deckId={deckId} />
+          {authorizedRole && (
+            <EditButton type="button" onClick={togglePopupModal}>
+              Edit
+            </EditButton>
           )}
+          {authorizedRole && <CardDelete card={card} deckId={deckId} />}
         </Styled.Container>
       ) : null}
     </Fragment>
@@ -88,7 +89,7 @@ const CardItem = ({ card, deckId, deckUserId, session }) => {
 CardItem.propTypes = {
   card: PropTypes.object.isRequired,
   deckUserId: PropTypes.string.isRequired,
-  session: PropTypes.object.isRequired
+  session: PropTypes.object.isRequired,
 };
 
 const CardField = styled.h4`
@@ -100,18 +101,18 @@ const CardField = styled.h4`
 const CardInfo = styled.h5`
   margin-top: 3px;
   margin-bottom: 6px;
-  color: ${props => props.theme.primaryMed};
+  color: ${(props) => props.theme.primaryMed};
 `;
 
 const Created = styled.h6`
   margin-left: 10px;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
-  color: ${props => props.theme.textLight};
+  color: ${(props) => props.theme.textLight};
 `;
 
 const EditButton = styled(Button)`
-  border: 2px solid ${props => props.theme.secondaryDark};
+  border: 2px solid ${(props) => props.theme.secondaryDark};
 `;
 
 export default withSession(CardItem);

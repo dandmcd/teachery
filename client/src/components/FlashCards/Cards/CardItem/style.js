@@ -1,11 +1,20 @@
 import styled from "styled-components";
 
 export const Header = styled.div`
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${(props) => props.theme.neutralLight};
   background-clip: border-box;
   width: 100%;
   margin: auto auto 5px auto;
   display: inline-block;
+`;
+
+export const SubHeader = styled.div`
+  background-color: ${(props) => props.theme.neutralLight};
+  background-clip: border-box;
+  width: 100%;
+  max-width: 1100px;
+  margin: auto auto 5px auto;
+  display: block;
 `;
 
 export const SubMenu = styled.div`
@@ -25,7 +34,7 @@ export const PopupFooterButton = styled.button`
   border-radius: 4px;
   margin: 0.2em;
   padding: 0.4em 0.3em;
-  border: 2px solid ${props => props.theme.neutralLight};
+  border: 2px solid ${(props) => props.theme.neutralLight};
   align-self: center;
   display: table-cell;
   text-align: center;
@@ -42,18 +51,18 @@ export const CloseSpan = styled.span`
   height: 6px;
   margin: 0 auto;
   z-index: 20;
-  background: ${props =>
+  background: ${(props) =>
     !props.cardChecked ? props.theme.secondaryDark : props.theme.primaryMed};
   border-radius: 3px;
   transform-origin: 4px 0px;
   transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1),
     background 0.5s cubic-bezier(0.77, 0.2, 0.05, 1), opacity 0.55s ease;
   :hover {
-    background: ${props => props.theme.disabled};
+    background: ${(props) => props.theme.disabled};
   }
 `;
 
-export const SubTitle = styled.h2`
+export const SubTitle = styled.h3`
   margin: 0;
   padding: 0.2em 0px 0.2em 4px;
   @media only screen and (max-width: 675px) {
@@ -69,6 +78,6 @@ export const Container = styled.div`
 `;
 
 export const Span = styled.span`
-  color: ${props => props.theme.textOverlay};
+  color: ${(props) => props.theme.textOverlay};
   font-weight: lighter;
 `;

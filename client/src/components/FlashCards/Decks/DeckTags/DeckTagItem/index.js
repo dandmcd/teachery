@@ -22,10 +22,12 @@ function TagLink({ tag, deckId, session }) {
 TagLink.propTypes = {
   tag: PropTypes.object.isRequired,
   deckId: PropTypes.string,
-  session: PropTypes.object.isRequired
+  session: PropTypes.object.isRequired,
 };
 
 const TagItem = styled.h5`
+  padding: 0.2em;
+  line-height: 0.8em;
   margin: 0px;
 `;
 

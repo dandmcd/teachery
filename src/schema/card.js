@@ -28,11 +28,12 @@ export default gql`
     """
     Deletes a card
     """
-    deleteCard(id: ID!): Boolean!
+    deleteCard(id: ID!, deckId: Int!): Boolean!
     """
     Edit a card
     """
     updateCard(
+      deckId: Int!
       id: ID!
       front: String!
       back: String

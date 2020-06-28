@@ -20,17 +20,17 @@ import { signOut } from "./components/SignOut";
 const httpLink = new HttpLink({
   fetch: buildAxiosFetch(axios, (config, input, init) => ({
     ...config,
-    onUploadProgress: init.onUploadProgress
+    onUploadProgress: init.onUploadProgress,
   })),
-  uri: "/graphql"
+  uri: "/graphql",
 });
 
 //Production use wss://fuwuyuan.herokuapp.com/graphql
 const wsLink = new WebSocketLink({
   uri: `wss://fuwuyuan.herokuapp.com/graphql`,
   options: {
-    reconnect: true
-  }
+    reconnect: true,
+  },
 });
 
 const terminatingLink = split(
@@ -83,7 +83,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 const link = ApolloLink.from([authLink, errorLink, terminatingLink]);
 
 const cache = new InMemoryCache({
-  dataIdFromObject: object => object.id
+  dataIdFromObject: (object) => object.id,
 });
 
 const client = new ApolloClient({
@@ -91,10 +91,11 @@ const client = new ApolloClient({
   link,
   cache,
   typeDefs,
-  resolvers
+  resolvers,
 });
 
 const data = {
+  toggleExplore: false,
   toggleLanding: 0,
   togglePopup: false,
   toggleAddCard: false,
@@ -115,6 +116,7 @@ const data = {
   paramT: "",
   assignmentId: null,
   current: null,
+  currentDeckId: null,
   customError: null,
   editImg: false,
   search: {
@@ -122,8 +124,8 @@ const data = {
     showPopup: false,
     noResult: false,
     tagName: "",
-    tags: []
-  }
+    tags: [],
+  },
 };
 
 cache.writeData({ data });
