@@ -16,12 +16,7 @@ const DELETE_DECK = gql`
 
 const DeckDelete = ({ deck }) => {
   const [deleteDeck, { error }] = useMutation(DELETE_DECK, {
-    update(
-      cache,
-      {
-        data: { deleteDeck }
-      }
-    ) {
+    update(cache, { data: { deleteDeck } }) {
       const data = cache.readQuery({
         query: GET_PAGINATED_DECKS_WITH_USERS
       });
@@ -73,10 +68,10 @@ DeckDelete.propTypes = {
 
 const DeleteButton = styled(Button)`
   border: 2px solid ${props => props.theme.error};
-  color: #233841;
+  color: ${props => props.theme.text};
   :hover {
     color: white;
-    background: #b11a1a;
+    background: ${props => props.theme.primaryDark};
   }
 `;
 

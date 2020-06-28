@@ -5,7 +5,7 @@ import gql from "graphql-tag";
 import PropTypes from "prop-types";
 
 import { SignUpLink } from "../SignUp";
-import Loading from "../Loading";
+import Loading from "../Alerts/Loading";
 import * as routes from "../../routing/routes";
 import ErrorMessage from "../Alerts/Error";
 import * as Styled from "./style";
@@ -36,12 +36,6 @@ const INITIAL_STATE = {
 
 const SignInForm = props => {
   const client = useApolloClient();
-  // const { data } = useQuery(gql`
-  //   query Toggle {
-  //     toggleSuccess @client
-  //   }
-  // `);
-  // const { toggleSuccess } = data;
 
   const [{ login, password }, setState] = useState(INITIAL_STATE);
 
@@ -71,6 +65,8 @@ const SignInForm = props => {
     e.preventDefault();
 
     try {
+      localStorage.removeItem("token");
+      client.resetStore();
       await signIn({
         variables: {
           login: login,
@@ -81,7 +77,7 @@ const SignInForm = props => {
 
         localStorage.setItem("token", data.signIn.token);
         await props.refetch();
-        props.history.push(routes.LANDING);
+        props.history.push(routes.DASHBOARD);
       });
     } catch {}
   };
@@ -89,22 +85,30 @@ const SignInForm = props => {
   return (
     <Styled.Box onSubmit={e => onSubmit(e, signIn)}>
       <Styled.Title>Login</Styled.Title>
-      <Styled.InputUserName
-        name="login"
-        value={login}
-        onChange={onChange}
-        type="text"
-        placeholder="Email or Username"
-        autoComplete="username"
-      />
-      <Styled.InputPassword
-        name="password"
-        value={password}
-        onChange={onChange}
-        type="password"
-        placeholder="Password"
-        autoComplete="current-password"
-      />
+      <Styled.Label>
+        <Styled.Span>
+          <Styled.LabelName>Email or Username</Styled.LabelName>
+        </Styled.Span>
+        <Styled.InputUserName
+          name="login"
+          value={login}
+          onChange={onChange}
+          type="text"
+          autoComplete="username"
+        />
+      </Styled.Label>
+      <Styled.Label>
+        <Styled.Span>
+          <Styled.LabelName>Password</Styled.LabelName>
+        </Styled.Span>
+        <Styled.InputPassword
+          name="password"
+          value={password}
+          onChange={onChange}
+          type="password"
+          autoComplete="current-password"
+        />
+      </Styled.Label>
       <Styled.SubmitButton className="button" disabled={loading} type="submit">
         Sign In
       </Styled.SubmitButton>

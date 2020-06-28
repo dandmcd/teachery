@@ -16,7 +16,7 @@ function SearchTagLink({ tag, deckId, session }) {
         </Column>
 
         <Column>
-          {tag.decks.length} {tag.decks.length === 1 ? "deck" : "decks"}
+          Found {tag.decks.length} {tag.decks.length === 1 ? "deck" : "decks"}
         </Column>
       </Row>
     </TagItem>
@@ -26,11 +26,13 @@ function SearchTagLink({ tag, deckId, session }) {
 SearchTagLink.propTypes = {
   tag: PropTypes.object.isRequired,
   deckId: PropTypes.string,
-  session: PropTypes.object.isRequired
+  session: PropTypes.object.isRequired,
 };
 
 const Row = styled.div`
   display: flex;
+  width: 80%;
+  margin: 0 auto;
   flex-direction: row;
   flex-wrap: wrap;
 `;
@@ -41,7 +43,7 @@ const Column = styled.div`
   flex: 1;
 `;
 
-const TagItem = styled.h5`
+const TagItem = styled.h4`
   margin: 0px;
 `;
 

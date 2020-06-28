@@ -24,7 +24,7 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
       reader.onabort = () => console.log("file reading was aborted");
       reader.onerror = () => console.log("file reading has failed");
       reader.onload = () => {};
-      acceptedFiles.forEach(file => reader.readAsBinaryString(file));
+      acceptedFiles.forEach(file => reader.readAsArrayBuffer(file));
       setFiles(
         acceptedFiles.map(file =>
           Object.assign(file, { preview: URL.createObjectURL(file) })
@@ -32,10 +32,8 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
       );
 
       if (isCard || isDocument) {
-        console.log("Is Card");
         setDrop(acceptedFiles[0]);
       } else if (isDeck) {
-        console.log("Is Deck");
         setDrop(acceptedFiles[0]);
 
         acceptedFiles.forEach(file => {
@@ -71,7 +69,19 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
     noKeyboard: true,
     maxSize: 10485760,
     multiple: false,
-    accept: ["image/*", "application/pdf"]
+    accept:
+      isCard || isDeck
+        ? ["image/*"]
+        : [
+            "image/*",
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+          ]
   });
 
   const removeFile = (e, file) => {
@@ -139,13 +149,19 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
         <Button type="button" onClick={open}>
           Select File
         </Button>
-        <em>(Only image or PDF files will be accepted)</em>
+        {isDocument ? (
+          <em>(Image, PDF or Office document files will be accepted)</em>
+        ) : (
+          <em>(Only image files will be accepted)</em>
+        )}
       </Styled.Container>
       <Styled.Aside>
         {files.length > 0 && (
           <Styled.UploadTitle>File to be uploaded:</Styled.UploadTitle>
         )}
-        <Styled.ThumbContainer>{thumbs}</Styled.ThumbContainer>
+        {!isDocument ? (
+          <Styled.ThumbContainer>{thumbs}</Styled.ThumbContainer>
+        ) : null}
         <Styled.AcceptedList>{acceptedFilesItems}</Styled.AcceptedList>
         <Styled.RejectedList>{rejectedFilesItems}</Styled.RejectedList>
       </Styled.Aside>

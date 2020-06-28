@@ -2,7 +2,7 @@ import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 import { UserInputError } from "apollo-server-core";
 
-import { isAdmin, isAuthenticated } from "./authorization";
+import { isAdmin, isAuthenticated, isDeckOwner } from "./authorization";
 
 const s3Bucket = process.env.S3_BUCKET;
 
@@ -42,19 +42,21 @@ export default {
             }
           ]
         });
+        if (decks.length === 0) {
+        } else {
+          const hasNextPage = decks.length > limit;
+          const edges = hasNextPage ? decks.slice(0, -1) : decks;
 
-        const hasNextPage = decks.length > limit;
-        const edges = hasNextPage ? decks.slice(0, -1) : decks;
-
-        return {
-          edges,
-          pageInfo: {
-            hasNextPage,
-            endCursor: toCursorHash(
-              edges[edges.length - 1].createdAt.toString()
-            )
-          }
-        };
+          return {
+            edges,
+            pageInfo: {
+              hasNextPage,
+              endCursor: toCursorHash(
+                edges[edges.length - 1].createdAt.toString()
+              )
+            }
+          };
+        }
       } else {
         const decks = await models.Deck.findAll({
           order: [["createdAt", "DESC"]],
@@ -102,7 +104,8 @@ export default {
     ),
 
     updateDeck: combineResolvers(
-      isAdmin,
+      isAuthenticated,
+      isDeckOwner,
       async (
         parent,
         { id, deckName, description, deckImageName, deckImageUrl },
@@ -137,7 +140,6 @@ export default {
           deckId: deck.id,
           userId: me.id
         });
-        console.log(bookmarkedDeck);
         return deck;
       }
     ),
@@ -152,7 +154,7 @@ export default {
     ),
 
     addTagToDeck: combineResolvers(
-      isAdmin,
+      isAuthenticated,
       async (parent, { id, tagName }, { models }) => {
         const deck = await models.Deck.findOne({
           where: { id }
@@ -162,12 +164,9 @@ export default {
             tagName: tagName
           }
         }).then(([tag, created]) => {
-          console.log(
-            tag.get({
-              plain: true
-            })
-          );
-          console.log(created);
+          tag.get({
+            plain: true
+          });
           return tag;
         });
 
@@ -175,7 +174,6 @@ export default {
           tagId: tag.id,
           deckId: deck.id
         });
-        console.log(deckTag);
         return deck;
       }
     ),
@@ -190,7 +188,7 @@ export default {
     ),
 
     deleteDeck: combineResolvers(
-      isAdmin,
+      isDeckOwner,
       async (parent, { id }, { models }) => {
         await models.Card.destroy({
           where: {

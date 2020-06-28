@@ -1,5 +1,6 @@
 export const LANDING = "/";
 export const SIGN_UP = "/signup";
+export const CONFIRM_ACCOUNT = "/account/confirm/:token";
 export const SIGN_IN = "/signin";
 export const ASSIGNMENTS = "/assignments";
 export const ACCOUNT = "/account";
@@ -10,3 +11,8 @@ export const CARDLIST = "/deck/:id/list";
 export const SEARCH = "/search";
 export const TAGS = "/tag/:id";
 export const TEACHER = "/teacher";
+export const DASHBOARD = "/dashboard";
+export const FORGOT_PASSWORD = "/passwordreset";
+export const RESET_PASSWORD = "/account/reset/:token";
+export const CHANGE_PASSWORD = "/changepassword";
+export const CHANGE_PASSWORD_LOGGED_IN = "/account/changepassword";

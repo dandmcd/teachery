@@ -1,4 +1,4 @@
-import "react-app-polyfill/ie9";
+import "react-app-polyfill/ie11";
 import "react-app-polyfill/stable";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -12,27 +12,25 @@ import { onError } from "apollo-link-error";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import axios from "axios";
 import { buildAxiosFetch } from "@lifeomic/axios-fetch";
-import { ThemeProvider } from "styled-components";
 
 import { resolvers, typeDefs } from "./state/resolvers";
 import App from "./components/App";
 import { signOut } from "./components/SignOut";
-import theme from "./theme/theme";
 
 const httpLink = new HttpLink({
   fetch: buildAxiosFetch(axios, (config, input, init) => ({
     ...config,
-    onUploadProgress: init.onUploadProgress
+    onUploadProgress: init.onUploadProgress,
   })),
-  uri: "/graphql"
+  uri: "/graphql",
 });
 
 //Production use wss://fuwuyuan.herokuapp.com/graphql
 const wsLink = new WebSocketLink({
   uri: `wss://fuwuyuan.herokuapp.com/graphql`,
   options: {
-    reconnect: true
-  }
+    reconnect: true,
+  },
 });
 
 const terminatingLink = split(
@@ -66,10 +64,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       if (message === "UNAUTHENTICATED") {
         signOut(client);
       } else {
-        if (
-          message ===
-          "Context creation failed: Your session expired. Sign in again."
-        ) {
+        if (message === "Your session expired. Please ign in again.") {
           signOut(client);
         }
       }
@@ -88,7 +83,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 const link = ApolloLink.from([authLink, errorLink, terminatingLink]);
 
 const cache = new InMemoryCache({
-  dataIdFromObject: object => object.id
+  dataIdFromObject: (object) => object.id,
 });
 
 const client = new ApolloClient({
@@ -96,10 +91,11 @@ const client = new ApolloClient({
   link,
   cache,
   typeDefs,
-  resolvers
+  resolvers,
 });
 
 const data = {
+  toggleExplore: false,
   toggleLanding: 0,
   togglePopup: false,
   toggleAddCard: false,
@@ -108,21 +104,28 @@ const data = {
   toggleAddTag: false,
   toggleAssign: false,
   toggleAssignUpdate: false,
+  toggleAssignmentEdit: false,
+  toggleForgotPassword: false,
   toggleSuccess: false,
   toggleDeleteSuccess: false,
   toggleRoleChange: false,
   toggleBookmarks: false,
+  linkedToPage: false,
   isSubmitting: false,
+  isSuccessfulChange: false,
+  paramT: "",
   assignmentId: null,
   current: null,
+  currentDeckId: null,
+  customError: null,
   editImg: false,
   search: {
     __typename: "Search",
     showPopup: false,
     noResult: false,
     tagName: "",
-    tags: []
-  }
+    tags: [],
+  },
 };
 
 cache.writeData({ data });
@@ -134,9 +137,7 @@ client.onClearStore(async () => {
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
+    <App />
   </ApolloProvider>,
   document.getElementById("root")
 );

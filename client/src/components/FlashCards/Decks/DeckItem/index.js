@@ -4,18 +4,16 @@ import PropTypes from "prop-types";
 import { useQuery, useApolloClient, useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import { cloneDeep } from "lodash";
 
-import TagLink from "./DeckTags/TagLink";
+import TagLink from "../DeckTags/DeckTagItem";
 import { Link } from "react-router-dom";
 import history from "../../../../routing/history";
 import DeckDelete from "./../DeckDelete";
 import * as Styled from "./style";
-import Button from "../../../../theme/Button";
-
 import teststudent from "../../../../assets/teststudent.jpg";
 import like from "../../../../assets/like.png";
 import liked from "../../../../assets/liked.png";
-import { cloneDeep } from "lodash";
 import { GET_ME } from "../../../Session/queries";
 
 const BOOKMARK_DECK = gql`
@@ -45,58 +43,51 @@ const DeckItemBase = ({ deck, session }) => {
 
   const [isChecked, setIsChecked] = useState(false);
   const [sessionCount, setSessionCount] = useState({
-    count: ""
+    count: "",
   });
   const { count } = sessionCount;
 
-  console.log(session);
-
-  const isBookmarked = deckId => {
+  const isBookmarked = (deckId) => {
     return deckId.id === deck.id;
   };
-  console.log(session.me.bookmarkedDecks.find(isBookmarked));
 
   const [bookmarkDeck] = useMutation(BOOKMARK_DECK, {
     update(cache, { data: { bookmarkDeck } }) {
       const localData = cloneDeep(
         cache.readQuery({
-          query: GET_ME
+          query: GET_ME,
         })
       );
-      console.log(localData);
 
       localData.me.bookmarkedDecks = [
         ...localData.me.bookmarkedDecks,
-        bookmarkDeck
+        bookmarkDeck,
       ];
       cache.writeQuery({
         query: GET_ME,
-        data: { ...localData }
+        data: { ...localData },
       });
-      console.log(localData);
-    }
+    },
   });
   const [removeBookmark] = useMutation(REMOVE_BOOKMARK, {
     update(cache, { data: { removeBookmark } }) {
       const localData = cloneDeep(
         cache.readQuery({
-          query: GET_ME
+          query: GET_ME,
         })
       );
-      console.log(localData);
 
       localData.me.bookmarkedDecks = localData.me.bookmarkedDecks.filter(
-        item => item.id !== deck.id
+        (item) => item.id !== deck.id
       );
       cache.writeQuery({
         query: GET_ME,
-        data: { ...localData }
+        data: { ...localData },
       });
-      console.log(localData);
-    }
+    },
   });
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault();
     if (!count) {
       return;
@@ -105,10 +96,10 @@ const DeckItemBase = ({ deck, session }) => {
   };
 
   const cardListLink = {
-    pathname: `/deck/${deck.id}/list`
+    pathname: `/deck/${deck.id}/list`,
   };
 
-  const onChange = e => {
+  const onChange = (e) => {
     setSessionCount({ ...sessionCount, [e.target.name]: e.target.value });
   };
 
@@ -120,42 +111,46 @@ const DeckItemBase = ({ deck, session }) => {
     setIsChecked(isChecked === false ? true : false);
   };
 
-  const togglePopupModal = mutateType => {
+  const togglePopupModal = (mutateType) => {
     if (mutateType === "addTag") {
       client.writeData({
         data: {
           toggleAddTag: !toggleAddTag,
-          current: deck.id
-        }
+          current: deck.id,
+        },
       });
-      console.log("Add Tag");
     } else if (mutateType === "addCard") {
       client.writeData({
         data: {
           toggleAddCard: !toggleAddCard,
-          current: deck.id
-        }
+          current: deck.id,
+        },
       });
-      console.log("Add Card");
     } else {
       client.writeData({
         data: {
           toggleEditDeck: !toggleEditDeck,
-          current: deck.id
-        }
+          current: deck.id,
+        },
       });
-      console.log("Else");
     }
   };
   const isInvalid = count === "" || count <= "0";
+
+  let authorizedRole;
+  if (session && session.me && session.me.role === "ADMIN") {
+    authorizedRole = true;
+  } else if (session && session.me && deck.user.id === session.me.id) {
+    authorizedRole = true;
+  }
 
   return (
     <Styled.DeckItemContainer>
       <Styled.CardGrid>
         {deck.deckImageUrl === null ? (
-          <Styled.DeckImg src={teststudent} alt="Deck Logo" />
+          <Styled.DeckImg deckImg={teststudent} alt="Deck Logo" />
         ) : (
-          <Styled.DeckImg src={deck.deckImageUrl} alt="Deck Logo" />
+          <Styled.DeckImg deckImg={deck.deckImageUrl} />
         )}
         <Styled.DeckInfo>
           <Styled.Title>
@@ -171,7 +166,7 @@ const DeckItemBase = ({ deck, session }) => {
             On: <Moment format="YYYY-MM-DD">{deck.createdAt}</Moment>
           </Styled.CreatedOn>
           <Styled.Tags>
-            {deck.tags.map(tag => (
+            {deck.tags.map((tag) => (
               <TagLink key={tag.id} tag={tag} deckId={deck.id} />
             ))}
           </Styled.Tags>
@@ -187,7 +182,7 @@ const DeckItemBase = ({ deck, session }) => {
             </Link>
           </Styled.PracticeCardCount>
 
-          <Styled.PracticeForm onSubmit={e => onSubmit(e)}>
+          <Styled.PracticeForm onSubmit={(e) => onSubmit(e)}>
             <Styled.PracticeInput
               name="count"
               value={count}
@@ -208,43 +203,51 @@ const DeckItemBase = ({ deck, session }) => {
         </Styled.Practice>
         <Styled.DeckButtons>
           <EditDropDown>
-            <Button
+            <Styled.ManageButton
               type="checkbox"
               checked={isChecked}
               onClick={toggleEditMenu}
               onChange={toggleEditMenu}
             >
               Manage
-            </Button>
+            </Styled.ManageButton>
             <EditDropDownContent isChecked={isChecked}>
-              {session && session.me && deck.user.id === session.me.id && (
-                <DeckDelete deck={deck} />
+              {authorizedRole && <DeckDelete deck={deck} />}
+              {authorizedRole && (
+                <Styled.EditButton type="button" onClick={togglePopupModal}>
+                  Edit Details
+                </Styled.EditButton>
               )}
-              <Button type="button" onClick={togglePopupModal}>
-                Edit Details
-              </Button>
-              <Button type="button" onClick={() => togglePopupModal("addTag")}>
+              <Styled.TagButton
+                type="button"
+                onClick={() => togglePopupModal("addTag")}
+              >
                 Add Tag
-              </Button>
+              </Styled.TagButton>
             </EditDropDownContent>
           </EditDropDown>
-          <LinkButton type="button">
-            <Link to={cardListLink}>Browse</Link>
-          </LinkButton>
+
+          <BrowseLink to={cardListLink}>
+            <Styled.BrowseButton type="button">Browse</Styled.BrowseButton>
+          </BrowseLink>
           {session.me.bookmarkedDecks.find(isBookmarked) ? (
-            <Button
-              type="button"
-              onClick={() => removeBookmark({ variables: { id: deck.id } })}
-            >
-              <LikeIcon src={liked} />
-            </Button>
+            <Styled.Like>
+              <Styled.LikeButton
+                type="button"
+                onClick={() => removeBookmark({ variables: { id: deck.id } })}
+              >
+                <LikeIcon src={liked} />
+              </Styled.LikeButton>
+            </Styled.Like>
           ) : (
-            <Button
-              type="button"
-              onClick={() => bookmarkDeck({ variables: { id: deck.id } })}
-            >
-              <LikeIcon src={like} />
-            </Button>
+            <Styled.Like>
+              <Styled.LikeButton
+                type="button"
+                onClick={() => bookmarkDeck({ variables: { id: deck.id } })}
+              >
+                <LikeIcon src={like} />
+              </Styled.LikeButton>
+            </Styled.Like>
           )}
         </Styled.DeckButtons>
       </Styled.CardGrid>
@@ -254,33 +257,38 @@ const DeckItemBase = ({ deck, session }) => {
 
 DeckItemBase.propTypes = {
   deck: PropTypes.object.isRequired,
-  session: PropTypes.object.isRequired
+  session: PropTypes.object.isRequired,
 };
 
 const EditDropDown = styled.div`
   position: relative;
-  display: inline-block;
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
   z-index: 30;
 `;
 
 const EditDropDownContent = styled.div`
-  display: ${props => (props.isChecked ? "block" : "none")};
+  display: ${(props) => (props.isChecked ? "block" : "none")};
   position: absolute;
-  background-color: #fff;
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  background-color: ${(props) => props.theme.container};
+  -webkit-box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 30;
+  z-index: 16;
   bottom: 100%;
-`;
-
-const LinkButton = styled(Button)`
-  a {
-    color: ${props => props.theme.text};
-  }
 `;
 
 const LikeIcon = styled.img`
   width: 24px;
   height: 24px;
+`;
+
+const BrowseLink = styled(Link)`
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+  display: inherit;
 `;
 
 export default DeckItemBase;

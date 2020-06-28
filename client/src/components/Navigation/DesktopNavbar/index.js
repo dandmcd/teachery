@@ -11,7 +11,7 @@ const DesktopNavbar = ({ isChecked, toggleMobileNavbar, session }) => {
   return (
     <Styled.Navbar>
       <Styled.NavLeft>
-        <Link to={routes.LANDING}>Teachery</Link>
+        <Link to={session ? routes.DASHBOARD : routes.LANDING}>Teachery</Link>
       </Styled.NavLeft>
       <Styled.NavRight>
         {session && session.me ? (
@@ -48,8 +48,7 @@ const NavigationAuth = ({ session }) => {
   } else if (session && session.me && session.me.role === "ADMIN") {
     role = true;
   }
-  console.log(session);
-  console.log("Role is: " + role);
+
   return (
     <Styled.NavLinks>
       <Styled.NavLink>

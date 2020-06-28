@@ -23,15 +23,15 @@ const signOut = client => {
 };
 
 const SOButton = styled(Button)`
+  font-size: 9px;
   height: auto;
-  width: 80px;
+  width: 100%;
   text-align: center;
   vertical-align: middle;
-  border: 2px solid ${props => props.theme.secondaryDark};
+  border: 2px solid ${props => props.theme.textLight};
   display: table-cell;
   :hover {
-    color: ${props => props.theme.text};
-    background: #fff;
+    background-color: ${props => props.theme.primaryDark};
   }
 `;
 

@@ -1,15 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
-import styled from "styled-components";
 
-import useOuterClickNotifier from "../../../Alerts";
+import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
 import * as Styled from "../../../../theme/Popup";
-import Button from "../../../../theme/Button";
 import DropZone from "../../../Uploader";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 
@@ -17,6 +15,7 @@ import ErrorMessage from "../../../Alerts/Error";
 const UPDATE_CARD = gql`
   mutation(
     $id: ID!
+    $deckId: Int!
     $front: String!
     $back: String
     $pictureName: String
@@ -24,6 +23,7 @@ const UPDATE_CARD = gql`
   ) {
     updateCard(
       id: $id
+      deckId: $deckId
       front: $front
       back: $back
       pictureName: $pictureName
@@ -54,6 +54,7 @@ const CardEdit = () => {
       toggleSuccess @client
       toggleEditCard @client
       current @client
+      currentDeckId @client
       editImg @client
       isSubmitting @client
     }
@@ -63,17 +64,18 @@ const CardEdit = () => {
     toggleEditCard,
     isSubmitting,
     current,
-    editImg
+    currentDeckId,
+    editImg,
   } = data;
 
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [updateCard, { loading, error }] = useMutation(UPDATE_CARD, {
-    onError: err => {
+    onError: (err) => {
       client.writeData({ data: { toggleSuccess: false } });
     },
-    onCompleted: data => {
+    onCompleted: (data) => {
       client.writeData({ data: { toggleSuccess: true } });
-    }
+    },
   });
 
   useEffect(() => {
@@ -89,9 +91,9 @@ const CardEdit = () => {
             pictureUrl
             createdAt
           }
-        `
+        `,
       });
-      console.log(currentCard);
+
       setState(currentCard);
     }
   }, [client, current, toggleEditCard]);
@@ -101,10 +103,12 @@ const CardEdit = () => {
     front: "",
     back: "",
     pictureName: "",
-    pictureUrl: ""
+    pictureUrl: "",
   });
   const { id, front, back, pictureUrl, pictureName } = state;
   const [drop, setDrop] = useState(null);
+
+  console.log(currentDeckId);
 
   useEffect(() => {
     if (toggleSuccess) {
@@ -114,9 +118,9 @@ const CardEdit = () => {
     }
   }, [client, toggleSuccess]);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleClick = () => {
@@ -129,16 +133,14 @@ const CardEdit = () => {
   const uploadToS3 = async (file, signedRequest) => {
     const options = {
       headers: {
-        "Content-Type": file.type
-      }
+        "Content-Type": file.type,
+      },
     };
     await axios.put(signedRequest, file, options);
   };
-  const formatFilename = filename => {
+  const formatFilename = (filename) => {
     const date = moment().format("YYYYMMDD");
-    const randomString = Math.random()
-      .toString(36)
-      .substring(2, 7);
+    const randomString = Math.random().toString(36).substring(2, 7);
     const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-");
     const newFilename = `images/${date}-${randomString}-${cleanFileName}`;
     return newFilename.substring(0, 60);
@@ -146,15 +148,14 @@ const CardEdit = () => {
 
   const onSubmit = async (e, updateCard) => {
     e.preventDefault();
-    console.log(drop);
     if (drop) {
       try {
         client.writeData({ data: { isSubmitting: true } });
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
-            filetype: drop.type
-          }
+            filetype: drop.type,
+          },
         });
 
         const { signedRequest, url } = response.data.signS3;
@@ -164,11 +165,12 @@ const CardEdit = () => {
         await updateCard({
           variables: {
             id: id,
+            deckId: currentDeckId,
             front,
             back,
             pictureName: drop.name,
-            pictureUrl: url
-          }
+            pictureUrl: url,
+          },
         });
         client.writeData({ data: { isSubmitting: false } });
       } catch (error) {
@@ -178,22 +180,24 @@ const CardEdit = () => {
       await updateCard({
         variables: {
           id: id,
+          deckId: currentDeckId,
           front: front,
           back: back,
           pictureUrl: null,
-          pictureName: null
-        }
+          pictureName: null,
+        },
       });
     } else {
       try {
         await updateCard({
           variables: {
             id: id,
+            deckId: currentDeckId,
             front: front,
             back: back,
             pictureUrl: pictureUrl,
-            pictureName: pictureName
-          }
+            pictureName: pictureName,
+          },
         });
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
@@ -205,47 +209,65 @@ const CardEdit = () => {
     client.writeData({
       data: {
         toggleEditCard: !toggleEditCard,
-        editImg: false
-      }
+        editImg: false,
+      },
     });
   };
   const innerRef = useRef(null);
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Container>
+    <Fragment>
       {toggleEditCard ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupTitle>Edit Card ...</Styled.PopupTitle>
+            <Styled.PopupHeader>
+              <Styled.PopupTitle>Edit Card ...</Styled.PopupTitle>
+              <Styled.PopupFooterButton
+                title="Close"
+                onClick={togglePopupModal}
+              >
+                <Styled.CloseSpan />
+              </Styled.PopupFooterButton>
+            </Styled.PopupHeader>
             <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, updateCard)}>
-                <Styled.InputTextArea
-                  name="front"
-                  value={front}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Front of the flashcard*"
-                />
-                <Styled.InputTextArea
-                  name="back"
-                  value={back}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Back of the card"
-                />
+              <form onSubmit={(e) => onSubmit(e, updateCard)}>
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>Front of the Flashcard</Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.InputTextArea
+                    name="front"
+                    value={front}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>Back of the Flashcard</Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.InputTextArea
+                    name="back"
+                    value={back}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
                 {pictureUrl !== null ? (
-                  <Styled.CardImg src={pictureUrl} alt={pictureUrl} />
+                  <div>
+                    <Styled.CardImg src={pictureUrl} alt={pictureUrl} />
+                  </div>
                 ) : null}
-                <button type="button" onClick={handleClick}>
+                <Styled.AddButton type="button" onClick={handleClick}>
                   {!editImg && pictureUrl === null
-                    ? "Add Image"
+                    ? "Add File"
                     : !editImg
                     ? "Change"
                     : "Keep Original"}
-                </button>
+                </Styled.AddButton>
                 {pictureUrl !== null && (
-                  <DeleteButton
+                  <Styled.DeleteButton
                     pictureUrl={pictureUrl}
                     type="button"
                     onClick={() =>
@@ -254,40 +276,33 @@ const CardEdit = () => {
                         front: front,
                         back: back,
                         pictureUrl: "",
-                        pictureName: ""
+                        pictureName: "",
                       })
                     }
                   >
-                    Delete Image
-                  </DeleteButton>
+                    Remove File
+                  </Styled.DeleteButton>
                 )}
                 {editImg && <DropZone setDrop={setDrop} isCard={"isCard"} />}
-                {!isSubmitting ? (
-                  <Button disabled={isInvalid} type="submit">
-                    Submit
-                  </Button>
-                ) : (
-                  <Loading />
-                )}
                 {loading && <Loading />}
+                <Styled.Submission>
+                  {!isSubmitting ? (
+                    <Styled.SubmitButton disabled={isInvalid} type="submit">
+                      Submit
+                    </Styled.SubmitButton>
+                  ) : (
+                    <Loading />
+                  )}
+                </Styled.Submission>
                 {toggleSuccess && <SuccessMessage message="Card Updated!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>
-            <Styled.PopupFooterButton onClick={togglePopupModal}>
-              Close
-            </Styled.PopupFooterButton>
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Container>
+    </Fragment>
   );
 };
-
-const Container = styled.div``;
-
-const DeleteButton = styled(Button)`
-  display: ${props => props.pictureUrl === "" && "none"};
-`;
 
 export default CardEdit;

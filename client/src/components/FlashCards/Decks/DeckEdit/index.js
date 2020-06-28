@@ -1,15 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
-import styled from "styled-components";
 
-import useOuterClickNotifier from "../../../Alerts";
+import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
 import * as Styled from "../../../../theme/Popup";
-import Button from "../../../../theme/Button";
 import DropZone from "../../../Uploader";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 
@@ -147,12 +145,14 @@ const DeckEdit = () => {
 
   const onSubmit = async (e, updateDeck) => {
     e.preventDefault();
-    console.log(drop);
     if (drop) {
       try {
         client.writeData({ data: { isSubmitting: true } });
-        console.log(drop);
-        console.log(new File([image], drop.name));
+        try {
+          new File([image], drop.name);
+        } catch (err) {
+          new Blob([image], drop.name);
+        }
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
@@ -181,7 +181,6 @@ const DeckEdit = () => {
             deckImageUrl: ""
           });
         });
-        console.log("It's a drop");
         client.writeData({ data: { isSubmitting: false } });
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
@@ -196,7 +195,6 @@ const DeckEdit = () => {
           deckImageName: null
         }
       });
-      console.log("It's an empty");
     } else {
       try {
         await updateDeck({
@@ -216,7 +214,6 @@ const DeckEdit = () => {
             deckImageUrl: ""
           });
         });
-        console.log("It's an else");
       } catch (error) {
         client.writeData({ data: { isSubmitting: false } });
       }
@@ -235,39 +232,57 @@ const DeckEdit = () => {
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Container>
+    <Fragment>
       {toggleEditDeck ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupTitle>Edit Deck ...</Styled.PopupTitle>
+            <Styled.PopupHeader>
+              <Styled.PopupTitle>Edit Deck ...</Styled.PopupTitle>
+              <Styled.PopupFooterButton
+                title="Close"
+                onClick={togglePopupModal}
+              >
+                <Styled.CloseSpan />
+              </Styled.PopupFooterButton>
+            </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, updateDeck)}>
-                <Styled.InputTextArea
-                  name="deckName"
-                  value={deckName}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Deck Name*"
-                />
-                <Styled.InputTextArea
-                  name="description"
-                  value={description}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Add details and description*"
-                />
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>Deck Name</Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.Input
+                    name="deckName"
+                    value={deckName}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>Description</Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.InputTextArea
+                    name="description"
+                    value={description}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
                 {deckImageUrl !== null ? (
-                  <Styled.CardImg src={deckImageUrl} alt={deckImageUrl} />
+                  <div>
+                    <Styled.CardImg src={deckImageUrl} alt={deckImageUrl} />
+                  </div>
                 ) : null}
-                <button type="button" onClick={handleClick}>
+                <Styled.AddButton type="button" onClick={handleClick}>
                   {!editImg && deckImageUrl === null
-                    ? "Add Image"
+                    ? "Add File"
                     : !editImg
                     ? "Change"
                     : "Keep Original"}
-                </button>
+                </Styled.AddButton>
                 {deckImageUrl !== null && (
-                  <DeleteButton
+                  <Styled.DeleteButton
                     deckImageUrl={deckImageUrl}
                     type="button"
                     onClick={() =>
@@ -280,8 +295,8 @@ const DeckEdit = () => {
                       })
                     }
                   >
-                    Delete Image
-                  </DeleteButton>
+                    Remove File
+                  </Styled.DeleteButton>
                 )}
                 {editImg && (
                   <DropZone
@@ -290,32 +305,25 @@ const DeckEdit = () => {
                     isDeck={"isDeck"}
                   />
                 )}
-                {!isSubmitting ? (
-                  <Button disabled={isInvalid} type="submit">
-                    Submit
-                  </Button>
-                ) : (
-                  <Loading />
-                )}
                 {loading && <Loading />}
+                <Styled.Submission>
+                  {!isSubmitting ? (
+                    <Styled.SubmitButton disabled={isInvalid} type="submit">
+                      Submit
+                    </Styled.SubmitButton>
+                  ) : (
+                    <Loading />
+                  )}
+                </Styled.Submission>
                 {toggleSuccess && <SuccessMessage message="Deck Updated!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>
-            <Styled.PopupFooterButton onClick={togglePopupModal}>
-              Close
-            </Styled.PopupFooterButton>
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Container>
+    </Fragment>
   );
 };
-
-const Container = styled.div``;
-
-const DeleteButton = styled(Button)`
-  display: ${props => props.deckImageUrl === "" && "none"};
-`;
 
 export default DeckEdit;

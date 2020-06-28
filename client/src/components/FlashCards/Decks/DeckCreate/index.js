@@ -1,18 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import styled from "styled-components";
 import axios from "axios";
 import moment from "moment";
 
 import * as Styled from "../../../../theme/Popup";
-import Button from "../../../../theme/Button";
-import useOuterClickNotifier from "../../../Alerts";
+import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
 import DropZone from "../../../Uploader";
 import ErrorMessage from "../../../Alerts/Error";
 import SuccessMessage from "../../../Alerts/Success";
 import GET_PAGINATED_DECKS_WITH_USERS from "../DeckSchema";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 
 const CREATE_DECK = gql`
   mutation(
@@ -126,7 +124,12 @@ const DeckCreate = () => {
         "Content-Type": file.type
       }
     };
-    await axios.put(signedRequest, file, options);
+    await axios
+      .put(signedRequest, file, options)
+      .then(function(response) {})
+      .catch(function(error) {
+        console.log(error);
+      });
   };
 
   const formatFilename = filename => {
@@ -151,8 +154,11 @@ const DeckCreate = () => {
     if (drop) {
       try {
         client.writeData({ data: { isSubmitting: true } });
-        console.log(drop);
-        console.log(new File([image], drop.name));
+        try {
+          new File([image], drop.name);
+        } catch (err) {
+          new Blob([image], drop.name);
+        }
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
@@ -208,60 +214,70 @@ const DeckCreate = () => {
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Container>
-      <Button type="button" onClick={togglePopupModal}>
-        Create Deck
-      </Button>
+    <Fragment>
+      <Styled.CreateButton type="button" onClick={togglePopupModal}>
+        Create A New Deck
+      </Styled.CreateButton>
       {togglePopup ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupTitle>
-              Create a name and description for your deck...
-            </Styled.PopupTitle>
+            <Styled.PopupHeader>
+              <Styled.PopupTitle>Create a Deck ...</Styled.PopupTitle>
+              <Styled.PopupFooterButton onClick={togglePopupModal}>
+                <Styled.CloseSpan />
+              </Styled.PopupFooterButton>
+            </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, createDeck)}>
-                <Styled.Input
-                  name="deckName"
-                  value={deckName}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Enter a deck name*"
-                />
-                <Styled.InputTextArea
-                  name="description"
-                  value={description}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Add details and description*"
-                />
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>Enter a Deck Name</Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.Input
+                    name="deckName"
+                    value={deckName}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>
+                      Add Details or a Description
+                    </Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.InputTextArea
+                    name="description"
+                    value={description}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
                 <DropZone
                   setDrop={setDrop}
                   setImage={setImage}
                   handleChange={handleChange}
                   isDeck={"isDeck"}
                 />
-                {!isSubmitting ? (
-                  <Button disabled={isInvalid} type="submit">
-                    Submit
-                  </Button>
-                ) : (
-                  <Loading />
-                )}
                 {loading && <Loading />}
+                <Styled.Submission>
+                  {!isSubmitting ? (
+                    <Styled.SubmitButton disabled={isInvalid} type="submit">
+                      Submit
+                    </Styled.SubmitButton>
+                  ) : (
+                    <Loading />
+                  )}
+                </Styled.Submission>
                 {toggleSuccess && <SuccessMessage message="Deck created!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>
-            <Styled.PopupFooterButton onClick={togglePopupModal}>
-              Close
-            </Styled.PopupFooterButton>
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Container>
+    </Fragment>
   );
 };
-
-const Container = styled.div``;
 
 export default DeckCreate;

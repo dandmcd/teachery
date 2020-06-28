@@ -6,13 +6,13 @@ import PropTypes from "prop-types";
 import { cloneDeep } from "lodash";
 
 import Button from "../../../../theme/Button";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import ErrorMessage from "../../../Alerts/Error";
 import CARDS_QUERY from "../CardList/CardListSchema/CardListSchema";
 
 const DELETE_CARD = gql`
-  mutation($id: ID!) {
-    deleteCard(id: $id)
+  mutation($id: ID!, $deckId: Int!) {
+    deleteCard(id: $id, deckId: $deckId)
   }
 `;
 
@@ -30,37 +30,33 @@ const CardDelete = ({ card, deckId }) => {
       const localData = cloneDeep(
         cache.readQuery({
           query: CARDS_QUERY,
-          variables: { id: deckId }
+          variables: { id: deckId },
         })
       );
-      console.log(localData);
 
       localData.deck.cards = localData.deck.cards.filter(
-        item => item.id !== card.id
+        (item) => item.id !== card.id
       );
 
-      //      localData.deck.cards = [...localData.deck.cards, createCard];
-      console.log(localData.deck.id);
       cache.writeQuery({
         query: CARDS_QUERY,
         variables: { id: deckId, __typeName: "Deck" },
-        data: { ...localData }
+        data: { ...localData },
       });
-      console.log(localData);
     },
-    onError: err => {
+    onError: (err) => {
       client.writeData({ data: { toggleDeleteSuccess: false } });
     },
-    onCompleted: data => {
+    onCompleted: (data) => {
       client.writeData({ data: { toggleDeleteSuccess: true } });
-    }
+    },
   });
 
   useEffect(() => {
     if (toggleDeleteSuccess) {
       setTimeout(() => {
         client.writeData({
-          data: { toggleDeleteSuccess: !toggleDeleteSuccess }
+          data: { toggleDeleteSuccess: !toggleDeleteSuccess },
         });
       }, 5000);
     }
@@ -69,7 +65,7 @@ const CardDelete = ({ card, deckId }) => {
   const onSubmit = (e, deleteCard) => {
     e.preventDefault();
     deleteCard({
-      variables: { id: card.id }
+      variables: { id: card.id, deckId: deckId },
     });
   };
 
@@ -77,7 +73,7 @@ const CardDelete = ({ card, deckId }) => {
     <Fragment>
       <DeleteButton
         type="button"
-        onClick={e => {
+        onClick={(e) => {
           if (window.confirm("Are you sure you wish to delete this card?"))
             onSubmit(e, deleteCard);
         }}
@@ -91,15 +87,14 @@ const CardDelete = ({ card, deckId }) => {
 };
 
 CardDelete.propTypes = {
-  card: PropTypes.object.isRequired
+  card: PropTypes.object.isRequired,
 };
 
 const DeleteButton = styled(Button)`
-  border: 2px solid ${props => props.theme.error};
-  color: #233841;
+  border: 2px solid ${(props) => props.theme.error};
   :hover {
     color: white;
-    background: #b11a1a;
+    background: ${(props) => props.theme.primaryDark};
   }
 `;
 

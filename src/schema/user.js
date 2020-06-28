@@ -24,6 +24,16 @@ export default gql`
     """
     signUp(username: String!, email: String!, password: String!): Token!
 
+    confirmUser(token: String): Boolean!
+
+    changePassword(token: String!, password: String!): Token!
+
+    changePasswordLoggedIn(id: ID!, password: String!): Boolean!
+
+    forgotPassword(email: String!): Boolean!
+
+    resetPassword(token: String!): Boolean!
+
     """
     Sign in to account
     Token and password are required!
@@ -40,7 +50,7 @@ export default gql`
     Update a user
     Requires ADMIN role
     """
-    updateUserRole(id: ID, email: String, role: Role): Boolean!
+    updateUserRole(login: String!, role: Role!): Boolean!
     """
     Bookmark deck
     """

@@ -1,12 +1,12 @@
-import React, { useRef } from "react";
+import React, { useRef, Fragment } from "react";
 import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
 import * as Styled from "../../../../theme/Popup";
 import search from "../../../../assets/search.png";
-import useOuterClickNotifier from "../../../Alerts";
-import Loading from "../../../Loading";
+import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
+import Loading from "../../../Alerts/Loading";
 import ErrorMessage from "../../../Alerts/Error";
 import SearchTagLink from "./SearchTagLink";
 
@@ -96,11 +96,14 @@ const Search = () => {
         }
       });
     } else {
+      let filteredData = data.getTagsByName.filter(
+        item => item.decks.length >= 1
+      );
       client.writeData({
         data: {
           search: {
             showPopup: true,
-            tags: data.getTagsByName,
+            tags: filteredData,
             tagName: tagName,
             __typename: "Search"
           }
@@ -121,45 +124,53 @@ const Search = () => {
   );
 
   return (
-    <SearchContainer>
-      <SearchInput
-        name="tagName"
-        type="text"
-        defaultValue={tagName}
-        onChange={onChange}
-        placeholder="Search by language or tag"
-      />
-      <SearchImg src={search} alt="Search" onClick={onClick} />
-      <div>
-        {console.log(tags)}
-        {noResult && <p>Sorry, your search did not find any results...</p>}
-        {showPopup ? (
-          <Styled.PopupContainer>
-            <Styled.PopupInner ref={innerRef}>
-              <Styled.PopupTitle>
-                Tags that match {tagName} ...
-              </Styled.PopupTitle>
-              <Styled.PopupBody>
-                {tags.map(tag => (
-                  <SearchTagLink key={tag.id} tag={tag} />
-                ))}
-              </Styled.PopupBody>
+    <Fragment>
+      <SearchContainer>
+        <SearchInput
+          name="tagName"
+          type="text"
+          defaultValue={tagName}
+          onChange={onChange}
+          placeholder="Search by language or tag"
+        />
+        <SearchImg src={search} alt="Search" onClick={onClick} />
+      </SearchContainer>
+      {noResult && (
+        <div>
+          <NoResult> Sorry, your search did not find any results...</NoResult>
+        </div>
+      )}
+      {showPopup ? (
+        <Styled.PopupContainer>
+          <Styled.PopupInnerExtended ref={innerRef}>
+            <Styled.PopupHeader>
+              <Styled.PopupTitle>Search Results ...</Styled.PopupTitle>
               <Styled.PopupFooterButton onClick={togglePopup}>
-                Close
+                <Styled.CloseSpan />
               </Styled.PopupFooterButton>
-            </Styled.PopupInner>
-          </Styled.PopupContainer>
-        ) : null}
-      </div>
-    </SearchContainer>
+            </Styled.PopupHeader>
+            <Styled.PopupBody>
+              {tags.map(tag => (
+                <SearchTagLink key={tag.id} tag={tag} />
+              ))}
+            </Styled.PopupBody>
+          </Styled.PopupInnerExtended>
+        </Styled.PopupContainer>
+      ) : null}
+    </Fragment>
   );
 };
 
 const SearchContainer = styled.div`
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  padding: 0px 0px 5px 12px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  background-color: ${props => props.theme.neutralLight};
 `;
-
 const SearchImg = styled.img`
   height: 15px;
   width: 15px;
@@ -167,9 +178,18 @@ const SearchImg = styled.img`
 
 const SearchInput = styled.input`
   height: 35px;
+  width: 180px;
   border: 0;
   outline: 0;
   border-bottom: 2px solid ${props => props.theme.primary};
+  background-color: ${props => props.theme.neutralLight};
+`;
+
+const NoResult = styled.p`
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  text-indent: 0.5em;
+  margin: 0 auto;
 `;
 
 export default Search;

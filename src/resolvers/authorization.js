@@ -1,3 +1,4 @@
+import Sequelize from "sequelize";
 import { ForbiddenError } from "apollo-server";
 import { combineResolvers, skip } from "graphql-resolvers";
 
@@ -35,5 +36,30 @@ export const isAssignmentOwner = async (parent, { id }, { models, me }) => {
     throw new ForbiddenError("Not authenticated as assignment owner.");
   }
 
+  return skip;
+};
+
+export const isDeckOwner = async (parent, { id }, { models, me }) => {
+  const deck = await models.Deck.findByPk(id, { raw: true });
+  if (me.role === "ADMIN") {
+    return skip;
+  }
+  if (deck.userId !== me.id) {
+    throw new ForbiddenError("Not authenticated as deck owner.");
+  }
+  return skip;
+};
+
+export const isCardOwner = async (parent, { deckId }, { models, me }) => {
+  console.log(deckId);
+  const deck = await models.Deck.findByPk(deckId, { raw: true });
+  console.log(deck);
+  if (me.role === "ADMIN") {
+    return skip;
+  }
+  if (deck.userId !== me.id) {
+    throw new ForbiddenError("Not authenticated as deck owner.");
+  }
+  console.log(deck);
   return skip;
 };

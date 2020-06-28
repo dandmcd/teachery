@@ -1,13 +1,18 @@
 import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 
-import { isAdmin, isAuthenticated } from "./authorization";
+import {
+  isAdmin,
+  isAuthenticated,
+  isCardOwner,
+  isDeckOwner,
+} from "./authorization";
 import { UserInputError } from "apollo-server";
 import { validate } from "graphql";
 
-const toCursorHash = string => Buffer.from(string).toString("base64");
+const toCursorHash = (string) => Buffer.from(string).toString("base64");
 
-const fromCursorHash = string =>
+const fromCursorHash = (string) =>
   Buffer.from(string, "base64").toString("ascii");
 
 export default {
@@ -17,16 +22,16 @@ export default {
         ? {
             where: {
               createdAt: {
-                [Sequelize.Op.lt]: fromCursorHash(cursor)
-              }
-            }
+                [Sequelize.Op.lt]: fromCursorHash(cursor),
+              },
+            },
           }
         : {};
 
       const cards = await models.Card.findAll({
         order: [["createdAt", "DESC"]],
         limit: limit + 1,
-        ...cursorOptions
+        ...cursorOptions,
       });
 
       const hasNextPage = cards.length > limit;
@@ -36,18 +41,19 @@ export default {
         edges,
         pageInfo: {
           hasNextPage,
-          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
-        }
+          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString()),
+        },
       };
     },
     card: async (parent, { id }, { models }) => {
       return await models.Card.findByPk(id);
-    }
+    },
   },
 
   Mutation: {
     createCard: combineResolvers(
-      isAdmin,
+      isAuthenticated,
+      isCardOwner,
       async (
         parent,
         { deckId, front, back, pictureName, pictureUrl },
@@ -58,7 +64,7 @@ export default {
           front,
           back,
           pictureName,
-          pictureUrl
+          pictureUrl,
         });
         return card;
       }
@@ -66,25 +72,27 @@ export default {
 
     updateCard: combineResolvers(
       isAuthenticated,
+      isCardOwner,
       async (
         parent,
-        { id, front, back, pictureName, pictureUrl },
+        { id, deckId, front, back, pictureName, pictureUrl },
         { models }
       ) => {
         const card = await models.Card.update(
           {
             id: id,
+            deckId: deckId,
             front: front,
             back: back,
             pictureName: pictureName,
-            pictureUrl: pictureUrl
+            pictureUrl: pictureUrl,
           },
           { returning: true, plain: true, validate: true, where: { id: id } }
         )
           .spread((affectedCount, affectedRows) => {
             return affectedRows;
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
             throw new UserInputError(err);
           });
@@ -93,18 +101,19 @@ export default {
     ),
 
     deleteCard: combineResolvers(
-      isAdmin,
-      async (parent, { id }, { models }) => {
+      isAuthenticated,
+      isCardOwner,
+      async (parent, { id, deckId }, { models }) => {
         return await models.Card.destroy({
-          where: { id }
+          where: { id },
         });
       }
-    )
+    ),
   },
 
   Card: {
     deck: async (card, args, { loaders }) => {
       return await loaders.deck.load(card.deckId);
-    }
-  }
+    },
+  },
 };

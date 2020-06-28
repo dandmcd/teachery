@@ -1,28 +1,21 @@
 import React from "react";
-
 import withAuthorization from "../Session/withAuthorization";
-import { MessageCreate, Messages } from "../Message";
-import AssignmentCreate from "../Assignment/AssignmentCreate";
-import Assignments from "../Assignment/AssignmentAdmin";
-import AssignTask from "../Assignment/AssignmentAdmin/AssignTask";
-import AssignTaskUpdate from "../Assignment/AssignmentAdmin/AssignTaskUpdate";
-import TeacherAssignedTasks from "./TeacherAssignedTasks";
+import styled from "styled-components";
+import Teacher from "./Teachers";
 
-const TeacherPage = () => (
-  <div>
-    <h1>Teacher Admin</h1>
-    <hr />
-    <MessageCreate />
-    <Messages limit={3} />
-    <hr />
-    <AssignmentCreate />
-    <AssignTask />
-    <Assignments limit={3} />
-    <hr />
-    <AssignTaskUpdate />
-    <TeacherAssignedTasks limit={4} />
-  </div>
-);
+const TeacherPage = () => {
+  return (
+    <Container>
+      <Teacher />
+    </Container>
+  );
+};
+
+const Container = styled.div`
+  z-index: 15;
+  max-width: 100%;
+  margin: auto;
+`;
 
 export default withAuthorization(
   session =>

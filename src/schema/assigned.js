@@ -2,7 +2,7 @@ import { gql } from "apollo-server-express";
 
 export default gql`
   extend type Query {
-    assignedTasks(cursor: String, limit: Int): AssignedTaskConnection!
+    assignedTasks(cursor: String, limit: Int): AssignedTaskConnection
 
     assignedTasksTeacher(
       cursor: String
@@ -43,7 +43,7 @@ export default gql`
   enum Status {
     INCOMPLETE
     COMPLETE
-    REVIEWING
+    SUBMITTED
     GRADED
   }
 

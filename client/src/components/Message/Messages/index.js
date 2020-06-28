@@ -5,7 +5,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 
 import MessageDelete from "../MessageDelete";
-import Loading from "../../Loading";
+import Loading from "../../Alerts/Loading";
 import withSession from "../../Session/withSession";
 import Button from "../../../theme/Button";
 import ErrorMessage from "../../Alerts/Error";
@@ -48,10 +48,13 @@ const GET_PAGINATED_MESSAGES_WITH_USERS = gql`
 `;
 
 const Messages = ({ limit }) => {
-  const { data, loading, error, fetchMore, subscribeToMore } = useQuery(
-    GET_PAGINATED_MESSAGES_WITH_USERS,
-    { variables: { limit } }
-  );
+  const {
+    data,
+    loading,
+    error,
+    fetchMore,
+    subscribeToMore
+  } = useQuery(GET_PAGINATED_MESSAGES_WITH_USERS, { variables: { limit } });
   if (loading && !data) {
     return <Loading />;
   } else if (!data) {
@@ -85,12 +88,14 @@ Messages.propTypes = {
 const MessageContainer = styled.div`
   position: block;
   width: 300px;
+  height: 260px;
   margin: auto;
   margin-bottom: 5px;
   overflow-y: scroll;
   border-radius: 20px;
   background: ${props => props.theme.neutralLight};
   text-align: center;
+  -ms-overflow-style: none;
   scrollbar-width: none;
   ::-webkit-scrollbar {
     display: none;
@@ -98,7 +103,7 @@ const MessageContainer = styled.div`
 `;
 
 const MoreMessagesButton = ({ limit, pageInfo, fetchMore, children }) => (
-  <Button
+  <MoreButton
     type="button"
     onClick={() =>
       fetchMore({
@@ -125,8 +130,12 @@ const MoreMessagesButton = ({ limit, pageInfo, fetchMore, children }) => (
     }
   >
     {children}
-  </Button>
+  </MoreButton>
 );
+
+const MoreButton = styled(Button)`
+  border-color: ${props => props.theme.primaryDark};
+`;
 
 MoreMessagesButton.propTypes = {
   limit: PropTypes.number.isRequired,
@@ -174,16 +183,16 @@ MessageList.propTypes = {
 
 const MessageItemBase = ({ message, session }) => (
   <Fragment>
-    <h5>{message.user.username}</h5>
-    <h6>{message.createdAt}</h6>
-    <p>
+    <Username>{message.user.username}</Username>
+    <DateCreated>{message.createdAt}</DateCreated>
+    <Text>
       {message.text}
       {session && session.me && message.user.id === session.me.id && (
         <sup>
           <MessageDelete message={message} />
         </sup>
       )}
-    </p>
+    </Text>
   </Fragment>
 );
 
@@ -191,6 +200,19 @@ MessageItemBase.propTypes = {
   message: PropTypes.object.isRequired,
   session: PropTypes.object.isRequired
 };
+
+const Username = styled.h5`
+  margin: 0.2em 0 0.2em 0;
+`;
+
+const DateCreated = styled.h6`
+  margin: 0.2em 0 0.4em 0;
+  color: ${props => props.theme.textLight};
+`;
+
+const Text = styled.p`
+  margin: 0.2em 0 0.7em 0;
+`;
 
 const MessageItem = withSession(MessageItemBase);
 

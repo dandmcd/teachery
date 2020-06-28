@@ -1,17 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
-import styled from "styled-components";
 import PropTypes from "prop-types";
 import { cloneDeep } from "lodash";
 
-import useOuterClickNotifier from "../../../Alerts";
+import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
 import * as Styled from "../../../../theme/Popup";
-import Button from "../../../../theme/Button";
 import DropZone from "../../../Uploader";
-import Loading from "../../../Loading";
+import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import CARDS_QUERY from "../CardList/CardListSchema/CardListSchema";
@@ -84,17 +82,15 @@ const CardCreate = ({ deck }) => {
           variables: { id: current }
         })
       );
-      console.log(localData.deck.id);
 
       localData.deck.cards = [...localData.deck.cards, createCard];
       //      localData.deck.cards = [...localData.deck.cards, createCard];
-      console.log(localData.deck.id);
+
       cache.writeQuery({
         query: CARDS_QUERY,
         variables: { id: localData.deck.id },
         data: { ...localData }
       });
-      console.log(localData);
     },
     onError: err => {
       client.writeData({ data: { toggleSuccess: false } });
@@ -141,7 +137,6 @@ const CardCreate = ({ deck }) => {
   // Mutation Submit
   const onSubmit = async (e, createCard) => {
     e.preventDefault();
-    console.log(drop);
     if (drop) {
       try {
         client.writeData({ data: { isSubmitting: true } });
@@ -243,60 +238,73 @@ const CardCreate = ({ deck }) => {
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Container>
+    <Fragment>
       {toggleAddCard ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupTitle>
-              Create a card for your deck...
-            </Styled.PopupTitle>
+            <Styled.PopupHeader>
+              <Styled.PopupTitle>
+                Create a Card for Your Deck ...
+              </Styled.PopupTitle>
+              <Styled.PopupFooterButton
+                title="Close"
+                onClick={togglePopupModal}
+              >
+                <Styled.CloseSpan />
+              </Styled.PopupFooterButton>
+            </Styled.PopupHeader>
             <Styled.PopupBody>
               <form onSubmit={e => onSubmit(e, createCard)}>
-                <Styled.InputTextArea
-                  name="front"
-                  value={front}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Front of the flashcard*"
-                />
-                <Styled.InputTextArea
-                  name="back"
-                  value={back}
-                  onChange={onChange}
-                  type="text"
-                  placeholder="Back of the card"
-                />
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>Front of the Flashcard</Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.InputTextArea
+                    name="front"
+                    value={front}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
+                <Styled.Label>
+                  <Styled.Span>
+                    <Styled.LabelName>Back of the Flashcard</Styled.LabelName>
+                  </Styled.Span>
+                  <Styled.InputTextArea
+                    name="back"
+                    value={back}
+                    onChange={onChange}
+                    type="text"
+                  />
+                </Styled.Label>
                 <DropZone
                   setDrop={setDrop}
                   handleChange={handleChange}
                   isCard={"isCard"}
                 />
-                {!isSubmitting ? (
-                  <Button disabled={isInvalid} type="submit">
-                    Submit
-                  </Button>
-                ) : (
-                  <Loading />
-                )}
                 {loading && <Loading />}
+                <Styled.Submission>
+                  {!isSubmitting ? (
+                    <Styled.SubmitButton disabled={isInvalid} type="submit">
+                      Submit
+                    </Styled.SubmitButton>
+                  ) : (
+                    <Loading />
+                  )}
+                </Styled.Submission>
                 {toggleSuccess && <SuccessMessage message="Card Created!" />}
                 {(error || s3Error) && <ErrorMessage error={error} />}
               </form>
             </Styled.PopupBody>
-            <Styled.PopupFooterButton onClick={togglePopupModal}>
-              Close
-            </Styled.PopupFooterButton>
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Container>
+    </Fragment>
   );
 };
 
 CardCreate.propTyoes = {
   deck: PropTypes.object
 };
-
-const Container = styled.div``;
 
 export default CardCreate;

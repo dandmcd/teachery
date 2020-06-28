@@ -1,9 +1,12 @@
 import jwt from "jsonwebtoken";
-import Sequelize from "sequelize";
+import bcrypt from "bcrypt";
+import Sequelize, { Op } from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 import { UserInputError, AuthenticationError } from "apollo-server-core";
 
-import { isAdmin } from "./authorization";
+import { isAuthenticated, isAdmin } from "./authorization";
+import { sendNewUserEmail } from "../utilities/sendNewUserEmail";
+import { sendChangeEmail } from "../utilities/sendChangeEmail";
 
 const toCursorHash = string => Buffer.from(string).toString("base64");
 
@@ -88,8 +91,130 @@ export default {
         role: "STUDENT"
       });
 
+      const userId = user.id;
+
+      const token = jwt.sign({ userId, email }, secret, { expiresIn: 3600 });
+      await sendNewUserEmail(
+        email,
+        `http://localhost:3000/account/confirm/${token}`
+      );
+
       return { token: createToken(user, secret, "120m") };
     },
+
+    confirmUser: async (parent, { token }, { models, secret }) => {
+      let decode;
+      const payload = jwt.verify(token, secret, function(err, decoded) {
+        if (err) {
+          throw new AuthenticationError(
+            "This token has expired. Please try to sign-in again"
+          );
+        }
+        decode = decoded;
+      });
+      if (!decode.userId) {
+        return false;
+      }
+
+      const user = await models.User.update(
+        {
+          confirmed: true
+        },
+        { returning: true, validate: true, where: { id: decode.userId } }
+      )
+        .then(result => {
+          console.log(result);
+        })
+        .catch(err => {
+          console.log(err);
+          throw new UserInputError(err);
+        });
+      return true;
+    },
+
+    forgotPassword: async (parent, { email }, { models, secret }) => {
+      const user = await models.User.findOne({ where: { email } });
+
+      if (!user) {
+        throw new UserInputError("No user associated with this email address");
+      }
+      const userId = user.id;
+
+      const token = jwt.sign({ userId, email }, secret, { expiresIn: 3600 });
+      await sendChangeEmail(
+        email,
+        `http://localhost:3000/account/reset/${token}`
+      );
+
+      // await sendEmail(email, `http://localhost:3000/account/reset/${token}`);
+
+      return true;
+    },
+
+    resetPassword: async (parent, { token }, { models, secret }) => {
+      let decode;
+      const payload = jwt.verify(token, secret, function(err, decoded) {
+        if (err) {
+          throw new AuthenticationError(
+            "This token has expired. If you wish to reset your password, please re-enter your email address or username in the form below"
+          );
+        }
+        decode = decoded;
+      });
+      const user = await models.User.findByPk(decode.userId);
+
+      if (!decode) {
+        throw new AuthenticationError("This token has expired.");
+      } else if (!user) {
+        throw new AuthenticationError("This user does not exist.");
+      }
+
+      return true;
+    },
+
+    changePassword: async (parent, { token, password }, { models, secret }) => {
+      let decode;
+      const payload = jwt.verify(token, secret, function(err, decoded) {
+        if (err) {
+          throw new AuthenticationError(
+            "This token has expired. If you wish to reset your password, please re-enter your email address or username in the form below"
+          );
+        }
+        decode = decoded;
+      });
+      const newPassword = await bcrypt.hash(password, 10);
+
+      const user = await models.User.update(
+        {
+          password: newPassword
+        },
+        { where: { id: decode.userId } }
+      );
+
+      return { token: createToken(user, secret, "120m") };
+    },
+
+    changePasswordLoggedIn: combineResolvers(
+      isAuthenticated,
+      async (parent, { id, password }, { models, secret }) => {
+        const newPassword = await bcrypt.hash(password, 10);
+
+        const user = await models.User.update(
+          {
+            password: newPassword
+          },
+          { returning: true, validate: true, where: { id: id } }
+        )
+          .then(result => {
+            console.log(result);
+          })
+          .catch(err => {
+            console.log(err);
+            throw new UserInputError(err);
+          });
+        return true;
+      }
+    ),
 
     signIn: async (parent, { login, password }, { models, secret }) => {
       const user = await models.User.findByLogin(login);
@@ -97,7 +222,19 @@ export default {
       if (!user) {
         throw new UserInputError("No user found with this username.");
       }
+      if (!user.confirmed) {
+        const userId = user.id;
+        const email = user.email;
 
+        const token = jwt.sign({ userId, email }, secret, { expiresIn: 3600 });
+        await sendNewUserEmail(
+          email,
+          `http://localhost:3000/account/confirm/${token}`
+        );
+        throw new AuthenticationError(
+          "You have not confirmed your account.  Another confirmation has already been sent to your email address."
+        );
+      }
       const isValid = await user.validatePassword(password);
 
       if (!isValid) {
@@ -117,14 +254,21 @@ export default {
 
     updateUserRole: combineResolvers(
       isAdmin,
-      async (parent, { id, username, password, email, role }, { models }) => {
-        const user = await models.User.update(
+      async (parent, { login, role }, { models }) => {
+        const user = await models.User.findByLogin(login);
+        if (!user) {
+          throw new UserInputError("No user found with this username.");
+        }
+
+        await models.User.update(
           {
-            id: id,
-            role: role,
-            email: email
+            role: role
           },
-          { returning: true, validate: true, where: { email: email } }
+          {
+            returning: true,
+            validate: true,
+            where: { id: user.id }
+          }
         )
           .then(result => {
             console.log(result);
