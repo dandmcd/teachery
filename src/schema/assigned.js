@@ -85,6 +85,9 @@ export default gql`
     """
     status: Status!
     assignmentId: Int!
+    """
+    Email or user ID to assign task to
+    """
     assignedToName: String!
     updatedDocumentName: String
     updatedDocumentUrl: String
