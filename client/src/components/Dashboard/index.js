@@ -5,6 +5,7 @@ import DashboardPage from "./DashboardPage";
 import AddDeckTag from "../FlashCards/Decks/DeckTags/DeckTagCreate";
 import DeckEdit from "../FlashCards/Decks/DeckEdit";
 import AssignTaskUpdate from "../AssignedTask/AssignedTasks/AssignedTaskEdit";
+import Footer from "../Footer";
 
 const Dashboard = () => (
   <Container>
@@ -12,6 +13,7 @@ const Dashboard = () => (
     <AddDeckTag />
     <DeckEdit />
     <DashboardPage />
+    <Footer />
   </Container>
 );
 
@@ -21,4 +23,4 @@ const Container = styled.div`
   margin: auto;
 `;
 
-export default withAuthorization(session => session && session.me)(Dashboard);
+export default withAuthorization((session) => session && session.me)(Dashboard);

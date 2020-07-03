@@ -38,7 +38,7 @@ export const AssignmentItemContainer = styled.div`
   -ms-flex-item-align: center;
   -ms-grid-row-align: center;
   align-self: center;
-  background-color: ${props => props.theme.container};
+  background-color: ${(props) => props.theme.container};
   border-radius: 24px;
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
     0 6px 6px rgba(0, 0, 0, 0.23);
@@ -91,7 +91,7 @@ export const AssignmentDiv = styled.div`
 `;
 
 export const Overdue = styled.h4`
-  color: ${props => props.theme.error};
+  color: ${(props) => props.theme.error};
   -webkit-margin-before: 0.5em;
   margin-block-start: 0.5em;
   -webkit-margin-after: 0.5em;
@@ -111,7 +111,7 @@ export const OverdueButton = styled.button`
   outline: none;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.error};
+  background-color: ${(props) => props.theme.error};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -124,7 +124,7 @@ export const OverdueButton = styled.button`
     transform: scale(1.15);
     -webkit-filter: brightness(105%);
     filter: brightness(105%);
-    background: ${props => props.theme.primaryDark};
+    background: ${(props) => props.theme.primaryDark};
   }
   :active {
     -webkit-filter: brightness(115%);
@@ -146,7 +146,7 @@ export const DueButton = styled.button`
   outline: none;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.secondary};
+  background-color: ${(props) => props.theme.secondary};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -159,7 +159,7 @@ export const DueButton = styled.button`
     transform: scale(1.15);
     -webkit-filter: brightness(105%);
     filter: brightness(105%);
-    background: ${props => props.theme.primaryDark};
+    background: ${(props) => props.theme.primaryDark};
   }
   :active {
     -webkit-filter: brightness(115%);
@@ -171,7 +171,7 @@ export const EmptyAssignmentItemContainer = styled.div`
   z-index: 15;
   width: 330px;
   height: 106px;
-  background-color: ${props => props.theme.container};
+  background-color: ${(props) => props.theme.container};
   /* background-image: url(${malcolmx});
   background-size: 330px auto;
   background-repeat: no-repeat;
@@ -207,22 +207,22 @@ export const EmptyCardGrid = styled.div`
   align-content: flex-start;
   -o-border-image: linear-gradient(
       to top,
-      ${props => props.theme.primary},
-      ${props => props.theme.neutralLight}
+      ${(props) => props.theme.primary},
+      ${(props) => props.theme.neutralLight}
     )
     1 100%;
   border-image: -webkit-gradient(
       linear,
       left bottom,
       left top,
-      color-stop(${props => props.theme.primary}),
-      ${props => props.theme.neutralLight}
+      color-stop(${(props) => props.theme.primary}),
+      ${(props) => props.theme.neutralLight}
     )
     1 100%;
   border-image: linear-gradient(
       to top,
-      ${props => props.theme.primary},
-      ${props => props.theme.neutralLight}
+      ${(props) => props.theme.primary},
+      ${(props) => props.theme.neutralLight}
     )
     1 100%;
 `;
@@ -251,11 +251,11 @@ export const EmptyTitle = styled.h3`
   -ms-grid-row-align: center;
   -ms-grid-column-align: end;
   place-self: center end;
-  text-decoration-color: ${props => props.theme.primary};
+  text-decoration-color: ${(props) => props.theme.primary};
   margin: 0px 5px 0px 0px;
   a {
-    color: ${props => props.theme.text};
-    text-decoration-color: ${props => props.theme.primary};
+    color: ${(props) => props.theme.text};
+    text-decoration-color: ${(props) => props.theme.primary};
   }
 `;
 
@@ -272,7 +272,7 @@ export const DeckGrid = styled.div`
   -ms-grid-columns: 720px 5px 1fr;
   grid-template-columns: 720px 1fr;
   -ms-grid-rows: 560px;
-  grid-template-rows: 560px;
+  grid-template-rows: 590px;
   grid-gap: 5px;
   margin: 0.5em auto auto auto;
   @media only screen and (max-width: 770px) {
@@ -329,7 +329,7 @@ export const GridButtonCol = styled.div`
 `;
 
 export const DividerBack = styled.div`
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${(props) => props.theme.neutralLight};
   background-clip: border-box;
   width: 100%;
   margin: auto;
@@ -340,7 +340,7 @@ export const Headers = styled.h2`
   max-width: 1100px;
   margin: auto;
   padding: 0.5em;
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${(props) => props.theme.neutralLight};
   @media only screen and (max-width: 770px) {
     text-align: center;
   }
@@ -363,8 +363,8 @@ export const Hr = styled.hr`
   width: 100%;
   background-image: -webkit-linear-gradient(
     left,
-    ${props => props.theme.primary},
-    ${props => props.theme.neutralLight}
+    ${(props) => props.theme.primary},
+    ${(props) => props.theme.neutralLight}
   );
 `;
 
@@ -372,9 +372,9 @@ export const MoreAssignmentsButton = styled(Button)`
   margin: auto;
   display: block;
   width: 205px;
-  border: 2px solid ${props => props.theme.primaryDark};
+  border: 2px solid ${(props) => props.theme.primaryDark};
   a {
-    color: ${props => props.theme.text};
+    color: ${(props) => props.theme.text};
   }
   :hover {
     a {
@@ -387,9 +387,9 @@ export const MoreButton = styled(Button)`
   margin: auto auto 5px auto;
   display: block;
   width: 205px;
-  border: 2px solid ${props => props.theme.primaryDark};
+  border: 2px solid ${(props) => props.theme.primaryDark};
   a {
-    color: ${props => props.theme.text};
+    color: ${(props) => props.theme.text};
   }
   :hover {
     a {
@@ -415,10 +415,10 @@ export const LargeMoreButton = styled(Button)`
   outline: none;
   cursor: pointer;
   border-style: none;
-  color: ${props => props.theme.text};
-  background-color: ${props => props.theme.neutralLight};
+  color: ${(props) => props.theme.text};
+  background-color: ${(props) => props.theme.neutralLight};
   border-radius: 100%;
-  border: 2px solid ${props => props.theme.secondary};
+  border: 2px solid ${(props) => props.theme.secondary};
   text-align: center;
   padding: 0;
   -webkit-transition: all 0.25s ease-in-out;
@@ -430,7 +430,7 @@ export const LargeMoreButton = styled(Button)`
     filter: brightness(105%);
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
-    background: ${props => props.theme.success};
+    background: ${(props) => props.theme.success};
   }
   @media only screen and (max-width: 1000px) {
     display: none;
