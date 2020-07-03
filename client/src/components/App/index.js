@@ -7,7 +7,7 @@ import * as routes from "../../routing/routes";
 import history from "../../routing/history";
 
 import Navigation from "../Navigation";
-import LandingPage from "../Landing";
+import Landing from "../Landing";
 import SignUpPage from "../SignUp";
 import SignInPage from "../SignIn";
 import AssignmentPage from "../AssignedTask";
@@ -63,11 +63,7 @@ const App = ({ session, refetch }) => {
         <Navigation session={session} />
         <Container>
           <Switch>
-            <Route
-              exact
-              path={routes.LANDING}
-              component={() => <LandingPage />}
-            />
+            <Route exact path={routes.LANDING} component={() => <Landing />} />
             <Route
               exact
               path={routes.DASHBOARD}
@@ -91,7 +87,7 @@ const App = ({ session, refetch }) => {
             <Route
               exact
               path={routes.ACCOUNT}
-              render={props => <AccountPage {...props} setTheme={setTheme} />}
+              render={(props) => <AccountPage {...props} setTheme={setTheme} />}
             />
             <Route
               exact
@@ -112,12 +108,12 @@ const App = ({ session, refetch }) => {
             <Route
               exact
               path={routes.CARDS}
-              component={props => <Cards {...props} />}
+              component={(props) => <Cards {...props} />}
             />
             <Route
               exact
               path={routes.CARDLIST}
-              component={props => <CardList {...props} />}
+              component={(props) => <CardList {...props} />}
             />
             <Route exact path={routes.SEARCH} component={() => <Search />} />
             <Route exact path={routes.TAGS} component={Tags} />
@@ -151,7 +147,7 @@ const App = ({ session, refetch }) => {
 
 App.propTypes = {
   session: PropTypes.object,
-  refetch: PropTypes.func.isRequired
+  refetch: PropTypes.func.isRequired,
 };
 
 const Container = styled.div`
