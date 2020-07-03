@@ -8,15 +8,15 @@ import { isAuthenticated, isAdmin } from "./authorization";
 import { sendNewUserEmail } from "../utilities/sendNewUserEmail";
 import { sendChangeEmail } from "../utilities/sendChangeEmail";
 
-const toCursorHash = string => Buffer.from(string).toString("base64");
+const toCursorHash = (string) => Buffer.from(string).toString("base64");
 
-const fromCursorHash = string =>
+const fromCursorHash = (string) =>
   Buffer.from(string, "base64").toString("ascii");
 
 const createToken = async (user, secret, expiresIn) => {
   const { id, email, username, role } = user;
   return await jwt.sign({ id, email, username, role }, secret, {
-    expiresIn
+    expiresIn,
   });
 };
 
@@ -43,9 +43,9 @@ export default {
         ? {
             where: {
               createdAt: {
-                [Sequelize.Op.lt]: fromCursorHash(cursor)
-              }
-            }
+                [Sequelize.Op.lt]: fromCursorHash(cursor),
+              },
+            },
           }
         : {};
 
@@ -58,10 +58,10 @@ export default {
             model: models.User,
             as: "DeckBookmark",
             where: {
-              id: me.id
-            }
-          }
-        ]
+              id: me.id,
+            },
+          },
+        ],
       });
       const hasNextPage = bookmarkedDecks.length > limit;
       const edges = hasNextPage
@@ -72,10 +72,10 @@ export default {
         edges,
         pageInfo: {
           hasNextPage,
-          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
-        }
+          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString()),
+        },
       };
-    }
+    },
   },
 
   Mutation: {
@@ -88,7 +88,7 @@ export default {
         username,
         email,
         password,
-        role: "STUDENT"
+        role: "STUDENT",
       });
 
       const userId = user.id;
@@ -96,7 +96,7 @@ export default {
       const token = jwt.sign({ userId, email }, secret, { expiresIn: 3600 });
       await sendNewUserEmail(
         email,
-        `http://localhost:3000/account/confirm/${token}`
+        `https://teachery.herokuapp.com/account/confirm/${token}`
       );
 
       return { token: createToken(user, secret, "120m") };
@@ -104,7 +104,7 @@ export default {
 
     confirmUser: async (parent, { token }, { models, secret }) => {
       let decode;
-      const payload = jwt.verify(token, secret, function(err, decoded) {
+      const payload = jwt.verify(token, secret, function (err, decoded) {
         if (err) {
           throw new AuthenticationError(
             "This token has expired. Please try to sign-in again"
@@ -118,14 +118,14 @@ export default {
 
       const user = await models.User.update(
         {
-          confirmed: true
+          confirmed: true,
         },
         { returning: true, validate: true, where: { id: decode.userId } }
       )
-        .then(result => {
+        .then((result) => {
           console.log(result);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           throw new UserInputError(err);
         });
@@ -143,7 +143,7 @@ export default {
       const token = jwt.sign({ userId, email }, secret, { expiresIn: 3600 });
       await sendChangeEmail(
         email,
-        `http://localhost:3000/account/reset/${token}`
+        `https://teachery.herokuapp.com/account/reset/${token}`
       );
 
       // await sendEmail(email, `http://localhost:3000/account/reset/${token}`);
@@ -153,7 +153,7 @@ export default {
 
     resetPassword: async (parent, { token }, { models, secret }) => {
       let decode;
-      const payload = jwt.verify(token, secret, function(err, decoded) {
+      const payload = jwt.verify(token, secret, function (err, decoded) {
         if (err) {
           throw new AuthenticationError(
             "This token has expired. If you wish to reset your password, please re-enter your email address or username in the form below"
@@ -174,7 +174,7 @@ export default {
 
     changePassword: async (parent, { token, password }, { models, secret }) => {
       let decode;
-      const payload = jwt.verify(token, secret, function(err, decoded) {
+      const payload = jwt.verify(token, secret, function (err, decoded) {
         if (err) {
           throw new AuthenticationError(
             "This token has expired. If you wish to reset your password, please re-enter your email address or username in the form below"
@@ -186,7 +186,7 @@ export default {
 
       const user = await models.User.update(
         {
-          password: newPassword
+          password: newPassword,
         },
         { where: { id: decode.userId } }
       );
@@ -201,14 +201,14 @@ export default {
 
         const user = await models.User.update(
           {
-            password: newPassword
+            password: newPassword,
           },
           { returning: true, validate: true, where: { id: id } }
         )
-          .then(result => {
+          .then((result) => {
             console.log(result);
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
             throw new UserInputError(err);
           });
@@ -229,7 +229,7 @@ export default {
         const token = jwt.sign({ userId, email }, secret, { expiresIn: 3600 });
         await sendNewUserEmail(
           email,
-          `http://localhost:3000/account/confirm/${token}`
+          `https://teachery.herokuapp.com/account/confirm/${token}`
         );
         throw new AuthenticationError(
           "You have not confirmed your account.  Another confirmation has already been sent to your email address."
@@ -247,7 +247,7 @@ export default {
       isAdmin,
       async (parent, { id }, { models }) => {
         return await models.User.destroy({
-          where: { id }
+          where: { id },
         });
       }
     ),
@@ -262,53 +262,53 @@ export default {
 
         await models.User.update(
           {
-            role: role
+            role: role,
           },
           {
             returning: true,
             validate: true,
-            where: { id: user.id }
+            where: { id: user.id },
           }
         )
-          .then(result => {
+          .then((result) => {
             console.log(result);
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
             throw new UserInputError(err);
           });
         return true;
       }
-    )
+    ),
   },
 
   User: {
     messages: async (user, args, { models }) => {
       return await models.Message.findAll({
         where: {
-          userId: user.id
-        }
+          userId: user.id,
+        },
       });
     },
     decks: async (user, args, { models }) => {
       return await models.Deck.findAll({
         where: {
-          userId: user.id
-        }
+          userId: user.id,
+        },
       });
     },
     assignments: async (user, args, { models }) => {
       return await models.Assignment.findAll({
         where: {
-          userId: user.id
-        }
+          userId: user.id,
+        },
       });
     },
     assignedTasks: async (user, args, { models }) => {
       return await models.AssignedTask.findAll({
         where: {
-          assignedTo: user.id
-        }
+          assignedTo: user.id,
+        },
       });
     },
     bookmarkedDecks: async (user, args, { models }) => {
@@ -318,11 +318,11 @@ export default {
             model: models.User,
             as: "DeckBookmark",
             where: {
-              id: user.id
-            }
-          }
-        ]
+              id: user.id,
+            },
+          },
+        ],
       });
-    }
-  }
+    },
+  },
 };
