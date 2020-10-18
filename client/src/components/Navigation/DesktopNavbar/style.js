@@ -185,3 +185,7 @@ export const NavLink = styled.li`
     }
   }
 `;
+
+export const Span = styled.span`
+  font-size: 12px;
+`;

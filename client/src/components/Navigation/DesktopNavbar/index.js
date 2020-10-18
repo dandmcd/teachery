@@ -58,7 +58,7 @@ const NavigationAuth = ({ session }) => {
         <Link to={routes.ASSIGNMENTS}>Assignments</Link>
       </Styled.NavLink>
       <Styled.NavLink>
-        <Link to={routes.ACCOUNT}>Account ({session.me.username})</Link>
+        <Link to={routes.ACCOUNT}>Account <Styled.Span>({session.me.username})</Styled.Span></Link>
       </Styled.NavLink>
       {role && (
         <Styled.NavLink>

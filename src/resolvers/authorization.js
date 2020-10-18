@@ -51,15 +51,12 @@ export const isDeckOwner = async (parent, { id }, { models, me }) => {
 };
 
 export const isCardOwner = async (parent, { deckId }, { models, me }) => {
-  console.log(deckId);
   const deck = await models.Deck.findByPk(deckId, { raw: true });
-  console.log(deck);
   if (me.role === "ADMIN") {
     return skip;
   }
   if (deck.userId !== me.id) {
     throw new ForbiddenError("Not authenticated as deck owner.");
   }
-  console.log(deck);
   return skip;
 };

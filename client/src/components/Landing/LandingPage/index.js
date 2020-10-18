@@ -23,7 +23,6 @@ const LandingPage = () => {
   const [toggleStudentTeacher, setToggleStudentTeacher] = useState(0);
 
   const themeContext = useContext(ThemeContext);
-  console.log(themeContext);
 
   const ref = createRef();
 

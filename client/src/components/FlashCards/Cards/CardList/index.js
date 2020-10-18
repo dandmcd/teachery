@@ -48,13 +48,6 @@ export const CardList = ({ match, session }) => {
     });
   };
 
-  // 3-10 nEED TO SOLVE PROPS PROBLEM
-  console.log(cardData.deck.user.id);
-  console.log(session);
-  console.log(session.me);
-  console.log(session.me.role);
-  console.log(session.me.id);
-
   let authorizedRole;
 
   if (session && session.me && session.me.role === "ADMIN") {
@@ -63,7 +56,6 @@ export const CardList = ({ match, session }) => {
     authorizedRole = true;
   }
 
-  console.log(authorizedRole);
   return (
     <Fragment>
       <Header>

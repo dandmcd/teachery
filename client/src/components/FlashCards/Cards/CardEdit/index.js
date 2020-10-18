@@ -108,8 +108,6 @@ const CardEdit = () => {
   const { id, front, back, pictureUrl, pictureName } = state;
   const [drop, setDrop] = useState(null);
 
-  console.log(currentDeckId);
-
   useEffect(() => {
     if (toggleSuccess) {
       setTimeout(() => {
