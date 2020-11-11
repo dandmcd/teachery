@@ -7,7 +7,7 @@ import DeckItemBase from "../DeckItem";
 const DeckList = ({ decks, me }) => {
   return (
     <DeckContainer>
-      {decks.map(deck => (
+      {decks.map((deck) => (
         <DeckItem key={deck.id} deck={deck} me={me} />
       ))}
     </DeckContainer>
@@ -16,7 +16,7 @@ const DeckList = ({ decks, me }) => {
 
 DeckList.propTypes = {
   decks: PropTypes.array.isRequired,
-  me: PropTypes.object
+  me: PropTypes.object,
 };
 
 const DeckContainer = styled.div`

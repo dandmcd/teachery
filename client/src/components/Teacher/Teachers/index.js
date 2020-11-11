@@ -1,4 +1,4 @@
-import React, { Fragment, createRef, useState } from "react";
+import React, { createRef, useState } from "react";
 
 import { MessageCreate, Messages } from "../../Message";
 import AssignmentCreate from "../../Assignment/Assignments/AssignmentCreate";
@@ -25,7 +25,7 @@ const Teacher = ({ session, me }) => {
     toggleAssignedTasks();
     ref.current.scrollIntoView({
       behaivor: "smooth",
-      block: "start"
+      block: "start",
     });
   };
 
@@ -38,8 +38,10 @@ const Teacher = ({ session, me }) => {
   };
 
   return (
-    <Fragment>
+    <>
       <AssignmentEdit />
+      <AssignTask />
+      <AssignTaskUpdate />
       <Styled.TeacherHeader>
         <Styled.Menu>
           <Styled.Title>Teacher Admin</Styled.Title>
@@ -48,7 +50,6 @@ const Teacher = ({ session, me }) => {
           </Styled.ViewButton>
         </Styled.Menu>
       </Styled.TeacherHeader>
-
       <Styled.Grid>
         <Styled.MessageColumn>
           <Messages limit={3} />
@@ -71,8 +72,7 @@ const Teacher = ({ session, me }) => {
           <Styled.SubTitle>Assigned Tasks</Styled.SubTitle>
         </Styled.SubMenu>
       </Styled.TeacherHeader>
-      <AssignTask />
-      <AssignTaskUpdate />
+
       {!tasksChecked ? <TeacherAssignedTasks limit={6} /> : null}
       <Styled.TeacherHeader>
         <Styled.SubMenu>
@@ -91,7 +91,7 @@ const Teacher = ({ session, me }) => {
         </Styled.SubMenu>
       </Styled.TeacherHeader>
       {!assignmentsChecked ? <Assignments limit={6} /> : null}
-    </Fragment>
+    </>
   );
 };
 

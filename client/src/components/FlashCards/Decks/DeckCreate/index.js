@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Fragment } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
@@ -61,7 +61,7 @@ const INITIAL_STATE = {
   deckName: "",
   description: "",
   deckImageName: "",
-  deckImageUrl: ""
+  deckImageUrl: "",
 };
 
 const DeckCreate = () => {
@@ -84,15 +84,15 @@ const DeckCreate = () => {
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
 
   const [createDeck, { loading, error }] = useMutation(CREATE_DECK, {
-    onError: err => {
+    onError: (err) => {
       client.writeData({ data: { toggleSuccess: false } });
     },
-    onCompleted: data => {
+    onCompleted: (data) => {
       client.writeData({ data: { toggleSuccess: true } });
     },
     update(cache, { data: { createDeck } }) {
       const data = cache.readQuery({
-        query: GET_PAGINATED_DECKS_WITH_USERS
+        query: GET_PAGINATED_DECKS_WITH_USERS,
       });
 
       cache.writeQuery({
@@ -102,11 +102,11 @@ const DeckCreate = () => {
           decks: {
             ...data.decks,
             edges: [createDeck, ...data.decks.edges],
-            pageInfo: data.decks.pageInfo
-          }
-        }
+            pageInfo: data.decks.pageInfo,
+          },
+        },
       });
-    }
+    },
   });
 
   useEffect(() => {
@@ -121,30 +121,28 @@ const DeckCreate = () => {
   const uploadToS3 = async (file, signedRequest) => {
     const options = {
       headers: {
-        "Content-Type": file.type
-      }
+        "Content-Type": file.type,
+      },
     };
     await axios
       .put(signedRequest, file, options)
-      .then(function(response) {})
-      .catch(function(error) {
+      .then(function (response) {})
+      .catch(function (error) {
         console.log(error);
       });
   };
 
-  const formatFilename = filename => {
+  const formatFilename = (filename) => {
     const date = moment().format("YYYYMMDD");
-    const randomString = Math.random()
-      .toString(36)
-      .substring(2, 7);
+    const randomString = Math.random().toString(36).substring(2, 7);
     const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-");
     const newFilename = `images/${date}-${randomString}-${cleanFileName}`;
     return newFilename.substring(0, 60);
   };
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setDeckState(prevState => ({ ...prevState, [name]: value }));
+    setDeckState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const isInvalid = deckName === "" || description === "";
@@ -162,8 +160,8 @@ const DeckCreate = () => {
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
-            filetype: drop.type
-          }
+            filetype: drop.type,
+          },
         });
 
         const { signedRequest, url } = response.data.signS3;
@@ -175,8 +173,8 @@ const DeckCreate = () => {
             deckName,
             description,
             deckImageName: drop.name,
-            deckImageUrl: url
-          }
+            deckImageUrl: url,
+          },
         }).then(async ({ data }) => {
           setDeckState({ ...INITIAL_STATE });
         });
@@ -189,8 +187,8 @@ const DeckCreate = () => {
         await createDeck({
           variables: {
             deckName: deckName,
-            description: description
-          }
+            description: description,
+          },
         }).then(async ({ data }) => {
           setDeckState({ ...INITIAL_STATE });
         });
@@ -200,21 +198,21 @@ const DeckCreate = () => {
     }
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setDrop(e.target.value);
   };
 
   // Onclick toggle popup for mutation form
   const togglePopupModal = () => {
     client.writeData({
-      data: { togglePopup: !togglePopup }
+      data: { togglePopup: !togglePopup },
     });
   };
   const innerRef = useRef(null);
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Fragment>
+    <>
       <Styled.CreateButton type="button" onClick={togglePopupModal}>
         Create A New Deck
       </Styled.CreateButton>
@@ -228,7 +226,7 @@ const DeckCreate = () => {
               </Styled.PopupFooterButton>
             </Styled.PopupHeader>
             <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, createDeck)}>
+              <form onSubmit={(e) => onSubmit(e, createDeck)}>
                 <Styled.Label>
                   <Styled.Span>
                     <Styled.LabelName>Enter a Deck Name</Styled.LabelName>
@@ -276,7 +274,7 @@ const DeckCreate = () => {
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Fragment>
+    </>
   );
 };
 

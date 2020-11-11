@@ -12,7 +12,7 @@ export const PopupContainer = styled.div`
   right: 0;
   bottom: 0;
   margin: auto;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.1);
 `;
 
 export const PopupGridContainer = styled(PopupContainer)`
@@ -241,4 +241,13 @@ export const SubmitButton = styled(Button)`
 export const DeleteButton = styled(Button)`
   border: 2px solid ${(props) => props.theme.error};
   display: ${(props) => props.updatedDocumentUrl === "" && "none"};
+`;
+
+export const EditButton = styled(Button)`
+  -ms-grid-row: 5;
+  -ms-grid-row-span: 1;
+  grid-row: 5 / 6;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 1;
+  grid-column: 1 / 2;
 `;

@@ -1,16 +1,23 @@
-import React, { useState, useRef, useEffect, Fragment } from "react";
-import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
+import React, { useState, useEffect } from "react";
+import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
 
-import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
+import { useAtom } from "jotai";
+import {
+  modalAtom,
+  successAlertAtom,
+  isSubmittingAtom,
+} from "../../../../state/store";
+
 import * as Styled from "../../../../theme/Popup";
 import DropZone from "../../../Uploader";
 import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import withSession from "../../../Session/withSession";
+import Modal from "../../../Modal";
 
 const UPDATE_ASSIGNMENT = gql`
   mutation(
@@ -69,41 +76,31 @@ const S3SIGNMUTATION = gql`
 `;
 
 const AssignmentEdit = ({ session }) => {
+  const [modal, setModal] = useAtom(modalAtom);
+  const { toggleOn, modalId, target, editImg } = modal;
+
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
+  const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
+
   const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-      toggleAssignmentEdit @client
-      current @client
-      isSubmitting @client
-      editImg @client
-    }
-  `);
-  const {
-    toggleSuccess,
-    toggleAssignmentEdit,
-    current,
-    isSubmitting,
-    editImg
-  } = data;
 
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [updateAssignment, { loading, error }] = useMutation(
     UPDATE_ASSIGNMENT,
     {
-      onError: err => {
-        client.writeData({ data: { toggleSuccess: false } });
+      onError: (err) => {
+        setSuccessAlert((a) => (a = false));
       },
-      onCompleted: data => {
-        client.writeData({ data: { toggleSuccess: true } });
-      }
+      onCompleted: (data) => {
+        setSuccessAlert((a) => (a = true));
+      },
     }
   );
 
   useEffect(() => {
-    if (toggleAssignmentEdit) {
+    if (toggleOn && modalId) {
       const currentAssignment = client.readFragment({
-        id: current,
+        id: modalId,
         fragment: gql`
           fragment assignment on Assignment {
             id
@@ -114,12 +111,12 @@ const AssignmentEdit = ({ session }) => {
             documentUrl
             createdAt
           }
-        `
+        `,
       });
 
       setState(currentAssignment);
     }
-  }, [client, current, toggleAssignmentEdit]);
+  }, [client, toggleOn, modalId]);
 
   const [state, setState] = useState({
     id: null,
@@ -127,42 +124,40 @@ const AssignmentEdit = ({ session }) => {
     note: "",
     link: "",
     documentName: "",
-    documentUrl: ""
+    documentUrl: "",
   });
   const { id, assignmentName, note, link, documentName, documentUrl } = state;
 
   const [drop, setDrop] = useState(null);
 
   useEffect(() => {
-    if (toggleSuccess) {
+    if (successAlert) {
       setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+        setSuccessAlert((a) => (a = false));
       }, 5000);
     }
-  }, [client, toggleSuccess]);
+  }, [successAlert, setSuccessAlert]);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleClick = () => {
-    client.writeData({ data: { editImg: !editImg } });
+    setModal((m) => (m = { ...m, editImg: !m.editImg }));
   };
 
   const uploadToS3 = async (file, signedRequest) => {
     const options = {
       headers: {
-        "Content-Type": file.type
-      }
+        "Content-Type": file.type,
+      },
     };
     await axios.put(signedRequest, file, options);
   };
-  const formatFilename = filename => {
+  const formatFilename = (filename) => {
     const date = moment().format("YYYYMMDD");
-    const randomString = Math.random()
-      .toString(36)
-      .substring(2, 7);
+    const randomString = Math.random().toString(36).substring(2, 7);
     const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-");
     const newFilename = `docs/${date}-${randomString}-${cleanFileName}`;
     return newFilename.substring(0, 60);
@@ -174,12 +169,12 @@ const AssignmentEdit = ({ session }) => {
     e.preventDefault();
     if (drop) {
       try {
-        client.writeData({ data: { isSubmitting: true } });
+        setIsSubmitting((a) => (a = true));
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
-            filetype: drop.type
-          }
+            filetype: drop.type,
+          },
         });
 
         const { signedRequest, url } = response.data.signS3;
@@ -192,8 +187,8 @@ const AssignmentEdit = ({ session }) => {
             note,
             link,
             documentName: drop.name,
-            documentUrl: url
-          }
+            documentUrl: url,
+          },
         }).then(async ({ data }) => {
           setState({
             id: id,
@@ -201,12 +196,12 @@ const AssignmentEdit = ({ session }) => {
             note: note,
             link: link,
             documentName: "",
-            documentUrl: ""
+            documentUrl: "",
           });
         });
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       } catch (error) {
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       }
     } else if (documentUrl === "") {
       await updateAssignment({
@@ -216,8 +211,8 @@ const AssignmentEdit = ({ session }) => {
           note: note,
           link: link,
           documentName: null,
-          documentUrl: null
-        }
+          documentUrl: null,
+        },
       });
     } else {
       try {
@@ -228,8 +223,8 @@ const AssignmentEdit = ({ session }) => {
             note: note,
             link: link,
             documentName: documentName,
-            documentUrl: documentUrl
-          }
+            documentUrl: documentUrl,
+          },
         }).then(async ({ data }) => {
           setState({
             id: id,
@@ -237,125 +232,114 @@ const AssignmentEdit = ({ session }) => {
             note: note,
             link: link,
             documentName: "",
-            documentUrl: ""
+            documentUrl: "",
           });
         });
       } catch (error) {
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       }
     }
   };
 
-  const togglePopupModal = () => {
-    client.writeData({
-      data: {
-        toggleAssignmentEdit: !toggleAssignmentEdit,
-        editImg: false
-      }
-    });
+  const toggleOffModal = () => {
+    setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
   };
-  const innerRef = useRef(null);
-  useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Fragment>
-      {toggleAssignmentEdit ? (
-        <Styled.PopupContainer>
-          <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupHeader>
-              <Styled.PopupTitle>Edit Assignment ...</Styled.PopupTitle>
-              <Styled.PopupFooterButton onClick={togglePopupModal}>
-                <Styled.CloseSpan />
-              </Styled.PopupFooterButton>
-            </Styled.PopupHeader>
-            <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, updateAssignment)}>
-                <Styled.Label>
-                  <Styled.Span>
-                    <Styled.LabelName>Assignment Name</Styled.LabelName>
-                  </Styled.Span>
-                  <Styled.Input
-                    name="assignmentName"
-                    value={assignmentName}
-                    onChange={onChange}
-                    type="text"
-                  />
-                </Styled.Label>
-                <Styled.Label>
-                  <Styled.Span>
-                    <Styled.LabelName>Add a Note or Details</Styled.LabelName>
-                  </Styled.Span>
-                  <Styled.InputTextArea
-                    name="note"
-                    value={note}
-                    onChange={onChange}
-                    type="text"
-                  />
-                </Styled.Label>
-                <Styled.Label>
-                  <Styled.Span>
-                    <Styled.LabelName>Add an URL Link</Styled.LabelName>
-                  </Styled.Span>
-                  <Styled.Input
-                    name="link"
-                    value={link || ""}
-                    onChange={onChange}
-                    type="text"
-                  />
-                </Styled.Label>
-                {documentUrl !== null ? (
-                  <div>
-                    <Styled.CardImg src={documentUrl} alt={documentUrl} />
-                  </div>
-                ) : null}
-                <Styled.AddButton type="button" onClick={handleClick}>
-                  {!editImg && documentUrl === null
-                    ? "Add File"
-                    : !editImg
-                    ? "Change"
-                    : "Keep Original"}
-                </Styled.AddButton>
-                {documentUrl !== null && (
-                  <Styled.DeleteButton
-                    documentUrl={documentUrl}
-                    type="button"
-                    onClick={() =>
-                      setState({
-                        id: id,
-                        assignmentName: assignmentName,
-                        note: note,
-                        link: link,
-                        documentName: "",
-                        documentUrl: ""
-                      })
-                    }
-                  >
-                    Remove File
-                  </Styled.DeleteButton>
+    <>
+      {toggleOn && target === "edit" ? (
+        <Modal toggleOn={toggleOn} onToggleOffModal={toggleOffModal}>
+          <Styled.PopupHeader>
+            <Styled.PopupTitle>Edit Assignment ...</Styled.PopupTitle>
+            <Styled.PopupFooterButton onClick={toggleOffModal}>
+              <Styled.CloseSpan />
+            </Styled.PopupFooterButton>
+          </Styled.PopupHeader>
+          <Styled.PopupBody>
+            <form onSubmit={(e) => onSubmit(e, updateAssignment)}>
+              <Styled.Label>
+                <Styled.Span>
+                  <Styled.LabelName>Assignment Name</Styled.LabelName>
+                </Styled.Span>
+                <Styled.Input
+                  name="assignmentName"
+                  value={assignmentName}
+                  onChange={onChange}
+                  type="text"
+                />
+              </Styled.Label>
+              <Styled.Label>
+                <Styled.Span>
+                  <Styled.LabelName>Add a Note or Details</Styled.LabelName>
+                </Styled.Span>
+                <Styled.InputTextArea
+                  name="note"
+                  value={note}
+                  onChange={onChange}
+                  type="text"
+                />
+              </Styled.Label>
+              <Styled.Label>
+                <Styled.Span>
+                  <Styled.LabelName>Add an URL Link</Styled.LabelName>
+                </Styled.Span>
+                <Styled.Input
+                  name="link"
+                  value={link || ""}
+                  onChange={onChange}
+                  type="text"
+                />
+              </Styled.Label>
+              {documentUrl !== null ? (
+                <div>
+                  <Styled.CardImg src={documentUrl} alt={documentUrl} />
+                </div>
+              ) : null}
+              <Styled.AddButton type="button" onClick={handleClick}>
+                {!editImg && documentUrl === null
+                  ? "Add File"
+                  : !editImg
+                  ? "Change"
+                  : "Keep Original"}
+              </Styled.AddButton>
+              {documentUrl !== null && (
+                <Styled.DeleteButton
+                  documentUrl={documentUrl}
+                  type="button"
+                  onClick={() =>
+                    setState({
+                      id: id,
+                      assignmentName: assignmentName,
+                      note: note,
+                      link: link,
+                      documentName: "",
+                      documentUrl: null,
+                    })
+                  }
+                >
+                  Remove File
+                </Styled.DeleteButton>
+              )}
+              {editImg && (
+                <DropZone setDrop={setDrop} isDocument={"isDocument"} />
+              )}
+              {loading && <Loading />}
+              <Styled.Submission>
+                {!isSubmitting ? (
+                  <Styled.SubmitButton disabled={isInvalid} type="submit">
+                    Submit
+                  </Styled.SubmitButton>
+                ) : (
+                  <Loading />
                 )}
-                {editImg && (
-                  <DropZone setDrop={setDrop} isDocument={"isDocument"} />
-                )}
-                {loading && <Loading />}
-                <Styled.Submission>
-                  {!isSubmitting ? (
-                    <Styled.SubmitButton disabled={isInvalid} type="submit">
-                      Submit
-                    </Styled.SubmitButton>
-                  ) : (
-                    <Loading />
-                  )}
-                </Styled.Submission>
-                {toggleSuccess && (
-                  <SuccessMessage message="Assignment Updated!" />
-                )}
-                {(error || s3Error) && <ErrorMessage error={error} />}
-              </form>
-            </Styled.PopupBody>
-          </Styled.PopupInnerExtended>
-        </Styled.PopupContainer>
+              </Styled.Submission>
+              {successAlert && <SuccessMessage message="Assignment Updated!" />}
+              {(error || s3Error) && <ErrorMessage error={error} />}
+            </form>
+          </Styled.PopupBody>
+        </Modal>
       ) : null}
-    </Fragment>
+    </>
   );
 };
 

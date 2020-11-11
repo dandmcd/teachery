@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
@@ -16,9 +16,15 @@ const DELETE_ASSIGNMENT = gql`
 
 const AssignmentDelete = ({ assignment }) => {
   const [deleteAssignment, { error }] = useMutation(DELETE_ASSIGNMENT, {
+    optimisticResponse: {
+      __typename: "Mutation",
+      deleteAssignment: {
+        id: assignment.id,
+      },
+    },
     update(cache, { data: { deleteAssignment } }) {
       const data = cache.readQuery({
-        query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS
+        query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS,
       });
 
       cache.writeQuery({
@@ -28,29 +34,29 @@ const AssignmentDelete = ({ assignment }) => {
           assignments: {
             ...data.assignments,
             edges: data.assignments.edges.filter(
-              node => node.id !== assignment.id
+              (node) => node.id !== assignment.id
             ),
-            pageInfo: data.assignments.pageInfo
-          }
-        }
+            pageInfo: data.assignments.pageInfo,
+          },
+        },
       });
-    }
+    },
   });
 
   const onSubmit = (e, deleteAssignment) => {
     e.preventDefault();
     deleteAssignment({
       variables: {
-        id: assignment.id
-      }
+        id: assignment.id,
+      },
     });
   };
 
   return (
-    <Fragment>
+    <>
       <RemoveAssignmentButton
         type="button"
-        onClick={e => {
+        onClick={(e) => {
           if (
             window.confirm(
               "Are you sure you wish to delete this assignment?  All users will be no longer able to view it."
@@ -62,16 +68,16 @@ const AssignmentDelete = ({ assignment }) => {
         Delete
       </RemoveAssignmentButton>
       {error && <ErrorMessage error={error} />}
-    </Fragment>
+    </>
   );
 };
 
 AssignmentDelete.propTypes = {
-  assignment: PropTypes.object.isRequired
+  assignment: PropTypes.object.isRequired,
 };
 
 const RemoveAssignmentButton = styled(Button)`
-  border: 2px solid ${props => props.theme.error};
+  border: 2px solid ${(props) => props.theme.error};
 `;
 
 export default AssignmentDelete;

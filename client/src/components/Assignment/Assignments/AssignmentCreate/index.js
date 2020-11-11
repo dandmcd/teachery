@@ -73,7 +73,7 @@ const INITIAL_STATE = {
   note: "",
   link: "",
   documentName: "",
-  documentUrl: ""
+  documentUrl: "",
 };
 
 const AssignmentCreate = () => {
@@ -97,15 +97,15 @@ const AssignmentCreate = () => {
   const [createAssignment, { loading, error }] = useMutation(
     CREATE_ASSIGNMENT,
     {
-      onError: err => {
+      onError: (err) => {
         client.writeData({ data: { toggleSuccess: false } });
       },
-      onCompleted: data => {
+      onCompleted: (data) => {
         client.writeData({ data: { toggleSuccess: true } });
       },
       update(cache, { data: { createAssignment } }) {
         const data = cache.readQuery({
-          query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS
+          query: GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS,
         });
 
         cache.writeQuery({
@@ -115,11 +115,11 @@ const AssignmentCreate = () => {
             assignments: {
               ...data.assignments,
               edges: [createAssignment, ...data.assignments.edges],
-              pageInfo: data.assignments.pageInfo
-            }
-          }
+              pageInfo: data.assignments.pageInfo,
+            },
+          },
         });
-      }
+      },
     }
   );
 
@@ -135,24 +135,22 @@ const AssignmentCreate = () => {
   const uploadToS3 = async (file, signedRequest) => {
     const options = {
       headers: {
-        "Content-Type": file.type
-      }
+        "Content-Type": file.type,
+      },
     };
     await axios.put(signedRequest, file, options);
   };
-  const formatFilename = filename => {
+  const formatFilename = (filename) => {
     const date = moment().format("YYYYMMDD");
-    const randomString = Math.random()
-      .toString(36)
-      .substring(2, 7);
+    const randomString = Math.random().toString(36).substring(2, 7);
     const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-");
     const newFilename = `docs/${date}-${randomString}-${cleanFileName}`;
     return newFilename.substring(0, 60);
   };
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setAssignmentState(prevState => ({ ...prevState, [name]: value }));
+    setAssignmentState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const isInvalid = assignmentName === "";
@@ -165,8 +163,8 @@ const AssignmentCreate = () => {
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
-            filetype: drop.type
-          }
+            filetype: drop.type,
+          },
         });
 
         const { signedRequest, url } = response.data.signS3;
@@ -179,8 +177,8 @@ const AssignmentCreate = () => {
             note: note,
             link: link,
             documentName: drop.name,
-            documentUrl: url
-          }
+            documentUrl: url,
+          },
         }).then(async ({ data }) => {
           setAssignmentState({ ...INITIAL_STATE });
         });
@@ -194,8 +192,8 @@ const AssignmentCreate = () => {
           variables: {
             assignmentName: assignmentName,
             note: note,
-            link: link
-          }
+            link: link,
+          },
         }).then(async ({ data }) => {
           setAssignmentState({ ...INITIAL_STATE });
         });
@@ -205,21 +203,21 @@ const AssignmentCreate = () => {
     }
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setDrop(e.target.value);
   };
 
   // Onclick toggle popup for mutation form
   const togglePopupModal = () => {
     client.writeData({
-      data: { togglePopup: !togglePopup }
+      data: { togglePopup: !togglePopup },
     });
   };
   const innerRef = useRef(null);
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Container>
+    <>
       <AssignButton type="button" onClick={togglePopupModal}>
         New Assignment
       </AssignButton>
@@ -233,7 +231,7 @@ const AssignmentCreate = () => {
               </Styled.PopupFooterButton>
             </Styled.PopupHeader>
             <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, createAssignment)}>
+              <form onSubmit={(e) => onSubmit(e, createAssignment)}>
                 <Styled.Label>
                   <Styled.Span>
                     <Styled.LabelName>Assignment Name</Styled.LabelName>
@@ -292,11 +290,9 @@ const AssignmentCreate = () => {
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Container>
+    </>
   );
 };
-
-const Container = styled.div``;
 
 const AssignButton = styled(Button)`
   width: 175px;

@@ -18,15 +18,15 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
 
   const [files, setFiles] = useState([]);
   const onDrop = useCallback(
-    acceptedFiles => {
+    (acceptedFiles) => {
       const reader = new FileReader();
 
       reader.onabort = () => console.log("file reading was aborted");
       reader.onerror = () => console.log("file reading has failed");
       reader.onload = () => {};
-      acceptedFiles.forEach(file => reader.readAsArrayBuffer(file));
+      acceptedFiles.forEach((file) => reader.readAsArrayBuffer(file));
       setFiles(
-        acceptedFiles.map(file =>
+        acceptedFiles.map((file) =>
           Object.assign(file, { preview: URL.createObjectURL(file) })
         )
       );
@@ -36,7 +36,7 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
       } else if (isDeck) {
         setDrop(acceptedFiles[0]);
 
-        acceptedFiles.forEach(file => {
+        acceptedFiles.forEach((file) => {
           Resizer.imageFileResizer(
             file,
             500,
@@ -44,7 +44,7 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
             "PNG",
             100,
             0,
-            blob => {
+            (blob) => {
               setImage(blob);
             },
             "blob"
@@ -56,13 +56,13 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
   );
 
   const {
-    rejectedFiles,
+    fileRejections,
     getRootProps,
     getInputProps,
     isDragActive,
     isDragAccept,
     isDragReject,
-    open
+    open,
   } = useDropzone({
     onDrop,
     noClick: true,
@@ -80,8 +80,8 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
             "application/vnd.ms-excel",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             "application/vnd.ms-powerpoint",
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-          ]
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          ],
   });
 
   const removeFile = (e, file) => {
@@ -92,13 +92,13 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
     setDrop(e.target.value === null);
   };
 
-  const acceptedFilesItems = files.map(file => (
+  const acceptedFilesItems = files.map((file) => (
     <Styled.AcceptedItem key={file.path}>
       {file.path} - {file.size} bytes
     </Styled.AcceptedItem>
   ));
 
-  const rejectedFilesItems = rejectedFiles.map(file => (
+  const rejectedFilesItems = fileRejections.map((file) => (
     <Styled.RejectedItem key={file.path}>
       <Styled.RejectedFileWarning>
         Rejected ~ File is not an image, or is over the 10mb limit
@@ -107,7 +107,7 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
     </Styled.RejectedItem>
   ));
 
-  const thumbs = files.map(file => (
+  const thumbs = files.map((file) => (
     <Styled.Thumb key={file.name}>
       <Styled.ThumbInner>
         <Styled.Img src={file.preview} />
@@ -117,12 +117,12 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
 
   useEffect(
     () => () => {
-      files.forEach(file => URL.revokeObjectURL(file.preview));
+      files.forEach((file) => URL.revokeObjectURL(file.preview));
     },
     [files]
   );
 
-  const removeOnSuccess = useCallback(file => {
+  const removeOnSuccess = useCallback((file) => {
     const newFiles = [...files];
     newFiles.splice(newFiles.indexOf(file), 1);
     setFiles(newFiles);
@@ -131,7 +131,7 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
   }, []);
 
   useEffect(
-    file => {
+    (file) => {
       if (toggleSuccess) {
         removeOnSuccess();
       }
@@ -165,7 +165,7 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
         <Styled.AcceptedList>{acceptedFilesItems}</Styled.AcceptedList>
         <Styled.RejectedList>{rejectedFilesItems}</Styled.RejectedList>
       </Styled.Aside>
-      <Styled.RemoveButton files={files} onClick={e => removeFile(e)}>
+      <Styled.RemoveButton files={files} onClick={(e) => removeFile(e)}>
         Remove File
       </Styled.RemoveButton>
     </section>
@@ -178,7 +178,7 @@ DropZone.propTypes = {
   setImage: PropTypes.func,
   isCard: PropTypes.string,
   isDeck: PropTypes.string,
-  isDocument: PropTypes.string
+  isDocument: PropTypes.string,
 };
 
 export default DropZone;

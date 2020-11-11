@@ -24,7 +24,7 @@ const Container = styled.div`
 `;
 
 const AssignmentHeader = styled.div`
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${(props) => props.theme.neutralLight};
   background-clip: border-box;
   width: 100%;
   margin: auto;

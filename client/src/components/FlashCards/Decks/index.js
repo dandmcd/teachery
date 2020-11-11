@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useQuery, useApolloClient } from "@apollo/react-hooks";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -24,7 +24,7 @@ const Decks = ({ limit, me }) => {
   const { data, loading, error, fetchMore, refetch } = useQuery(
     GET_PAGINATED_DECKS_WITH_USERS,
     {
-      variables: { limit, showBookmarks: toggleBookmarks }
+      variables: { limit, showBookmarks: toggleBookmarks },
     }
   );
 
@@ -68,7 +68,7 @@ const Decks = ({ limit, me }) => {
   const { edges, pageInfo } = data.decks;
 
   return (
-    <Fragment>
+    <>
       <DeckList decks={edges} me={me} />
       {pageInfo.hasNextPage && (
         <MoreDecksButton
@@ -80,58 +80,58 @@ const Decks = ({ limit, me }) => {
           More
         </MoreDecksButton>
       )}
-    </Fragment>
+    </>
   );
 };
 
 Decks.propTypes = {
   limit: PropTypes.number.isRequired,
-  me: PropTypes.object
+  me: PropTypes.object,
 };
 
 const DeckButton = styled(Button)`
   margin: auto;
   display: block;
   width: 205px;
-  border: 2px solid ${props => props.theme.primaryDark};
+  border: 2px solid ${(props) => props.theme.primaryDark};
 `;
 
-const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (
-  <DeckButton
-    type="button"
-    onClick={() =>
-      fetchMore({
-        variables: {
-          cursor: pageInfo.endCursor,
-          limit
-        },
-        updateQuery: (previousResult, { fetchMoreResult }) => {
-          if (!fetchMoreResult) {
-            return previousResult;
-          }
-
-          return {
-            decks: {
-              ...fetchMoreResult.decks,
-              edges: [
-                ...previousResult.decks.edges,
-                ...fetchMoreResult.decks.edges
-              ]
-            }
-          };
+const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => {
+  const fetchEvent = () => {
+    fetchMore({
+      variables: {
+        cursor: pageInfo.endCursor,
+        limit,
+      },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        if (!fetchMoreResult) {
+          return previousResult;
         }
-      })
-    }
-  >
-    {children}
-  </DeckButton>
-);
+
+        return {
+          decks: {
+            ...fetchMoreResult.decks,
+            edges: [
+              ...previousResult.decks.edges,
+              ...fetchMoreResult.decks.edges,
+            ],
+          },
+        };
+      },
+    });
+  };
+  return (
+    <DeckButton type="button" onMouseOver={fetchEvent} onClick={fetchEvent}>
+      {children}
+    </DeckButton>
+  );
+};
 
 MoreDecksButton.propTypes = {
   limit: PropTypes.number.isRequired,
   pageInfo: PropTypes.object.isRequired,
   fetchMore: PropTypes.func.isRequired,
-  children: PropTypes.string.isRequired
+  children: PropTypes.string.isRequired,
 };
 
 export default Decks;

@@ -14,7 +14,7 @@ const AssignedTasks = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
     GET_PAGINATED_ASSIGNMENTS_WITH_USERS,
     {
-      variables: { limit }
+      variables: { limit },
     }
   );
 
@@ -59,52 +59,57 @@ const AssignedTasks = ({ limit, me }) => {
 
 AssignedTasks.propTypes = {
   limit: PropTypes.number.isRequired,
-  me: PropTypes.object
+  me: PropTypes.object,
 };
 
-const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
-  <AssignmentButton
-    type="button"
-    onClick={() =>
-      fetchMore({
-        variables: {
-          cursor: pageInfo.endCursor,
-          limit
-        },
-        updateQuery: (previousResult, { fetchMoreResult }) => {
-          if (!fetchMoreResult) {
-            return previousResult;
-          }
-
-          return {
-            assignedTasks: {
-              ...fetchMoreResult.assignedTasks,
-              edges: [
-                ...previousResult.assignedTasks.edges,
-                ...fetchMoreResult.assignedTasks.edges
-              ]
-            }
-          };
+const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => {
+  const fetchEvent = () => {
+    fetchMore({
+      variables: {
+        cursor: pageInfo.endCursor,
+        limit,
+      },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        if (!fetchMoreResult) {
+          return previousResult;
         }
-      })
-    }
-  >
-    {children}
-  </AssignmentButton>
-);
+
+        return {
+          assignedTasks: {
+            ...fetchMoreResult.assignedTasks,
+            edges: [
+              ...previousResult.assignedTasks.edges,
+              ...fetchMoreResult.assignedTasks.edges,
+            ],
+          },
+        };
+      },
+    });
+  };
+
+  return (
+    <AssignmentButton
+      type="button"
+      onMouseOver={fetchEvent}
+      onClick={fetchEvent}
+    >
+      {children}
+    </AssignmentButton>
+  );
+};
 
 const AssignmentButton = styled(Button)`
   margin: auto;
   display: block;
   width: 205px;
-  border: 2px solid ${props => props.theme.primaryDark};
+  border: 2px solid ${(props) => props.theme.primaryDark};
 `;
 
 MoreAssignedTasksButton.propTypes = {
   limit: PropTypes.number.isRequired,
   pageInfo: PropTypes.object.isRequired,
   fetchMore: PropTypes.func.isRequired,
-  children: PropTypes.string.isRequired
+  children: PropTypes.string.isRequired,
 };
 
 export default AssignedTasks;

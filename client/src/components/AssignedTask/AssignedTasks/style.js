@@ -41,7 +41,7 @@ export const AssignmentItemContainer = styled.div`
   z-index: 15;
   width: 330px;
   margin: 0.5em;
-  background-color: ${props => props.theme.container};
+  background-color: ${(props) => props.theme.container};
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
     0 6px 6px rgba(0, 0, 0, 0.23);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
@@ -70,22 +70,22 @@ export const CardGrid = styled.div`
   align-content: flex-start;
   -o-border-image: linear-gradient(
       to top,
-      ${props => props.theme.primary},
-      ${props => props.theme.neutralLight}
+      ${(props) => props.theme.primary},
+      ${(props) => props.theme.neutralLight}
     )
     1 100%;
   border-image: -webkit-gradient(
       linear,
       left bottom,
       left top,
-      color-stop(${props => props.theme.primary}),
-      ${props => props.theme.neutralLight}
+      color-stop(${(props) => props.theme.primary}),
+      ${(props) => props.theme.neutralLight}
     )
     1 100%;
   border-image: linear-gradient(
       to top,
-      ${props => props.theme.primary},
-      ${props => props.theme.neutralLight}
+      ${(props) => props.theme.primary},
+      ${(props) => props.theme.neutralLight}
     )
     1 100%;
 `;
@@ -99,11 +99,11 @@ export const Title = styled.h3`
   grid-column: 1 / 3;
   letter-spacing: 0.05em;
   text-decoration: underline;
-  text-decoration-color: ${props => props.theme.primary};
+  text-decoration-color: ${(props) => props.theme.primary};
   margin: 0px 0px 0px 5px;
   a {
-    color: ${props => props.theme.text};
-    text-decoration-color: ${props => props.theme.primary};
+    color: ${(props) => props.theme.text};
+    text-decoration-color: ${(props) => props.theme.primary};
   }
 `;
 
@@ -115,10 +115,10 @@ export const Status = styled.h4`
   -ms-grid-column-span: 1;
   grid-column: 1 / 2;
   margin: 0px 0px 0px 5px;
-  color: ${props =>
+  color: ${(props) =>
     (props.status === "INCOMPLETE" && props.theme.error) ||
     (props.status === "COMPLETE" && props.theme.success) ||
-    (props.status === "SUBMITTED" && props.theme.primaryDark) ||
+    (props.status === "REVIEWING" && props.theme.primaryDark) ||
     (props.status === "GRADED" && props.theme.secondaryDark)};
 `;
 
@@ -130,7 +130,7 @@ export const DueDate = styled.h4`
   -ms-grid-column-span: 1;
   grid-column: 2 / 3;
   margin: 0;
-  color: ${props =>
+  color: ${(props) =>
     moment(date).isSameOrAfter(props.dueDate)
       ? props.theme.error
       : props.theme.text};
@@ -192,7 +192,7 @@ export const CreatedAt = styled.h6`
   -ms-grid-column-span: 1;
   grid-column: 1 / 2;
   margin: 0 auto;
-  color: ${props => props.theme.textLight};
+  color: ${(props) => props.theme.textLight};
 `;
 
 export const CreatedBy = styled.h6`
@@ -203,7 +203,7 @@ export const CreatedBy = styled.h6`
   -ms-grid-column-span: 1;
   grid-column: 1 / 2;
   margin: 0 auto;
-  color: ${props => props.theme.textLight};
+  color: ${(props) => props.theme.textLight};
 `;
 
 export const AssignedTo = styled.h6`
@@ -214,7 +214,7 @@ export const AssignedTo = styled.h6`
   -ms-grid-column-span: 1;
   grid-column: 1 / 2;
   margin: 0 auto;
-  color: ${props => props.theme.textLight};
+  color: ${(props) => props.theme.textLight};
 `;
 
 export const FileStatus = styled.h5`

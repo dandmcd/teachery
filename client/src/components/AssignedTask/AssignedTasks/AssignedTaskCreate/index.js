@@ -1,15 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
+import React, { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import styled from "styled-components";
 import PropTypes from "prop-types";
 
-import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
+import { useAtom } from "jotai";
+import { modalAtom, successAlertAtom } from "../../../../state/store";
+
 import ErrorMessage from "../../../Alerts/Error";
 import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import * as Styled from "../../../../theme/Popup";
 import GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS from "../AssignedTaskTeacherSchema";
+import Modal from "../../../Modal";
 
 const STATUS_ENUM = gql`
   query {
@@ -71,15 +73,10 @@ const INITIAL_STATE = {
 };
 
 const AssignTask = ({ assignment }) => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-      toggleAssign @client
-      assignmentId @client
-    }
-  `);
-  const { toggleSuccess, toggleAssign, assignmentId } = data;
+  const [modal, setModal] = useAtom(modalAtom);
+  const { toggleOn, modalId, target } = modal;
+
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
 
   const { data: enumData, loading: enumLoading, error: enumError } = useQuery(
     STATUS_ENUM
@@ -94,23 +91,23 @@ const AssignTask = ({ assignment }) => {
   const [{ assignedTo, dueDate, status }, setState] = useState(INITIAL_STATE);
 
   useEffect(() => {
-    if (assignment && assignmentId) {
+    if (assignment && modalId) {
       setState({
-        id: assignmentId,
+        id: modalId,
         tagName: "",
         assignedTo: "",
         dueDate: "",
         status: "",
       });
     }
-  }, [assignment, assignmentId]);
+  }, [assignment, modalId]);
 
   const [assignTask, { loading, error }] = useMutation(CREATE_ASSIGNED_TASK, {
     onError: (err) => {
-      client.writeData({ data: { toggleSuccess: false } });
+      setSuccessAlert((a) => (a = false));
     },
     onCompleted: (data) => {
-      client.writeData({ data: { toggleSuccess: true } });
+      setSuccessAlert((a) => (a = true));
     },
     update(cache, { data: { assignTask } }) {
       const data = cache.readQuery({
@@ -131,12 +128,12 @@ const AssignTask = ({ assignment }) => {
   });
 
   useEffect(() => {
-    if (toggleSuccess) {
+    if (successAlert) {
       setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+        setSuccessAlert((a) => (a = false));
       }, 5000);
     }
-  }, [client, toggleSuccess]);
+  }, [successAlert, setSuccessAlert]);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -148,7 +145,7 @@ const AssignTask = ({ assignment }) => {
     try {
       await assignTask({
         variables: {
-          assignmentId: parseInt(assignmentId),
+          assignmentId: parseInt(modalId),
           assignedTo: assignedTo,
           dueDate: dueDate,
           status: status,
@@ -159,93 +156,84 @@ const AssignTask = ({ assignment }) => {
     } catch {}
   };
 
-  // Onclick toggle popup for mutation form
-  const togglePopupModal = () => {
-    client.writeData({ data: { toggleAssign: !toggleAssign } });
+  const toggleOffModal = () => {
+    setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
   };
-  const innerRef = useRef(null);
-  useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Container>
-      {toggleAssign ? (
-        <Styled.PopupContainer>
-          <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupHeader>
-              <Styled.PopupTitle>
-                Assign a task for a student ...
-              </Styled.PopupTitle>
-              <Styled.PopupFooterButton onClick={togglePopupModal}>
-                <Styled.CloseSpan />
-              </Styled.PopupFooterButton>
-            </Styled.PopupHeader>
-            <Styled.PopupBody>
-              <form onSubmit={(e) => onSubmit(e, assignTask)}>
-                <Styled.Label>
-                  <Styled.Span>
-                    <Styled.LabelName>
-                      Student's Email or Username
-                    </Styled.LabelName>
-                  </Styled.Span>
-                  <Styled.Input
-                    name="assignedTo"
-                    value={assignedTo}
-                    onChange={onChange}
-                    type="text"
-                  />
-                </Styled.Label>
-                <Styled.Label>
-                  <Styled.Span>
-                    <Styled.LabelName>Due Date</Styled.LabelName>
-                  </Styled.Span>
-                  <Styled.Input
-                    name="dueDate"
-                    value={dueDate}
-                    onChange={onChange}
-                    type="date"
-                  />
-                </Styled.Label>
-                <Styled.Select>
-                  <Styled.SelectBox
-                    name="status"
-                    value={status}
-                    onChange={onChange}
-                    type="text"
-                    placeholder="Set Task Status"
-                  >
-                    <option value="" disabled>
-                      Select Status
+    <>
+      {toggleOn && target === "assign" ? (
+        <Modal toggleOn={toggleOn} onToggleOffModal={toggleOffModal}>
+          <Styled.PopupHeader>
+            <Styled.PopupTitle>
+              Assign a task for a student ...
+            </Styled.PopupTitle>
+            <Styled.PopupFooterButton onClick={toggleOffModal}>
+              <Styled.CloseSpan />
+            </Styled.PopupFooterButton>
+          </Styled.PopupHeader>
+          <Styled.PopupBody>
+            <form onSubmit={(e) => onSubmit(e, assignTask)}>
+              <Styled.Label>
+                <Styled.Span>
+                  <Styled.LabelName>
+                    Student's Email or Username
+                  </Styled.LabelName>
+                </Styled.Span>
+                <Styled.Input
+                  name="assignedTo"
+                  value={assignedTo}
+                  onChange={onChange}
+                  type="text"
+                />
+              </Styled.Label>
+              <Styled.Label>
+                <Styled.Span>
+                  <Styled.LabelName>Due Date</Styled.LabelName>
+                </Styled.Span>
+                <Styled.Input
+                  name="dueDate"
+                  value={dueDate}
+                  onChange={onChange}
+                  type="date"
+                />
+              </Styled.Label>
+              <Styled.Select>
+                <Styled.SelectBox
+                  name="status"
+                  value={status}
+                  onChange={onChange}
+                  type="text"
+                  placeholder="Set Task Status"
+                >
+                  <option value="" disabled>
+                    Select Status
+                  </option>
+                  {menuItems.map((item, index) => (
+                    <option key={index} value={item.name}>
+                      {item.name}
                     </option>
-                    {menuItems.map((item, index) => (
-                      <option key={index} value={item.name}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </Styled.SelectBox>
-                </Styled.Select>
-                {loading && <Loading />}
-                <Styled.Submission>
-                  <Styled.SubmitButton type="submit">
-                    Submit
-                  </Styled.SubmitButton>
-                </Styled.Submission>
-                {toggleSuccess && (
-                  <SuccessMessage message="Assigned Task Created!" />
-                )}
-                {error && <ErrorMessage error={error} />}
-              </form>
-            </Styled.PopupBody>
-          </Styled.PopupInnerExtended>
-        </Styled.PopupContainer>
+                  ))}
+                </Styled.SelectBox>
+              </Styled.Select>
+              {loading && <Loading />}
+              <Styled.Submission>
+                <Styled.SubmitButton type="submit">Submit</Styled.SubmitButton>
+              </Styled.Submission>
+              {successAlert && (
+                <SuccessMessage message="Assigned Task Created!" />
+              )}
+              {error && <ErrorMessage error={error} />}
+            </form>
+          </Styled.PopupBody>
+        </Modal>
       ) : null}
-    </Container>
+    </>
   );
 };
 
 AssignTask.propTypes = {
   assignment: PropTypes.object,
 };
-
-const Container = styled.div``;
 
 export default AssignTask;

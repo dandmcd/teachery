@@ -1,9 +1,11 @@
-import React, { Fragment, useState } from "react";
-import { useQuery, useApolloClient } from "@apollo/react-hooks";
+import React, { useState } from "react";
+import { useQuery } from "@apollo/react-hooks";
 import Moment from "react-moment";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import gql from "graphql-tag";
+
+import { useAtom } from "jotai";
+import { modalAtom } from "../../../state/store";
 
 import withSession from "../../Session/withSession";
 import GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS from "./AssignmentSchema";
@@ -18,7 +20,7 @@ const Assignments = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
     GET_PAGINATED_ASSIGNMENTS_WITH_ASSIGNED_USERS,
     {
-      variables: { limit }
+      variables: { limit },
     }
   );
   if (loading && !data) {
@@ -32,10 +34,6 @@ const Assignments = ({ limit, me }) => {
         </Styled.EmptyText>
       </Styled.Container>
     );
-    // <NoData
-    //   title="No Assignments"
-    //   message="You haven't created any assignments"
-    // />
   } else if (error) {
     return <ErrorMessage error={error} />;
   }
@@ -43,9 +41,8 @@ const Assignments = ({ limit, me }) => {
   const { edges, pageInfo } = data.assignments;
 
   return (
-    <Fragment>
+    <>
       <AssignmentList assignments={edges} me={me} />
-
       {pageInfo.hasNextPage && (
         <MoreAssignmentsButton
           limit={limit}
@@ -55,64 +52,69 @@ const Assignments = ({ limit, me }) => {
           More
         </MoreAssignmentsButton>
       )}
-    </Fragment>
+    </>
   );
 };
 
 Assignments.propTypes = {
   limit: PropTypes.number.isRequired,
-  me: PropTypes.object
+  me: PropTypes.object,
 };
 
-const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
-  <AssignmentButton
-    type="button"
-    onClick={() =>
-      fetchMore({
-        variables: {
-          cursor: pageInfo.endCursor,
-          limit
-        },
-        updateQuery: (previousResult, { fetchMoreResult }) => {
-          if (!fetchMoreResult) {
-            return previousResult;
-          }
-
-          return {
-            assignments: {
-              ...fetchMoreResult.assignments,
-              edges: [
-                ...previousResult.assignments.edges,
-                ...fetchMoreResult.assignments.edges
-              ]
-            }
-          };
+const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => {
+  const fetchEvent = () => {
+    fetchMore({
+      variables: {
+        cursor: pageInfo.endCursor,
+        limit,
+      },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        if (!fetchMoreResult) {
+          return previousResult;
         }
-      })
-    }
-  >
-    {children}
-  </AssignmentButton>
-);
+
+        return {
+          assignments: {
+            ...fetchMoreResult.assignments,
+            edges: [
+              ...previousResult.assignments.edges,
+              ...fetchMoreResult.assignments.edges,
+            ],
+          },
+        };
+      },
+    });
+
+    return (
+      <AssignmentButton
+        type="button"
+        onMouseOver={fetchEvent}
+        onClick={fetchEvent}
+      >
+        {children}
+      </AssignmentButton>
+    );
+  };
+};
 
 MoreAssignmentsButton.propTypes = {
   limit: PropTypes.number.isRequired,
   pageInfo: PropTypes.object.isRequired,
   fetchMore: PropTypes.func.isRequired,
-  children: PropTypes.string.isRequired
+  children: PropTypes.string.isRequired,
 };
 
 const AssignmentButton = styled(Button)`
   margin: auto;
   display: block;
   width: 205px;
-  border: 2px solid ${props => props.theme.primaryDark};
+  border: 2px solid ${(props) => props.theme.primaryDark};
 `;
 
 const AssignmentList = ({ assignments, me }) => {
   return (
     <Styled.AssignmentContainer>
-      {assignments.map(assignment => (
+      {assignments.map((assignment) => (
         <AssignmentItem key={assignment.id} assignment={assignment} me={me} />
       ))}
     </Styled.AssignmentContainer>
@@ -121,18 +123,11 @@ const AssignmentList = ({ assignments, me }) => {
 
 AssignmentList.propTypes = {
   assignments: PropTypes.array.isRequired,
-  me: PropTypes.object
+  me: PropTypes.object,
 };
 
 const AssignmentItemBase = ({ assignment, session }) => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleAssign @client
-      toggleAssignmentEdit @client
-    }
-  `);
-  const { toggleAssign, toggleAssignmentEdit } = data;
+  const [, setModal] = useAtom(modalAtom);
 
   const [isChecked, setIsChecked] = useState(false);
 
@@ -147,19 +142,16 @@ const AssignmentItemBase = ({ assignment, session }) => {
     fileStatus = "noFile";
   }
 
-  const togglePopupModal = mutateType => {
-    if (mutateType === "toggleAssign") {
-      client.writeData({
-        data: { toggleAssign: !toggleAssign, assignmentId: assignment.id }
-      });
-    } else if (mutateType === "toggleAssignmentEdit") {
-      client.writeData({
-        data: {
-          toggleAssignmentEdit: !toggleAssignmentEdit,
-          current: assignment.id
-        }
-      });
-    }
+  const toggleOnModal = (e) => {
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: true,
+          modalId: assignment.id,
+          target: e.target.id,
+        })
+    );
   };
 
   return (
@@ -200,15 +192,14 @@ const AssignmentItemBase = ({ assignment, session }) => {
             {session && session.me && assignment.user.id === session.me.id && (
               <AssignmentDelete assignment={assignment} />
             )}
-            <Styled.EditButton
-              type="button"
-              onClick={() => togglePopupModal("toggleAssignmentEdit")}
-            >
+            <Styled.EditButton id="edit" type="button" onClick={toggleOnModal}>
               Edit
             </Styled.EditButton>
+
             <Styled.AssignButton
+              id="assign"
               type="button"
-              onClick={() => togglePopupModal("toggleAssign")}
+              onClick={toggleOnModal}
             >
               Assign Task
             </Styled.AssignButton>
@@ -237,7 +228,7 @@ const AssignmentItemBase = ({ assignment, session }) => {
 
 AssignmentItemBase.propTypes = {
   assignment: PropTypes.object.isRequired,
-  me: PropTypes.object
+  me: PropTypes.object,
 };
 
 const AssignmentItem = withSession(AssignmentItemBase);

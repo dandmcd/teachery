@@ -1,13 +1,16 @@
-import React, { useState, useRef, useEffect, Fragment } from "react";
-import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
+import React, { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
-import useOuterClickNotifier from "../../Alerts/OuterClickNotifier";
+import { useAtom } from "jotai";
+import { modalAtom, successAlertAtom } from "../../../state/store";
+
 import ErrorMessage from "../../Alerts/Error";
 import Loading from "../../Alerts/Loading";
 import SuccessMessage from "../../Alerts/Success";
 import * as Styled from "../../../theme/Popup";
 import Button from "../../../theme/Button";
+import Modal from "../../Modal";
 
 const ROLE_ENUM = gql`
   query {
@@ -28,18 +31,14 @@ const ROLE_CHANGE = gql`
 
 const INITIAL_STATE = {
   login: "",
-  role: "STUDENT"
+  role: "STUDENT",
 };
 
 const RoleChange = () => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-      toggleRoleChange @client
-    }
-  `);
-  const { toggleSuccess, toggleRoleChange } = data;
+  const [modal, setModal] = useAtom(modalAtom);
+  const { toggleOn, target } = modal;
+
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
 
   const { data: enumData, loading: enumLoading, error: enumError } = useQuery(
     ROLE_ENUM
@@ -53,38 +52,26 @@ const RoleChange = () => {
 
   const [{ login, role }, setState] = useState(INITIAL_STATE);
 
-  // useEffect for future use
-  /*
-    useEffect(() => {
-        if (email) {
-          setState({
-            email: email,
-role: ""
-          });
-        }
-      }, [id]);
-*/
-
   const [updateUserRole, { loading, error }] = useMutation(ROLE_CHANGE, {
-    onError: err => {
-      client.writeData({ data: { toggleSuccess: false } });
+    onError: (err) => {
+      setSuccessAlert((a) => (a = false));
     },
-    onCompleted: data => {
-      client.writeData({ data: { toggleSuccess: true } });
-    }
+    onCompleted: (data) => {
+      setSuccessAlert((a) => (a = true));
+    },
   });
 
   useEffect(() => {
-    if (toggleSuccess) {
+    if (successAlert) {
       setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+        setSuccessAlert((a) => (a = false));
       }, 5000);
     }
-  }, [client, toggleSuccess]);
+  }, [successAlert, setSuccessAlert]);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const onSubmit = async (e, updateUserRole) => {
@@ -93,82 +80,85 @@ role: ""
       await updateUserRole({
         variables: {
           login: login,
-          role: role
-        }
+          role: role,
+        },
       }).then(async ({ data }) => {
         setState({ ...INITIAL_STATE });
       });
     } catch {}
   };
 
-  const togglePopupModal = () => {
-    client.writeData({ data: { toggleRoleChange: !toggleRoleChange } });
+  const toggleOnModal = (e) => {
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: true,
+          target: e.target.id,
+        })
+    );
   };
-  const innerRef = useRef(null);
-  useOuterClickNotifier(togglePopupModal, innerRef);
+
+  const toggleOffModal = () => {
+    setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
+  };
 
   return (
-    <Fragment>
-      <Button type="button" onClick={togglePopupModal}>
+    <>
+      <Button id="role" type="button" onClick={toggleOnModal}>
         Change Role
       </Button>
-      {toggleRoleChange ? (
-        <Styled.PopupContainer>
-          <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupHeader>
-              <Styled.PopupTitle>Change user role ...</Styled.PopupTitle>
-              <Styled.PopupFooterButton onClick={togglePopupModal}>
-                <Styled.CloseSpan />
-              </Styled.PopupFooterButton>
-            </Styled.PopupHeader>
-            <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, updateUserRole)}>
-                <Styled.Label>
-                  <Styled.Span>
-                    <Styled.LabelName>
-                      Enter an Email or Username
-                    </Styled.LabelName>
-                  </Styled.Span>
-                  <Styled.Input
-                    name="login"
-                    value={login}
-                    onChange={onChange}
-                    type="text"
-                  />
-                </Styled.Label>
-                <Styled.Select>
-                  <Styled.SelectBox
-                    name="role"
-                    value={role}
-                    onChange={onChange}
-                    type="text"
-                  >
-                    <option value="" disabled>
-                      Select Role
+      {toggleOn && target === "role" ? (
+        <Modal toggleOn={toggleOn} onToggleOffModal={toggleOffModal}>
+          <Styled.PopupHeader>
+            <Styled.PopupTitle>Change user role ...</Styled.PopupTitle>
+            <Styled.PopupFooterButton onClick={toggleOffModal}>
+              <Styled.CloseSpan />
+            </Styled.PopupFooterButton>
+          </Styled.PopupHeader>
+          <Styled.PopupBody>
+            <form onSubmit={(e) => onSubmit(e, updateUserRole)}>
+              <Styled.Label>
+                <Styled.Span>
+                  <Styled.LabelName>
+                    Enter an Email or Username
+                  </Styled.LabelName>
+                </Styled.Span>
+                <Styled.Input
+                  name="login"
+                  value={login}
+                  onChange={onChange}
+                  type="text"
+                />
+              </Styled.Label>
+              <Styled.Select>
+                <Styled.SelectBox
+                  name="role"
+                  value={role}
+                  onChange={onChange}
+                  type="text"
+                >
+                  <option value="" disabled>
+                    Select Role
+                  </option>
+                  {menuItems.map((item, index) => (
+                    <option key={index} value={item.name}>
+                      {item.name}
                     </option>
-                    {menuItems.map((item, index) => (
-                      <option key={index} value={item.name}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </Styled.SelectBox>
-                </Styled.Select>
-                {loading && <Loading />}
-                <Styled.Submission>
-                  <Styled.SubmitButton type="submit">
-                    Submit
-                  </Styled.SubmitButton>
-                </Styled.Submission>
-                {toggleSuccess && (
-                  <SuccessMessage message="User role updated!" />
-                )}
-                {error && <ErrorMessage error={error} />}
-              </form>
-            </Styled.PopupBody>
-          </Styled.PopupInnerExtended>
-        </Styled.PopupContainer>
+                  ))}
+                </Styled.SelectBox>
+              </Styled.Select>
+              {loading && <Loading />}
+              <Styled.Submission>
+                <Styled.SubmitButton type="submit">Submit</Styled.SubmitButton>
+              </Styled.Submission>
+              {successAlert && <SuccessMessage message="User role updated!" />}
+              {error && <ErrorMessage error={error} />}
+            </form>
+          </Styled.PopupBody>
+        </Modal>
       ) : null}
-    </Fragment>
+    </>
   );
 };
 

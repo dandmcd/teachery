@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Fragment } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
@@ -54,7 +54,7 @@ const INITIAL_STATE = {
   front: "",
   back: "",
   pictureName: "",
-  pictureUrl: ""
+  pictureUrl: "",
 };
 
 const CardCreate = ({ deck }) => {
@@ -75,29 +75,40 @@ const CardCreate = ({ deck }) => {
   // Mutation Hooks
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [createCard, { loading, error }] = useMutation(CREATE_CARD, {
+    optimisticResponse: {
+      __typename: "Mutation",
+      createCard: {
+        id: current,
+        __typename: "",
+        front: front,
+        back: back,
+        createdAt: new Date(),
+        pictureName: "",
+        pictureUrl: "",
+      },
+    },
     update(cache, { data: { createCard } }) {
       const localData = cloneDeep(
         cache.readQuery({
           query: CARDS_QUERY,
-          variables: { id: current }
+          variables: { id: current },
         })
       );
 
       localData.deck.cards = [...localData.deck.cards, createCard];
-      //      localData.deck.cards = [...localData.deck.cards, createCard];
 
       cache.writeQuery({
         query: CARDS_QUERY,
         variables: { id: localData.deck.id },
-        data: { ...localData }
+        data: { ...localData },
       });
     },
-    onError: err => {
+    onError: (err) => {
       client.writeData({ data: { toggleSuccess: false } });
     },
-    onCompleted: data => {
+    onCompleted: (data) => {
       client.writeData({ data: { toggleSuccess: true } });
-    }
+    },
   });
 
   useEffect(() => {
@@ -112,24 +123,22 @@ const CardCreate = ({ deck }) => {
   const uploadToS3 = async (file, signedRequest) => {
     const options = {
       headers: {
-        "Content-Type": file.type
-      }
+        "Content-Type": file.type,
+      },
     };
     await axios.put(signedRequest, file, options);
   };
-  const formatFilename = filename => {
+  const formatFilename = (filename) => {
     const date = moment().format("YYYYMMDD");
-    const randomString = Math.random()
-      .toString(36)
-      .substring(2, 7);
+    const randomString = Math.random().toString(36).substring(2, 7);
     const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-");
     const newFilename = `images/${date}-${randomString}-${cleanFileName}`;
     return newFilename.substring(0, 60);
   };
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const isInvalid = front === "";
@@ -143,8 +152,8 @@ const CardCreate = ({ deck }) => {
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
-            filetype: drop.type
-          }
+            filetype: drop.type,
+          },
         });
 
         const { signedRequest, url } = response.data.signS3;
@@ -157,8 +166,8 @@ const CardCreate = ({ deck }) => {
             front,
             back,
             pictureName: drop.name,
-            pictureUrl: url
-          }
+            pictureUrl: url,
+          },
           //,
           // refetchQueries: [
           //   {
@@ -174,7 +183,7 @@ const CardCreate = ({ deck }) => {
             front: "",
             back: "",
             pictureName: "",
-            pictureUrl: ""
+            pictureUrl: "",
           });
         });
         client.writeData({ data: { isSubmitting: false } });
@@ -187,8 +196,8 @@ const CardCreate = ({ deck }) => {
           variables: {
             deckId: parseInt(current, 10),
             front: front,
-            back: back
-          }
+            back: back,
+          },
           // ,
           // refetchQueries: [
           //   {
@@ -204,7 +213,7 @@ const CardCreate = ({ deck }) => {
             front: "",
             back: "",
             pictureName: "",
-            pictureUrl: ""
+            pictureUrl: "",
           });
         });
       } catch (error) {
@@ -213,7 +222,7 @@ const CardCreate = ({ deck }) => {
     }
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setDrop(e.target.value);
   };
 
@@ -224,21 +233,21 @@ const CardCreate = ({ deck }) => {
         front: "",
         back: "",
         pictureName: "",
-        pictureUrl: ""
+        pictureUrl: "",
       });
     }
   }, [toggleAddCard, current]);
 
   const togglePopupModal = () => {
     client.writeData({
-      data: { toggleAddCard: !toggleAddCard }
+      data: { toggleAddCard: !toggleAddCard },
     });
   };
   const innerRef = useRef(null);
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Fragment>
+    <>
       {toggleAddCard ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
@@ -254,7 +263,7 @@ const CardCreate = ({ deck }) => {
               </Styled.PopupFooterButton>
             </Styled.PopupHeader>
             <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, createCard)}>
+              <form onSubmit={(e) => onSubmit(e, createCard)}>
                 <Styled.Label>
                   <Styled.Span>
                     <Styled.LabelName>Front of the Flashcard</Styled.LabelName>
@@ -299,12 +308,12 @@ const CardCreate = ({ deck }) => {
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Fragment>
+    </>
   );
 };
 
 CardCreate.propTyoes = {
-  deck: PropTypes.object
+  deck: PropTypes.object,
 };
 
 export default CardCreate;

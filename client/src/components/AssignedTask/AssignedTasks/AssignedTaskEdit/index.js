@@ -1,16 +1,23 @@
-import React, { useState, useRef, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
 
-import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
+import { useAtom } from "jotai";
+import {
+  isSubmittingAtom,
+  modalAtom,
+  successAlertAtom,
+} from "../../../../state/store";
+
 import * as Styled from "../../../../theme/Popup";
 import DropZone from "../../../Uploader";
 import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import withSession from "../../../Session/withSession";
+import Modal from "../../../Modal";
 
 const UPDATE_ASSIGNED_TASK = gql`
   mutation(
@@ -60,23 +67,30 @@ const S3SIGNMUTATION = gql`
 `;
 
 const AssignTaskUpdate = ({ session }) => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-      toggleAssignUpdate @client
-      current @client
-      isSubmitting @client
-      editImg @client
-    }
-  `);
+  const [state, setState] = useState({
+    id: null,
+    assignedTo: "",
+    dueDate: "",
+    status: "",
+    updatedDocumentName: "",
+    updatedDocumentUrl: "",
+  });
   const {
-    toggleSuccess,
-    toggleAssignUpdate,
-    current,
-    isSubmitting,
-    editImg
-  } = data;
+    id,
+    assignedTo,
+    dueDate,
+    status,
+    updatedDocumentName,
+    updatedDocumentUrl,
+  } = state;
+
+  const client = useApolloClient();
+
+  const [modal, setModal] = useAtom(modalAtom);
+  const { toggleOn, modalId, target, editImg } = modal;
+
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
+  const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
 
   const { data: enumData, loading: enumLoading, error: enumError } = useQuery(
     STATUS_ENUM
@@ -92,36 +106,31 @@ const AssignTaskUpdate = ({ session }) => {
   const [updateAssignedTask, { loading, error }] = useMutation(
     UPDATE_ASSIGNED_TASK,
     {
-      onError: err => {
-        client.writeData({ data: { toggleSuccess: false } });
+      optimisticResponse: {
+        __typename: "Mutation",
+        updateAssignedTask: {
+          __typename: "AssignedTask",
+          id: id,
+          assignedTo: assignedTo,
+          dueDate: dueDate,
+          status: status,
+          updatedDocumentName: updatedDocumentName,
+          updatedDocumentUrl: updatedDocumentUrl,
+        },
       },
-      onCompleted: data => {
-        client.writeData({ data: { toggleSuccess: true } });
-      }
+      onError: (err) => {
+        setSuccessAlert((a) => (a = false));
+      },
+      onCompleted: (data) => {
+        setSuccessAlert((a) => (a = true));
+      },
     }
   );
 
-  const [state, setState] = useState({
-    id: null,
-    assignedTo: "",
-    dueDate: "",
-    status: "",
-    updatedDocumentName: "",
-    updatedDocumentUrl: ""
-  });
-  const {
-    id,
-    assignedTo,
-    dueDate,
-    status,
-    updatedDocumentName,
-    updatedDocumentUrl
-  } = state;
-
   useEffect(() => {
-    if (toggleAssignUpdate) {
+    if (toggleOn && modalId) {
       const currentAssignedTask = client.readFragment({
-        id: current,
+        id: modalId,
         fragment: gql`
           fragment assignedTask on AssignedTask {
             id
@@ -132,50 +141,43 @@ const AssignTaskUpdate = ({ session }) => {
             updatedDocumentUrl
             createdAt
           }
-        `
+        `,
       });
       setState(currentAssignedTask);
     }
-  }, [client, current, toggleAssignUpdate]);
+  }, [client, toggleOn, modalId]);
 
   const [drop, setDrop] = useState(null);
 
   useEffect(() => {
-    if (toggleSuccess) {
+    if (successAlert) {
       setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+        setSuccessAlert((a) => (a = false));
       }, 5000);
     }
-  }, [client, toggleSuccess]);
+  }, [successAlert, setSuccessAlert]);
 
-  // const handleDrop = e => {
-  //   setDrop(e.target.value);
-  //   console.log(drop);
-  // };
-
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleClick = () => {
-    client.writeData({ data: { editImg: !editImg } });
+    setModal((m) => (m = { ...m, editImg: !m.editImg }));
   };
 
   // S3 Sign and format
   const uploadToS3 = async (file, signedRequest) => {
     const options = {
       headers: {
-        "Content-Type": file.type
-      }
+        "Content-Type": file.type,
+      },
     };
     await axios.put(signedRequest, file, options);
   };
-  const formatFilename = filename => {
+  const formatFilename = (filename) => {
     const date = moment().format("YYYYMMDD");
-    const randomString = Math.random()
-      .toString(36)
-      .substring(2, 7);
+    const randomString = Math.random().toString(36).substring(2, 7);
     const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-");
     const newFilename = `docs/${date}-${randomString}-${cleanFileName}`;
     return newFilename.substring(0, 60);
@@ -187,12 +189,12 @@ const AssignTaskUpdate = ({ session }) => {
     e.preventDefault();
     if (drop) {
       try {
-        client.writeData({ data: { isSubmitting: true } });
+        setIsSubmitting((a) => (a = true));
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
-            filetype: drop.type
-          }
+            filetype: drop.type,
+          },
         });
 
         const { signedRequest, url } = response.data.signS3;
@@ -203,10 +205,10 @@ const AssignTaskUpdate = ({ session }) => {
             id: id,
             assignedTo,
             dueDate,
-            status: !superRole ? "SUBMITTED" : status,
+            status: !superRole ? "REVIEWING" : status,
             updatedDocumentName: drop.name,
-            updatedDocumentUrl: url
-          }
+            updatedDocumentUrl: url,
+          },
         }).then(async ({ data }) => {
           setState({
             id: id,
@@ -214,12 +216,12 @@ const AssignTaskUpdate = ({ session }) => {
             dueDate: dueDate,
             status: status,
             updatedDocumentName: "",
-            updatedDocumentUrl: ""
+            updatedDocumentUrl: "",
           });
         });
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       } catch (error) {
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       }
     } else if (updatedDocumentUrl === "") {
       await updateAssignedTask({
@@ -229,8 +231,8 @@ const AssignTaskUpdate = ({ session }) => {
           dueDate,
           status,
           updatedDocumentName: null,
-          updatedDocumentUrl: null
-        }
+          updatedDocumentUrl: null,
+        },
       });
     } else {
       try {
@@ -241,8 +243,8 @@ const AssignTaskUpdate = ({ session }) => {
             dueDate,
             status,
             updatedDocumentName: updatedDocumentName,
-            updatedDocumentUrl: updatedDocumentUrl
-          }
+            updatedDocumentUrl: updatedDocumentUrl,
+          },
         }).then(async ({ data }) => {
           setState({
             id: id,
@@ -250,29 +252,18 @@ const AssignTaskUpdate = ({ session }) => {
             dueDate: dueDate,
             status: status,
             updatedDocumentName: "",
-            updatedDocumentUrl: ""
+            updatedDocumentUrl: "",
           });
         });
       } catch (error) {
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       }
     }
   };
 
-  // const handleChange = e => {
-  //   setDrop(e.target.value);
-  // };
-
-  const togglePopupModal = () => {
-    client.writeData({
-      data: {
-        toggleAssignUpdate: !toggleAssignUpdate,
-        editImg: false
-      }
-    });
+  const toggleOffModal = () => {
+    setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
   };
-  const innerRef = useRef(null);
-  useOuterClickNotifier(togglePopupModal, innerRef);
 
   let superRole;
   if (session && session.me && session.me.role === "TEACHER") {
@@ -282,107 +273,105 @@ const AssignTaskUpdate = ({ session }) => {
   }
 
   return (
-    <Fragment>
-      {toggleAssignUpdate ? (
-        <Styled.PopupContainer>
-          <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupHeader>
-              <Styled.PopupTitle>Update assigned task ...</Styled.PopupTitle>
-              <Styled.PopupFooterButton onClick={togglePopupModal}>
-                <Styled.CloseSpan />
-              </Styled.PopupFooterButton>
-            </Styled.PopupHeader>
-            <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, updateAssignedTask)}>
-                {superRole && (
-                  <Fragment>
-                    <Styled.Label>
-                      <Styled.Span>
-                        <Styled.LabelName>Due Date</Styled.LabelName>
-                      </Styled.Span>
-                      <Styled.Input
-                        name="dueDate"
-                        value={dueDate}
-                        onChange={onChange}
-                        type="date"
-                      />
-                    </Styled.Label>
-                    <Styled.Select>
-                      <Styled.SelectBox
-                        name="status"
-                        value={status}
-                        onChange={onChange}
-                        type="text"
-                        placeholder="Set Task Status"
-                      >
-                        <option value="" disabled>
-                          Select status
-                        </option>
-                        {menuItems.map((item, index) => (
-                          <option key={index} value={item.name}>
-                            {item.name}
-                          </option>
-                        ))}
-                      </Styled.SelectBox>
-                    </Styled.Select>
-                  </Fragment>
-                )}
-                {updatedDocumentUrl !== null ? (
-                  <div>
-                    <Styled.CardImg
-                      src={updatedDocumentUrl}
-                      alt={updatedDocumentUrl}
+    <>
+      {toggleOn && target === "assigntaskedit" ? (
+        <Modal toggleOn={toggleOn} onToggleOffModal={toggleOffModal}>
+          <Styled.PopupHeader>
+            <Styled.PopupTitle>Update assigned task ...</Styled.PopupTitle>
+            <Styled.PopupFooterButton onClick={toggleOffModal}>
+              <Styled.CloseSpan />
+            </Styled.PopupFooterButton>
+          </Styled.PopupHeader>
+          <Styled.PopupBody>
+            <form onSubmit={(e) => onSubmit(e, updateAssignedTask)}>
+              {superRole && (
+                <Fragment>
+                  <Styled.Label>
+                    <Styled.Span>
+                      <Styled.LabelName>Due Date</Styled.LabelName>
+                    </Styled.Span>
+                    <Styled.Input
+                      name="dueDate"
+                      value={dueDate}
+                      onChange={onChange}
+                      type="date"
                     />
-                  </div>
-                ) : null}
-                <Styled.AddButton type="button" onClick={handleClick}>
-                  {!editImg && updatedDocumentUrl === null
-                    ? "Add File"
-                    : !editImg
-                    ? "Change"
-                    : "Keep Original"}
-                </Styled.AddButton>
-                {updatedDocumentUrl !== null && (
-                  <Styled.DeleteButton
-                    updatedDocumentUrl={updatedDocumentUrl}
-                    type="button"
-                    onClick={() =>
-                      setState({
-                        id: id,
-                        assignedTo: assignedTo,
-                        dueDate: dueDate,
-                        status: status,
-                        updatedDocumentName: "",
-                        updatedDocumentUrl: ""
-                      })
-                    }
-                  >
-                    Remove File
-                  </Styled.DeleteButton>
+                  </Styled.Label>
+                  <Styled.Select>
+                    <Styled.SelectBox
+                      name="status"
+                      value={status}
+                      onChange={onChange}
+                      type="text"
+                      placeholder="Set Task Status"
+                    >
+                      <option value="" disabled>
+                        Select status
+                      </option>
+                      {menuItems.map((item, index) => (
+                        <option key={index} value={item.name}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </Styled.SelectBox>
+                  </Styled.Select>
+                </Fragment>
+              )}
+              {updatedDocumentUrl ? (
+                <div>
+                  <Styled.CardImg
+                    src={updatedDocumentUrl}
+                    alt={updatedDocumentUrl}
+                  />
+                </div>
+              ) : null}
+              <Styled.AddButton type="button" onClick={handleClick}>
+                {!editImg && updatedDocumentUrl === null
+                  ? "Add File"
+                  : !editImg
+                  ? "Change"
+                  : "Keep Original"}
+              </Styled.AddButton>
+              {updatedDocumentUrl !== null && (
+                <Styled.DeleteButton
+                  updatedDocumentUrl={updatedDocumentUrl}
+                  type="button"
+                  onClick={() =>
+                    setState({
+                      id: id,
+                      assignedTo: assignedTo,
+                      dueDate: dueDate,
+                      status: status,
+                      updatedDocumentName: "",
+                      updatedDocumentUrl: "",
+                    })
+                  }
+                >
+                  Remove File
+                </Styled.DeleteButton>
+              )}
+              {editImg && (
+                <DropZone setDrop={setDrop} isDocument={"isDocument"} />
+              )}
+              {loading && <Loading />}
+              <Styled.Submission>
+                {!isSubmitting ? (
+                  <Styled.SubmitButton disabled={isInvalid} type="submit">
+                    Submit
+                  </Styled.SubmitButton>
+                ) : (
+                  <Loading />
                 )}
-                {editImg && (
-                  <DropZone setDrop={setDrop} isDocument={"isDocument"} />
-                )}
-                {loading && <Loading />}
-                <Styled.Submission>
-                  {!isSubmitting ? (
-                    <Styled.SubmitButton disabled={isInvalid} type="submit">
-                      Submit
-                    </Styled.SubmitButton>
-                  ) : (
-                    <Loading />
-                  )}
-                </Styled.Submission>
-                {toggleSuccess && (
-                  <SuccessMessage message="Assigned Task Updated!" />
-                )}
-                {(error || s3Error) && <ErrorMessage error={error} />}
-              </form>
-            </Styled.PopupBody>
-          </Styled.PopupInnerExtended>
-        </Styled.PopupContainer>
+              </Styled.Submission>
+              {successAlert && (
+                <SuccessMessage message="Assigned Task Updated!" />
+              )}
+              {(error || s3Error) && <ErrorMessage error={error} />}
+            </form>
+          </Styled.PopupBody>
+        </Modal>
       ) : null}
-    </Fragment>
+    </>
   );
 };
 

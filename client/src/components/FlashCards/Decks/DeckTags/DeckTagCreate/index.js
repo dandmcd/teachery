@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useRef, Fragment } from "react";
-import { useMutation, useApolloClient, useQuery } from "@apollo/react-hooks";
+import React, { useState, useEffect } from "react";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
-import useOuterClickNotifier from "../../../../Alerts/OuterClickNotifier";
 import ErrorMessage from "../../../../Alerts/Error";
 import * as Styled from "../../../../../theme/Popup";
 import SuccessMessage from "../../../../Alerts/Success";
 import Loading from "../../../../Alerts/Loading";
+import { useAtom } from "jotai";
+import { modalAtom, successAlertAtom } from "../../../../../state/store";
+import Modal from "../../../../Modal";
 
 const ADD_TAG_TO_DECK = gql`
   mutation($id: ID!, $tagName: String!) {
@@ -22,48 +24,43 @@ const ADD_TAG_TO_DECK = gql`
 
 const INITIAL_STATE = {
   id: null,
-  tagName: ""
+  tagName: "",
 };
 
 const AddDeckTag = () => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-      toggleAddTag @client
-      current @client
-    }
-  `);
-  const { toggleSuccess, toggleAddTag, current } = data;
+  const [modal, setModal] = useAtom(modalAtom);
+  const { toggleOn, modalId, target } = modal;
+
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
 
   const [{ id, tagName }, setState] = useState(INITIAL_STATE);
 
   useEffect(() => {
-    if (toggleAddTag && current) {
-      setState({ id: current, tagName: "" });
+    if (toggleOn && modalId) {
+      setState({ id: modalId, tagName: "" });
     }
-  }, [toggleAddTag, current]);
+  }, [toggleOn, modalId]);
 
   const [addTagToDeck, { loading, error }] = useMutation(ADD_TAG_TO_DECK, {
-    onError: err => {
-      client.writeData({ data: { toggleSuccess: false } });
+    onError: (err) => {
+      setSuccessAlert((a) => (a = false));
     },
-    onCompleted: data => {
-      client.writeData({ data: { toggleSuccess: true } });
-    }
+    onCompleted: (data) => {
+      setSuccessAlert((a) => (a = true));
+    },
   });
 
   useEffect(() => {
-    if (toggleSuccess) {
+    if (successAlert) {
       setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+        setSuccessAlert((a) => (a = false));
       }, 5000);
     }
-  }, [client, toggleSuccess]);
+  }, [successAlert, setSuccessAlert]);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const isInvalid = tagName === "";
@@ -75,69 +72,58 @@ const AddDeckTag = () => {
       await addTagToDeck({
         variables: {
           id: id,
-          tagName: tagName
-        }
+          tagName: tagName,
+        },
       }).then(async ({ data }) => {
         setState({
-          id: current,
-          tagName: ""
+          id: modalId,
+          tagName: "",
         });
       });
     } catch (error) {}
   };
 
-  const togglePopupModal = () => {
-    client.writeData({
-      data: { toggleAddTag: !toggleAddTag }
-    });
+  const toggleOffModal = () => {
+    setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
   };
-  const innerRef = useRef(null);
-  useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Fragment>
-      {toggleAddTag ? (
-        <Styled.PopupContainer>
-          <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupHeader>
-              <Styled.PopupTitle>
-                Create a tag for this deck...
-              </Styled.PopupTitle>
-              <Styled.PopupFooterButton
-                title="Close"
-                onClick={togglePopupModal}
+    <>
+      {toggleOn && target === "decktag" ? (
+        <Modal toggleOn={toggleOn} onToggleOffModal={toggleOffModal}>
+          <Styled.PopupHeader>
+            <Styled.PopupTitle>Create a tag for this deck...</Styled.PopupTitle>
+            <Styled.PopupFooterButton title="Close" onClick={toggleOffModal}>
+              <Styled.CloseSpan />
+            </Styled.PopupFooterButton>
+          </Styled.PopupHeader>
+          <Styled.PopupBody>
+            <form onSubmit={(e) => onSubmit(e, addTagToDeck)}>
+              <Styled.Label>
+                <Styled.Span>
+                  <Styled.LabelName>Tag Name</Styled.LabelName>
+                </Styled.Span>
+                <Styled.Input
+                  name="tagName"
+                  value={tagName}
+                  onChange={onChange}
+                  type="text"
+                />
+              </Styled.Label>
+              <Styled.SubmitButton
+                disabled={isInvalid || loading}
+                type="submit"
               >
-                <Styled.CloseSpan />
-              </Styled.PopupFooterButton>
-            </Styled.PopupHeader>
-            <Styled.PopupBody>
-              <form onSubmit={e => onSubmit(e, addTagToDeck)}>
-                <Styled.Label>
-                  <Styled.Span>
-                    <Styled.LabelName>Tag Name</Styled.LabelName>
-                  </Styled.Span>
-                  <Styled.Input
-                    name="tagName"
-                    value={tagName}
-                    onChange={onChange}
-                    type="text"
-                  />
-                </Styled.Label>
-                <Styled.SubmitButton
-                  disabled={isInvalid || loading}
-                  type="submit"
-                >
-                  Submit
-                </Styled.SubmitButton>
-                {loading && <Loading />}
-                {toggleSuccess && <SuccessMessage message="Tag Created!" />}
-                {error && <ErrorMessage error={error} />}
-              </form>
-            </Styled.PopupBody>
-          </Styled.PopupInnerExtended>
-        </Styled.PopupContainer>
+                Submit
+              </Styled.SubmitButton>
+              {loading && <Loading />}
+              {successAlert && <SuccessMessage message="Tag Created!" />}
+              {error && <ErrorMessage error={error} />}
+            </form>
+          </Styled.PopupBody>
+        </Modal>
       ) : null}
-    </Fragment>
+    </>
   );
 };
 

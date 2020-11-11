@@ -1,13 +1,13 @@
 import React from "react";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
-import { useQuery, useApolloClient } from "@apollo/react-hooks";
-import gql from "graphql-tag";
 import styled from "styled-components";
 
 import * as Styled from "../style";
 import download from "../../../../assets/download.png";
 import downloadblue from "../../../../assets/downloadblue.png";
+import { modalAtom } from "../../../../state/store";
+import { useAtom } from "jotai";
 
 const AssignedTaskItemBase = ({
   assignedTask: {
@@ -25,22 +25,16 @@ const AssignedTaskItemBase = ({
       note,
       documentName,
       documentUrl,
-      user: { username }
-    }
+      user: { username },
+    },
   },
-  session
+  session,
 }) => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleAssignUpdate @client
-    }
-  `);
-  const { toggleAssignUpdate } = data;
+  const [, setModal] = useAtom(modalAtom);
 
   let fileStatus;
   if (updatedDocumentUrl !== null) {
-    if (status === "SUBMITTED" || "COMPLETE") {
+    if (status === "REVIEWING" || "COMPLETE") {
       fileStatus = "uploadedFile";
     }
     if (status === "GRADED") {
@@ -49,13 +43,17 @@ const AssignedTaskItemBase = ({
   } else {
     fileStatus = "noFile";
   }
-  const togglePopupModal = () => {
-    client.writeData({
-      data: {
-        toggleAssignUpdate: !toggleAssignUpdate,
-        current: id
-      }
-    });
+
+  const toggleOnModal = (e) => {
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: true,
+          modalId: id,
+          target: e.target.id,
+        })
+    );
   };
 
   return (
@@ -97,7 +95,11 @@ const AssignedTaskItemBase = ({
         </Styled.CreatedInfo>
 
         {status === "INCOMPLETE" && (
-          <Styled.EditButton type="button" onClick={togglePopupModal}>
+          <Styled.EditButton
+            id="assigntaskedit"
+            type="button"
+            onClick={toggleOnModal}
+          >
             Update
           </Styled.EditButton>
         )}
@@ -135,12 +137,12 @@ const AssignedTaskItemBase = ({
 
 AssignedTaskItemBase.propTypes = {
   assignedTask: PropTypes.object.isRequired,
-  me: PropTypes.object
+  me: PropTypes.object,
 };
 
 const DownloadLink = styled.a`
   font-weight: 400;
-  color: ${props => props.theme.secondary};
+  color: ${(props) => props.theme.secondary};
 `;
 
 export default AssignedTaskItemBase;

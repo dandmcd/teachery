@@ -1,6 +1,5 @@
-import React, { useState, useContext, createRef } from "react";
+import React, { useState, createRef } from "react";
 import { Link } from "react-router-dom";
-import { ThemeContext } from "styled-components";
 
 import withSession from "../../Session/withSession";
 import * as routes from "../../../routing/routes";
@@ -21,8 +20,6 @@ import cardstudy from "../../../assets/cardstudy.png";
 const LandingPage = () => {
   const [toggleExplore, setToggleExplore] = useState(false);
   const [toggleStudentTeacher, setToggleStudentTeacher] = useState(0);
-
-  const themeContext = useContext(ThemeContext);
 
   const ref = createRef();
 

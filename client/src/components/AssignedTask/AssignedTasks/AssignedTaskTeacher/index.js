@@ -1,9 +1,8 @@
-import React, { Fragment, useState } from "react";
-import { useQuery, useApolloClient } from "@apollo/react-hooks";
+import React, { useState } from "react";
+import { useQuery } from "@apollo/react-hooks";
 import Moment from "react-moment";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import gql from "graphql-tag";
 
 import withSession from "../../../Session/withSession";
 import Loading from "../../../Alerts/Loading";
@@ -15,11 +14,14 @@ import AssignedTaskDelete from "../AssignedTaskDelete";
 import download from "../../../../assets/download.png";
 import downloadblue from "../../../../assets/downloadblue.png";
 
+import { useAtom } from "jotai";
+import { modalAtom } from "../../../../state/store";
+
 const TeacherAssignedTasks = ({ limit, me }) => {
   const { data, loading, error, fetchMore } = useQuery(
     GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS,
     {
-      variables: { limit }
+      variables: { limit },
     }
   );
 
@@ -38,7 +40,7 @@ const TeacherAssignedTasks = ({ limit, me }) => {
   const { edges, pageInfo } = data.assignedTasksTeacher;
 
   return (
-    <Fragment>
+    <>
       <AssignedTaskList assignedTasksTeacher={edges} me={me} />
 
       {pageInfo.hasNextPage && (
@@ -50,64 +52,68 @@ const TeacherAssignedTasks = ({ limit, me }) => {
           More
         </MoreAssignedTasksButton>
       )}
-    </Fragment>
+    </>
   );
 };
 
 TeacherAssignedTasks.propTypes = {
   limit: PropTypes.number.isRequired,
-  me: PropTypes.object
+  me: PropTypes.object,
 };
 
-const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
-  <AssignmentButton
-    type="button"
-    onClick={() =>
-      fetchMore({
-        variables: {
-          cursor: pageInfo.endCursor,
-          limit
-        },
-        updateQuery: (previousResult, { fetchMoreResult }) => {
-          if (!fetchMoreResult) {
-            return previousResult;
-          }
-
-          return {
-            assignedTasksTeacher: {
-              ...fetchMoreResult.assignedTasksTeacher,
-              edges: [
-                ...previousResult.assignedTasksTeacher.edges,
-                ...fetchMoreResult.assignedTasksTeacher.edges
-              ]
-            }
-          };
+const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => {
+  const fetchEvent = () => {
+    fetchMore({
+      variables: {
+        cursor: pageInfo.endCursor,
+        limit,
+      },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        if (!fetchMoreResult) {
+          return previousResult;
         }
-      })
-    }
-  >
-    {children}
-  </AssignmentButton>
-);
+
+        return {
+          assignedTasksTeacher: {
+            ...fetchMoreResult.assignedTasksTeacher,
+            edges: [
+              ...previousResult.assignedTasksTeacher.edges,
+              ...fetchMoreResult.assignedTasksTeacher.edges,
+            ],
+          },
+        };
+      },
+    });
+  };
+  return (
+    <AssignmentButton
+      type="button"
+      onMouseOver={fetchEvent}
+      onClick={fetchEvent}
+    >
+      {children}
+    </AssignmentButton>
+  );
+};
 
 const AssignmentButton = styled(Button)`
   margin: auto auto 5px auto;
   display: block;
   width: 205px;
-  border: 2px solid ${props => props.theme.primaryDark};
+  border: 2px solid ${(props) => props.theme.primaryDark};
 `;
 
 MoreAssignedTasksButton.propTypes = {
   limit: PropTypes.number.isRequired,
   pageInfo: PropTypes.object.isRequired,
   fetchMore: PropTypes.func.isRequired,
-  children: PropTypes.string.isRequired
+  children: PropTypes.string.isRequired,
 };
 
 const AssignedTaskList = ({ assignedTasksTeacher, me }) => {
   return (
     <Styled.AssignmentContainer>
-      {assignedTasksTeacher.map(assignedTask => (
+      {assignedTasksTeacher.map((assignedTask) => (
         <AssignedTaskItem
           key={assignedTask.id}
           assignedTask={assignedTask}
@@ -120,17 +126,12 @@ const AssignedTaskList = ({ assignedTasksTeacher, me }) => {
 
 AssignedTaskList.propTypes = {
   assignedTasksTeacher: PropTypes.array.isRequired,
-  me: PropTypes.object
+  me: PropTypes.object,
 };
 
 const AssignmentItemBase = ({ assignedTask, session }) => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleAssignUpdate @client
-    }
-  `);
-  const { toggleAssignUpdate } = data;
+  const [, setModal] = useAtom(modalAtom);
+
   const {
     dueDate,
     id,
@@ -143,15 +144,15 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
       link,
       note,
       documentUrl,
-      user: { username }
-    }
+      user: { username },
+    },
   } = assignedTask;
 
   const [isChecked, setIsChecked] = useState(false);
 
   let fileStatus;
   if (updatedDocumentUrl !== null) {
-    if (status === "SUBMITTED" || "COMPLETE") {
+    if (status === "REVIEWING" || "COMPLETE") {
       fileStatus = "uploadedFile";
     }
     if (status === "GRADED") {
@@ -165,13 +166,16 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
     setIsChecked(isChecked === false ? true : false);
   };
 
-  const togglePopupModal = () => {
-    client.writeData({
-      data: {
-        toggleAssignUpdate: !toggleAssignUpdate,
-        current: id
-      }
-    });
+  const toggleOnModal = (e) => {
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: true,
+          modalId: id,
+          target: e.target.id,
+        })
+    );
   };
 
   return (
@@ -222,7 +226,11 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
           </Styled.ManageButton>
           <Styled.EditDropDownContent isChecked={isChecked}>
             <AssignedTaskDelete assignedTask={assignedTask} />
-            <Styled.EditButton type="button" onClick={togglePopupModal}>
+            <Styled.EditButton
+              id="assigntaskedit"
+              type="button"
+              onClick={toggleOnModal}
+            >
               Edit
             </Styled.EditButton>
           </Styled.EditDropDownContent>
@@ -261,10 +269,10 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
 
 AssignmentItemBase.propTypes = {
   assignedTask: PropTypes.object.isRequired,
-  me: PropTypes.object
+  me: PropTypes.object,
 };
 
-export const Container = styled.div`
+const Container = styled.div`
   z-index: 10;
   max-width: 1100px;
   margin: 0 auto;
@@ -272,7 +280,7 @@ export const Container = styled.div`
 
 const DownloadLink = styled.a`
   font-weight: 400;
-  color: ${props => props.theme.secondary};
+  color: ${(props) => props.theme.secondary};
 `;
 
 const AssignedTaskItem = withSession(AssignmentItemBase);

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
@@ -16,9 +16,15 @@ const DELETE_ASSIGNED_TASK = gql`
 
 const AssignedTaskDelete = ({ assignedTask }) => {
   const [deleteAssignedTask, { error }] = useMutation(DELETE_ASSIGNED_TASK, {
+    optimisticResponse: {
+      __typename: "Mutation",
+      deleteAssignedTask: {
+        id: assignedTask.id,
+      },
+    },
     update(cache, { data: { deleteAssignedTask } }) {
       const data = cache.readQuery({
-        query: GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS
+        query: GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS,
       });
       cache.writeQuery({
         query: GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS,
@@ -27,29 +33,29 @@ const AssignedTaskDelete = ({ assignedTask }) => {
           assignedTasksTeacher: {
             ...data.assignedTasksTeacher,
             edges: data.assignedTasksTeacher.edges.filter(
-              node => node.id !== assignedTask.id
+              (node) => node.id !== assignedTask.id
             ),
-            pageInfo: data.assignedTasksTeacher.pageInfo
-          }
-        }
+            pageInfo: data.assignedTasksTeacher.pageInfo,
+          },
+        },
       });
-    }
+    },
   });
 
   const onSubmit = (e, deleteAssignedTask) => {
     e.preventDefault();
     deleteAssignedTask({
       variables: {
-        id: assignedTask.id
-      }
+        id: assignedTask.id,
+      },
     });
   };
 
   return (
-    <Fragment>
+    <>
       <RemoveAssignmentButton
         type="button"
-        onClick={e => {
+        onClick={(e) => {
           if (
             window.confirm(
               "Are you sure you wish to delete this assigned task?  The student will no longer be able to view it."
@@ -61,16 +67,16 @@ const AssignedTaskDelete = ({ assignedTask }) => {
         Delete
       </RemoveAssignmentButton>
       {error && <ErrorMessage error={error} />}
-    </Fragment>
+    </>
   );
 };
 
 AssignedTaskDelete.propTypes = {
-  assignedTask: PropTypes.object.isRequired
+  assignedTask: PropTypes.object.isRequired,
 };
 
 const RemoveAssignmentButton = styled(Button)`
-  border: 2px solid ${props => props.theme.error};
+  border: 2px solid ${(props) => props.theme.error};
 `;
 
 export default AssignedTaskDelete;

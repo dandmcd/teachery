@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Fragment } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
@@ -68,8 +68,29 @@ const CardEdit = () => {
     editImg,
   } = data;
 
+  const [state, setState] = useState({
+    id: null,
+    front: "",
+    back: "",
+    pictureName: "",
+    pictureUrl: "",
+  });
+  const { id, front, back, pictureUrl, pictureName } = state;
+
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [updateCard, { loading, error }] = useMutation(UPDATE_CARD, {
+    optimisticResponse: {
+      __typename: "Mutation",
+      updateCard: {
+        id: id,
+        __typename: "",
+        front: front,
+        back: back,
+        pictureName: pictureName,
+        pictureUrl: pictureUrl,
+      },
+    },
+
     onError: (err) => {
       client.writeData({ data: { toggleSuccess: false } });
     },
@@ -98,14 +119,6 @@ const CardEdit = () => {
     }
   }, [client, current, toggleEditCard]);
 
-  const [state, setState] = useState({
-    id: null,
-    front: "",
-    back: "",
-    pictureName: "",
-    pictureUrl: "",
-  });
-  const { id, front, back, pictureUrl, pictureName } = state;
   const [drop, setDrop] = useState(null);
 
   useEffect(() => {
@@ -215,7 +228,7 @@ const CardEdit = () => {
   useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
-    <Fragment>
+    <>
       {toggleEditCard ? (
         <Styled.PopupContainer>
           <Styled.PopupInnerExtended ref={innerRef}>
@@ -299,7 +312,7 @@ const CardEdit = () => {
           </Styled.PopupInnerExtended>
         </Styled.PopupContainer>
       ) : null}
-    </Fragment>
+    </>
   );
 };
 

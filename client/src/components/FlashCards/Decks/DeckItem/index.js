@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
-import { useQuery, useApolloClient, useMutation } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import { cloneDeep } from "lodash";
@@ -15,6 +15,8 @@ import teststudent from "../../../../assets/teststudent.jpg";
 import like from "../../../../assets/like.png";
 import liked from "../../../../assets/liked.png";
 import { GET_ME } from "../../../Session/queries";
+import { useAtom } from "jotai";
+import { modalAtom } from "../../../../state/store";
 
 const BOOKMARK_DECK = gql`
   mutation($id: ID!) {
@@ -31,15 +33,7 @@ const REMOVE_BOOKMARK = gql`
 `;
 
 const DeckItemBase = ({ deck, session }) => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleEditDeck @client
-      toggleAddTag @client
-      toggleAddCard @client
-    }
-  `);
-  const { toggleEditDeck, toggleAddTag, toggleAddCard } = data;
+  const [, setModal] = useAtom(modalAtom);
 
   const [isChecked, setIsChecked] = useState(false);
   const [sessionCount, setSessionCount] = useState({
@@ -111,30 +105,18 @@ const DeckItemBase = ({ deck, session }) => {
     setIsChecked(isChecked === false ? true : false);
   };
 
-  const togglePopupModal = (mutateType) => {
-    if (mutateType === "addTag") {
-      client.writeData({
-        data: {
-          toggleAddTag: !toggleAddTag,
-          current: deck.id,
-        },
-      });
-    } else if (mutateType === "addCard") {
-      client.writeData({
-        data: {
-          toggleAddCard: !toggleAddCard,
-          current: deck.id,
-        },
-      });
-    } else {
-      client.writeData({
-        data: {
-          toggleEditDeck: !toggleEditDeck,
-          current: deck.id,
-        },
-      });
-    }
+  const toggleOnModal = (e) => {
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: true,
+          modalId: deck.id,
+          target: e.target.id,
+        })
+    );
   };
+
   const isInvalid = count === "" || count <= "0";
 
   let authorizedRole;
@@ -214,13 +196,18 @@ const DeckItemBase = ({ deck, session }) => {
             <EditDropDownContent isChecked={isChecked}>
               {authorizedRole && <DeckDelete deck={deck} />}
               {authorizedRole && (
-                <Styled.EditButton type="button" onClick={togglePopupModal}>
+                <Styled.EditButton
+                  id="deckedit"
+                  type="button"
+                  onClick={toggleOnModal}
+                >
                   Edit Details
                 </Styled.EditButton>
               )}
               <Styled.TagButton
+                id="decktag"
                 type="button"
-                onClick={() => togglePopupModal("addTag")}
+                onClick={toggleOnModal}
               >
                 Add Tag
               </Styled.TagButton>

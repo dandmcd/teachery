@@ -7,48 +7,48 @@ const assignedTask = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: "A deck must have a name."
-          }
+            msg: "A deck must have a name.",
+          },
         },
         unique: {
           args: "noDuplicate",
-          msg: "User was already assigned this task."
-        }
+          msg: "User was already assigned this task.",
+        },
       },
       status: {
         type: DataTypes.ENUM,
-        values: ["INCOMPLETE", "COMPLETE", "SUBMITTED", "GRADED"],
+        values: ["INCOMPLETE", "COMPLETE", "REVIEWING", "GRADED"],
         validate: {
           notEmpty: {
             args: true,
-            msg: "A deck must have a name."
-          }
-        }
+            msg: "A deck must have a name.",
+          },
+        },
       },
       assignedTo: {
         type: DataTypes.INTEGER,
         validate: {
           notEmpty: {
             args: true,
-            msg: "A deck must have a name."
-          }
+            msg: "A deck must have a name.",
+          },
         },
         unique: {
           args: "noDuplicate",
-          msg: "User was already assigned this task."
-        }
+          msg: "User was already assigned this task.",
+        },
       },
       assignedToName: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       updatedDocumentName: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
       },
       updatedDocumentUrl: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
       },
       dueDate: {
         type: DataTypes.STRING,
@@ -56,30 +56,30 @@ const assignedTask = (sequelize, DataTypes) => {
           isDate: true,
           notEmpty: {
             args: true,
-            msg: "A deck must have a due date."
-          }
+            msg: "A deck must have a due date.",
+          },
         },
         validate: {
           isDate: {
             args: true,
-            msg: "Please enter a date in this format - YYYY-MM-DD"
-          }
-        }
-      }
+            msg: "Please enter a date in this format - YYYY-MM-DD",
+          },
+        },
+      },
     },
     {
       uniqueKeys: {
         noDuplicate: {
-          fields: ["assignmentId", "assignedTo"]
-        }
-      }
+          fields: ["assignmentId", "assignedTo"],
+        },
+      },
     }
   );
-  AssignedTask.associate = models => {
+  AssignedTask.associate = (models) => {
     AssignedTask.belongsTo(models.User);
     AssignedTask.belongsToMany(models.Assignment, {
       through: models.UserAssignment,
-      onDelete: "CASCADE"
+      onDelete: "CASCADE",
     });
   };
   return AssignedTask;

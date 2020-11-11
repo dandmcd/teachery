@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useMutation, useApolloClient, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
@@ -26,6 +26,13 @@ const CardDelete = ({ card, deckId }) => {
   const { toggleDeleteSuccess } = data;
 
   const [deleteCard, { loading, error }] = useMutation(DELETE_CARD, {
+    optimisticResponse: {
+      __typename: "Mutation",
+      deleteCard: {
+        id: card.id,
+      },
+    },
+
     update(cache, { data: { deleteCard } }) {
       const localData = cloneDeep(
         cache.readQuery({
@@ -70,7 +77,7 @@ const CardDelete = ({ card, deckId }) => {
   };
 
   return (
-    <Fragment>
+    <>
       <DeleteButton
         type="button"
         onClick={(e) => {
@@ -82,7 +89,7 @@ const CardDelete = ({ card, deckId }) => {
       </DeleteButton>
       {loading && <Loading />}
       {error && <ErrorMessage error={error} />}
-    </Fragment>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import gql from "graphql-tag";
 import { Link } from "react-router-dom";
 import moment from "moment";
@@ -35,21 +35,21 @@ const TeacherTaskStatus = ({ session }) => {
 
   const date = moment().format("YYYYMMDD");
   const notComplete = data.assignedTasksTeacher.edges.filter(
-    item => item.status === "INCOMPLETE"
+    (item) => item.status === "INCOMPLETE"
   );
-  const overdue = notComplete.filter(item =>
+  const overdue = notComplete.filter((item) =>
     moment(date).isSameOrAfter(item.dueDate)
   ).length;
   const incomplete = notComplete.length;
   const submitted = data.assignedTasksTeacher.edges.filter(
-    item => item.status === "SUBMITTED"
+    (item) => item.status === "REVIEWING"
   ).length;
   const complete = data.assignedTasksTeacher.edges.filter(
-    item => item.status === "COMPLETE"
+    (item) => item.status === "COMPLETE"
   ).length;
 
   return (
-    <Fragment>
+    <>
       <Styled.Welcome>
         <Link to={routes.ACCOUNT}>{session.me.username}</Link>, you have ...
       </Styled.Welcome>
@@ -71,7 +71,7 @@ const TeacherTaskStatus = ({ session }) => {
           grade
         </Styled.NotGraded>
       </Styled.AssignmentDiv>
-    </Fragment>
+    </>
   );
 };
 
