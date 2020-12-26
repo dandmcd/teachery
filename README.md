@@ -1,7 +1,7 @@
-## Teachery
-Teachery is a full-stack app designed for teachers and students to connect with each other. Front-end was developed with React and Apollo GraphQL, back-end is PostgreSQL with Apollo Server and GraphQL with full authentication.
+# Teachery
+[Teachery](https://teachery.herokuapp.com/) is a full-stack app designed for teachers and students to connect with each other. Front-end was developed with React and Apollo GraphQL, back-end is PostgreSQL with Apollo Server and GraphQL with full authentication.
 
-## Built With A Serious Tech Stack
+## Built With An Advanced Tech Stack
 For Teachery, I chose a NodeJS back-end with a powerful combination PostgreSQL with Sequelize ORM, and GraphQL to build a modern non-REST API. Account creation features full server authentication and password management, and AWS S3 upload/download capabilities for content creation.
 
 ## React Front-End
