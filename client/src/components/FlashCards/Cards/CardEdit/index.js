@@ -1,15 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
+import React, { useState, useEffect } from "react";
+import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
 
-import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
 import * as Styled from "../../../../theme/Popup";
 import DropZone from "../../../Uploader";
 import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
+import { useAtom } from "jotai";
+import {
+  deckIdAtom,
+  isSubmittingAtom,
+  modalAtom,
+  successAlertAtom,
+} from "../../../../state/store";
+import Modal from "../../../Modal";
 
 //Mutations
 const UPDATE_CARD = gql`
@@ -49,24 +56,13 @@ const S3SIGNMUTATION = gql`
 
 const CardEdit = () => {
   const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-      toggleEditCard @client
-      current @client
-      currentDeckId @client
-      editImg @client
-      isSubmitting @client
-    }
-  `);
-  const {
-    toggleSuccess,
-    toggleEditCard,
-    isSubmitting,
-    current,
-    currentDeckId,
-    editImg,
-  } = data;
+
+  const [modal, setModal] = useAtom(modalAtom);
+  const { toggleOn, modalId, target, editImg } = modal;
+  const [deckId] = useAtom(deckIdAtom);
+
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
+  const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
 
   const [state, setState] = useState({
     id: null,
@@ -92,17 +88,17 @@ const CardEdit = () => {
     },
 
     onError: (err) => {
-      client.writeData({ data: { toggleSuccess: false } });
+      setSuccessAlert((a) => (a = false));
     },
     onCompleted: (data) => {
-      client.writeData({ data: { toggleSuccess: true } });
+      setSuccessAlert((a) => (a = true));
     },
   });
 
   useEffect(() => {
-    if (toggleEditCard) {
+    if (toggleOn && modalId) {
       const currentCard = client.readFragment({
-        id: current,
+        id: modalId,
         fragment: gql`
           fragment card on Card {
             id
@@ -117,17 +113,17 @@ const CardEdit = () => {
 
       setState(currentCard);
     }
-  }, [client, current, toggleEditCard]);
+  }, [client, toggleOn, modalId]);
 
   const [drop, setDrop] = useState(null);
 
   useEffect(() => {
-    if (toggleSuccess) {
+    if (successAlert) {
       setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+        setSuccessAlert((a) => (a = false));
       }, 5000);
     }
-  }, [client, toggleSuccess]);
+  }, [successAlert, setSuccessAlert]);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -135,7 +131,7 @@ const CardEdit = () => {
   };
 
   const handleClick = () => {
-    client.writeData({ data: { editImg: !editImg } });
+    setModal((m) => (m = { ...m, editImg: !m.editImg }));
   };
 
   const isInvalid = front === "";
@@ -176,22 +172,22 @@ const CardEdit = () => {
         await updateCard({
           variables: {
             id: id,
-            deckId: currentDeckId,
+            deckId: deckId,
             front,
             back,
             pictureName: drop.name,
             pictureUrl: url,
           },
         });
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       } catch (error) {
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       }
     } else if (pictureUrl === "") {
       await updateCard({
         variables: {
           id: id,
-          deckId: currentDeckId,
+          deckId: deckId,
           front: front,
           back: back,
           pictureUrl: null,
@@ -203,7 +199,7 @@ const CardEdit = () => {
         await updateCard({
           variables: {
             id: id,
-            deckId: currentDeckId,
+            deckId: deckId,
             front: front,
             back: back,
             pictureUrl: pictureUrl,
@@ -211,106 +207,94 @@ const CardEdit = () => {
           },
         });
       } catch (error) {
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       }
     }
   };
 
-  const togglePopupModal = () => {
-    client.writeData({
-      data: {
-        toggleEditCard: !toggleEditCard,
-        editImg: false,
-      },
-    });
+  const toggleOffModal = () => {
+    setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
   };
-  const innerRef = useRef(null);
-  useOuterClickNotifier(togglePopupModal, innerRef);
 
   return (
     <>
-      {toggleEditCard ? (
-        <Styled.PopupContainer>
-          <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupHeader>
-              <Styled.PopupTitle>Edit Card ...</Styled.PopupTitle>
-              <Styled.PopupFooterButton
-                title="Close"
-                onClick={togglePopupModal}
-              >
-                <Styled.CloseSpan />
-              </Styled.PopupFooterButton>
-            </Styled.PopupHeader>
-            <Styled.PopupBody>
-              <form onSubmit={(e) => onSubmit(e, updateCard)}>
-                <Styled.Label>
-                  <Styled.Span>
-                    <Styled.LabelName>Front of the Flashcard</Styled.LabelName>
-                  </Styled.Span>
-                  <Styled.InputTextArea
-                    name="front"
-                    value={front}
-                    onChange={onChange}
-                    type="text"
-                  />
-                </Styled.Label>
-                <Styled.Label>
-                  <Styled.Span>
-                    <Styled.LabelName>Back of the Flashcard</Styled.LabelName>
-                  </Styled.Span>
-                  <Styled.InputTextArea
-                    name="back"
-                    value={back}
-                    onChange={onChange}
-                    type="text"
-                  />
-                </Styled.Label>
-                {pictureUrl !== null ? (
-                  <div>
-                    <Styled.CardImg src={pictureUrl} alt={pictureUrl} />
-                  </div>
-                ) : null}
-                <Styled.AddButton type="button" onClick={handleClick}>
-                  {!editImg && pictureUrl === null
-                    ? "Add File"
-                    : !editImg
-                    ? "Change"
-                    : "Keep Original"}
-                </Styled.AddButton>
-                {pictureUrl !== null && (
-                  <Styled.DeleteButton
-                    pictureUrl={pictureUrl}
-                    type="button"
-                    onClick={() =>
-                      setState({
-                        id: id,
-                        front: front,
-                        back: back,
-                        pictureUrl: "",
-                        pictureName: "",
-                      })
-                    }
-                  >
-                    Remove File
-                  </Styled.DeleteButton>
+      {toggleOn && target === "cardedit" ? (
+        <Modal toggleOn={toggleOn} onToggleOffModal={toggleOffModal}>
+          <Styled.PopupHeader>
+            <Styled.PopupTitle>Edit Card ...</Styled.PopupTitle>
+            <Styled.PopupFooterButton title="Close" onClick={toggleOffModal}>
+              <Styled.CloseSpan />
+            </Styled.PopupFooterButton>
+          </Styled.PopupHeader>
+          <Styled.PopupBody>
+            <form onSubmit={(e) => onSubmit(e, updateCard)}>
+              <Styled.Label>
+                <Styled.Span>
+                  <Styled.LabelName>Front of the Flashcard</Styled.LabelName>
+                </Styled.Span>
+                <Styled.InputTextArea
+                  name="front"
+                  value={front}
+                  onChange={onChange}
+                  type="text"
+                />
+              </Styled.Label>
+              <Styled.Label>
+                <Styled.Span>
+                  <Styled.LabelName>Back of the Flashcard</Styled.LabelName>
+                </Styled.Span>
+                <Styled.InputTextArea
+                  name="back"
+                  value={back}
+                  onChange={onChange}
+                  type="text"
+                />
+              </Styled.Label>
+              {pictureUrl !== null ? (
+                <div>
+                  <Styled.CardImg src={pictureUrl} alt={pictureUrl} />
+                </div>
+              ) : null}
+              <Styled.AddButton type="button" onClick={handleClick}>
+                {!editImg && pictureUrl === null
+                  ? "Add File"
+                  : !editImg
+                  ? "Change"
+                  : "Keep Original"}
+              </Styled.AddButton>
+              {pictureUrl !== null && (
+                <Styled.DeleteButton
+                  pictureUrl={pictureUrl}
+                  type="button"
+                  onClick={() =>
+                    setState({
+                      id: id,
+                      front: front,
+                      back: back,
+                      pictureUrl: "",
+                      pictureName: "",
+                    })
+                  }
+                >
+                  Remove File
+                </Styled.DeleteButton>
+              )}
+              {editImg && <DropZone setDrop={setDrop} isCard={"isCard"} />}
+              {loading && <Loading />}
+              <Styled.Submission>
+                {!isSubmitting ? (
+                  <Styled.SubmitButton disabled={isInvalid} type="submit">
+                    Submit
+                  </Styled.SubmitButton>
+                ) : (
+                  <Loading />
                 )}
-                {editImg && <DropZone setDrop={setDrop} isCard={"isCard"} />}
-                {loading && <Loading />}
-                <Styled.Submission>
-                  {!isSubmitting ? (
-                    <Styled.SubmitButton disabled={isInvalid} type="submit">
-                      Submit
-                    </Styled.SubmitButton>
-                  ) : (
-                    <Loading />
-                  )}
-                </Styled.Submission>
-                {toggleSuccess && <SuccessMessage message="Card Updated!" />}
-                {(error || s3Error) && <ErrorMessage error={error} />}
-              </form>
-            </Styled.PopupBody>
-          </Styled.PopupInnerExtended>
-        </Styled.PopupContainer>
+              </Styled.Submission>
+              {successAlert && <SuccessMessage message="Card Updated!" />}
+              {(error || s3Error) && <ErrorMessage error={error} />}
+            </form>
+          </Styled.PopupBody>
+        </Modal>
       ) : null}
     </>
   );

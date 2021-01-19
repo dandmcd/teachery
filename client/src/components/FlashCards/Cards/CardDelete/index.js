@@ -4,11 +4,13 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { cloneDeep } from "lodash";
+import { useAtom } from "jotai";
 
 import Button from "../../../../theme/Button";
 import Loading from "../../../Alerts/Loading";
 import ErrorMessage from "../../../Alerts/Error";
 import CARDS_QUERY from "../CardList/CardListSchema/CardListSchema";
+import { deckIdAtom } from "../../../../state/store";
 
 const DELETE_CARD = gql`
   mutation($id: ID!, $deckId: Int!) {
@@ -16,7 +18,7 @@ const DELETE_CARD = gql`
   }
 `;
 
-const CardDelete = ({ card, deckId }) => {
+const CardDelete = ({ card }) => {
   const client = useApolloClient();
   const { data } = useQuery(gql`
     query Toggle {
@@ -24,6 +26,8 @@ const CardDelete = ({ card, deckId }) => {
     }
   `);
   const { toggleDeleteSuccess } = data;
+
+  const [deckId] = useAtom(deckIdAtom);
 
   const [deleteCard, { loading, error }] = useMutation(DELETE_CARD, {
     optimisticResponse: {

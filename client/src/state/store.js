@@ -2,6 +2,7 @@ import { atom } from "jotai";
 
 export const successAlertAtom = atom(false);
 export const isSubmittingAtom = atom(false);
+export const deckIdAtom = atom(null);
 
 export const modalAtom = atom({
   toggleOn: false,

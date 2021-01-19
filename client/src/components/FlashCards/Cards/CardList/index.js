@@ -1,9 +1,8 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { withRouter } from "react-router-dom";
-import { useQuery, useApolloClient } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import gql from "graphql-tag";
 
 import CARDS_QUERY from "./CardListSchema/CardListSchema";
 import withAuthorization from "../../../Session/withAuthorization";
@@ -16,18 +15,19 @@ import CardCreate from "../CardCreate";
 import CardEdit from "../CardEdit";
 import Button from "../../../../theme/Button";
 import withSession from "../../../Session/withSession";
+import { useAtom } from "jotai";
+import { deckIdAtom, modalAtom } from "../../../../state/store";
 
 export const CardList = ({ match, session }) => {
   let { id } = match.params;
   id = parseInt(id);
 
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleAddCard @client
-    }
-  `);
-  const { toggleAddCard } = data;
+  const [, setModal] = useAtom(modalAtom);
+  const [, setDeckId] = useAtom(deckIdAtom);
+
+  useEffect(() => {
+    setDeckId(id);
+  }, [id, setDeckId]);
 
   const { data: cardData, error, loading } = useQuery(CARDS_QUERY, {
     variables: { id },
@@ -42,10 +42,16 @@ export const CardList = ({ match, session }) => {
     deck: { cards, deckName },
   } = cardData;
 
-  const togglePopupModal = () => {
-    client.writeData({
-      data: { toggleAddCard: !toggleAddCard, current: id },
-    });
+  const toggleOnModal = (e) => {
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: true,
+          modalId: id,
+          target: e.target.id,
+        })
+    );
   };
 
   let authorizedRole;
@@ -68,7 +74,7 @@ export const CardList = ({ match, session }) => {
           <div>
             <CardCountButton>{cards.length}</CardCountButton> Cards
             {authorizedRole && (
-              <AddCardButton type="button" onClick={togglePopupModal}>
+              <AddCardButton id="addcard" type="button" onClick={toggleOnModal}>
                 Add Card
               </AddCardButton>
             )}

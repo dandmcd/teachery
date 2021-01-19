@@ -2,22 +2,16 @@ import React, { useState, Fragment } from "react";
 import Moment from "react-moment";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { useApolloClient, useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
 
 import Button from "../../../../theme/Button";
 import withSession from "../../../Session/withSession";
 import CardDelete from "../CardDelete";
 import * as Styled from "./style";
+import { useAtom } from "jotai";
+import { modalAtom } from "../../../../state/store";
 
-const CardItem = ({ card, deckId, authorizedRole }) => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleEditCard @client
-    }
-  `);
-  const { toggleEditCard } = data;
+const CardItem = ({ card, authorizedRole }) => {
+  const [modal, setModal] = useAtom(modalAtom);
 
   const [cardChecked, setCardChecked] = useState(false);
 
@@ -25,14 +19,16 @@ const CardItem = ({ card, deckId, authorizedRole }) => {
     setCardChecked(cardChecked === false ? true : false);
   };
 
-  const togglePopupModal = () => {
-    client.writeData({
-      data: {
-        toggleEditCard: !toggleEditCard,
-        current: card.id,
-        currentDeckId: deckId,
-      },
-    });
+  const toggleOnModal = (e) => {
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: true,
+          modalId: card.id,
+          target: e.target.id,
+        })
+    );
   };
 
   return (
@@ -75,11 +71,11 @@ const CardItem = ({ card, deckId, authorizedRole }) => {
             <Moment format="YYYY-MM-DD HH:mm">{card.createdAt}</Moment>
           </Created>
           {authorizedRole && (
-            <EditButton type="button" onClick={togglePopupModal}>
+            <EditButton id="cardedit" type="button" onClick={toggleOnModal}>
               Edit
             </EditButton>
           )}
-          {authorizedRole && <CardDelete card={card} deckId={deckId} />}
+          {authorizedRole && <CardDelete card={card} />}
         </Styled.Container>
       ) : null}
     </Fragment>
@@ -88,7 +84,6 @@ const CardItem = ({ card, deckId, authorizedRole }) => {
 
 CardItem.propTypes = {
   card: PropTypes.object.isRequired,
-  deckUserId: PropTypes.string.isRequired,
   session: PropTypes.object.isRequired,
 };
 

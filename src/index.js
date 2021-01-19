@@ -19,7 +19,7 @@ app.use(cors());
 
 app.use(morgan("dev"));
 
-const getMe = async req => {
+const getMe = async (req) => {
   const token = req.headers["x-token"];
 
   if (token) {
@@ -36,14 +36,14 @@ const server = new ApolloServer({
   playground: true,
   typeDefs: schema,
   resolvers,
-  formatError: error => {
+  formatError: (error) => {
     const message = error.message
       .replace("SequelizeValidationError: ", "")
       .replace("Validation error: ", "");
 
     return {
       ...error,
-      message
+      message,
     };
   },
   context: async ({ req, connection }) => {
@@ -51,15 +51,15 @@ const server = new ApolloServer({
       return {
         models,
         loaders: {
-          user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
-          deck: new DataLoader(keys => loaders.deck.batchDecks(keys, models)),
-          assignment: new DataLoader(keys =>
+          user: new DataLoader((keys) => loaders.user.batchUsers(keys, models)),
+          deck: new DataLoader((keys) => loaders.deck.batchDecks(keys, models)),
+          assignment: new DataLoader((keys) =>
             loaders.assignment.batchAssignments(keys, models)
           ),
-          assignedTask: new DataLoader(keys =>
+          assignedTask: new DataLoader((keys) =>
             loaders.assignedTask.batchAssignedTasks(keys, models)
-          )
-        }
+          ),
+        },
       };
     }
 
@@ -71,18 +71,18 @@ const server = new ApolloServer({
         me,
         secret: process.env.SECRET,
         loaders: {
-          user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
-          deck: new DataLoader(keys => loaders.deck.batchDecks(keys, models)),
-          assignment: new DataLoader(keys =>
+          user: new DataLoader((keys) => loaders.user.batchUsers(keys, models)),
+          deck: new DataLoader((keys) => loaders.deck.batchDecks(keys, models)),
+          assignment: new DataLoader((keys) =>
             loaders.assignment.batchAssignments(keys, models)
           ),
-          assignedTask: new DataLoader(keys =>
+          assignedTask: new DataLoader((keys) =>
             loaders.assignedTask.batchAssignedTasks(keys, models)
-          )
-        }
+          ),
+        },
       };
     }
-  }
+  },
 });
 
 server.applyMiddleware({ app, path: "/graphql" });
@@ -102,12 +102,12 @@ httpServer.listen({ port }, () => {
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
-  app.get("/*", function(req, res) {
+  app.get("/*", function (req, res) {
     res.sendFile(path.join(__dirname, "../client/build/index.html"));
   });
 } else {
   app.use(express.static(path.join(__dirname, "/client/public")));
-  app.get("/*", function(req, res) {
-    res.sendFile(path.join(__dirname, "./client/public/index.html"));
+  app.get("/*", function (req, res) {
+    res.sendFile(path.join(__dirname, "../client/public/index.html"));
   });
 }
