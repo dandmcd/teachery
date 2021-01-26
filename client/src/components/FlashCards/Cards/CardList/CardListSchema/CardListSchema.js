@@ -5,6 +5,9 @@ const CARDS_QUERY = gql`
     deck(id: $id) {
       id
       deckName
+      description
+      deckImageUrl
+      createdAt
       user {
         id
       }

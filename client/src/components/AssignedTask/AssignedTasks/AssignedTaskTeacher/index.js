@@ -174,6 +174,7 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
           toggleOn: true,
           modalId: id,
           target: e.target.id,
+          editFileText: updatedDocumentUrl != null ? "Change" : "Add File",
         })
     );
   };

@@ -8,11 +8,11 @@ const Modal = ({ children, toggleOn, onToggleOffModal }) => {
   return toggleOn ? (
     <Styled.PopupContainer>
       <BackgroundOverlay />
-      <Styled.PopupInnerExtended>
-        <ClickHandler toggleOn={toggleOn} closeModal={onToggleOffModal}>
+      <ClickHandler toggleOn={toggleOn} closeModal={onToggleOffModal}>
+        <Styled.PopupInnerExtended>
           <div>{children}</div>
-        </ClickHandler>
-      </Styled.PopupInnerExtended>
+        </Styled.PopupInnerExtended>
+      </ClickHandler>
     </Styled.PopupContainer>
   ) : null;
 };

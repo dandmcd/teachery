@@ -203,6 +203,18 @@ export const PopupFooterButton = styled.button`
   outline: none;
 `;
 
+export const CardDiv = styled.div`
+  margin-top: 0.5em;
+  margin-bottom: 0.7em;
+`;
+
+export const CardFile = styled.a``;
+
+export const DownloadIcon = styled.img`
+  width: 20px;
+  height: 20px;
+`;
+
 export const CardImg = styled.img`
   -o-object-fit: cover;
   object-fit: cover;

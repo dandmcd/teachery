@@ -11,7 +11,7 @@ import { useAtom } from "jotai";
 import { modalAtom } from "../../../../state/store";
 
 const CardItem = ({ card, authorizedRole }) => {
-  const [modal, setModal] = useAtom(modalAtom);
+  const [, setModal] = useAtom(modalAtom);
 
   const [cardChecked, setCardChecked] = useState(false);
 
@@ -27,6 +27,7 @@ const CardItem = ({ card, authorizedRole }) => {
           toggleOn: true,
           modalId: card.id,
           target: e.target.id,
+          editFileText: card.pictureUrl != null ? "Change" : "Add Image",
         })
     );
   };

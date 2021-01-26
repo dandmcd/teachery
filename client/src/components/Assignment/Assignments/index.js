@@ -150,6 +150,7 @@ const AssignmentItemBase = ({ assignment, session }) => {
           toggleOn: true,
           modalId: assignment.id,
           target: e.target.id,
+          editFileText: assignment.documentUrl != null ? "Change" : "Add Image",
         })
     );
   };

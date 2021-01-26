@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useCallback } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
@@ -18,6 +18,7 @@ import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import withSession from "../../../Session/withSession";
 import Modal from "../../../Modal";
+import download from "../../../../assets/download.png";
 
 const UPDATE_ASSIGNED_TASK = gql`
   mutation(
@@ -87,7 +88,7 @@ const AssignTaskUpdate = ({ session }) => {
   const client = useApolloClient();
 
   const [modal, setModal] = useAtom(modalAtom);
-  const { toggleOn, modalId, target, editImg } = modal;
+  const { toggleOn, modalId, target, editImg, editFileText } = modal;
 
   const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
   const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
@@ -162,9 +163,26 @@ const AssignTaskUpdate = ({ session }) => {
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleClick = () => {
-    setModal((m) => (m = { ...m, editImg: !m.editImg }));
-  };
+  const handleClick = useCallback(() => {
+    if (editImg && updatedDocumentUrl === null) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Add File" })
+      );
+      setDrop(null);
+    } else if (!editImg && updatedDocumentUrl === null) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "No File" })
+      );
+    } else if (!editImg && updatedDocumentUrl) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Keep File" })
+      );
+    } else if (editImg && updatedDocumentUrl) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Change" })
+      );
+    }
+  }, [editImg, updatedDocumentUrl, setModal]);
 
   // S3 Sign and format
   const uploadToS3 = async (file, signedRequest) => {
@@ -209,15 +227,6 @@ const AssignTaskUpdate = ({ session }) => {
             updatedDocumentName: drop.name,
             updatedDocumentUrl: url,
           },
-        }).then(async ({ data }) => {
-          setState({
-            id: id,
-            assignedTo: assignedTo,
-            dueDate: dueDate,
-            status: status,
-            updatedDocumentName: "",
-            updatedDocumentUrl: "",
-          });
         });
         setIsSubmitting((a) => (a = false));
       } catch (error) {
@@ -245,15 +254,6 @@ const AssignTaskUpdate = ({ session }) => {
             updatedDocumentName: updatedDocumentName,
             updatedDocumentUrl: updatedDocumentUrl,
           },
-        }).then(async ({ data }) => {
-          setState({
-            id: id,
-            assignedTo: assignedTo,
-            dueDate: dueDate,
-            status: status,
-            updatedDocumentName: "",
-            updatedDocumentUrl: "",
-          });
         });
       } catch (error) {
         setIsSubmitting((a) => (a = false));
@@ -262,7 +262,33 @@ const AssignTaskUpdate = ({ session }) => {
   };
 
   const toggleOffModal = () => {
-    setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: false,
+          editImg: false,
+        })
+    );
+    setDrop(null);
+  };
+
+  const onDelete = (e) => {
+    setState({
+      id: id,
+      assignedTo: assignedTo,
+      dueDate: dueDate,
+      status: status,
+      updatedDocumentName: "",
+      updatedDocumentUrl: null,
+    });
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          editFileText: "Add File",
+        })
+    );
   };
 
   let superRole;
@@ -318,36 +344,35 @@ const AssignTaskUpdate = ({ session }) => {
                 </Fragment>
               )}
               {updatedDocumentUrl ? (
-                <div>
-                  <Styled.CardImg
-                    src={updatedDocumentUrl}
-                    alt={updatedDocumentUrl}
-                  />
-                </div>
+                <Styled.CardDiv>
+                  <Styled.CardFile
+                    href={updatedDocumentUrl}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <Styled.DownloadIcon src={download} /> View uploaded file
+                  </Styled.CardFile>
+                </Styled.CardDiv>
               ) : null}
-              <Styled.AddButton type="button" onClick={handleClick}>
-                {!editImg && updatedDocumentUrl === null
-                  ? "Add File"
-                  : !editImg
-                  ? "Change"
-                  : "Keep Original"}
-              </Styled.AddButton>
+              {!drop ? (
+                <Styled.AddButton type="button" onClick={handleClick}>
+                  {editFileText}
+                </Styled.AddButton>
+              ) : null}
               {updatedDocumentUrl !== null && (
                 <Styled.DeleteButton
                   updatedDocumentUrl={updatedDocumentUrl}
                   type="button"
-                  onClick={() =>
-                    setState({
-                      id: id,
-                      assignedTo: assignedTo,
-                      dueDate: dueDate,
-                      status: status,
-                      updatedDocumentName: "",
-                      updatedDocumentUrl: "",
-                    })
-                  }
+                  onClick={(e) => {
+                    if (
+                      window.confirm(
+                        "Are you sure you wish to remove this file?  Changes won't be saved until you Submit changes."
+                      )
+                    )
+                      onDelete(e);
+                  }}
                 >
-                  Remove File
+                  Delete File
                 </Styled.DeleteButton>
               )}
               {editImg && (
