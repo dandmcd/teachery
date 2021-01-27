@@ -10,7 +10,7 @@ const CardDeck = ({ cards }) => {
   const [state, setState] = useState({
     index: 0,
     countRight: 0,
-    countWrong: 0
+    countWrong: 0,
   });
   const { index, countRight, countWrong } = state;
 
@@ -18,7 +18,7 @@ const CardDeck = ({ cards }) => {
     setState({
       countRight: countRight + 1,
       countWrong: countWrong,
-      index: index + 1
+      index: index + 1,
     });
     setIsFlipped(false);
   };
@@ -27,20 +27,38 @@ const CardDeck = ({ cards }) => {
     setState({
       countRight: countRight,
       countWrong: countWrong + 1,
-      index: index + 1
+      index: index + 1,
     });
     setIsFlipped(false);
   };
 
-  const handleCardFlip = e => {
+  const handleKeyPress = (e) => {
+    if (e.key === "r") {
+      onClickIncrement();
+    } else if (e.key === "w") {
+      onClickDecrement();
+    } else if (e.key === " ") {
+      handleCardFlip();
+      console.log("happening");
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress, false);
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress, false);
+    };
+  });
+
+  const handleCardFlip = () => {
     setIsFlipped(isFlipped === false ? true : false);
   };
 
   //Preload card images
-  let cardsWithImages = cards.filter(card => card.pictureUrl);
-  const cardUrls = cardsWithImages.map(card => card.pictureUrl);
+  let cardsWithImages = cards.filter((card) => card.pictureUrl);
+  const cardUrls = cardsWithImages.map((card) => card.pictureUrl);
   useEffect(() => {
-    cardUrls.forEach(image => {
+    cardUrls.forEach((image) => {
       new Image().src = image;
     });
   }, [cardUrls]);
@@ -66,7 +84,7 @@ const CardDeck = ({ cards }) => {
       <Styled.Container>
         <Styled.Box>
           <Styled.CardFront>{card.front}</Styled.CardFront>
-          {cardUrls.map(url => url) && card.pictureUrl && (
+          {cardUrls.map((url) => url) && card.pictureUrl && (
             <Styled.CardImg src={card.pictureUrl} alt={card.front} />
           )}
           {isFlipped && (
@@ -78,19 +96,30 @@ const CardDeck = ({ cards }) => {
         </Styled.Box>
         <Styled.Footer>
           <Styled.FooterLeft>
-            <Styled.CorrectButton onClick={onClickIncrement}>
-              Right
-            </Styled.CorrectButton>
+            <Styled.WrongButton
+              onKeyDown={handleKeyPress}
+              onClick={onClickDecrement}
+            >
+              <u>W</u>rong
+            </Styled.WrongButton>
           </Styled.FooterLeft>
           <Styled.BigButtonDiv>
-            <Styled.ShowAnswer onClick={handleCardFlip}>
+            <Styled.ShowAnswer
+              onKeyDown={handleKeyPress}
+              onClick={handleCardFlip}
+              isFlipped={isFlipped}
+            >
               {isFlipped ? "Hide Answer" : "Show Answer"}
             </Styled.ShowAnswer>
           </Styled.BigButtonDiv>
           <Styled.FooterRight>
-            <Styled.WrongButton onClick={onClickDecrement}>
-              Wrong
-            </Styled.WrongButton>
+            <Styled.CorrectButton
+              tabIndex="1"
+              onKeyDown={handleKeyPress}
+              onClick={onClickIncrement}
+            >
+              <u>R</u>ight
+            </Styled.CorrectButton>
           </Styled.FooterRight>
         </Styled.Footer>
       </Styled.Container>
@@ -99,7 +128,7 @@ const CardDeck = ({ cards }) => {
 };
 
 CardDeck.propTypes = {
-  cards: PropTypes.array.isRequired
+  cards: PropTypes.array.isRequired,
 };
 
 export default CardDeck;
