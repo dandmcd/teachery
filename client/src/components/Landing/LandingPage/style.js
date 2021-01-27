@@ -141,7 +141,7 @@ export const ExploreMenu = styled.div`
   flex-direction: row;
   max-width: 1100px;
   padding: 2em 0;
-  margin: 0 auto 5em auto;
+  margin: 0 auto;
   border-radius: 4px;
   background-color: ${(props) => props.theme.appBody};
 `;
@@ -176,7 +176,7 @@ export const CTAButton = styled(Button)`
 `;
 
 export const Explore = styled.div`
-  margin: 2.2em auto 0 auto;
+  margin: 1.5em auto 0 auto;
   cursor: ${(props) => props.cursor || "default"};
 `;
 
@@ -198,6 +198,13 @@ export const ExploreH3 = styled.h3`
 
 export const ExploreH3Top = styled(ExploreH3)`
   font-size: 24px;
+  opacity: 1;
+  transition: opacity 0.25s ease-in-out;
+  -moz-transition: opacity 0.25s ease-in-out;
+  -webkit-transition: opacity 0.25s ease-in-out;
+  :hover {
+    opacity: 0.5;
+  }
 `;
 
 export const ArrowDown = styled.i`
