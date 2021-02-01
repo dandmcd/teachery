@@ -13,7 +13,6 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import axios from "axios";
 import { buildAxiosFetch } from "@lifeomic/axios-fetch";
 
-import { resolvers, typeDefs } from "./state/resolvers";
 import App from "./components/App";
 import { signOut } from "./components/SignOut";
 
@@ -90,49 +89,6 @@ const client = new ApolloClient({
   fetchOptions: { fetch },
   link,
   cache,
-  typeDefs,
-  resolvers,
-});
-
-const data = {
-  toggleExplore: false,
-  toggleLanding: 0,
-  togglePopup: false,
-  toggleAddCard: false,
-  toggleEditCard: false,
-  toggleEditDeck: false,
-  toggleAddTag: false,
-  toggleAssign: false,
-  toggleAssignUpdate: false,
-  toggleAssignmentEdit: false,
-  toggleForgotPassword: false,
-  toggleSuccess: false,
-  toggleDeleteSuccess: false,
-  toggleRoleChange: false,
-  toggleBookmarks: false,
-  linkedToPage: false,
-  isSubmitting: false,
-  isSuccessfulChange: false,
-  paramT: "",
-  assignmentId: null,
-  current: null,
-  currentDeckId: null,
-  customError: null,
-  editImg: false,
-  search: {
-    __typename: "Search",
-    showPopup: false,
-    noResult: false,
-    tagName: "",
-    tags: [],
-  },
-};
-
-cache.writeData({ data });
-
-client.onResetStore(async () => cache.writeData({ data }));
-client.onClearStore(async () => {
-  cache.writeData({ data });
 });
 
 ReactDOM.render(

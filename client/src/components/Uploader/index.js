@@ -2,19 +2,14 @@ import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import Resizer from "react-image-file-resizer";
 import PropTypes from "prop-types";
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
 
 import * as Styled from "./style";
 import Button from "../../theme/Button";
+import { useAtom } from "jotai";
+import { successAlertAtom } from "../../state/store";
 
 const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-    }
-  `);
-  const { toggleSuccess } = data;
+  const [successAlert] = useAtom(successAlertAtom);
 
   const [files, setFiles] = useState([]);
   const onDrop = useCallback(
@@ -132,11 +127,11 @@ const DropZone = ({ props, setDrop, setImage, isCard, isDeck, isDocument }) => {
 
   useEffect(
     (file) => {
-      if (toggleSuccess) {
+      if (successAlert) {
         removeOnSuccess();
       }
     },
-    [toggleSuccess, removeOnSuccess]
+    [successAlert, removeOnSuccess]
   );
 
   return (

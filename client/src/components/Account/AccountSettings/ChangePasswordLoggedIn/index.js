@@ -1,6 +1,8 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import gql from "graphql-tag";
-import { useMutation, useQuery, useApolloClient } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
+import PropTypes from "prop-types";
+import { useAtom } from "jotai";
 
 import * as Styled from "./style";
 import Loading from "../../../Alerts/Loading";
@@ -9,6 +11,11 @@ import ErrorMessage from "../../../Alerts/Error";
 import * as routes from "../../../../routing/routes";
 import { Link } from "react-router-dom";
 import withSession from "../../../Session/withSession";
+import {
+  customErrorAtom,
+  isPasswordChangedAtom,
+  successAlertAtom,
+} from "../../../../state/store";
 
 const CHANGE_PASSWORD_LOGGED_IN = gql`
   mutation($id: ID!, $password: String!) {
@@ -18,19 +25,15 @@ const CHANGE_PASSWORD_LOGGED_IN = gql`
 
 const INITIAL_STATE = {
   password: "",
-  passwordConfirmation: ""
+  passwordConfirmation: "",
 };
 
 const ChangePasswordLoggedIn = ({ session }) => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-      customError @client
-      isSuccessfulChange @client
-    }
-  `);
-  const { toggleSuccess, customError, isSuccessfulChange } = data;
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
+  const [customError, setCustomError] = useAtom(customErrorAtom);
+  const [isPasswordChanged, setIsPasswordChanged] = useAtom(
+    isPasswordChangedAtom
+  );
 
   const [{ password, passwordConfirmation }, setState] = useState(
     INITIAL_STATE
@@ -39,52 +42,52 @@ const ChangePasswordLoggedIn = ({ session }) => {
   const [changePasswordLoggedIn, { loading, error }] = useMutation(
     CHANGE_PASSWORD_LOGGED_IN,
     {
-      onError: err => {
-        client.writeData({ data: { toggleSuccess: false } });
+      onError: (err) => {
+        setSuccessAlert((a) => (a = false));
       },
-      onCompleted: data => {
-        client.writeData({ data: { toggleSuccess: true } });
-      }
+      onCompleted: (data) => {
+        setSuccessAlert((a) => (a = true));
+      },
     }
   );
 
   useEffect(() => {
-    if (toggleSuccess) {
+    if (successAlert) {
       setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+        setSuccessAlert((a) => (a = false));
       }, 5000);
     }
-  }, [client, toggleSuccess]);
+  }, [successAlert, setSuccessAlert]);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const onSubmit = async (e, changePasswordLoggedIn) => {
     e.preventDefault();
     if (password !== passwordConfirmation) {
-      client.writeData({ data: { customError: "Password doesn't match" } });
+      setCustomError((c) => (c = "Password doesn't match"));
     } else {
-      client.writeData({ data: { customError: null } });
+      setCustomError((c) => (c = null));
       try {
         await changePasswordLoggedIn({
           variables: {
             id: session.me.id,
-            password: password
-          }
+            password: password,
+          },
         }).then(async ({ data }) => {
           setState({ ...INITIAL_STATE });
-          client.writeData({ data: { isSuccessfulChange: true } });
+          setIsPasswordChanged((a) => (a = true));
         });
       } catch {}
     }
   };
 
   return (
-    <Fragment>
-      {!isSuccessfulChange ? (
-        <Styled.Box onSubmit={e => onSubmit(e, changePasswordLoggedIn)}>
+    <>
+      {!isPasswordChanged ? (
+        <Styled.Box onSubmit={(e) => onSubmit(e, changePasswordLoggedIn)}>
           <Styled.Title>Change Password</Styled.Title>
           <Styled.Label>
             <Styled.Span>
@@ -121,19 +124,23 @@ const ChangePasswordLoggedIn = ({ session }) => {
           {customError && <ErrorMessage customError={customError} />}
         </Styled.Box>
       ) : (
-        <Fragment>
+        <>
           <Styled.Box>
             <Styled.Title>
               <Link to={routes.ACCOUNT}>Return to Account</Link>
             </Styled.Title>
-            {toggleSuccess && (
+            {successAlert && (
               <SuccessMessage message="Password Change Successful!" />
             )}
           </Styled.Box>
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
+};
+
+ChangePasswordLoggedIn.propTypes = {
+  session: PropTypes.object,
 };
 
 export default withSession(ChangePasswordLoggedIn);

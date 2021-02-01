@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
@@ -58,7 +58,7 @@ const CardEdit = () => {
   const client = useApolloClient();
 
   const [modal, setModal] = useAtom(modalAtom);
-  const { toggleOn, modalId, target, editImg } = modal;
+  const { toggleOn, modalId, target, editImg, editFileText } = modal;
   const [deckId] = useAtom(deckIdAtom);
 
   const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
@@ -75,18 +75,6 @@ const CardEdit = () => {
 
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [updateCard, { loading, error }] = useMutation(UPDATE_CARD, {
-    optimisticResponse: {
-      __typename: "Mutation",
-      updateCard: {
-        id: id,
-        __typename: "",
-        front: front,
-        back: back,
-        pictureName: pictureName,
-        pictureUrl: pictureUrl,
-      },
-    },
-
     onError: (err) => {
       setSuccessAlert((a) => (a = false));
     },
@@ -130,9 +118,26 @@ const CardEdit = () => {
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleClick = () => {
-    setModal((m) => (m = { ...m, editImg: !m.editImg }));
-  };
+  const handleClick = useCallback(() => {
+    if (editImg && pictureUrl === null) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Add Image" })
+      );
+      setDrop(null);
+    } else if (!editImg && pictureUrl === null) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "No Image" })
+      );
+    } else if (!editImg && pictureUrl) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Keep Image" })
+      );
+    } else if (editImg && pictureUrl) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Change" })
+      );
+    }
+  }, [editImg, pictureUrl, setModal]);
 
   const isInvalid = front === "";
 
@@ -157,7 +162,7 @@ const CardEdit = () => {
     e.preventDefault();
     if (drop) {
       try {
-        client.writeData({ data: { isSubmitting: true } });
+        setIsSubmitting((a) => (a = true));
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
@@ -213,7 +218,33 @@ const CardEdit = () => {
   };
 
   const toggleOffModal = () => {
-    setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: false,
+          editImg: false,
+        })
+    );
+    setDrop(null);
+    setSuccessAlert((a) => (a = false));
+  };
+
+  const onDelete = (e) => {
+    setState({
+      id: id,
+      front: front,
+      back: back,
+      pictureUrl: null,
+      pictureName: "",
+    });
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          editFileText: "Add Image",
+        })
+    );
   };
 
   return (
@@ -255,28 +286,25 @@ const CardEdit = () => {
                   <Styled.CardImg src={pictureUrl} alt={pictureUrl} />
                 </div>
               ) : null}
-              <Styled.AddButton type="button" onClick={handleClick}>
-                {!editImg && pictureUrl === null
-                  ? "Add File"
-                  : !editImg
-                  ? "Change"
-                  : "Keep Original"}
-              </Styled.AddButton>
+              {!drop ? (
+                <Styled.AddButton type="button" onClick={handleClick}>
+                  {editFileText}
+                </Styled.AddButton>
+              ) : null}
               {pictureUrl !== null && (
                 <Styled.DeleteButton
                   pictureUrl={pictureUrl}
                   type="button"
-                  onClick={() =>
-                    setState({
-                      id: id,
-                      front: front,
-                      back: back,
-                      pictureUrl: "",
-                      pictureName: "",
-                    })
-                  }
+                  onClick={(e) => {
+                    if (
+                      window.confirm(
+                        "Are you sure you wish to remove this file?  Changes won't be saved until you Submit changes."
+                      )
+                    )
+                      onDelete(e);
+                  }}
                 >
-                  Remove File
+                  Delete Image
                 </Styled.DeleteButton>
               )}
               {editImg && <DropZone setDrop={setDrop} isCard={"isCard"} />}

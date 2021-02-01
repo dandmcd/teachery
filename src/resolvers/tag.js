@@ -3,9 +3,9 @@ import { combineResolvers } from "graphql-resolvers";
 
 import { isAdmin } from "./authorization";
 
-const toCursorHash = string => Buffer.from(string).toString("base64");
+const toCursorHash = (string) => Buffer.from(string).toString("base64");
 
-const fromCursorHash = string =>
+const fromCursorHash = (string) =>
   Buffer.from(string, "base64").toString("ascii");
 
 export default {
@@ -15,16 +15,16 @@ export default {
         ? {
             where: {
               createdAt: {
-                [Sequelize.Op.lt]: fromCursorHash(cursor)
-              }
-            }
+                [Sequelize.Op.lt]: fromCursorHash(cursor),
+              },
+            },
           }
         : {};
 
       const tags = await models.Tag.findAll({
         order: [["createdAt", "DESC"]],
         limit: limit + 1,
-        ...cursorOptions
+        ...cursorOptions,
       });
 
       const hasNextPage = tags.length > limit;
@@ -34,8 +34,8 @@ export default {
         edges,
         pageInfo: {
           hasNextPage,
-          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
-        }
+          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString()),
+        },
       };
     },
     tag: async (parent, { id }, { models }) => {
@@ -46,11 +46,11 @@ export default {
         include: [models.Deck],
         where: {
           tagName: {
-            [Sequelize.Op.iLike]: "%" + tagName + "%"
-          }
-        }
+            [Sequelize.Op.iLike]: "%" + tagName + "%",
+          },
+        },
       });
-    }
+    },
   },
 
   Mutation: {
@@ -58,7 +58,7 @@ export default {
       isAdmin,
       async (parent, { tagName }, { models, me }) => {
         const tag = await models.Tag.create({
-          tagName
+          tagName,
         });
         return tag;
       }
@@ -66,9 +66,9 @@ export default {
 
     deleteTag: combineResolvers(isAdmin, async (parent, { id }, { models }) => {
       return await models.Tag.destroy({
-        where: { id }
+        where: { id },
       });
-    })
+    }),
   },
 
   Tag: {
@@ -78,11 +78,11 @@ export default {
           {
             model: models.Tag,
             where: {
-              id: tag.id
-            }
-          }
-        ]
+              id: tag.id,
+            },
+          },
+        ],
       });
-    }
-  }
+    },
+  },
 };

@@ -174,6 +174,7 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
           toggleOn: true,
           modalId: id,
           target: e.target.id,
+          editFileText: updatedDocumentUrl != null ? "Change" : "Add File",
         })
     );
   };
@@ -269,7 +270,7 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
 
 AssignmentItemBase.propTypes = {
   assignedTask: PropTypes.object.isRequired,
-  me: PropTypes.object,
+  session: PropTypes.object,
 };
 
 const Container = styled.div`

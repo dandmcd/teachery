@@ -1,7 +1,9 @@
 import React, { Fragment } from "react";
-import { useApolloClient, useQuery } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/react-hooks";
 import moment from "moment";
 import { Link } from "react-router-dom";
+import { useAtom } from "jotai";
+import PropTypes from "prop-types";
 
 import withSession from "../../Session/withSession";
 import Loading from "../../Alerts/Loading";
@@ -12,9 +14,10 @@ import GET_DASHBOARD from "../DashboardSchema";
 import liked from "../../../assets/liked.png";
 import * as routes from "../../../routing/routes";
 import * as Styled from "./style";
+import { bookmarkAtom } from "../../../state/store";
 
 const DashboardPage = ({ session, me }) => {
-  const client = useApolloClient();
+  const [, setBookmark] = useAtom(bookmarkAtom);
 
   const { data, error, loading } = useQuery(GET_DASHBOARD, {});
   if (loading && !data) {
@@ -32,9 +35,9 @@ const DashboardPage = ({ session, me }) => {
     overdue = 0;
   } else {
     incomplete = data.dueAssignedTasks.edges.filter(
-      item => item.status === "INCOMPLETE"
+      (item) => item.status === "INCOMPLETE"
     );
-    overdue = incomplete.filter(item =>
+    overdue = incomplete.filter((item) =>
       moment(date).isSameOrAfter(item.dueDate)
     );
     incomplete = incomplete.length;
@@ -42,15 +45,25 @@ const DashboardPage = ({ session, me }) => {
   }
 
   const toggleBookmarksLink = () => {
-    client.writeData({
-      data: { toggleBookmarks: true, linkedToPage: true }
-    });
+    setBookmark(
+      (a) =>
+        (a = {
+          ...a,
+          toggleBookmarks: true,
+          linkedToPage: true,
+        })
+    );
   };
 
   const toggleBookmarksLinkAll = () => {
-    client.writeData({
-      data: { toggleBookmarks: false, linkedToPage: true }
-    });
+    setBookmark(
+      (a) =>
+        (a = {
+          ...a,
+          toggleBookmarks: false,
+          linkedToPage: true,
+        })
+    );
   };
 
   return (
@@ -164,6 +177,11 @@ const EmptyAssignedContainer = () => {
       </Styled.EmptyCardGrid>
     </Styled.EmptyAssignmentItemContainer>
   );
+};
+
+DashboardPage.propTypes = {
+  session: PropTypes.object,
+  me: PropTypes.object,
 };
 
 export default withSession(DashboardPage);

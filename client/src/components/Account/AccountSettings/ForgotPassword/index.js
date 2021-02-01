@@ -1,12 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
+import React, { useState, useEffect } from "react";
+import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
-import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
 import ErrorMessage from "../../../Alerts/Error";
 import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import * as Styled from "./style";
+import { successAlertAtom } from "../../../../state/store";
+import { useAtom } from "jotai";
 
 const FORGOT_PASSWORD = gql`
   mutation($email: String!) {
@@ -15,42 +16,36 @@ const FORGOT_PASSWORD = gql`
 `;
 
 const INITIAL_STATE = {
-  email: ""
+  email: "",
 };
 
 const ForgotPassword = () => {
   const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-      toggleForgotPassword @client
-    }
-  `);
 
-  const { toggleSuccess, toggleForgotPassword } = data;
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
 
   const [{ email }, setState] = useState(INITIAL_STATE);
 
   const [forgotPassword, { loading, error }] = useMutation(FORGOT_PASSWORD, {
-    onError: err => {
-      client.writeData({ data: { toggleSuccess: false } });
+    onError: (err) => {
+      setSuccessAlert((a) => (a = false));
     },
-    onCompleted: data => {
-      client.writeData({ data: { toggleSuccess: true } });
-    }
+    onCompleted: (data) => {
+      setSuccessAlert((a) => (a = true));
+    },
   });
 
   useEffect(() => {
-    if (toggleSuccess) {
+    if (successAlert) {
       setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+        setSuccessAlert((a) => (a = false));
       }, 10000);
     }
-  }, [client, toggleSuccess]);
+  }, [successAlert, setSuccessAlert]);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const onSubmit = async (e, forgotPassword) => {
@@ -60,43 +55,39 @@ const ForgotPassword = () => {
     try {
       await forgotPassword({
         variables: {
-          email: email
-        }
+          email: email,
+        },
       }).then(async ({ data }) => {
         setState({ ...INITIAL_STATE });
       });
     } catch {}
   };
 
-  const togglePopupModal = () => {
-    client.writeData({ data: { toggleForgotPassword: !toggleForgotPassword } });
-  };
-  const innerRef = useRef(null);
-  useOuterClickNotifier(togglePopupModal, innerRef);
-
   return (
-    <Styled.Box onSubmit={e => onSubmit(e, forgotPassword)}>
-      <Styled.Title>Reset Password</Styled.Title>
-      <Styled.Label>
-        <Styled.Span>
-          <Styled.LabelName>
-            Enter the email for the account you wish to reset
-          </Styled.LabelName>
-        </Styled.Span>
-        <Styled.InputConfirmPassword
-          name="email"
-          value={email}
-          onChange={onChange}
-          type="email"
-        />
-      </Styled.Label>
-      <Styled.SubmitButton type="submit">Submit</Styled.SubmitButton>
-      {loading && <Loading />}
-      {toggleSuccess && (
-        <SuccessMessage message="Password Reset Email Successfully Sent!" />
-      )}
-      {error && <ErrorMessage error={error} />}
-    </Styled.Box>
+    <>
+      <Styled.Box onSubmit={(e) => onSubmit(e, forgotPassword)}>
+        <Styled.Title>Reset Password</Styled.Title>
+        <Styled.Label>
+          <Styled.Span>
+            <Styled.LabelName>
+              Enter the email for the account you wish to reset
+            </Styled.LabelName>
+          </Styled.Span>
+          <Styled.InputConfirmPassword
+            name="email"
+            value={email}
+            onChange={onChange}
+            type="email"
+          />
+        </Styled.Label>
+        <Styled.SubmitButton type="submit">Submit</Styled.SubmitButton>
+        {loading && <Loading />}
+        {successAlert && (
+          <SuccessMessage message="Password Reset Email Successfully Sent!" />
+        )}
+        {error && <ErrorMessage error={error} />}
+      </Styled.Box>
+    </>
   );
 };
 

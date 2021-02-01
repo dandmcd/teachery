@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
@@ -55,7 +55,7 @@ const DeckEdit = () => {
   const client = useApolloClient();
 
   const [modal, setModal] = useAtom(modalAtom);
-  const { toggleOn, modalId, target, editImg } = modal;
+  const { toggleOn, modalId, target, editImg, editFileText } = modal;
 
   const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
   const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
@@ -71,18 +71,6 @@ const DeckEdit = () => {
 
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [updateDeck, { loading, error }] = useMutation(UPDATE_DECK, {
-    optimisticResponse: {
-      __typename: "Mutation",
-      updateDeck: {
-        __typename: "Deck",
-        id: id,
-        deckName,
-        description: description,
-        deckImageName: deckImageName,
-        deckImageUrl: deckImageUrl,
-        createdAt: new Date(),
-      },
-    },
     onError: (err) => {
       setSuccessAlert((a) => (a = false));
     },
@@ -126,9 +114,26 @@ const DeckEdit = () => {
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleClick = () => {
-    setModal((m) => (m = { ...m, editImg: !m.editImg }));
-  };
+  const handleClick = useCallback(() => {
+    if (editImg && deckImageUrl === null) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Add Image" })
+      );
+      setDrop(null);
+    } else if (!editImg && deckImageUrl === null) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "No Image" })
+      );
+    } else if (!editImg && deckImageUrl) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Keep Image" })
+      );
+    } else if (editImg && deckImageUrl) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Change" })
+      );
+    }
+  }, [editImg, deckImageUrl, setModal]);
 
   const isInvalid = deckName === "";
 
@@ -153,7 +158,7 @@ const DeckEdit = () => {
     e.preventDefault();
     if (drop) {
       try {
-        client.writeData({ data: { isSubmitting: true } });
+        setIsSubmitting((a) => (a = true));
         try {
           new File([image], drop.name);
         } catch (err) {
@@ -178,14 +183,6 @@ const DeckEdit = () => {
             deckImageName: drop.name,
             deckImageUrl: url,
           },
-        }).then(async ({ data }) => {
-          setState({
-            id: id,
-            deckName: deckName,
-            description: description,
-            deckImageName: "",
-            deckImageUrl: "",
-          });
         });
         setIsSubmitting((a) => (a = false));
       } catch (error) {
@@ -211,14 +208,6 @@ const DeckEdit = () => {
             deckImageUrl: deckImageUrl,
             deckImageName: deckImageName,
           },
-        }).then(async ({ data }) => {
-          setState({
-            id: id,
-            deckName: deckName,
-            description: description,
-            deckImageName: "",
-            deckImageUrl: "",
-          });
         });
       } catch (error) {
         setIsSubmitting((a) => (a = false));
@@ -227,7 +216,33 @@ const DeckEdit = () => {
   };
 
   const toggleOffModal = () => {
-    setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: false,
+          editImg: false,
+        })
+    );
+    setDrop(null);
+    setSuccessAlert((a) => (a = false));
+  };
+
+  const onDelete = (e) => {
+    setState({
+      id: id,
+      deckName: deckName,
+      description: description,
+      deckImageUrl: null,
+      deckImageName: "",
+    });
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          editFileText: "Add Image",
+        })
+    );
   };
 
   return (
@@ -269,26 +284,23 @@ const DeckEdit = () => {
                   <Styled.CardImg src={deckImageUrl} alt={deckImageUrl} />
                 </div>
               ) : null}
-              <Styled.AddButton type="button" onClick={handleClick}>
-                {!editImg && deckImageUrl === null
-                  ? "Add File"
-                  : !editImg
-                  ? "Change"
-                  : "Keep Original"}
-              </Styled.AddButton>
+              {!drop ? (
+                <Styled.AddButton type="button" onClick={handleClick}>
+                  {editFileText}
+                </Styled.AddButton>
+              ) : null}
               {deckImageUrl !== null && (
                 <Styled.DeleteButton
                   deckImageUrl={deckImageUrl}
                   type="button"
-                  onClick={() =>
-                    setState({
-                      id: id,
-                      deckName: deckName,
-                      description: description,
-                      deckImageUrl: "",
-                      deckImageName: "",
-                    })
-                  }
+                  onClick={(e) => {
+                    if (
+                      window.confirm(
+                        "Are you sure you wish to remove this file?  Changes won't be saved until you Submit changes."
+                      )
+                    )
+                      onDelete(e);
+                  }}
                 >
                   Remove File
                 </Styled.DeleteButton>

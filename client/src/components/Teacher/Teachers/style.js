@@ -29,7 +29,7 @@ export const MessageColumn = styled.div`
 `;
 
 export const TeacherHeader = styled.div`
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${(props) => props.theme.neutralLight};
   background-clip: border-box;
   width: 100%;
   margin: auto auto 5px auto;
@@ -91,13 +91,13 @@ export const Hr = styled.hr`
   width: 100%;
   background-image: -webkit-linear-gradient(
     left,
-    ${props => props.theme.primary},
-    ${props => props.theme.neutralLight}
+    ${(props) => props.theme.primary},
+    ${(props) => props.theme.neutralLight}
   );
 `;
 
 export const ViewButton = styled(Button)`
-  border: 2px solid ${props => props.theme.secondaryDark};
+  border: 2px solid ${(props) => props.theme.secondaryDark};
   width: 175px;
 `;
 
@@ -114,7 +114,7 @@ export const AssignmentItemContainer = styled.div`
   -ms-flex-item-align: center;
   -ms-grid-row-align: center;
   align-self: center;
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${(props) => props.theme.neutralLight};
   border-radius: 24px;
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
     0 6px 6px rgba(0, 0, 0, 0.23);
@@ -168,7 +168,7 @@ export const Welcome = styled.h2`
 export const Submitted = styled.h3`
   -ms-grid-row: 2;
   -ms-grid-column: 1;
-  color: ${props => props.theme.text};
+  color: ${(props) => props.theme.text};
   -webkit-margin-before: 0.5em;
   margin-block-start: 0.5em;
   -webkit-margin-after: 0.5em;
@@ -188,7 +188,7 @@ export const SubmittedButton = styled.button`
   outline: none;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.primaryDark};
+  background-color: ${(props) => props.theme.primaryDark};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -201,7 +201,7 @@ export const SubmittedButton = styled.button`
     transform: scale(1.15);
     -webkit-filter: brightness(105%);
     filter: brightness(105%);
-    background: ${props => props.theme.primaryDark};
+    background: ${(props) => props.theme.primaryDark};
   }
   :active {
     -webkit-filter: brightness(115%);
@@ -212,7 +212,7 @@ export const SubmittedButton = styled.button`
 export const Overdue = styled.h3`
   -ms-grid-row: 1;
   -ms-grid-column: 1;
-  color: ${props => props.theme.error};
+  color: ${(props) => props.theme.error};
   -webkit-margin-before: 0.5em;
   margin-block-start: 0.5em;
   -webkit-margin-after: 0.5em;
@@ -232,7 +232,7 @@ export const OverdueButton = styled.button`
   outline: none;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.error};
+  background-color: ${(props) => props.theme.error};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -245,7 +245,7 @@ export const OverdueButton = styled.button`
     transform: scale(1.15);
     -webkit-filter: brightness(105%);
     filter: brightness(105%);
-    background: ${props => props.theme.primaryDark};
+    background: ${(props) => props.theme.primaryDark};
   }
   :active {
     -webkit-filter: brightness(115%);
@@ -256,7 +256,7 @@ export const OverdueButton = styled.button`
 export const Incomplete = styled.h3`
   -ms-grid-row: 3;
   -ms-grid-column: 1;
-  color: ${props => props.theme.text};
+  color: ${(props) => props.theme.text};
   -webkit-margin-before: 0.5em;
   margin-block-start: 0.5em;
   -webkit-margin-after: 0.5em;
@@ -276,7 +276,7 @@ export const IncompleteButton = styled.button`
   outline: none;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.primaryMed};
+  background-color: ${(props) => props.theme.primaryMed};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -289,7 +289,7 @@ export const IncompleteButton = styled.button`
     transform: scale(1.15);
     -webkit-filter: brightness(105%);
     filter: brightness(105%);
-    background: ${props => props.theme.primaryDark};
+    background: ${(props) => props.theme.primaryDark};
   }
   :active {
     -webkit-filter: brightness(115%);
@@ -300,7 +300,7 @@ export const IncompleteButton = styled.button`
 export const NotGraded = styled.h3`
   -ms-grid-row: 4;
   -ms-grid-column: 1;
-  color: ${props => props.theme.text};
+  color: ${(props) => props.theme.text};
   -webkit-margin-before: 0.5em;
   margin-block-start: 0.5em;
   -webkit-margin-after: 0.5em;
@@ -320,7 +320,7 @@ export const NotGradedButton = styled.button`
   outline: none;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.secondaryDark};
+  background-color: ${(props) => props.theme.secondaryDark};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -333,7 +333,7 @@ export const NotGradedButton = styled.button`
     transform: scale(1.15);
     -webkit-filter: brightness(105%);
     filter: brightness(105%);
-    background: ${props => props.theme.secondaryDark};
+    background: ${(props) => props.theme.secondaryDark};
   }
   :active {
     -webkit-filter: brightness(115%);
@@ -351,7 +351,7 @@ export const CloseSpan = styled.span`
   height: 6px;
   margin: 0 auto;
   z-index: 20;
-  background: ${props =>
+  background: ${(props) =>
     props.tasksChecked || props.assignmentsChecked
       ? props.theme.secondaryDark
       : props.theme.primaryMed};
@@ -368,7 +368,7 @@ export const CloseSpan = styled.span`
     background 0.5s cubic-bezier(0.77, 0.2, 0.05, 1), opacity 0.55s ease,
     -webkit-transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
   :hover {
-    background: ${props => props.theme.disabled};
+    background: ${(props) => props.theme.disabled};
   }
 `;
 
@@ -383,7 +383,7 @@ export const PopupFooterButton = styled.button`
   border-radius: 4px;
   margin: 0.2em;
   padding: 0.4em 0.3em;
-  border: 2px solid ${props => props.theme.neutralLight};
+  border: 2px solid ${(props) => props.theme.neutralLight};
   -ms-grid-row-align: center;
   align-self: center;
   display: table-cell;
@@ -391,4 +391,8 @@ export const PopupFooterButton = styled.button`
   vertical-align: middle;
   cursor: pointer;
   outline: none;
+`;
+
+export const AssignmentCreateButton = styled(Button)`
+  width: 175px;
 `;

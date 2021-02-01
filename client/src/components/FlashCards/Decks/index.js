@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
-import { useQuery, useApolloClient } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import gql from "graphql-tag";
 
 import GET_PAGINATED_DECKS_WITH_USERS from "./DeckSchema";
 import Loading from "../../Alerts/Loading";
@@ -10,16 +9,12 @@ import ErrorMessage from "../../Alerts/Error";
 import DeckList from "./DeckList";
 import Button from "../../../theme/Button";
 import NoData from "../../Alerts/NoData";
+import { useAtom } from "jotai";
+import { bookmarkAtom } from "../../../state/store";
 
 const Decks = ({ limit, me }) => {
-  const client = useApolloClient();
-  const { data: toggleData } = useQuery(gql`
-    query Toggle {
-      toggleBookmarks @client
-      linkedToPage @client
-    }
-  `);
-  const { toggleBookmarks, linkedToPage } = toggleData;
+  const [bookmark, setBookmark] = useAtom(bookmarkAtom);
+  const { toggleBookmarks, linkedToPage } = bookmark;
 
   const { data, loading, error, fetchMore, refetch } = useQuery(
     GET_PAGINATED_DECKS_WITH_USERS,
@@ -31,17 +26,35 @@ const Decks = ({ limit, me }) => {
   useEffect(() => {
     if (toggleBookmarks && linkedToPage) {
       refetch();
-      client.writeData({ data: { linkedToPage: !linkedToPage } });
+      setBookmark(
+        (a) =>
+          (a = {
+            ...a,
+            linkedToPage: !linkedToPage,
+          })
+      );
     } else if (!toggleBookmarks && linkedToPage) {
       refetch();
-      client.writeData({ data: { linkedToPage: !linkedToPage } });
+      setBookmark(
+        (a) =>
+          (a = {
+            ...a,
+            linkedToPage: !linkedToPage,
+          })
+      );
     }
-  }, [client, linkedToPage, refetch, toggleBookmarks]);
+  }, [setBookmark, linkedToPage, refetch, toggleBookmarks]);
 
   useEffect(() => {
     if (linkedToPage) {
       window.scrollTo(0, 0);
-      client.writeData({ data: { linkedToPage: !linkedToPage } });
+      setBookmark(
+        (a) =>
+          (a = {
+            ...a,
+            linkedToPage: !linkedToPage,
+          })
+      );
     }
   });
 

@@ -1,13 +1,21 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import gql from "graphql-tag";
-import { useMutation, useQuery, useApolloClient } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
+import PropTypes from "prop-types";
+import { useAtom } from "jotai";
+import { Link } from "react-router-dom";
 
 import * as Styled from "./style";
 import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import * as routes from "../../../../routing/routes";
-import { Link } from "react-router-dom";
+import {
+  customErrorAtom,
+  successAlertAtom,
+  paramTAtom,
+  isPasswordChangedAtom,
+} from "../../../../state/store";
 
 const CHANGE_PASSWORD = gql`
   mutation($token: String!, $password: String!) {
@@ -19,71 +27,67 @@ const CHANGE_PASSWORD = gql`
 
 const INITIAL_STATE = {
   password: "",
-  passwordConfirmation: ""
+  passwordConfirmation: "",
 };
 
-const ChangePassword = props => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-      customError @client
-      paramT @client
-      isSuccessfulChange @client
-    }
-  `);
-  const { toggleSuccess, customError, paramT, isSuccessfulChange } = data;
+const ChangePassword = (props) => {
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
+  const [customError, setCustomError] = useAtom(customErrorAtom);
+  const [paramT] = useAtom(paramTAtom);
+  const [isPasswordChanged, setIsPasswordChanged] = useAtom(
+    isPasswordChangedAtom
+  );
 
   const [{ password, passwordConfirmation }, setState] = useState(
     INITIAL_STATE
   );
 
   const [changePassword, { loading, error }] = useMutation(CHANGE_PASSWORD, {
-    onError: err => {
-      client.writeData({ data: { toggleSuccess: false } });
+    onError: (err) => {
+      setSuccessAlert((a) => (a = false));
     },
-    onCompleted: data => {
-      client.writeData({ data: { toggleSuccess: true } });
-    }
+    onCompleted: (data) => {
+      setSuccessAlert((a) => (a = true));
+    },
   });
 
   useEffect(() => {
-    if (toggleSuccess) {
+    if (successAlert) {
       setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+        setSuccessAlert((a) => (a = false));
       }, 5000);
     }
-  }, [client, toggleSuccess]);
+  }, [successAlert, setSuccessAlert]);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const onSubmit = async (e, changePassword) => {
     e.preventDefault();
     if (password !== passwordConfirmation) {
-      client.writeData({ data: { customError: "Password doesn't match" } });
+      setCustomError((c) => (c = "Password doesn't match"));
     } else {
-      client.writeData({ data: { customError: null } });
+      setCustomError((c) => (c = null));
       try {
         await changePassword({
           variables: {
             token: paramT,
-            password: password
-          }
+            password: password,
+          },
         }).then(async ({ data }) => {
           setState({ ...INITIAL_STATE });
-          client.writeData({ data: { isSuccessfulChange: true } });
+          setIsPasswordChanged((a) => (a = true));
         });
       } catch {}
     }
   };
 
   return (
-    <Fragment>
-      {!isSuccessfulChange ? (
-        <Styled.Box onSubmit={e => onSubmit(e, changePassword)}>
+    <>
+      {!isPasswordChanged ? (
+        <Styled.Box onSubmit={(e) => onSubmit(e, changePassword)}>
           <Styled.Title>Change Password</Styled.Title>
           <Styled.Label>
             <Styled.Span>
@@ -116,25 +120,28 @@ const ChangePassword = props => {
           </Styled.SubmitButton>
 
           {loading && <Loading />}
-          {/* Need to adjust success messaging for resets */}
-          {toggleSuccess && <SuccessMessage message="Token is verified!" />}
+          {successAlert && <SuccessMessage message="Token is verified!" />}
           {error && <ErrorMessage error={error} />}
           {customError && <ErrorMessage customError={customError} />}
         </Styled.Box>
       ) : (
-        <Fragment>
+        <>
           <Styled.Box>
             <Styled.Title>
               <Link to={routes.SIGN_IN}>Go to Sign In</Link>
             </Styled.Title>
-            {toggleSuccess && (
+            {successAlert && (
               <SuccessMessage message="Password Change Successful!" />
             )}
           </Styled.Box>
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
+};
+
+ChangePassword.propTypes = {
+  props: PropTypes.object,
 };
 
 export default ChangePassword;

@@ -113,6 +113,7 @@ const DeckItemBase = ({ deck, session }) => {
           toggleOn: true,
           modalId: deck.id,
           target: e.target.id,
+          editFileText: deck.deckImageUrl != null ? "Change" : "Add Image",
         })
     );
   };

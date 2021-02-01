@@ -15,7 +15,7 @@ export const CardImg = styled.img`
   left: 25%;
   right: 25%;
   border-radius: 10px;
-  border: 2px solid ${props => props.theme.primaryDark};
+  border: 2px solid ${(props) => props.theme.primaryDark};
   max-height: 50vh;
   max-width: 50vh;
   height: auto;
@@ -33,7 +33,7 @@ export const Footer = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${(props) => props.theme.neutralLight};
   text-align: center;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -52,8 +52,8 @@ export const Hr = styled.hr`
   height: 2px;
   background-image: -webkit-linear-gradient(
     left,
-    ${props => props.theme.neutralLight},
-    ${props => props.theme.container}
+    ${(props) => props.theme.neutralLight},
+    ${(props) => props.theme.container}
   );
   -webkit-animation: fadeInAnimation ease 1.5s;
   animation: fadeInAnimation ease 1.5s;
@@ -157,7 +157,7 @@ export const CorrectButton = styled.button`
   cursor: pointer;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.success};
+  background-color: ${(props) => props.theme.success};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -191,7 +191,7 @@ export const WrongButton = styled.button`
   cursor: pointer;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.error};
+  background-color: ${(props) => props.theme.error};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -232,7 +232,7 @@ export const ShowAnswer = styled.button`
   cursor: pointer;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.secondary};
+  background-color: ${(props) => props.theme.secondary};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -240,17 +240,20 @@ export const ShowAnswer = styled.button`
   transition: all 0.25s ease-in-out;
   -webkit-transform: scale(1) translateZ(0);
   transform: scale(1) translateZ(0);
+  ::first-letter {
+    text-decoration: ${(props) => (props.isFlipped ? "" : "underline")};
+  }
   :hover {
     -webkit-transform: scale(1.25);
     transform: scale(1.25);
-    -webkit-box-shadow: 0 0 10px 5px ${props => props.theme.success};
-    box-shadow: 0 0 10px 5px ${props => props.theme.success};
+    -webkit-box-shadow: 0 0 10px 5px ${(props) => props.theme.success};
+    box-shadow: 0 0 10px 5px ${(props) => props.theme.success};
   }
   :active {
     -webkit-filter: brightness(105%);
     filter: brightness(105%);
-    -webkit-box-shadow: 0 0 10px 5px ${props => props.theme.success};
-    box-shadow: 0 0 10px 5px ${props => props.theme.success};
+    -webkit-box-shadow: 0 0 10px 5px ${(props) => props.theme.success};
+    box-shadow: 0 0 10px 5px ${(props) => props.theme.success};
   }
 `;
 
@@ -267,7 +270,7 @@ export const FinishCorrect = styled.button`
   outline: none;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.success};
+  background-color: ${(props) => props.theme.success};
   border-radius: 100%;
   text-align: center;
   padding: 0;
@@ -300,7 +303,7 @@ export const FinishWrong = styled.button`
   outline: none;
   border-style: none;
   color: white;
-  background-color: ${props => props.theme.error};
+  background-color: ${(props) => props.theme.error};
   border-radius: 100%;
   text-align: center;
   padding: 0;

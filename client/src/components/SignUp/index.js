@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, withRouter } from "react-router-dom";
-import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
+import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import PropTypes from "prop-types";
 
@@ -9,6 +9,8 @@ import * as routes from "../../routing/routes";
 import ErrorMessage from "../Alerts/Error";
 import * as Styled from "./style";
 import SuccessMessage from "../Alerts/Success";
+import { useAtom } from "jotai";
+import { customErrorAtom, successAlertAtom } from "../../state/store";
 
 const SIGN_UP = gql`
   mutation($username: String!, $email: String!, $password: String!) {
@@ -26,51 +28,47 @@ const SignUpPage = ({ history, refetch }) => (
 
 SignUpPage.propTypes = {
   history: PropTypes.object.isRequired,
-  refetch: PropTypes.func.isRequired
+  refetch: PropTypes.func.isRequired,
 };
 
 const INITIAL_STATE = {
   username: "",
   email: "",
   password: "",
-  passwordConfirmation: ""
+  passwordConfirmation: "",
 };
 
-const SignUpForm = props => {
+const SignUpForm = (props) => {
   const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      customError @client
-      toggleSuccess @client
-    }
-  `);
-  const { customError, toggleSuccess } = data;
+
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
+  const [customError, setCustomError] = useAtom(customErrorAtom);
 
   const [
     { username, email, password, passwordConfirmation },
-    setState
+    setState,
   ] = useState(INITIAL_STATE);
 
   const [signUp, { loading, error }] = useMutation(SIGN_UP, {
-    onError: err => {
-      client.writeData({ data: { toggleSuccess: false } });
+    onError: (err) => {
+      setSuccessAlert((a) => (a = false));
     },
-    onCompleted: data => {
-      client.writeData({ data: { toggleSuccess: true } });
-    }
+    onCompleted: (data) => {
+      setSuccessAlert((a) => (a = true));
+    },
   });
 
   useEffect(() => {
-    if (toggleSuccess) {
+    if (successAlert) {
       setTimeout(() => {
-        client.writeData({ data: { toggleSuccess: !toggleSuccess } });
+        setSuccessAlert((a) => (a = false));
       }, 5000);
     }
-  }, [client, toggleSuccess]);
+  }, [successAlert, setSuccessAlert]);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const onSubmit = async (e, signUp) => {
@@ -78,18 +76,18 @@ const SignUpForm = props => {
 
     try {
       if (password !== passwordConfirmation) {
-        client.writeData({ data: { customError: "Password doesn't match" } });
+        setCustomError((c) => (c = "Password doesn't match"));
       } else {
         localStorage.removeItem("token");
         client.resetStore();
 
-        client.writeData({ data: { customError: null } });
+        setCustomError((c) => (c = null));
         await signUp({
           variables: {
             username: username,
             email: email,
-            password: password
-          }
+            password: password,
+          },
         }).then(async ({ data }) => {
           setState({ ...INITIAL_STATE });
           setTimeout(() => {
@@ -102,14 +100,8 @@ const SignUpForm = props => {
     } catch {}
   };
 
-  // const isInvalid =
-  //   password !== passwordConfirmation ||
-  //   password === "" ||
-  //   email === "" ||
-  //   username === "";
-
   return (
-    <Styled.Box onSubmit={e => onSubmit(e, signUp)}>
+    <Styled.Box onSubmit={(e) => onSubmit(e, signUp)}>
       <Styled.Title>Sign Up</Styled.Title>
       <Styled.Label>
         <Styled.Span>
@@ -163,7 +155,7 @@ const SignUpForm = props => {
       </Styled.Label>
       <Styled.SubmitButton type="submit">Sign Up</Styled.SubmitButton>
       {loading && <Loading />}
-      {toggleSuccess && (
+      {successAlert && (
         <SuccessMessage message="Successfully Signed Up!  You will receive an email to confirm your account!" />
       )}
       {error && <ErrorMessage error={error} />}
@@ -173,7 +165,7 @@ const SignUpForm = props => {
 };
 
 SignUpForm.propTypes = {
-  props: PropTypes.object
+  props: PropTypes.object,
 };
 
 const SignUpLink = () => (

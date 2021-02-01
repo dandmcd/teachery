@@ -65,6 +65,7 @@ const LandingPage = () => {
           hoverColor="white"
         >
           <Styled.ExploreH3Top>Explore Features</Styled.ExploreH3Top>
+          <Styled.ArrowDown />
         </Styled.Explore>
       </Styled.Menu>
       <Styled.HeaderExplore

@@ -9,25 +9,44 @@ import DeckEdit from "./Decks/DeckEdit";
 import AddDeckTag from "./Decks/DeckTags/DeckTagCreate";
 import CardCreate from "./Cards/CardCreate";
 import DeckBookmarks from "./Decks/DeckBookmarks";
+import Button from "../../theme/Button";
+import { useAtom } from "jotai";
+import { modalAtom } from "../../state/store";
 
-const FlashCardPage = () => (
-  <Container>
-    <FlashCardHeader>
-      <Menu>
-        <Title>Flashcard Decks</Title>
-        <DeckCreate />
-      </Menu>
-      <AddDeckTag />
-      <CardCreate />
-      <DeckEdit />
-      <Menu>
-        <Search />
-        <DeckBookmarks />
-      </Menu>
-    </FlashCardHeader>
-    <Decks limit={6} />
-  </Container>
-);
+const FlashCardPage = () => {
+  const [, setModal] = useAtom(modalAtom);
+  const toggleOnModal = (e) => {
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: true,
+          target: e.target.id,
+        })
+    );
+  };
+  return (
+    <Container>
+      <FlashCardHeader>
+        <Menu>
+          <Title>Flashcard Decks</Title>
+          <DeckCreate />
+          <CreateButton id="deckcreate" type="button" onClick={toggleOnModal}>
+            Create A New Deck
+          </CreateButton>
+        </Menu>
+        <AddDeckTag />
+        <CardCreate />
+        <DeckEdit />
+        <Menu>
+          <Search />
+          <DeckBookmarks />
+        </Menu>
+      </FlashCardHeader>
+      <Decks limit={6} />
+    </Container>
+  );
+};
 
 const Container = styled.div`
   z-index: 15;
@@ -36,7 +55,7 @@ const Container = styled.div`
 `;
 
 const FlashCardHeader = styled.div`
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${(props) => props.theme.neutralLight};
   background-clip: border-box;
   width: 100%;
   margin: auto auto 5px auto;
@@ -67,6 +86,11 @@ const Menu = styled.div`
   margin: 0 auto;
 `;
 
-export default withAuthorization(session => session && session.me)(
+const CreateButton = styled(Button)`
+  border: 2px solid ${(props) => props.theme.secondary};
+  width: 175px;
+`;
+
+export default withAuthorization((session) => session && session.me)(
   FlashCardPage
 );

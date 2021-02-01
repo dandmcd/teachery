@@ -19,7 +19,7 @@ const Box = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: ${props => props.theme.neutralLight};
+  background: ${(props) => props.theme.neutralLight};
   border-radius: 24px;
   text-align: center;
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
@@ -51,7 +51,8 @@ const LabelName = styled.h4`
 `;
 
 NoData.propTypes = {
-  message: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
 };
 
 export default NoData;

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 import { useAtom } from "jotai";
 import {
@@ -18,6 +19,7 @@ import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import withSession from "../../../Session/withSession";
 import Modal from "../../../Modal";
+import download from "../../../../assets/download.png";
 
 const UPDATE_ASSIGNMENT = gql`
   mutation(
@@ -76,13 +78,13 @@ const S3SIGNMUTATION = gql`
 `;
 
 const AssignmentEdit = ({ session }) => {
+  const client = useApolloClient();
+
   const [modal, setModal] = useAtom(modalAtom);
-  const { toggleOn, modalId, target, editImg } = modal;
+  const { toggleOn, modalId, target, editImg, editFileText } = modal;
 
   const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
   const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
-
-  const client = useApolloClient();
 
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [updateAssignment, { loading, error }] = useMutation(
@@ -143,9 +145,26 @@ const AssignmentEdit = ({ session }) => {
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleClick = () => {
-    setModal((m) => (m = { ...m, editImg: !m.editImg }));
-  };
+  const handleClick = useCallback(() => {
+    if (editImg && documentUrl === null) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Add File" })
+      );
+      setDrop(null);
+    } else if (!editImg && documentUrl === null) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "No File" })
+      );
+    } else if (!editImg && documentUrl) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Keep File" })
+      );
+    } else if (editImg && documentUrl) {
+      setModal(
+        (m) => (m = { ...m, editImg: !m.editImg, editFileText: "Change" })
+      );
+    }
+  }, [editImg, documentUrl, setModal]);
 
   const uploadToS3 = async (file, signedRequest) => {
     const options = {
@@ -189,15 +208,6 @@ const AssignmentEdit = ({ session }) => {
             documentName: drop.name,
             documentUrl: url,
           },
-        }).then(async ({ data }) => {
-          setState({
-            id: id,
-            assignmentName: assignmentName,
-            note: note,
-            link: link,
-            documentName: "",
-            documentUrl: "",
-          });
         });
         setIsSubmitting((a) => (a = false));
       } catch (error) {
@@ -225,15 +235,6 @@ const AssignmentEdit = ({ session }) => {
             documentName: documentName,
             documentUrl: documentUrl,
           },
-        }).then(async ({ data }) => {
-          setState({
-            id: id,
-            assignmentName: assignmentName,
-            note: note,
-            link: link,
-            documentName: "",
-            documentUrl: "",
-          });
         });
       } catch (error) {
         setIsSubmitting((a) => (a = false));
@@ -242,7 +243,34 @@ const AssignmentEdit = ({ session }) => {
   };
 
   const toggleOffModal = () => {
-    setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: false,
+          editImg: false,
+        })
+    );
+    setDrop(null);
+    setSuccessAlert((a) => (a = false));
+  };
+
+  const onDelete = (e) => {
+    setState({
+      id: id,
+      assignmentName: assignmentName,
+      note: note,
+      link: link,
+      documentName: "",
+      documentUrl: null,
+    });
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          editFileText: "Add File",
+        })
+    );
   };
 
   return (
@@ -290,34 +318,36 @@ const AssignmentEdit = ({ session }) => {
                   type="text"
                 />
               </Styled.Label>
-              {documentUrl !== null ? (
-                <div>
-                  <Styled.CardImg src={documentUrl} alt={documentUrl} />
-                </div>
+              {documentUrl ? (
+                <Styled.CardDiv>
+                  <Styled.CardFile
+                    href={documentUrl}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <Styled.DownloadIcon src={download} /> View uploaded file
+                  </Styled.CardFile>
+                </Styled.CardDiv>
               ) : null}
-              <Styled.AddButton type="button" onClick={handleClick}>
-                {!editImg && documentUrl === null
-                  ? "Add File"
-                  : !editImg
-                  ? "Change"
-                  : "Keep Original"}
-              </Styled.AddButton>
+              {!drop ? (
+                <Styled.AddButton type="button" onClick={handleClick}>
+                  {editFileText}
+                </Styled.AddButton>
+              ) : null}
               {documentUrl !== null && (
                 <Styled.DeleteButton
                   documentUrl={documentUrl}
                   type="button"
-                  onClick={() =>
-                    setState({
-                      id: id,
-                      assignmentName: assignmentName,
-                      note: note,
-                      link: link,
-                      documentName: "",
-                      documentUrl: null,
-                    })
-                  }
+                  onClick={(e) => {
+                    if (
+                      window.confirm(
+                        "Are you sure you wish to remove this file?  Changes won't be saved until you Submit changes."
+                      )
+                    )
+                      onDelete(e);
+                  }}
                 >
-                  Remove File
+                  Delete File
                 </Styled.DeleteButton>
               )}
               {editImg && (
@@ -341,6 +371,10 @@ const AssignmentEdit = ({ session }) => {
       ) : null}
     </>
   );
+};
+
+AssignmentEdit.propTypes = {
+  session: PropTypes.object,
 };
 
 export default withSession(AssignmentEdit);

@@ -32,3 +32,6 @@ tests
 launch.json
 
 src/seed.js
+
+.eslintcache
+client/.eslintcache

@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useState } from "react";
 import Moment from "react-moment";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -11,7 +11,7 @@ import { useAtom } from "jotai";
 import { modalAtom } from "../../../../state/store";
 
 const CardItem = ({ card, authorizedRole }) => {
-  const [modal, setModal] = useAtom(modalAtom);
+  const [, setModal] = useAtom(modalAtom);
 
   const [cardChecked, setCardChecked] = useState(false);
 
@@ -27,12 +27,13 @@ const CardItem = ({ card, authorizedRole }) => {
           toggleOn: true,
           modalId: card.id,
           target: e.target.id,
+          editFileText: card.pictureUrl != null ? "Change" : "Add Image",
         })
     );
   };
 
   return (
-    <Fragment>
+    <>
       <Styled.SubHeader>
         <Styled.SubMenu>
           <Styled.PopupFooterButton
@@ -78,7 +79,7 @@ const CardItem = ({ card, authorizedRole }) => {
           {authorizedRole && <CardDelete card={card} />}
         </Styled.Container>
       ) : null}
-    </Fragment>
+    </>
   );
 };
 

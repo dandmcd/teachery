@@ -85,6 +85,7 @@ const AddDeckTag = () => {
 
   const toggleOffModal = () => {
     setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
+    setSuccessAlert((a) => (a = false));
   };
 
   return (
