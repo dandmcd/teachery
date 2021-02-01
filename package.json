@@ -1,7 +1,15 @@
 {
   "name": "fuwuyuan",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1.0",
+  "description": "Teachery is a full-stack app designed for teachers and students. Created with React, PostgreSQL, GraphQL and NodeJS.",
+  "keywords": [
+    "nodejs",
+    "graphql",
+    "apollo",
+    "sequelize"
+  ],
+  "author": "Daniel McDermott <dandmcd@gmail.com> (https://danielmcdermott.me/)",
+  "license": "MIT",
   "main": "index.js",
   "engines": {
     "node": "10.16.0"
@@ -15,8 +23,6 @@
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "heroku-postbuild": "cd client/ && npm install && npm run build"
   },
-  "author": "",
-  "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
@@ -32,7 +38,7 @@
     "@sendgrid/mail": "^7.4.2",
     "apollo-server": "^2.19.2",
     "apollo-server-express": "^2.19.2",
-    "aws-sdk": "^2.828.0",
+    "aws-sdk": "^2.834.0",
     "bcrypt": "^5.0.0",
     "cors": "^2.8.5",
     "dataloader": "^2.0.0",
@@ -46,7 +52,7 @@
     "pg": "^8.5.1",
     "sequelize": "^5.22.3",
     "sequelize-cli": "^5.5.1",
-    "subscriptions-transport-ws": "^0.9.18"
+    "subscriptions-transport-ws": "^0.9.16"
   },
   "heroku-run-build-script": true
 }

@@ -94,6 +94,7 @@ const Flex = styled.div`
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
+  align-items: center;
 `;
 
 const LikeIcon = styled.img`
