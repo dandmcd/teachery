@@ -9,6 +9,8 @@ import Loading from "../Alerts/Loading";
 import * as routes from "../../routing/routes";
 import ErrorMessage from "../Alerts/Error";
 import * as Styled from "./style";
+import { useAtom } from "jotai";
+import { successAlertAtom } from "../../state/store";
 
 const SIGN_IN = gql`
   mutation($login: String!, $password: String!) {
@@ -26,39 +28,33 @@ const SignInPage = ({ history, refetch }) => (
 
 SignInPage.propTypes = {
   history: PropTypes.object.isRequired,
-  refetch: PropTypes.func.isRequired
+  refetch: PropTypes.func.isRequired,
 };
 
 const INITIAL_STATE = {
   login: "",
-  password: ""
+  password: "",
 };
 
-const SignInForm = props => {
+const SignInForm = (props) => {
   const client = useApolloClient();
+
+  const [, setSuccessAlert] = useAtom(successAlertAtom);
 
   const [{ login, password }, setState] = useState(INITIAL_STATE);
 
   const [signIn, { loading, error }] = useMutation(SIGN_IN, {
-    onError: err => {
-      client.writeData({ data: { toggleSuccess: false } });
+    onError: (err) => {
+      setSuccessAlert((a) => (a = false));
     },
-    onCompleted: data => {
-      client.writeData({ data: { toggleSuccess: true } });
-    }
+    onCompleted: (data) => {
+      setSuccessAlert((a) => (a = true));
+    },
   });
 
-  // useEffect(() => {
-  //   if (toggleSuccess) {
-  //     setTimeout(() => {
-  //       client.writeData({ data: { toggleSuccess: !toggleSuccess } });
-  //     }, 5000);
-  //   }
-  // }, [client, toggleSuccess]);
-
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setState(prevState => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const onSubmit = async (e, signIn) => {
@@ -70,8 +66,8 @@ const SignInForm = props => {
       await signIn({
         variables: {
           login: login,
-          password: password
-        }
+          password: password,
+        },
       }).then(async ({ data }) => {
         setState({ ...INITIAL_STATE });
 
@@ -83,7 +79,7 @@ const SignInForm = props => {
   };
 
   return (
-    <Styled.Box onSubmit={e => onSubmit(e, signIn)}>
+    <Styled.Box onSubmit={(e) => onSubmit(e, signIn)}>
       <Styled.Title>Login</Styled.Title>
       <Styled.Label>
         <Styled.Span>
@@ -113,7 +109,6 @@ const SignInForm = props => {
         Sign In
       </Styled.SubmitButton>
       {loading && <Loading />}
-      {/* {toggleSuccess && <SuccessMessage message="Successfully Logged In!" />} */}
       {error && <ErrorMessage error={error} />}
       <SignUpLink />
     </Styled.Box>
@@ -121,7 +116,7 @@ const SignInForm = props => {
 };
 
 SignInForm.propTypes = {
-  props: PropTypes.object
+  props: PropTypes.object,
 };
 
 export default withRouter(SignInPage);

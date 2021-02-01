@@ -3,6 +3,7 @@ import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 import { useAtom } from "jotai";
 import {
@@ -107,18 +108,6 @@ const AssignTaskUpdate = ({ session }) => {
   const [updateAssignedTask, { loading, error }] = useMutation(
     UPDATE_ASSIGNED_TASK,
     {
-      optimisticResponse: {
-        __typename: "Mutation",
-        updateAssignedTask: {
-          __typename: "AssignedTask",
-          id: id,
-          assignedTo: assignedTo,
-          dueDate: dueDate,
-          status: status,
-          updatedDocumentName: updatedDocumentName,
-          updatedDocumentUrl: updatedDocumentUrl,
-        },
-      },
       onError: (err) => {
         setSuccessAlert((a) => (a = false));
       },
@@ -271,6 +260,7 @@ const AssignTaskUpdate = ({ session }) => {
         })
     );
     setDrop(null);
+    setSuccessAlert((a) => (a = false));
   };
 
   const onDelete = (e) => {
@@ -398,6 +388,10 @@ const AssignTaskUpdate = ({ session }) => {
       ) : null}
     </>
   );
+};
+
+AssignTaskUpdate.propTypes = {
+  session: PropTypes.object,
 };
 
 export default withSession(AssignTaskUpdate);

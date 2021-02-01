@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import { useQuery } from "@apollo/react-hooks";
+import PropTypes from "prop-types";
 
 import * as Styled from "../style";
 import * as routes from "../../../../routing/routes";
@@ -73,6 +74,10 @@ const TeacherTaskStatus = ({ session }) => {
       </Styled.AssignmentDiv>
     </>
   );
+};
+
+TeacherTaskStatus.propTypes = {
+  session: PropTypes.object,
 };
 
 export default TeacherTaskStatus;

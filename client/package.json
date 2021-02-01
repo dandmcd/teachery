@@ -19,7 +19,7 @@
     "graphql-tag": "^2.11.0",
     "history": "^4.10.1",
     "http-proxy-middleware": "^1.0.6",
-    "jotai": "^0.12.2",
+    "jotai": "^0.12.7",
     "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-app-polyfill": "^2.0.0",

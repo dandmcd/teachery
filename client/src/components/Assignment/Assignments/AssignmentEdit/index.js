@@ -3,6 +3,7 @@ import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 import { useAtom } from "jotai";
 import {
@@ -77,13 +78,13 @@ const S3SIGNMUTATION = gql`
 `;
 
 const AssignmentEdit = ({ session }) => {
+  const client = useApolloClient();
+
   const [modal, setModal] = useAtom(modalAtom);
   const { toggleOn, modalId, target, editImg, editFileText } = modal;
 
   const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
   const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
-
-  const client = useApolloClient();
 
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [updateAssignment, { loading, error }] = useMutation(
@@ -251,6 +252,7 @@ const AssignmentEdit = ({ session }) => {
         })
     );
     setDrop(null);
+    setSuccessAlert((a) => (a = false));
   };
 
   const onDelete = (e) => {
@@ -369,6 +371,10 @@ const AssignmentEdit = ({ session }) => {
       ) : null}
     </>
   );
+};
+
+AssignmentEdit.propTypes = {
+  session: PropTypes.object,
 };
 
 export default withSession(AssignmentEdit);

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useMutation, useApolloClient, useQuery } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -10,7 +10,7 @@ import Button from "../../../../theme/Button";
 import Loading from "../../../Alerts/Loading";
 import ErrorMessage from "../../../Alerts/Error";
 import CARDS_QUERY from "../CardList/CardListSchema/CardListSchema";
-import { deckIdAtom } from "../../../../state/store";
+import { deckIdAtom, successAlertAtom } from "../../../../state/store";
 
 const DELETE_CARD = gql`
   mutation($id: ID!, $deckId: Int!) {
@@ -19,13 +19,7 @@ const DELETE_CARD = gql`
 `;
 
 const CardDelete = ({ card }) => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleDeleteSuccess @client
-    }
-  `);
-  const { toggleDeleteSuccess } = data;
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
 
   const [deckId] = useAtom(deckIdAtom);
 
@@ -56,22 +50,20 @@ const CardDelete = ({ card }) => {
       });
     },
     onError: (err) => {
-      client.writeData({ data: { toggleDeleteSuccess: false } });
+      setSuccessAlert((a) => (a = false));
     },
     onCompleted: (data) => {
-      client.writeData({ data: { toggleDeleteSuccess: true } });
+      setSuccessAlert((a) => (a = true));
     },
   });
 
   useEffect(() => {
-    if (toggleDeleteSuccess) {
+    if (successAlert) {
       setTimeout(() => {
-        client.writeData({
-          data: { toggleDeleteSuccess: !toggleDeleteSuccess },
-        });
+        setSuccessAlert((a) => (a = false));
       }, 5000);
     }
-  }, [client, toggleDeleteSuccess]);
+  }, [successAlert, setSuccessAlert]);
 
   const onSubmit = (e, deleteCard) => {
     e.preventDefault();

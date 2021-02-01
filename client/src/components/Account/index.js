@@ -1,10 +1,11 @@
 import React, { Fragment } from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import withAuthorization from "../Session/withAuthorization";
 import Account from "./Accounts";
 
-const AccountPage = props => (
+const AccountPage = (props) => (
   <Fragment>
     <Header>
       <Menu>
@@ -15,8 +16,12 @@ const AccountPage = props => (
   </Fragment>
 );
 
+AccountPage.propTypes = {
+  props: PropTypes.object,
+};
+
 const Header = styled.div`
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${(props) => props.theme.neutralLight};
   background-clip: border-box;
   width: 100%;
   margin: auto auto 5px auto;
@@ -47,4 +52,6 @@ const Title = styled.h2`
   }
 `;
 
-export default withAuthorization(session => session && session.me)(AccountPage);
+export default withAuthorization((session) => session && session.me)(
+  AccountPage
+);

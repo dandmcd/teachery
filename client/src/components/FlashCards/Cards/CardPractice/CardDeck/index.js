@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import * as Styled from "./style";
@@ -39,7 +39,6 @@ const CardDeck = ({ cards }) => {
       onClickDecrement();
     } else if (e.key === " ") {
       handleCardFlip();
-      console.log("happening");
     }
   };
 
@@ -88,10 +87,10 @@ const CardDeck = ({ cards }) => {
             <Styled.CardImg src={card.pictureUrl} alt={card.front} />
           )}
           {isFlipped && (
-            <Fragment>
+            <>
               <Styled.Hr />
               <Styled.CardBack>{card.back}</Styled.CardBack>
-            </Fragment>
+            </>
           )}
         </Styled.Box>
         <Styled.Footer>

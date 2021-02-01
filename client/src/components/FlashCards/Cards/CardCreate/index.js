@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
@@ -13,7 +13,11 @@ import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import CARDS_QUERY from "../CardList/CardListSchema/CardListSchema";
-import { modalAtom, successAlertAtom } from "../../../../state/store";
+import {
+  isSubmittingAtom,
+  modalAtom,
+  successAlertAtom,
+} from "../../../../state/store";
 import Modal from "../../../Modal";
 
 //Mutations
@@ -64,14 +68,7 @@ const CardCreate = ({ deck }) => {
   const { toggleOn, modalId, target } = modal;
 
   const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
-
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      isSubmitting @client
-    }
-  `);
-  const { isSubmitting } = data;
+  const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
 
   const [{ deckId, front, back }, setState] = useState(INITIAL_STATE);
   const [drop, setDrop] = useState(null);
@@ -152,7 +149,7 @@ const CardCreate = ({ deck }) => {
     e.preventDefault();
     if (drop) {
       try {
-        client.writeData({ data: { isSubmitting: true } });
+        setIsSubmitting((a) => (a = true));
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
@@ -181,9 +178,9 @@ const CardCreate = ({ deck }) => {
             pictureUrl: "",
           });
         });
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       } catch (error) {
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       }
     } else {
       try {
@@ -203,7 +200,7 @@ const CardCreate = ({ deck }) => {
           });
         });
       } catch (error) {
-        client.writeData({ data: { isSubmitting: false } });
+        setIsSubmitting((a) => (a = false));
       }
     }
   };
@@ -226,6 +223,7 @@ const CardCreate = ({ deck }) => {
 
   const toggleOffModal = () => {
     setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
+    setSuccessAlert((a) => (a = false));
   };
 
   return (

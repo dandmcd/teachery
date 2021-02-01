@@ -1,4 +1,7 @@
 import React, { createRef, useState } from "react";
+import PropTypes from "prop-types";
+import styled from "styled-components";
+import { useAtom } from "jotai";
 
 import { MessageCreate, Messages } from "../../Message";
 import AssignmentCreate from "../../Assignment/Assignments/AssignmentCreate";
@@ -9,10 +12,11 @@ import TeacherAssignedTasks from "../../AssignedTask/AssignedTasks/AssignedTaskT
 import * as Styled from "./style";
 import withSession from "../../Session/withSession";
 import AssignmentEdit from "../../Assignment/Assignments/AssignmentEdit";
-import styled from "styled-components";
 import TeacherTaskStatus from "./TeacherTaskStatus";
+import { modalAtom } from "../../../state/store";
 
 const Teacher = ({ session, me }) => {
+  const [, setModal] = useAtom(modalAtom);
   const [tasksChecked, setTasksChecked] = useState(false);
   const [assignmentsChecked, setAssignmentsChecked] = useState(false);
 
@@ -37,8 +41,20 @@ const Teacher = ({ session, me }) => {
     setAssignmentsChecked(assignmentsChecked === false ? true : false);
   };
 
+  const toggleOnModal = (e) => {
+    setModal(
+      (m) =>
+        (m = {
+          ...m,
+          toggleOn: true,
+          target: e.target.id,
+        })
+    );
+  };
+
   return (
     <>
+      <AssignmentCreate />
       <AssignmentEdit />
       <AssignTask />
       <AssignTaskUpdate />
@@ -86,7 +102,15 @@ const Teacher = ({ session, me }) => {
           </Styled.PopupFooterButton>
           <Styled.SubTitle ref={ref}>Assignments</Styled.SubTitle>
           <RightItem>
-            {!assignmentsChecked ? <AssignmentCreate /> : null}
+            {!assignmentsChecked ? (
+              <Styled.AssignmentCreateButton
+                id="assignmentcreate"
+                type="button"
+                onClick={toggleOnModal}
+              >
+                New Assignment
+              </Styled.AssignmentCreateButton>
+            ) : null}
           </RightItem>
         </Styled.SubMenu>
       </Styled.TeacherHeader>
@@ -98,5 +122,10 @@ const Teacher = ({ session, me }) => {
 const RightItem = styled.div`
   margin-left: auto;
 `;
+
+Teacher.propTypes = {
+  session: PropTypes.object,
+  me: PropTypes.object,
+};
 
 export default withSession(Teacher);

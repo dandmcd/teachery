@@ -1,14 +1,16 @@
-import React, { useRef, Fragment } from "react";
-import { useApolloClient, useQuery } from "@apollo/react-hooks";
+import React from "react";
+import { useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import styled from "styled-components";
 
 import * as Styled from "../../../../theme/Popup";
-import search from "../../../../assets/search.png";
-import useOuterClickNotifier from "../../../Alerts/OuterClickNotifier";
+import searchImg from "../../../../assets/search.png";
 import Loading from "../../../Alerts/Loading";
 import ErrorMessage from "../../../Alerts/Error";
 import SearchTagLink from "./SearchTagLink";
+import { useAtom } from "jotai";
+import { searchAtom } from "../../../../state/store";
+import Modal from "../../../Modal";
 
 const TAG_SEARCH_QUERY = gql`
   query tag($tagName: String!) {
@@ -24,107 +26,71 @@ const TAG_SEARCH_QUERY = gql`
 
 const Search = () => {
   const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Search {
-      search @client {
-        tagName
-        showPopup
-        noResult
-        tags {
-          id
-          tagName
-          decks {
-            id
-          }
-        }
-      }
-    }
-  `);
-  const {
-    search: { tagName, showPopup, noResult, tags }
-  } = data;
 
-  const togglePopup = () => {
-    client.writeData({
-      data: {
-        search: {
-          tagName: tagName,
-          showPopup: !showPopup,
-          __typename: "Search"
-        }
-      }
-    });
+  const [search, setSearch] = useAtom(searchAtom);
+  const { toggleOn, noResult, tagName, tags } = search;
+
+  const onChange = (e) => {
+    setSearch((a) => (a = { ...a, tagName: e.target.value, noResult: false }));
   };
 
-  const onChange = e =>
-    client.writeData({
-      data: {
-        search: {
-          tagName: e.target.value,
-          noResult: false,
-          __typename: "Search"
-        }
-      }
-    });
-
-  const onClick = async e => {
+  const onClick = async (e) => {
     e.preventDefault();
-    client.writeData({
-      data: {
-        search: { noResult: false, tags: [], __typename: "Search" }
-      }
-    });
-    const { data, loading, error } = await client.query({
-      query: TAG_SEARCH_QUERY,
-      variables: { tagName }
-    });
-    if (loading || !data) {
-      return <Loading />;
-    }
-    if (error) {
-      return <ErrorMessage error={error} />;
-    }
+
     if (tagName === "") {
-      client.writeData({
-        data: { search: { noResult: true, __typename: "Search" } }
-      });
-    }
-    if (data.getTagsByName.length === 0) {
-      client.writeData({
-        data: {
-          search: { tagName: tagName, noResult: true, __typename: "Search" }
-        }
-      });
-    } else {
-      let filteredData = data.getTagsByName.filter(
-        item => item.decks.length >= 1
-      );
-      client.writeData({
-        data: {
-          search: {
-            showPopup: true,
-            tags: filteredData,
+      setSearch(
+        (a) =>
+          (a = {
+            ...a,
             tagName: tagName,
-            __typename: "Search"
-          }
-        }
+            noResult: true,
+          })
+      );
+    } else {
+      const { data, loading, error } = await client.query({
+        query: TAG_SEARCH_QUERY,
+        variables: { tagName },
       });
+      if (loading || !data) {
+        return <Loading />;
+      }
+      if (error) {
+        return <ErrorMessage error={error} />;
+      }
+
+      if (data.getTagsByName.length === 0) {
+        setSearch(
+          (a) =>
+            (a = {
+              ...a,
+              tagName: tagName,
+              noResult: true,
+            })
+        );
+      }
+      if (data.getTagsByName.length > 0) {
+        let filteredData = data.getTagsByName.filter(
+          (item) => item.decks.length >= 1
+        );
+        setSearch(
+          (a) =>
+            (a = {
+              ...a,
+              toggleOn: true,
+              tags: filteredData,
+              tagName: tagName,
+            })
+        );
+      }
     }
   };
 
-  const innerRef = useRef(null);
-  useOuterClickNotifier(
-    e =>
-      client.writeData({
-        data: {
-          search: { tagName: tagName, showPopup: false, __typename: "Search" }
-        }
-      }),
-    innerRef
-  );
+  const toggleOffModal = () => {
+    setSearch((a) => (a = { ...a, tagName: tagName, toggleOn: false }));
+  };
 
   return (
-    <Fragment>
+    <>
       <SearchContainer>
         <SearchInput
           name="tagName"
@@ -133,31 +99,27 @@ const Search = () => {
           onChange={onChange}
           placeholder="Search by language or tag"
         />
-        <SearchImg src={search} alt="Search" onClick={onClick} />
+        <SearchImg src={searchImg} alt="Search" onClick={onClick} />
       </SearchContainer>
       {noResult && (
         <div>
           <NoResult> Sorry, your search did not find any results...</NoResult>
         </div>
       )}
-      {showPopup ? (
-        <Styled.PopupContainer>
-          <Styled.PopupInnerExtended ref={innerRef}>
-            <Styled.PopupHeader>
-              <Styled.PopupTitle>Search Results ...</Styled.PopupTitle>
-              <Styled.PopupFooterButton onClick={togglePopup}>
-                <Styled.CloseSpan />
-              </Styled.PopupFooterButton>
-            </Styled.PopupHeader>
-            <Styled.PopupBody>
-              {tags.map(tag => (
-                <SearchTagLink key={tag.id} tag={tag} />
-              ))}
-            </Styled.PopupBody>
-          </Styled.PopupInnerExtended>
-        </Styled.PopupContainer>
-      ) : null}
-    </Fragment>
+      <Modal toggleOn={toggleOn} onToggleOffModal={toggleOffModal}>
+        <Styled.PopupHeader>
+          <Styled.PopupTitle>Search Results ...</Styled.PopupTitle>
+          <Styled.PopupFooterButton onClick={toggleOffModal}>
+            <Styled.CloseSpan />
+          </Styled.PopupFooterButton>
+        </Styled.PopupHeader>
+        <Styled.PopupBody>
+          {tags.map((tag) => (
+            <SearchTagLink key={tag.id} tag={tag} />
+          ))}
+        </Styled.PopupBody>
+      </Modal>
+    </>
   );
 };
 
@@ -169,7 +131,7 @@ const SearchContainer = styled.div`
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  background-color: ${props => props.theme.neutralLight};
+  background-color: ${(props) => props.theme.neutralLight};
 `;
 const SearchImg = styled.img`
   height: 15px;
@@ -181,8 +143,8 @@ const SearchInput = styled.input`
   width: 180px;
   border: 0;
   outline: 0;
-  border-bottom: 2px solid ${props => props.theme.primary};
-  background-color: ${props => props.theme.neutralLight};
+  border-bottom: 2px solid ${(props) => props.theme.primary};
+  background-color: ${(props) => props.theme.neutralLight};
 `;
 
 const NoResult = styled.p`

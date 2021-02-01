@@ -71,18 +71,6 @@ const DeckEdit = () => {
 
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [updateDeck, { loading, error }] = useMutation(UPDATE_DECK, {
-    optimisticResponse: {
-      __typename: "Mutation",
-      updateDeck: {
-        __typename: "Deck",
-        id: id,
-        deckName,
-        description: description,
-        deckImageName: deckImageName,
-        deckImageUrl: deckImageUrl,
-        createdAt: new Date(),
-      },
-    },
     onError: (err) => {
       setSuccessAlert((a) => (a = false));
     },
@@ -170,7 +158,7 @@ const DeckEdit = () => {
     e.preventDefault();
     if (drop) {
       try {
-        client.writeData({ data: { isSubmitting: true } });
+        setIsSubmitting((a) => (a = true));
         try {
           new File([image], drop.name);
         } catch (err) {
@@ -237,6 +225,7 @@ const DeckEdit = () => {
         })
     );
     setDrop(null);
+    setSuccessAlert((a) => (a = false));
   };
 
   const onDelete = (e) => {

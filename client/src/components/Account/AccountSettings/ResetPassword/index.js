@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import gql from "graphql-tag";
-import { useApolloClient, useMutation, useQuery } from "@apollo/react-hooks";
-import Loading from "../../../Alerts/Loading";
+import { useMutation } from "@apollo/react-hooks";
+import PropTypes from "prop-types";
+import { withRouter } from "react-router-dom";
+import { useAtom } from "jotai";
+
 import SuccessMessage from "../../../Alerts/Success";
 import ErrorMessage from "../../../Alerts/Error";
 import ChangePassword from "../ChangePassword";
 import ForgotPassword from "../ForgotPassword";
-import { withRouter } from "react-router-dom";
+
+import { paramTAtom, successAlertAtom } from "../../../../state/store";
 
 const RESET_PASSWORD = gql`
   mutation($token: String!) {
@@ -14,31 +18,33 @@ const RESET_PASSWORD = gql`
   }
 `;
 
-const ResetPassword = props => {
-  const client = useApolloClient();
-  const { data } = useQuery(gql`
-    query Toggle {
-      toggleSuccess @client
-    }
-  `);
-
-  const { toggleSuccess } = data;
+const ResetPassword = (props) => {
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
+  const [, setParamT] = useAtom(paramTAtom);
 
   const [resetStatus, setResetStatus] = useState(false);
 
   if (props.match.params.token) {
-    client.writeData({ data: { paramT: props.match.params.token } });
+    setParamT((a) => (a = props.match.params.token));
   }
 
-  const [resetPassword, { loading, error }] = useMutation(RESET_PASSWORD, {
-    onError: err => {
-      client.writeData({ data: { toggleSuccess: false } });
+  const [resetPassword, { error }] = useMutation(RESET_PASSWORD, {
+    onError: (err) => {
+      setSuccessAlert((a) => (a = false));
       setResetStatus(true);
     },
-    onCompleted: data => {
-      client.writeData({ data: { toggleSuccess: true } });
-    }
+    onCompleted: (data) => {
+      setSuccessAlert((a) => (a = true));
+    },
   });
+
+  useEffect(() => {
+    if (successAlert) {
+      setTimeout(() => {
+        setSuccessAlert((a) => (a = false));
+      }, 5000);
+    }
+  }, [successAlert, setSuccessAlert]);
 
   useEffect(() => {
     resetPassword({ variables: { token: props.match.params.token } });
@@ -47,11 +53,14 @@ const ResetPassword = props => {
   return (
     <div>
       {!resetStatus ? <ChangePassword /> : <ForgotPassword />}
-      {loading && <Loading />}
-      {toggleSuccess && <SuccessMessage message="Looking good!" />}
+      {successAlert && <SuccessMessage message="Looking good!" />}
       {error && <ErrorMessage error={error} />}
     </div>
   );
+};
+
+ResetPassword.propTypes = {
+  props: PropTypes.object,
 };
 
 export default withRouter(ResetPassword);

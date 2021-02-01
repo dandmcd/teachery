@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-
 import { useAtom } from "jotai";
-import { modalAtom, successAlertAtom } from "../../../state/store";
 
+import { modalAtom, successAlertAtom } from "../../../state/store";
 import ErrorMessage from "../../Alerts/Error";
 import Loading from "../../Alerts/Loading";
 import SuccessMessage from "../../Alerts/Success";
@@ -101,6 +100,7 @@ const RoleChange = () => {
 
   const toggleOffModal = () => {
     setModal((m) => (m = { ...m, toggleOn: false, editImg: false }));
+    setSuccessAlert((a) => (a = false));
   };
 
   return (

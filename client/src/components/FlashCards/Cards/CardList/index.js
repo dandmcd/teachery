@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
@@ -16,7 +16,11 @@ import CardEdit from "../CardEdit";
 import Button from "../../../../theme/Button";
 import withSession from "../../../Session/withSession";
 import { useAtom } from "jotai";
-import { deckIdAtom, modalAtom } from "../../../../state/store";
+import {
+  deckIdAtom,
+  modalAtom,
+  successAlertAtom,
+} from "../../../../state/store";
 import teststudent from "../../../../assets/teststudent.jpg";
 import DeckEdit from "../../Decks/DeckEdit";
 
@@ -25,8 +29,10 @@ export const CardList = ({ match, session }) => {
   id = parseInt(id);
 
   const [modal, setModal] = useAtom(modalAtom);
+  const { toggleOn } = modal;
   const [, setDeckId] = useAtom(deckIdAtom);
-  console.log(modal);
+  const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
+
   useEffect(() => {
     setDeckId(id);
   }, [id, setDeckId]);
@@ -40,12 +46,23 @@ export const CardList = ({ match, session }) => {
     return <ErrorMessage error={error} />;
   }
   const {
-    toggleDeleteSuccess,
     deck: { cards, deckName, description, deckImageUrl },
   } = cardData;
 
   const toggleOnModal = (e) => {
+    setSuccessAlert((a) => (a = false));
     if (e.target.id === "deckedit") {
+      setModal(
+        (m) =>
+          (m = {
+            ...m,
+            toggleOn: true,
+            modalId: id,
+            target: e.target.id,
+            editFileText: deckImageUrl != null ? "Change" : "Add Image",
+          })
+      );
+    } else if (e.target.id === "addcard") {
       setModal(
         (m) =>
           (m = {
@@ -56,15 +73,6 @@ export const CardList = ({ match, session }) => {
           })
       );
     }
-    setModal(
-      (m) =>
-        (m = {
-          ...m,
-          toggleOn: true,
-          modalId: id,
-          target: e.target.id,
-        })
-    );
   };
 
   let authorizedRole;
@@ -76,7 +84,7 @@ export const CardList = ({ match, session }) => {
   }
 
   return (
-    <Fragment>
+    <>
       <DeckEdit />
       <Header>
         <GoBack message="Go Back" />
@@ -111,7 +119,7 @@ export const CardList = ({ match, session }) => {
           </DeckCards>
         </Menu>
       </Header>
-      {toggleDeleteSuccess && (
+      {successAlert && !toggleOn && (
         <SuccessMessage message="Card successfully deleted!" />
       )}
       {cards.length === 0 && (
@@ -125,7 +133,7 @@ export const CardList = ({ match, session }) => {
           authorizedRole={authorizedRole}
         />
       ))}
-    </Fragment>
+    </>
   );
 };
 

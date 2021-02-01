@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useState } from "react";
 import Moment from "react-moment";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -33,7 +33,7 @@ const CardItem = ({ card, authorizedRole }) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Styled.SubHeader>
         <Styled.SubMenu>
           <Styled.PopupFooterButton
@@ -79,7 +79,7 @@ const CardItem = ({ card, authorizedRole }) => {
           {authorizedRole && <CardDelete card={card} />}
         </Styled.Container>
       ) : null}
-    </Fragment>
+    </>
   );
 };
 

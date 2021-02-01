@@ -270,7 +270,7 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
 
 AssignmentItemBase.propTypes = {
   assignedTask: PropTypes.object.isRequired,
-  me: PropTypes.object,
+  session: PropTypes.object,
 };
 
 const Container = styled.div`

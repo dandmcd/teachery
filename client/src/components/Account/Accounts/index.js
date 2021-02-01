@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 import * as routes from "../../../routing/routes";
 import * as Styled from "./style";
@@ -72,6 +73,11 @@ const Account = ({ session, props }) => {
       {!personalizeChecked ? <ToggleTheme props={props} /> : null}
     </Fragment>
   );
+};
+
+Account.propTypes = {
+  session: PropTypes.object,
+  props: PropTypes.object,
 };
 
 export default withSession(Account);

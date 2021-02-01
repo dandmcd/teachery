@@ -138,7 +138,7 @@ const AssignedTaskItemBase = ({
 
 AssignedTaskItemBase.propTypes = {
   assignedTask: PropTypes.object.isRequired,
-  me: PropTypes.object,
+  session: PropTypes.object,
 };
 
 const DownloadLink = styled.a`

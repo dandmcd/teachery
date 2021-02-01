@@ -75,18 +75,6 @@ const CardEdit = () => {
 
   const [s3SignMutation, { error: s3Error }] = useMutation(S3SIGNMUTATION);
   const [updateCard, { loading, error }] = useMutation(UPDATE_CARD, {
-    optimisticResponse: {
-      __typename: "Mutation",
-      updateCard: {
-        id: id,
-        __typename: "",
-        front: front,
-        back: back,
-        pictureName: pictureName,
-        pictureUrl: pictureUrl,
-      },
-    },
-
     onError: (err) => {
       setSuccessAlert((a) => (a = false));
     },
@@ -174,7 +162,7 @@ const CardEdit = () => {
     e.preventDefault();
     if (drop) {
       try {
-        client.writeData({ data: { isSubmitting: true } });
+        setIsSubmitting((a) => (a = true));
         const response = await s3SignMutation({
           variables: {
             filename: formatFilename(drop.name),
@@ -239,6 +227,7 @@ const CardEdit = () => {
         })
     );
     setDrop(null);
+    setSuccessAlert((a) => (a = false));
   };
 
   const onDelete = (e) => {

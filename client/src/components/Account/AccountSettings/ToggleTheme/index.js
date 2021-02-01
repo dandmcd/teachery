@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { lightTheme, darkTheme, iceTheme } from "../../../../theme/theme";
 import * as Styled from "../../Accounts/style";
 
@@ -29,6 +30,10 @@ const ToggleTheme = ({ props: { setTheme } }) => {
       </Styled.ThemeGrid>
     </Styled.Container>
   );
+};
+
+ToggleTheme.propTypes = {
+  setTheme: PropTypes.func.isRequired,
 };
 
 export default ToggleTheme;
