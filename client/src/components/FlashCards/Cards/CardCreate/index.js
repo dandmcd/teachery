@@ -142,7 +142,7 @@ const CardCreate = ({ deck }) => {
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const isInvalid = front === "";
+  const isInvalid = front === "" || back.length > 255;
 
   // Mutation Submit
   const onSubmit = async (e, createCard) => {

@@ -6,6 +6,7 @@ const CARDS_QUERY = gql`
       id
       deckName
       description
+      deckImageName
       deckImageUrl
       createdAt
       user {

@@ -28,19 +28,19 @@
     "graphql-tag": "^2.11.0",
     "history": "^4.10.1",
     "http-proxy-middleware": "^1.0.6",
-    "jotai": "^0.12.7",
+    "jotai": "^0.15.3",
     "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-app-polyfill": "^2.0.0",
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.2.4",
-    "react-image-file-resizer": "^0.3.11",
+    "react-image-file-resizer": "^0.4.2",
     "react-moment": "^1.1.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.1",
+    "react-scripts": "4.0.3",
     "react-test-renderer": "^17.0.1",
     "styled-components": "^5.2.1",
-    "subscriptions-transport-ws": "^0.9.16"
+    "subscriptions-transport-ws": "0.9.16"
   },
   "scripts": {
     "start": "react-scripts start",

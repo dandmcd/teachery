@@ -52,7 +52,7 @@
     "pg": "^8.5.1",
     "sequelize": "^5.22.3",
     "sequelize-cli": "^5.5.1",
-    "subscriptions-transport-ws": "^0.9.16"
+    "subscriptions-transport-ws": "0.9.16"
   },
   "heroku-run-build-script": true
 }
