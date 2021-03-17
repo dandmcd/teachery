@@ -7,9 +7,13 @@ module.exports = {
     database: process.env.DATABASE,
     host: process.env.DATABASE_HOST,
     dialect: "postgres",
-    logging: false
+    logging: false,
   },
   production: {
-    use_env_variable: "DATABASE_URL"
-  }
+    use_env_variable: "DATABASE_URL",
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
 };
