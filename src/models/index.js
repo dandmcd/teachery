@@ -3,7 +3,13 @@ import Sequelize from "sequelize";
 let sequelize;
 if (process.env.DATABASE_URL) {
   sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: "postgres"
+    dialect: "postgres",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
   });
 } else {
   sequelize = new Sequelize(
@@ -11,7 +17,7 @@ if (process.env.DATABASE_URL) {
     process.env.DATABASE_USER,
     process.env.DATABASE_PASSWORD,
     {
-      dialect: "postgres"
+      dialect: "postgres",
     }
   );
 }
@@ -26,10 +32,10 @@ const models = {
   Tag: sequelize.import("./tag"),
   DeckTag: sequelize.import("./decktag"),
   UserAssignment: sequelize.import("./userassignment.js"),
-  BookmarkedDeck: sequelize.import("./bookmarkedDeck.js")
+  BookmarkedDeck: sequelize.import("./bookmarkedDeck.js"),
 };
 
-Object.keys(models).forEach(key => {
+Object.keys(models).forEach((key) => {
   if ("associate" in models[key]) {
     models[key].associate(models);
   }
