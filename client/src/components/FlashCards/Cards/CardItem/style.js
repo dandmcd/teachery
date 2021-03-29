@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Button from "../../../../theme/Button";
 
 export const Header = styled.div`
   background-color: ${(props) => props.theme.neutralLight};
@@ -80,4 +81,27 @@ export const Container = styled.div`
 export const Span = styled.span`
   color: ${(props) => props.theme.textOverlay};
   font-weight: lighter;
+`;
+
+export const CardField = styled.h4`
+  margin-left: 10px;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+`;
+
+export const CardInfo = styled.h5`
+  margin-top: 3px;
+  margin-bottom: 6px;
+  color: ${(props) => props.theme.primaryMed};
+`;
+
+export const Created = styled.h6`
+  margin-left: 10px;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  color: ${(props) => props.theme.textLight};
+`;
+
+export const EditButton = styled(Button)`
+  border: 2px solid ${(props) => props.theme.secondaryDark};
 `;

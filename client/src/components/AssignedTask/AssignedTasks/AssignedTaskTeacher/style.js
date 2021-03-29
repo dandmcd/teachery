@@ -286,3 +286,14 @@ export const EditButton = styled(Button)``;
 export const ManageButton = styled(Button)`
   border: 2px solid ${(props) => props.theme.secondaryDark};
 `;
+
+export const Container = styled.div`
+  z-index: 10;
+  max-width: 1100px;
+  margin: 0 auto;
+`;
+
+export const DownloadLink = styled.a`
+  font-weight: 400;
+  color: ${(props) => props.theme.secondary};
+`;

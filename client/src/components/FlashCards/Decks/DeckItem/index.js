@@ -3,7 +3,6 @@ import Moment from "react-moment";
 import PropTypes from "prop-types";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import styled from "styled-components";
 import { cloneDeep } from "lodash";
 
 import TagLink from "../DeckTags/DeckTagItem";
@@ -185,7 +184,7 @@ const DeckItemBase = ({ deck, session }) => {
           </Styled.PracticeForm>
         </Styled.Practice>
         <Styled.DeckButtons>
-          <EditDropDown>
+          <Styled.EditDropDown>
             <Styled.ManageButton
               type="checkbox"
               checked={isChecked}
@@ -194,7 +193,7 @@ const DeckItemBase = ({ deck, session }) => {
             >
               Manage
             </Styled.ManageButton>
-            <EditDropDownContent isChecked={isChecked}>
+            <Styled.EditDropDownContent isChecked={isChecked}>
               {authorizedRole && <DeckDelete deck={deck} />}
               {authorizedRole && (
                 <Styled.EditButton
@@ -212,19 +211,19 @@ const DeckItemBase = ({ deck, session }) => {
               >
                 Add Tag
               </Styled.TagButton>
-            </EditDropDownContent>
-          </EditDropDown>
+            </Styled.EditDropDownContent>
+          </Styled.EditDropDown>
 
-          <BrowseLink to={cardListLink}>
+          <Styled.BrowseLink to={cardListLink}>
             <Styled.BrowseButton type="button">Browse</Styled.BrowseButton>
-          </BrowseLink>
+          </Styled.BrowseLink>
           {session.me.bookmarkedDecks.find(isBookmarked) ? (
             <Styled.Like>
               <Styled.LikeButton
                 type="button"
                 onClick={() => removeBookmark({ variables: { id: deck.id } })}
               >
-                <LikeIcon src={liked} />
+                <Styled.LikeIcon src={liked} />
               </Styled.LikeButton>
             </Styled.Like>
           ) : (
@@ -233,7 +232,7 @@ const DeckItemBase = ({ deck, session }) => {
                 type="button"
                 onClick={() => bookmarkDeck({ variables: { id: deck.id } })}
               >
-                <LikeIcon src={like} />
+                <Styled.LikeIcon src={like} />
               </Styled.LikeButton>
             </Styled.Like>
           )}
@@ -247,36 +246,5 @@ DeckItemBase.propTypes = {
   deck: PropTypes.object.isRequired,
   session: PropTypes.object.isRequired,
 };
-
-const EditDropDown = styled.div`
-  position: relative;
-  -ms-grid-row: 1;
-  -ms-grid-column: 1;
-  z-index: 30;
-`;
-
-const EditDropDownContent = styled.div`
-  display: ${(props) => (props.isChecked ? "block" : "none")};
-  position: absolute;
-  width: -webkit-min-content;
-  width: -moz-min-content;
-  width: min-content;
-  background-color: ${(props) => props.theme.container};
-  -webkit-box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 16;
-  bottom: 100%;
-`;
-
-const LikeIcon = styled.img`
-  width: 24px;
-  height: 24px;
-`;
-
-const BrowseLink = styled(Link)`
-  -ms-grid-row: 1;
-  -ms-grid-column: 2;
-  display: inherit;
-`;
 
 export default DeckItemBase;

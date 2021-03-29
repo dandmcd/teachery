@@ -1,7 +1,6 @@
 import React from "react";
 import { useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import styled from "styled-components";
 
 import * as Styled from "../../../../theme/Popup";
 import searchImg from "../../../../assets/search.png";
@@ -11,6 +10,7 @@ import SearchTagLink from "./SearchTagLink";
 import { useAtom } from "jotai";
 import { searchAtom } from "../../../../state/store";
 import Modal from "../../../Modal";
+import * as StyledSearch from "./schema";
 
 const TAG_SEARCH_QUERY = gql`
   query tag($tagName: String!) {
@@ -91,19 +91,26 @@ const Search = () => {
 
   return (
     <>
-      <SearchContainer>
-        <SearchInput
+      <StyledSearch.SearchContainer>
+        <StyledSearch.SearchInput
           name="tagName"
           type="text"
           defaultValue={tagName}
           onChange={onChange}
           placeholder="Search by language or tag"
         />
-        <SearchImg src={searchImg} alt="Search" onClick={onClick} />
-      </SearchContainer>
+        <StyledSearch.SearchImg
+          src={searchImg}
+          alt="Search"
+          onClick={onClick}
+        />
+      </StyledSearch.SearchContainer>
       {noResult && (
         <div>
-          <NoResult> Sorry, your search did not find any results...</NoResult>
+          <StyledSearch.NoResult>
+            {" "}
+            Sorry, your search did not find any results...
+          </StyledSearch.NoResult>
         </div>
       )}
       <Modal toggleOn={toggleOn} onToggleOffModal={toggleOffModal}>
@@ -122,36 +129,5 @@ const Search = () => {
     </>
   );
 };
-
-const SearchContainer = styled.div`
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  padding: 0px 0px 5px 12px;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  background-color: ${(props) => props.theme.neutralLight};
-`;
-const SearchImg = styled.img`
-  height: 15px;
-  width: 15px;
-`;
-
-const SearchInput = styled.input`
-  height: 35px;
-  width: 180px;
-  border: 0;
-  outline: 0;
-  border-bottom: 2px solid ${(props) => props.theme.primary};
-  background-color: ${(props) => props.theme.neutralLight};
-`;
-
-const NoResult = styled.p`
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  text-indent: 0.5em;
-  margin: 0 auto;
-`;
 
 export default Search;

@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useCallback } from "react";
 import { useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
@@ -9,43 +8,7 @@ import Loading from "../../Alerts/Loading";
 import withSession from "../../Session/withSession";
 import Button from "../../../theme/Button";
 import ErrorMessage from "../../Alerts/Error";
-
-const MESSAGE_CREATED = gql`
-  subscription {
-    messageCreated {
-      message {
-        id
-        text
-        createdAt
-        user {
-          id
-          username
-        }
-      }
-    }
-  }
-`;
-
-const GET_PAGINATED_MESSAGES_WITH_USERS = gql`
-  query($cursor: String, $limit: Int!) {
-    messages(cursor: $cursor, limit: $limit)
-      @connection(key: "MessagesConnection") {
-      edges {
-        id
-        text
-        createdAt
-        user {
-          id
-          username
-        }
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-    }
-  }
-`;
+import { GET_PAGINATED_MESSAGES_WITH_USERS, MESSAGE_CREATED } from "./schema";
 
 const Messages = ({ limit }) => {
   const {
@@ -53,7 +16,7 @@ const Messages = ({ limit }) => {
     loading,
     error,
     fetchMore,
-    subscribeToMore
+    subscribeToMore,
   } = useQuery(GET_PAGINATED_MESSAGES_WITH_USERS, { variables: { limit } });
   if (loading && !data) {
     return <Loading />;
@@ -82,7 +45,7 @@ const Messages = ({ limit }) => {
 };
 
 Messages.propTypes = {
-  limit: PropTypes.number.isRequired
+  limit: PropTypes.number.isRequired,
 };
 
 const MessageContainer = styled.div`
@@ -93,7 +56,7 @@ const MessageContainer = styled.div`
   margin-bottom: 5px;
   overflow-y: scroll;
   border-radius: 20px;
-  background: ${props => props.theme.neutralLight};
+  background: ${(props) => props.theme.neutralLight};
   text-align: center;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -109,7 +72,7 @@ const MoreMessagesButton = ({ limit, pageInfo, fetchMore, children }) => (
       fetchMore({
         variables: {
           cursor: pageInfo.endCursor,
-          limit
+          limit,
         },
         updateQuery: (previousResult, { fetchMoreResult }) => {
           if (!fetchMoreResult) {
@@ -121,11 +84,11 @@ const MoreMessagesButton = ({ limit, pageInfo, fetchMore, children }) => (
               ...fetchMoreResult.messages,
               edges: [
                 ...previousResult.messages.edges,
-                ...fetchMoreResult.messages.edges
-              ]
-            }
+                ...fetchMoreResult.messages.edges,
+              ],
+            },
           };
-        }
+        },
       })
     }
   >
@@ -134,17 +97,17 @@ const MoreMessagesButton = ({ limit, pageInfo, fetchMore, children }) => (
 );
 
 const MoreButton = styled(Button)`
-  border-color: ${props => props.theme.primaryDark};
+  border-color: ${(props) => props.theme.primaryDark};
 `;
 
 MoreMessagesButton.propTypes = {
   limit: PropTypes.number.isRequired,
   pageInfo: PropTypes.object.isRequired,
   fetchMore: PropTypes.func.isRequired,
-  children: PropTypes.string.isRequired
+  children: PropTypes.string.isRequired,
 };
 
-const MessageList = props => {
+const MessageList = (props) => {
   const subscribeToMoreMessage = useCallback(() => {
     props.subscribeToMore({
       document: MESSAGE_CREATED,
@@ -159,10 +122,10 @@ const MessageList = props => {
           ...previousResult,
           messages: {
             ...previousResult.messages,
-            edges: [messageCreated.message, ...previousResult.messages.edges]
-          }
+            edges: [messageCreated.message, ...previousResult.messages.edges],
+          },
         };
-      }
+      },
     });
   }, [props]);
 
@@ -172,13 +135,13 @@ const MessageList = props => {
 
   const { messages } = props;
 
-  return messages.map(message => (
+  return messages.map((message) => (
     <MessageItem key={message.id} message={message} />
   ));
 };
 
 MessageList.propTypes = {
-  props: PropTypes.object
+  props: PropTypes.object,
 };
 
 const MessageItemBase = ({ message, session }) => (
@@ -198,7 +161,7 @@ const MessageItemBase = ({ message, session }) => (
 
 MessageItemBase.propTypes = {
   message: PropTypes.object.isRequired,
-  session: PropTypes.object.isRequired
+  session: PropTypes.object.isRequired,
 };
 
 const Username = styled.h5`
@@ -207,7 +170,7 @@ const Username = styled.h5`
 
 const DateCreated = styled.h6`
   margin: 0.2em 0 0.4em 0;
-  color: ${props => props.theme.textLight};
+  color: ${(props) => props.theme.textLight};
 `;
 
 const Text = styled.p`

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../../../../theme/Button";
 
@@ -484,4 +485,35 @@ export const AddTagButton = styled(Button)`
   :hover {
     background: ${(props) => props.theme.secondaryDark};
   }
+`;
+
+export const EditDropDown = styled.div`
+  position: relative;
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+  z-index: 30;
+`;
+
+export const EditDropDownContent = styled.div`
+  display: ${(props) => (props.isChecked ? "block" : "none")};
+  position: absolute;
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  background-color: ${(props) => props.theme.container};
+  -webkit-box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 16;
+  bottom: 100%;
+`;
+
+export const LikeIcon = styled.img`
+  width: 24px;
+  height: 24px;
+`;
+
+export const BrowseLink = styled(Link)`
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+  display: inherit;
 `;

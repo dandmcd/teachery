@@ -1,69 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import gql from "graphql-tag";
 import PropTypes from "prop-types";
 
 import { useAtom } from "jotai";
 import { modalAtom, successAlertAtom } from "../../../../state/store";
 
+import { STATUS_ENUM, CREATE_ASSIGNED_TASK } from "./schema";
 import ErrorMessage from "../../../Alerts/Error";
 import Loading from "../../../Alerts/Loading";
 import SuccessMessage from "../../../Alerts/Success";
 import * as Styled from "../../../../theme/Popup";
 import GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS from "../AssignedTaskTeacherSchema";
 import Modal from "../../../Modal";
-
-const STATUS_ENUM = gql`
-  query {
-    __type(name: "Status") {
-      name
-      enumValues {
-        name
-      }
-    }
-  }
-`;
-
-const CREATE_ASSIGNED_TASK = gql`
-  mutation(
-    $assignmentId: Int!
-    $assignedTo: String!
-    $dueDate: String!
-    $status: Status!
-  ) {
-    assignTask(
-      assignmentId: $assignmentId
-      assignedTo: $assignedTo
-      dueDate: $dueDate
-      status: $status
-    ) {
-      id
-      assignmentId
-      status
-      dueDate
-      createdAt
-      assignedTo
-      assignedToName
-      updatedDocumentName
-      updatedDocumentUrl
-      user {
-        id
-        username
-      }
-      assignment {
-        id
-        assignmentName
-        note
-        link
-        createdAt
-        user {
-          id
-          username
-        }
-      }
-    }
-  }
-`;
 
 const INITIAL_STATE = {
   id: 0,

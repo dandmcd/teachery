@@ -29,9 +29,9 @@ const TeacherAssignedTasks = ({ limit, me }) => {
     return <Loading />;
   } else if (!data) {
     return (
-      <Container>
+      <Styled.Container>
         <ErrorMessage customError="You haven't assigned any tasks.  You can assign a task to a student by clicking Manage on any assignment below, and choosing 'Assign Task'" />
-      </Container>
+      </Styled.Container>
     );
   } else if (error) {
     return <ErrorMessage error={error} />;
@@ -189,13 +189,13 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
         <Styled.LinkCell>
           {documentUrl !== null ? (
             <Styled.FileStatus>
-              <DownloadLink
+              <Styled.DownloadLink
                 href={documentUrl}
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 <Styled.DownloadIcon src={downloadblue} /> View
-              </DownloadLink>
+              </Styled.DownloadLink>
             </Styled.FileStatus>
           ) : null}
           {link !== null ? (
@@ -272,17 +272,6 @@ AssignmentItemBase.propTypes = {
   assignedTask: PropTypes.object.isRequired,
   session: PropTypes.object,
 };
-
-const Container = styled.div`
-  z-index: 10;
-  max-width: 1100px;
-  margin: 0 auto;
-`;
-
-const DownloadLink = styled.a`
-  font-weight: 400;
-  color: ${(props) => props.theme.secondary};
-`;
 
 const AssignedTaskItem = withSession(AssignmentItemBase);
 

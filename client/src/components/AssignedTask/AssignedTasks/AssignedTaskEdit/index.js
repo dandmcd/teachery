@@ -12,6 +12,7 @@ import {
   successAlertAtom,
 } from "../../../../state/store";
 
+import { UPDATE_ASSIGNED_TASK, STATUS_ENUM, S3SIGNMUTATION } from "./schema";
 import * as Styled from "../../../../theme/Popup";
 import DropZone from "../../../Uploader";
 import Loading from "../../../Alerts/Loading";
@@ -20,53 +21,6 @@ import ErrorMessage from "../../../Alerts/Error";
 import withSession from "../../../Session/withSession";
 import Modal from "../../../Modal";
 import download from "../../../../assets/download.png";
-
-const UPDATE_ASSIGNED_TASK = gql`
-  mutation(
-    $id: ID!
-    $assignedTo: String!
-    $dueDate: String!
-    $status: Status!
-    $updatedDocumentName: String
-    $updatedDocumentUrl: String
-  ) {
-    updateAssignedTask(
-      id: $id
-      assignedTo: $assignedTo
-      dueDate: $dueDate
-      status: $status
-      updatedDocumentName: $updatedDocumentName
-      updatedDocumentUrl: $updatedDocumentUrl
-    ) {
-      id
-      assignedTo
-      dueDate
-      status
-      updatedDocumentName
-      updatedDocumentUrl
-    }
-  }
-`;
-
-const STATUS_ENUM = gql`
-  query {
-    __type(name: "Status") {
-      name
-      enumValues {
-        name
-      }
-    }
-  }
-`;
-
-const S3SIGNMUTATION = gql`
-  mutation($filename: String!, $filetype: String!) {
-    signS3(filename: $filename, filetype: $filetype) {
-      url
-      signedRequest
-    }
-  }
-`;
 
 const AssignTaskUpdate = ({ session }) => {
   const [state, setState] = useState({

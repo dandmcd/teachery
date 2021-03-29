@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useMutation } from "@apollo/react-hooks";
-import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
 import PropTypes from "prop-types";
@@ -19,41 +18,7 @@ import {
   successAlertAtom,
 } from "../../../../state/store";
 import Modal from "../../../Modal";
-
-//Mutations
-const CREATE_CARD = gql`
-  mutation(
-    $deckId: Int!
-    $front: String!
-    $back: String
-    $pictureName: String
-    $pictureUrl: String
-  ) {
-    createCard(
-      deckId: $deckId
-      front: $front
-      back: $back
-      pictureName: $pictureName
-      pictureUrl: $pictureUrl
-    ) {
-      id
-      front
-      back
-      createdAt
-      pictureName
-      pictureUrl
-    }
-  }
-`;
-
-const S3SIGNMUTATION = gql`
-  mutation($filename: String!, $filetype: String!) {
-    signS3(filename: $filename, filetype: $filetype) {
-      url
-      signedRequest
-    }
-  }
-`;
+import { S3SIGNMUTATION, CREATE_CARD } from "./schema";
 
 const INITIAL_STATE = {
   deckId: null,

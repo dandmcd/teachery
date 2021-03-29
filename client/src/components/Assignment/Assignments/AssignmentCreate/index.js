@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useMutation } from "@apollo/react-hooks";
-import gql from "graphql-tag";
 import axios from "axios";
 import moment from "moment";
 import { useAtom } from "jotai";
@@ -17,60 +16,7 @@ import {
   successAlertAtom,
 } from "../../../../state/store";
 import Modal from "../../../Modal";
-
-const CREATE_ASSIGNMENT = gql`
-  mutation(
-    $assignmentName: String!
-    $note: String
-    $link: String
-    $documentName: String
-    $documentUrl: String
-  ) {
-    createAssignment(
-      assignmentName: $assignmentName
-      note: $note
-      link: $link
-      documentName: $documentName
-      documentUrl: $documentUrl
-    ) {
-      id
-      assignmentName
-      note
-      link
-      documentName
-      documentUrl
-      createdAt
-      user {
-        id
-        username
-      }
-      assignedTasks {
-        id
-        assignmentId
-        status
-        dueDate
-        createdAt
-        assignedTo
-        assignedToName
-        updatedDocumentName
-        updatedDocumentUrl
-        user {
-          id
-          username
-        }
-      }
-    }
-  }
-`;
-
-const S3SIGNMUTATION = gql`
-  mutation($filename: String!, $filetype: String!) {
-    signS3(filename: $filename, filetype: $filetype) {
-      url
-      signedRequest
-    }
-  }
-`;
+import { S3SIGNMUTATION, CREATE_ASSIGNMENT } from "./schema";
 
 const INITIAL_STATE = {
   assignmentName: "",

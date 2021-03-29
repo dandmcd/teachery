@@ -17,42 +17,7 @@ import {
   successAlertAtom,
 } from "../../../../state/store";
 import Modal from "../../../Modal";
-
-//Mutations
-const UPDATE_CARD = gql`
-  mutation(
-    $id: ID!
-    $deckId: Int!
-    $front: String!
-    $back: String
-    $pictureName: String
-    $pictureUrl: String
-  ) {
-    updateCard(
-      id: $id
-      deckId: $deckId
-      front: $front
-      back: $back
-      pictureName: $pictureName
-      pictureUrl: $pictureUrl
-    ) {
-      id
-      front
-      back
-      pictureName
-      pictureUrl
-    }
-  }
-`;
-
-const S3SIGNMUTATION = gql`
-  mutation($filename: String!, $filetype: String!) {
-    signS3(filename: $filename, filetype: $filetype) {
-      url
-      signedRequest
-    }
-  }
-`;
+import { S3SIGNMUTATION, UPDATE_CARD } from "./schema";
 
 const CardEdit = () => {
   const client = useApolloClient();

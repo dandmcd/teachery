@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import Moment from "react-moment";
-import styled from "styled-components";
 import PropTypes from "prop-types";
 
-import Button from "../../../../theme/Button";
 import withSession from "../../../Session/withSession";
 import CardDelete from "../CardDelete";
 import * as Styled from "./style";
@@ -49,32 +47,36 @@ const CardItem = ({ card, authorizedRole }) => {
       </Styled.SubHeader>
       {cardChecked ? (
         <Styled.Container>
-          <CardField>
+          <Styled.CardField>
             Card Front: <Styled.Span>{card.front}</Styled.Span>
-          </CardField>
-          <CardField>
+          </Styled.CardField>
+          <Styled.CardField>
             Card Back: <Styled.Span>{card.back}</Styled.Span>
-          </CardField>
+          </Styled.CardField>
           {card.pictureUrl != null ? (
-            <CardField>
+            <Styled.CardField>
               Image:{" "}
               <a
                 href={card.pictureUrl}
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <CardInfo>{card.pictureUrl}</CardInfo>
+                <Styled.CardInfo>{card.pictureUrl}</Styled.CardInfo>
               </a>
-            </CardField>
+            </Styled.CardField>
           ) : null}
-          <Created>
+          <Styled.Created>
             Created on:{" "}
             <Moment format="YYYY-MM-DD HH:mm">{card.createdAt}</Moment>
-          </Created>
+          </Styled.Created>
           {authorizedRole && (
-            <EditButton id="cardedit" type="button" onClick={toggleOnModal}>
+            <Styled.EditButton
+              id="cardedit"
+              type="button"
+              onClick={toggleOnModal}
+            >
               Edit
-            </EditButton>
+            </Styled.EditButton>
           )}
           {authorizedRole && <CardDelete card={card} />}
         </Styled.Container>
@@ -87,28 +89,5 @@ CardItem.propTypes = {
   card: PropTypes.object.isRequired,
   session: PropTypes.object.isRequired,
 };
-
-const CardField = styled.h4`
-  margin-left: 10px;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-`;
-
-const CardInfo = styled.h5`
-  margin-top: 3px;
-  margin-bottom: 6px;
-  color: ${(props) => props.theme.primaryMed};
-`;
-
-const Created = styled.h6`
-  margin-left: 10px;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  color: ${(props) => props.theme.textLight};
-`;
-
-const EditButton = styled(Button)`
-  border: 2px solid ${(props) => props.theme.secondaryDark};
-`;
 
 export default withSession(CardItem);
