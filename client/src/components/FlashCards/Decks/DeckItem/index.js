@@ -18,7 +18,7 @@ import { useAtom } from "jotai";
 import { modalAtom } from "../../../../state/store";
 
 const BOOKMARK_DECK = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     bookmarkDeck(id: $id) {
       id
     }
@@ -26,7 +26,7 @@ const BOOKMARK_DECK = gql`
 `;
 
 const REMOVE_BOOKMARK = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     removeBookmark(id: $id)
   }
 `;
@@ -40,6 +40,7 @@ const DeckItemBase = ({ deck, session }) => {
   });
   const { count } = sessionCount;
 
+  // Toggles bookmarked deck icon
   const isBookmarked = (deckId) => {
     return deckId.id === deck.id;
   };
@@ -119,6 +120,7 @@ const DeckItemBase = ({ deck, session }) => {
 
   const isInvalid = count === "" || count <= "0";
 
+  //User role determines deck options
   let authorizedRole;
   if (session && session.me && session.me.role === "ADMIN") {
     authorizedRole = true;

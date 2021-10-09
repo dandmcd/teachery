@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -41,7 +41,7 @@ const AssignedTasks = ({ limit, me }) => {
   const { edges, pageInfo } = data.assignedTasks;
 
   return (
-    <Fragment>
+    <>
       <AssignedTaskList assignedTasks={edges} me={me} />
 
       {pageInfo.hasNextPage && (
@@ -53,7 +53,7 @@ const AssignedTasks = ({ limit, me }) => {
           More
         </MoreAssignedTasksButton>
       )}
-    </Fragment>
+    </>
   );
 };
 

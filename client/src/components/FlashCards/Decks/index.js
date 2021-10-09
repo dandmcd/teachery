@@ -23,6 +23,7 @@ const Decks = ({ limit, me }) => {
     }
   );
 
+  // Toggles showing only bookmarked decks including through dashboard link
   useEffect(() => {
     if (toggleBookmarks && linkedToPage) {
       refetch();

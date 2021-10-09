@@ -28,6 +28,7 @@ const INITIAL_STATE = {
   passwordConfirmation: "",
 };
 
+// This component is used when user requests to change password from Account settings
 const ChangePasswordLoggedIn = ({ session }) => {
   const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
   const [customError, setCustomError] = useAtom(customErrorAtom);

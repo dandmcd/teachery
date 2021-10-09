@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
@@ -8,6 +8,7 @@ import withSession from "../../Session/withSession";
 import ToggleTheme from "../AccountSettings/ToggleTheme";
 
 const Account = ({ session, props }) => {
+  // Toggle hiding Account sections
   const [accountChecked, setAccountChecked] = useState(false);
   const [personalizeChecked, setPersonalizeChecked] = useState(false);
   const toggleAccountSection = () => {
@@ -18,7 +19,7 @@ const Account = ({ session, props }) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Styled.Header>
         <Styled.SubMenu>
           <Styled.PopupFooterButton
@@ -71,7 +72,7 @@ const Account = ({ session, props }) => {
         </Styled.SubMenu>
       </Styled.Header>
       {!personalizeChecked ? <ToggleTheme props={props} /> : null}
-    </Fragment>
+    </>
   );
 };
 

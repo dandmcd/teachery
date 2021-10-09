@@ -50,6 +50,7 @@ const ForgotPassword = () => {
 
   const onSubmit = async (e, forgotPassword) => {
     e.preventDefault();
+    // Clear the cache and any tokens from local storage before running forgotten password logic
     localStorage.removeItem("token");
     client.resetStore();
     try {

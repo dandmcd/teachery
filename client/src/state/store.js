@@ -5,6 +5,7 @@ export const successAlertAtom = atom(false);
 export const isPasswordChangedAtom = atom(false);
 export const isSubmittingAtom = atom(false);
 export const customErrorAtom = atom(null);
+// Temporarily stores the token for change password and account verification
 export const paramTAtom = atom("");
 
 //Create and edit items

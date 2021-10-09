@@ -3,6 +3,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 
 const ErrorMessage = ({ error, customError }) => {
+  // If Graphql sends back error, use it's messaging, else use a passed in custom error
   if (error) {
     return (
       <ErrorContainer>
@@ -20,7 +21,7 @@ const ErrorMessage = ({ error, customError }) => {
 
 ErrorMessage.propTypes = {
   error: PropTypes.object,
-  customError: PropTypes.string
+  customError: PropTypes.string,
 };
 
 const ErrorContainer = styled.div`
@@ -32,7 +33,7 @@ const ErrorContainer = styled.div`
 
 const Error = styled.h5`
   text-align: center;
-  color: ${props => props.theme.error};
+  color: ${(props) => props.theme.error};
 `;
 
 export default ErrorMessage;

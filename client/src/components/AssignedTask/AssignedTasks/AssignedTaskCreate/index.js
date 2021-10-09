@@ -26,6 +26,7 @@ const AssignTask = ({ assignment }) => {
 
   const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
 
+  // Set selection box with status enum
   const { data: enumData, loading: enumLoading, error: enumError } = useQuery(
     STATUS_ENUM
   );

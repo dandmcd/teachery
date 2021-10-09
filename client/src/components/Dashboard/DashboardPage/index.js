@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import moment from "moment";
 import { Link } from "react-router-dom";
@@ -26,6 +26,7 @@ const DashboardPage = ({ session, me }) => {
     return <ErrorMessage error={error} />;
   }
 
+  //Check assignments due date status
   const date = moment().format("YYYYMMDD");
   let incomplete;
   let overdue;
@@ -67,7 +68,7 @@ const DashboardPage = ({ session, me }) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Styled.DashboardGrid>
         <Styled.AssignmentItemContainer>
           <Styled.Welcome>
@@ -108,7 +109,7 @@ const DashboardPage = ({ session, me }) => {
         )}{" "}
       </Styled.DashboardGrid>
       {data.bookmarkedDecks !== null && (
-        <Fragment>
+        <>
           <Styled.DividerBack>
             <Styled.Headers>Recently Saved Flashcard Decks</Styled.Headers>
           </Styled.DividerBack>
@@ -127,7 +128,7 @@ const DashboardPage = ({ session, me }) => {
               </Link>
             </Styled.GridButtonCol>
           </Styled.DeckGrid>
-        </Fragment>
+        </>
       )}
 
       <Styled.DividerBack>
@@ -147,7 +148,7 @@ const DashboardPage = ({ session, me }) => {
         </Styled.GridButtonCol>
       </Styled.DeckGrid>
       {data.bookmarkedDecks === null && (
-        <Fragment>
+        <>
           <Styled.DividerBack>
             <Styled.Headers>Recently Saved Flashcard Decks</Styled.Headers>
           </Styled.DividerBack>
@@ -156,9 +157,9 @@ const DashboardPage = ({ session, me }) => {
             You don't currenly have any saved decks, but if you did, they would
             appear right here!
           </Styled.EmptyText>
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 };
 

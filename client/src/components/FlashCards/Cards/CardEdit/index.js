@@ -83,6 +83,7 @@ const CardEdit = () => {
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
+  //Adjust button text based on card image status
   const handleClick = useCallback(() => {
     if (editImg && pictureUrl === null) {
       setModal(

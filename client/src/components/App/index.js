@@ -26,7 +26,7 @@ import GlobalStyle from "../../theme/globalStyle";
 import ForgotPassword from "../Account/AccountSettings/ForgotPassword";
 import ResetPassword from "../Account/AccountSettings/ResetPassword";
 import ChangePassword from "../Account/AccountSettings/ChangePassword";
-import ConfirmAccount from "../Account/AccountSettings/ConfirmAccount/ConfirmAccount";
+import ConfirmAccount from "../Account/AccountSettings/ConfirmAccount";
 import ChangePasswordLoggedIn from "../Account/AccountSettings/ChangePasswordLoggedIn";
 import { lightTheme, darkTheme, iceTheme } from "../../theme/theme";
 import PageNotFound from "../Navigation/PageNotFound";
@@ -36,7 +36,9 @@ const App = ({ session, refetch }) => {
   const [componentMounted, setComponentMounted] = useState(false);
 
   useLayoutEffect(() => {
+    // get saved theme, if any, from local browser
     const localTheme = window.localStorage.getItem("theme");
+    // If no saved theme, check browser preference for light or dark theme and set
     if (
       window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches &&
@@ -53,6 +55,7 @@ const App = ({ session, refetch }) => {
     setComponentMounted(true);
   }, []);
 
+  // Need to mount theme before returning the app so that themes apply on load
   if (!componentMounted) {
     return <div />;
   }

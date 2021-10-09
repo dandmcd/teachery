@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import axios from "axios";
@@ -48,9 +48,12 @@ const AssignTaskUpdate = ({ session }) => {
   const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
   const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
 
-  const { data: enumData, loading: enumLoading, error: enumError } = useQuery(
-    STATUS_ENUM
-  );
+  // Enum fills the status select box
+  const {
+    data: enumData,
+    loading: enumLoading,
+    error: enumError,
+  } = useQuery(STATUS_ENUM);
   let menuItems = [];
   if (enumLoading || enumError) {
     menuItems = [];
@@ -106,6 +109,7 @@ const AssignTaskUpdate = ({ session }) => {
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
+  //Sets the form buttons based on toggles and image status
   const handleClick = useCallback(() => {
     if (editImg && updatedDocumentUrl === null) {
       setModal(
@@ -235,6 +239,7 @@ const AssignTaskUpdate = ({ session }) => {
     );
   };
 
+  // Toggles edit options based on user role
   let superRole;
   if (session && session.me && session.me.role === "TEACHER") {
     superRole = true;
@@ -255,7 +260,7 @@ const AssignTaskUpdate = ({ session }) => {
           <Styled.PopupBody>
             <form onSubmit={(e) => onSubmit(e, updateAssignedTask)}>
               {superRole && (
-                <Fragment>
+                <>
                   <Styled.Label>
                     <Styled.Span>
                       <Styled.LabelName>Due Date</Styled.LabelName>
@@ -285,7 +290,7 @@ const AssignTaskUpdate = ({ session }) => {
                       ))}
                     </Styled.SelectBox>
                   </Styled.Select>
-                </Fragment>
+                </>
               )}
               {updatedDocumentUrl ? (
                 <Styled.CardDiv>

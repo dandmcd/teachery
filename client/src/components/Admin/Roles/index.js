@@ -39,6 +39,7 @@ const RoleChange = () => {
 
   const [successAlert, setSuccessAlert] = useAtom(successAlertAtom);
 
+  // Fills selection box with roles
   const { data: enumData, loading: enumLoading, error: enumError } = useQuery(
     ROLE_ENUM
   );

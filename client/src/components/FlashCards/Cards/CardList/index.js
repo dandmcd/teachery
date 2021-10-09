@@ -37,7 +37,11 @@ export const CardList = ({ match, session }) => {
     setDeckId(id);
   }, [id, setDeckId]);
 
-  const { data: cardData, error, loading } = useQuery(CARDS_QUERY, {
+  const {
+    data: cardData,
+    error,
+    loading,
+  } = useQuery(CARDS_QUERY, {
     variables: { id },
   });
   if (loading && !cardData) {
@@ -76,7 +80,7 @@ export const CardList = ({ match, session }) => {
   };
 
   let authorizedRole;
-
+  // Checks user ownership and role to add, edit or delete cards
   if (session && session.me && session.me.role === "ADMIN") {
     authorizedRole = true;
   } else if (session && session.me && session.me.id === cardData.deck.user.id) {
