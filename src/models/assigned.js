@@ -76,6 +76,7 @@ const assignedTask = (sequelize, DataTypes) => {
     }
   );
   AssignedTask.associate = (models) => {
+    AssignedTask.hasMany(models.Note, { onDelete: "CASCADE" });
     AssignedTask.belongsTo(models.User);
     AssignedTask.belongsToMany(models.Assignment, {
       through: models.UserAssignment,

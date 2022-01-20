@@ -33,6 +33,7 @@ const models = {
   DeckTag: sequelize.import("./decktag"),
   UserAssignment: sequelize.import("./userassignment.js"),
   BookmarkedDeck: sequelize.import("./bookmarkedDeck.js"),
+  Note: sequelize.import("./note.js"),
 };
 
 Object.keys(models).forEach((key) => {

@@ -39,6 +39,18 @@ export const isAssignmentOwner = async (parent, { id }, { models, me }) => {
   return skip;
 };
 
+export const isAssignedTaskOwner = async (parent, { id }, { models, me }) => {
+  const assignedTask = await models.AssignedTask.findByPk(id, { raw: true });
+  if (me.role === "ADMIN") {
+    return skip;
+  }
+  if (assignedTask.assignedTo !== me.id) {
+    throw new ForbiddenError("Not authenticated as assigned task owner.");
+  }
+
+  return skip;
+};
+
 export const isDeckOwner = async (parent, { id }, { models, me }) => {
   const deck = await models.Deck.findByPk(id, { raw: true });
   if (me.role === "ADMIN") {

@@ -94,5 +94,6 @@ export default gql`
     createdAt: Date!
     user: User!
     assignment: Assignment!
+    notes: [Note!]
   }
 `;

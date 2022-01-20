@@ -5,9 +5,9 @@ import { isAuthenticated, isTeacher } from "./authorization";
 import { UserInputError } from "apollo-server";
 import moment from "moment";
 
-const toCursorHash = string => Buffer.from(string).toString("base64");
+const toCursorHash = (string) => Buffer.from(string).toString("base64");
 
-const fromCursorHash = string =>
+const fromCursorHash = (string) =>
   Buffer.from(string, "base64").toString("ascii");
 
 export default {
@@ -20,18 +20,18 @@ export default {
               where: {
                 assignedTo: me.id,
                 createdAt: {
-                  [Sequelize.Op.lt]: fromCursorHash(cursor)
-                }
-              }
+                  [Sequelize.Op.lt]: fromCursorHash(cursor),
+                },
+              },
             }
           : {};
         const assignedTasks = await models.AssignedTask.findAll({
           where: {
-            assignedTo: me.id
+            assignedTo: me.id,
           },
           order: [["createdAt", "DESC"]],
           limit: limit + 1,
-          ...cursorOptions
+          ...cursorOptions,
         });
         if (assignedTasks.length === 0) {
           return null;
@@ -47,8 +47,8 @@ export default {
               hasNextPage,
               endCursor: toCursorHash(
                 edges[edges.length - 1].createdAt.toString()
-              )
-            }
+              ),
+            },
           };
         }
       }
@@ -63,18 +63,18 @@ export default {
         ? {
             where: {
               createdAt: {
-                [Sequelize.Op.lt]: fromCursorHash(cursor)
-              }
-            }
+                [Sequelize.Op.lt]: fromCursorHash(cursor),
+              },
+            },
           }
         : {};
       const assignedTasks = await models.AssignedTask.findAll({
         where: {
-          userId: me.id
+          userId: me.id,
         },
         order: [["createdAt", "DESC"]],
         limit: limit + 1,
-        ...cursorOptions
+        ...cursorOptions,
       });
 
       const hasNextPage = assignedTasks.length > limit;
@@ -84,14 +84,14 @@ export default {
         edges,
         pageInfo: {
           hasNextPage,
-          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString())
-        }
+          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString()),
+        },
       };
     },
 
     assignedTask: async (parent, { id }, { models }) => {
       return await models.AssignedTask.findByPk(id);
-    }
+    },
   },
 
   Mutation: {
@@ -110,10 +110,13 @@ export default {
         const assignment = await models.Assignment.findByPk(assignmentId);
         const user = await models.User.findOne({
           where: {
-            [Sequelize.Op.or]: [{ email: assignedTo }, { username: assignedTo }]
+            [Sequelize.Op.or]: [
+              { email: assignedTo },
+              { username: assignedTo },
+            ],
           },
           raw: true,
-          returning: true
+          returning: true,
         });
         if (assignment == null) {
           throw new UserInputError(
@@ -128,13 +131,13 @@ export default {
           assignedToName: user.username,
           userId: me.id,
           dueDate,
-          status
+          status,
         });
         const userAssignment = await models.UserAssignment.create({
           assignmentId: assignment.id,
           assignedTaskId: assignedTask.id,
           assignedToName: user.username,
-          assignedTo //Do we need this?
+          assignedTo, //Do we need this?
         });
         return assignedTask;
       }
@@ -151,7 +154,7 @@ export default {
           dueDate,
           status,
           updatedDocumentName,
-          updatedDocumentUrl
+          updatedDocumentUrl,
         },
         { models }
       ) => {
@@ -168,14 +171,14 @@ export default {
             dueDate: dueDate,
             status: status,
             updatedDocumentName: updatedDocumentName,
-            updatedDocumentUrl: updatedDocumentUrl
+            updatedDocumentUrl: updatedDocumentUrl,
           },
           { returning: true, plain: true, validate: true, where: { id: id } }
         )
           .spread((affectedCount, affectedRows) => {
             return affectedRows;
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
             throw new UserInputError(err);
           });
@@ -195,14 +198,14 @@ export default {
             id: id,
             status: status,
             updatedDocumentName: updatedDocumentName,
-            updatedDocumentUrl: updatedDocumentUrl
+            updatedDocumentUrl: updatedDocumentUrl,
           },
           { returning: true, plain: true, validate: true, where: { id: id } }
         )
           .spread((affectedCount, affectedRows) => {
             return affectedRows;
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
             throw new UserInputError(err);
           });
@@ -213,15 +216,18 @@ export default {
       isTeacher,
       async (parent, { id }, { models }) => {
         await models.UserAssignment.destroy({
-          where: { assignedTaskId: id }
+          where: { assignedTaskId: id },
+        });
+        await models.Note.destroy({
+          where: { assignedTaskId: id },
         });
         return await models.AssignedTask.destroy({
           where: {
-            id: id
-          }
+            id: id,
+          },
         });
       }
-    )
+    ),
   },
 
   AssignedTask: {
@@ -230,6 +236,13 @@ export default {
     },
     user: async (assignedTask, args, { loaders }) => {
       return await loaders.user.load(assignedTask.userId);
-    }
-  }
+    },
+    notes: async (assignedTask, args, { models }) => {
+      return await models.Note.findAll({
+        where: {
+          assignedTaskId: assignedTask.id,
+        },
+      });
+    },
+  },
 };
