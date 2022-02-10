@@ -146,6 +146,7 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
       documentUrl,
       user: { username },
     },
+    notes,
   } = assignedTask;
 
   const [isChecked, setIsChecked] = useState(false);
@@ -209,6 +210,14 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
           ) : null}
         </Styled.LinkCell>
         <Styled.CreatedInfo>
+          {notes.map((note) => {
+            return (
+              <li key={note.id}>
+                <h5>{note.noteCreatedAt}</h5>
+                <h4>{note.text}</h4>
+              </li>
+            );
+          })}
           <Styled.CreatedAt>
             Created on: <Moment format="YYYY-MM-DD">{createdAt}</Moment>
           </Styled.CreatedAt>

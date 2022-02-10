@@ -24,6 +24,7 @@ const AssignedTaskItemBase = ({
       documentUrl,
       user: { username },
     },
+    notes,
   },
   session,
 }) => {
@@ -91,7 +92,14 @@ const AssignedTaskItemBase = ({
 
           <Styled.AssignedTo>Assigned to: {assignedToName}</Styled.AssignedTo>
         </Styled.CreatedInfo>
-
+        {notes.map((note) => {
+          return (
+            <li key={note.id}>
+              <h5>{note.noteCreatedAt}</h5>
+              <h4>{note.text}</h4>
+            </li>
+          );
+        })}
         {status === "INCOMPLETE" && (
           <Styled.EditButton
             id="assigntaskedit"

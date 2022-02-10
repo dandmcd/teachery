@@ -7,7 +7,7 @@ import * as Styled from "../style";
 const AssignedTaskList = ({ assignedTasks, me }) => {
   return (
     <Styled.AssignmentContainer>
-      {assignedTasks.map(assignedTask => (
+      {assignedTasks.map((assignedTask) => (
         <AssignedTaskItem
           key={assignedTask.id}
           assignedTask={assignedTask}
@@ -20,7 +20,7 @@ const AssignedTaskList = ({ assignedTasks, me }) => {
 
 AssignedTaskList.propTypes = {
   assignedTasks: PropTypes.array.isRequired,
-  me: PropTypes.object
+  me: PropTypes.object,
 };
 
 const AssignedTaskItem = withSession(AssignedTaskItemBase);

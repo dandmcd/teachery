@@ -31,6 +31,15 @@ const GET_PAGINATED_ASSIGNMENTS_WITH_USERS = gql`
             username
           }
         }
+        notes {
+          id
+          text
+          noteCreatedAt: createdAt
+          user {
+            id
+            username
+          }
+        }
       }
       pageInfo {
         hasNextPage

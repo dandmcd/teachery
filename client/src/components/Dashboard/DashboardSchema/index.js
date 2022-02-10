@@ -35,6 +35,15 @@ const GET_DASHBOARD = gql`
             username
           }
         }
+        notes {
+          id
+          text
+          noteCreatedAt: createdAt
+          user {
+            id
+            username
+          }
+        }
       }
     }
     bookmarkedDecks: decks(limit: 2, showBookmarks: true) {
