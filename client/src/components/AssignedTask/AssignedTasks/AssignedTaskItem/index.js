@@ -6,6 +6,7 @@ import styled from "styled-components";
 import * as Styled from "../style";
 import download from "../../../../assets/download.png";
 import downloadblue from "../../../../assets/downloadblue.png";
+import noteIcon from "../../../../assets/note.png";
 import { modalAtom } from "../../../../state/store";
 import { useAtom } from "jotai";
 
@@ -70,7 +71,7 @@ const AssignedTaskItemBase = ({
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <Styled.DownloadIcon src={downloadblue} /> View
+                <Styled.DownloadIcon src={downloadblue} /> View Assignment
               </DownloadLink>
             </Styled.FileStatus>
           ) : null}
@@ -92,14 +93,7 @@ const AssignedTaskItemBase = ({
 
           <Styled.AssignedTo>Assigned to: {assignedToName}</Styled.AssignedTo>
         </Styled.CreatedInfo>
-        {notes.map((note) => {
-          return (
-            <li key={note.id}>
-              <h5>{note.noteCreatedAt}</h5>
-              <h4>{note.text}</h4>
-            </li>
-          );
-        })}
+
         {status === "INCOMPLETE" && (
           <Styled.EditButton
             id="assigntaskedit"
@@ -136,6 +130,10 @@ const AssignedTaskItemBase = ({
             </a>
           </Styled.FileUploadStatus>
         ) : null}
+        <Styled.NoteButton id="notemodal" type="button" onClick={toggleOnModal}>
+          <Styled.NoteIcon src={noteIcon} /> {notes.length}
+          {notes.length !== 1 ? " Notes" : " Note"}
+        </Styled.NoteButton>
       </Styled.CardGrid>
     </Styled.AssignmentItemContainer>
   );

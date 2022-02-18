@@ -242,6 +242,7 @@ export default {
         where: {
           assignedTaskId: assignedTask.id,
         },
+        order: [["createdAt", "DESC"]],
       });
     },
   },

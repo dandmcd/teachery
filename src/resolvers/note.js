@@ -1,14 +1,8 @@
 import Sequelize from "sequelize";
 import { combineResolvers } from "graphql-resolvers";
 
-import {
-  isAuthenticated,
-  isAssignedTaskOwner,
-  isTeacher,
-} from "./authorization";
+import { isAuthenticated, isTeacher } from "./authorization";
 
-import { UserInputError } from "apollo-server";
-import moment from "moment";
 import assignedTask from "../models/assigned";
 
 const toCursorHash = (string) => Buffer.from(string).toString("base64");
@@ -30,7 +24,7 @@ export default {
         : {};
 
       const notes = await models.Note.findAll({
-        order: [["createdAt", "DESC"]],
+        order: [["createdAt", "ASC"]],
         limit: limit + 1,
         ...cursorOptions,
       });

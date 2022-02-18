@@ -14,9 +14,11 @@ import GET_DASHBOARD from "../DashboardSchema";
 import liked from "../../../assets/liked.png";
 import * as routes from "../../../routing/routes";
 import * as Styled from "./style";
-import { bookmarkAtom } from "../../../state/store";
+import { bookmarkAtom, modalAtom } from "../../../state/store";
+import NoteList from "../../Note/NoteList";
 
 const DashboardPage = ({ session, me }) => {
+  const [modal] = useAtom(modalAtom);
   const [, setBookmark] = useAtom(bookmarkAtom);
 
   const { data, error, loading } = useQuery(GET_DASHBOARD, {});
@@ -70,6 +72,7 @@ const DashboardPage = ({ session, me }) => {
   return (
     <>
       <Styled.DashboardGrid>
+        {modal.target === "notemodal" && <NoteList />}
         <Styled.AssignmentItemContainer>
           <Styled.Welcome>
             Welcome back <Link to={routes.ACCOUNT}>{session.me.username}</Link>!

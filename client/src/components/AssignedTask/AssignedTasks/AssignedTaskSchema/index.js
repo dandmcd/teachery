@@ -17,6 +17,7 @@ const GET_PAGINATED_ASSIGNMENTS_WITH_USERS = gql`
         user {
           id
           username
+          role
         }
         assignment {
           id
@@ -38,6 +39,7 @@ const GET_PAGINATED_ASSIGNMENTS_WITH_USERS = gql`
           user {
             id
             username
+            role
           }
         }
       }

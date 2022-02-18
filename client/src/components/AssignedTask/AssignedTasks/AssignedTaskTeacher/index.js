@@ -13,6 +13,7 @@ import GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS from "../AssignedTaskTeacherSchem
 import AssignedTaskDelete from "../AssignedTaskDelete";
 import download from "../../../../assets/download.png";
 import downloadblue from "../../../../assets/downloadblue.png";
+import noteIcon from "../../../../assets/note.png";
 
 import { useAtom } from "jotai";
 import { modalAtom } from "../../../../state/store";
@@ -195,7 +196,7 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <Styled.DownloadIcon src={downloadblue} /> View
+                <Styled.DownloadIcon src={downloadblue} /> View Assignment
               </Styled.DownloadLink>
             </Styled.FileStatus>
           ) : null}
@@ -210,14 +211,6 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
           ) : null}
         </Styled.LinkCell>
         <Styled.CreatedInfo>
-          {notes.map((note) => {
-            return (
-              <li key={note.id}>
-                <h5>{note.noteCreatedAt}</h5>
-                <h4>{note.text}</h4>
-              </li>
-            );
-          })}
           <Styled.CreatedAt>
             Created on: <Moment format="YYYY-MM-DD">{createdAt}</Moment>
           </Styled.CreatedAt>
@@ -272,6 +265,10 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
             </a>
           </Styled.FileUploadStatus>
         ) : null}
+        <Styled.NoteButton id="notemodal" type="button" onClick={toggleOnModal}>
+          <Styled.NoteIcon src={noteIcon} /> {notes.length}
+          {notes.length !== 1 ? " Notes" : " Note"}
+        </Styled.NoteButton>
       </Styled.CardGrid>
     </Styled.AssignmentItemContainer>
   );

@@ -59,8 +59,8 @@ export const CardGrid = styled.div`
   display: -ms-grid;
   display: grid;
   z-index: 15;
-  -ms-grid-rows: auto auto auto 45px 40px;
-  grid-template-rows: auto auto auto 45px 40px;
+  -ms-grid-rows: auto auto auto 45px 40px 40px;
+  grid-template-rows: auto auto auto 45px 40px 40px;
   -ms-grid-columns: 1fr 1fr;
   grid-template-columns: 1fr 1fr;
   -webkit-box-pack: start start;
@@ -143,8 +143,8 @@ export const Note = styled.p`
   -ms-grid-column: 1;
   -ms-grid-column-span: 2;
   grid-column: 1 / 3;
-  margin: 0px 0px 0px 5px;
-  padding: 0.2em;
+  margin: 0 0 0 0.2em;
+  padding: 0.3em 0 0.3em 0;
 `;
 
 export const LinkCell = styled.div`
@@ -154,9 +154,7 @@ export const LinkCell = styled.div`
   -ms-grid-column: 1;
   -ms-grid-column-span: 1;
   grid-column: 1 / 2;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+  margin: 0.2em;
   -webkit-box-align: baseline;
   -ms-flex-align: baseline;
   align-items: baseline;
@@ -229,16 +227,16 @@ export const FileStatus = styled.h5`
 `;
 
 export const FileUploadStatus = styled.h5`
-  -ms-grid-row: 5;
+  -ms-grid-row: 6;
   -ms-grid-row-span: 1;
-  grid-row: 5 / 6;
-  -ms-grid-column: 2;
+  grid-row: 6 / 7;
+  -ms-grid-column: 1;
   -ms-grid-column-span: 1;
-  grid-column: 2 / 3;
+  grid-column: 1 / 2;
   -ms-grid-row-align: center;
   -ms-grid-column-align: start;
   place-self: center start;
-  margin: 0;
+  margin: 0.2em;
 `;
 
 export const DownloadIcon = styled.img`
@@ -296,4 +294,21 @@ export const Container = styled.div`
 export const DownloadLink = styled.a`
   font-weight: 400;
   color: ${(props) => props.theme.secondary};
+`;
+
+export const NoteButton = styled.h4`
+  cursor: pointer;
+  margin: 0 auto;
+  -ms-grid-row: 6;
+  -ms-grid-row-span: 1;
+  grid-row: 6 / 7;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 1;
+  grid-column: 2 / 3;
+`;
+
+export const NoteIcon = styled.img`
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
 `;
