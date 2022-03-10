@@ -61,41 +61,36 @@ Assignments.propTypes = {
   me: PropTypes.object,
 };
 
-const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => {
-  const fetchEvent = () => {
-    fetchMore({
-      variables: {
-        cursor: pageInfo.endCursor,
-        limit,
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
-          return previousResult;
-        }
+const MoreAssignmentsButton = ({ limit, pageInfo, fetchMore, children }) => (
+  <AssignmentButton
+    type="button"
+    onClick={() =>
+      fetchMore({
+        variables: {
+          cursor: pageInfo.endCursor,
+          limit,
+        },
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          if (!fetchMoreResult) {
+            return previousResult;
+          }
 
-        return {
-          assignments: {
-            ...fetchMoreResult.assignments,
-            edges: [
-              ...previousResult.assignments.edges,
-              ...fetchMoreResult.assignments.edges,
-            ],
-          },
-        };
-      },
-    });
-
-    return (
-      <AssignmentButton
-        type="button"
-        onMouseOver={fetchEvent}
-        onClick={fetchEvent}
-      >
-        {children}
-      </AssignmentButton>
-    );
-  };
-};
+          return {
+            assignments: {
+              ...fetchMoreResult.assignments,
+              edges: [
+                ...previousResult.assignments.edges,
+                ...fetchMoreResult.assignments.edges,
+              ],
+            },
+          };
+        },
+      })
+    }
+  >
+    {children}
+  </AssignmentButton>
+);
 
 MoreAssignmentsButton.propTypes = {
   limit: PropTypes.number.isRequired,
