@@ -17,6 +17,7 @@ const GET_PAGINATED_ASSIGNMENTS_WITH_USERS = gql`
         user {
           id
           username
+          role
         }
         assignment {
           id
@@ -29,6 +30,16 @@ const GET_PAGINATED_ASSIGNMENTS_WITH_USERS = gql`
           user {
             id
             username
+          }
+        }
+        notes {
+          id
+          text
+          noteCreatedAt: createdAt
+          user {
+            id
+            username
+            role
           }
         }
       }

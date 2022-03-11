@@ -14,9 +14,10 @@ import withSession from "../../Session/withSession";
 import AssignmentEdit from "../../Assignment/Assignments/AssignmentEdit";
 import TeacherTaskStatus from "./TeacherTaskStatus";
 import { modalAtom } from "../../../state/store";
+import NoteList from "../../Note/NoteList";
 
 const Teacher = ({ session, me }) => {
-  const [, setModal] = useAtom(modalAtom);
+  const [modal, setModal] = useAtom(modalAtom);
   const [tasksChecked, setTasksChecked] = useState(false);
   const [assignmentsChecked, setAssignmentsChecked] = useState(false);
 
@@ -58,6 +59,7 @@ const Teacher = ({ session, me }) => {
       <AssignmentEdit />
       <AssignTask />
       <AssignTaskUpdate />
+      {modal.target === "notemodal" && <NoteList />}
       <Styled.TeacherHeader>
         <Styled.Menu>
           <Styled.Title>Teacher Admin</Styled.Title>

@@ -86,5 +86,6 @@ export default gql`
     assignedTasks: [AssignedTask!]
     decks: [Deck!]
     bookmarkedDecks: [Deck!]!
+    notes: [Note!]
   }
 `;

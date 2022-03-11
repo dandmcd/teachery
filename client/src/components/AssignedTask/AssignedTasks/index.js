@@ -62,41 +62,36 @@ AssignedTasks.propTypes = {
   me: PropTypes.object,
 };
 
-const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => {
-  const fetchEvent = () => {
-    fetchMore({
-      variables: {
-        cursor: pageInfo.endCursor,
-        limit,
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
-          return previousResult;
-        }
+const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
+  <AssignmentButton
+    type="button"
+    onClick={() =>
+      fetchMore({
+        variables: {
+          cursor: pageInfo.endCursor,
+          limit,
+        },
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          if (!fetchMoreResult) {
+            return previousResult;
+          }
 
-        return {
-          assignedTasks: {
-            ...fetchMoreResult.assignedTasks,
-            edges: [
-              ...previousResult.assignedTasks.edges,
-              ...fetchMoreResult.assignedTasks.edges,
-            ],
-          },
-        };
-      },
-    });
-  };
-
-  return (
-    <AssignmentButton
-      type="button"
-      onMouseOver={fetchEvent}
-      onClick={fetchEvent}
-    >
-      {children}
-    </AssignmentButton>
-  );
-};
+          return {
+            assignedTasks: {
+              ...fetchMoreResult.assignedTasks,
+              edges: [
+                ...previousResult.assignedTasks.edges,
+                ...fetchMoreResult.assignedTasks.edges,
+              ],
+            },
+          };
+        },
+      })
+    }
+  >
+    {children}
+  </AssignmentButton>
+);
 
 const AssignmentButton = styled(Button)`
   margin: auto;

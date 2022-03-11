@@ -8,9 +8,10 @@ import assignmentResolvers from "../resolvers/assignment";
 import tagResolvers from "../resolvers/tag";
 import assignedTaskResolvers from "./assigned";
 import uploadResolvers from "./upload";
+import noteResolvers from "./note";
 
 const customScalarResolver = {
-  Date: GraphQLDateTime
+  Date: GraphQLDateTime,
 };
 
 export default [
@@ -22,5 +23,6 @@ export default [
   assignmentResolvers,
   tagResolvers,
   assignedTaskResolvers,
-  uploadResolvers
+  uploadResolvers,
+  noteResolvers,
 ];

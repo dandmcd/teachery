@@ -6,6 +6,7 @@ import styled from "styled-components";
 import * as Styled from "../style";
 import download from "../../../../assets/download.png";
 import downloadblue from "../../../../assets/downloadblue.png";
+import noteIcon from "../../../../assets/note.png";
 import { modalAtom } from "../../../../state/store";
 import { useAtom } from "jotai";
 
@@ -24,6 +25,7 @@ const AssignedTaskItemBase = ({
       documentUrl,
       user: { username },
     },
+    notes,
   },
   session,
 }) => {
@@ -69,7 +71,7 @@ const AssignedTaskItemBase = ({
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <Styled.DownloadIcon src={downloadblue} /> View
+                <Styled.DownloadIcon src={downloadblue} /> View Assignment
               </DownloadLink>
             </Styled.FileStatus>
           ) : null}
@@ -128,6 +130,10 @@ const AssignedTaskItemBase = ({
             </a>
           </Styled.FileUploadStatus>
         ) : null}
+        <Styled.NoteButton id="notemodal" type="button" onClick={toggleOnModal}>
+          <Styled.NoteIcon src={noteIcon} /> {notes.length}
+          {notes.length !== 1 ? " Notes" : " Note"}
+        </Styled.NoteButton>
       </Styled.CardGrid>
     </Styled.AssignmentItemContainer>
   );

@@ -29,6 +29,17 @@ const GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS = gql`
           user {
             id
             username
+            role
+          }
+        }
+        notes {
+          id
+          text
+          noteCreatedAt: createdAt
+          user {
+            id
+            username
+            role
           }
         }
       }

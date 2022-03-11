@@ -13,6 +13,7 @@ import GET_PAGINATED_ASSIGNED_TASKS_WITH_USERS from "../AssignedTaskTeacherSchem
 import AssignedTaskDelete from "../AssignedTaskDelete";
 import download from "../../../../assets/download.png";
 import downloadblue from "../../../../assets/downloadblue.png";
+import noteIcon from "../../../../assets/note.png";
 
 import { useAtom } from "jotai";
 import { modalAtom } from "../../../../state/store";
@@ -61,40 +62,36 @@ TeacherAssignedTasks.propTypes = {
   me: PropTypes.object,
 };
 
-const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => {
-  const fetchEvent = () => {
-    fetchMore({
-      variables: {
-        cursor: pageInfo.endCursor,
-        limit,
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
-          return previousResult;
-        }
+const MoreAssignedTasksButton = ({ limit, pageInfo, fetchMore, children }) => (
+  <AssignmentButton
+    type="button"
+    onClick={() =>
+      fetchMore({
+        variables: {
+          cursor: pageInfo.endCursor,
+          limit,
+        },
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          if (!fetchMoreResult) {
+            return previousResult;
+          }
 
-        return {
-          assignedTasksTeacher: {
-            ...fetchMoreResult.assignedTasksTeacher,
-            edges: [
-              ...previousResult.assignedTasksTeacher.edges,
-              ...fetchMoreResult.assignedTasksTeacher.edges,
-            ],
-          },
-        };
-      },
-    });
-  };
-  return (
-    <AssignmentButton
-      type="button"
-      onMouseOver={fetchEvent}
-      onClick={fetchEvent}
-    >
-      {children}
-    </AssignmentButton>
-  );
-};
+          return {
+            assignedTasksTeacher: {
+              ...fetchMoreResult.assignedTasksTeacher,
+              edges: [
+                ...previousResult.assignedTasksTeacher.edges,
+                ...fetchMoreResult.assignedTasksTeacher.edges,
+              ],
+            },
+          };
+        },
+      })
+    }
+  >
+    {children}
+  </AssignmentButton>
+);
 
 const AssignmentButton = styled(Button)`
   margin: auto auto 5px auto;
@@ -146,6 +143,7 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
       documentUrl,
       user: { username },
     },
+    notes,
   } = assignedTask;
 
   const [isChecked, setIsChecked] = useState(false);
@@ -194,7 +192,7 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <Styled.DownloadIcon src={downloadblue} /> View
+                <Styled.DownloadIcon src={downloadblue} /> View Assignment
               </Styled.DownloadLink>
             </Styled.FileStatus>
           ) : null}
@@ -263,6 +261,10 @@ const AssignmentItemBase = ({ assignedTask, session }) => {
             </a>
           </Styled.FileUploadStatus>
         ) : null}
+        <Styled.NoteButton id="notemodal" type="button" onClick={toggleOnModal}>
+          <Styled.NoteIcon src={noteIcon} /> {notes.length}
+          {notes.length !== 1 ? " Notes" : " Note"}
+        </Styled.NoteButton>
       </Styled.CardGrid>
     </Styled.AssignmentItemContainer>
   );

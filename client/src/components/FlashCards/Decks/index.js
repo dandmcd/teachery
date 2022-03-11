@@ -110,36 +110,36 @@ const DeckButton = styled(Button)`
   border: 2px solid ${(props) => props.theme.primaryDark};
 `;
 
-const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => {
-  const fetchEvent = () => {
-    fetchMore({
-      variables: {
-        cursor: pageInfo.endCursor,
-        limit,
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
-          return previousResult;
-        }
+const MoreDecksButton = ({ limit, pageInfo, fetchMore, children }) => (
+  <DeckButton
+    type="button"
+    onClick={() =>
+      fetchMore({
+        variables: {
+          cursor: pageInfo.endCursor,
+          limit,
+        },
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          if (!fetchMoreResult) {
+            return previousResult;
+          }
 
-        return {
-          decks: {
-            ...fetchMoreResult.decks,
-            edges: [
-              ...previousResult.decks.edges,
-              ...fetchMoreResult.decks.edges,
-            ],
-          },
-        };
-      },
-    });
-  };
-  return (
-    <DeckButton type="button" onMouseOver={fetchEvent} onClick={fetchEvent}>
-      {children}
-    </DeckButton>
-  );
-};
+          return {
+            decks: {
+              ...fetchMoreResult.decks,
+              edges: [
+                ...previousResult.decks.edges,
+                ...fetchMoreResult.decks.edges,
+              ],
+            },
+          };
+        },
+      })
+    }
+  >
+    {children}
+  </DeckButton>
+);
 
 MoreDecksButton.propTypes = {
   limit: PropTypes.number.isRequired,
